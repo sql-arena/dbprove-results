@@ -16,10 +16,10 @@ Let:
 Process:
 
 - Download and run `dbprove` against your database.
-  - The run will generate a `data/` folder.
+  - The run will generate a `proof/` folder.
 - Fill out the `template.md` file and name it `submission.md`
 - File a PR against this repo - putting the `submission.md` file
-  and the contents of your `data/` folder into the folder:
+  and the contents of your `proof/` folder into the folder:
   `engine/[engine]/[version]/[user]`
   - **Optionally:** If you test more than one configuration, add a
     subfolder under your username for each configuration tested and make sure to fill out a `submission.md` file for each tested configuration.
@@ -41,7 +41,7 @@ The following are the canonical names of database under test
 - "BigQuery"
 - "Redshift"
 - "SQL Server" - The on-premise version of SQL Server.
-  - Version string shoudl contain the edition (Enterprise, Standard, etc)
+  - Version string shouls contain the edition (Enterprise, Standard, etc)
 - "Azure Fabric" - The hosted version of Fabric
 - "Oracle"
 - "Db2"

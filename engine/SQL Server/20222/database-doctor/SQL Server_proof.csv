@@ -84,8 +84,8 @@ SQL Server|62|PLAN|TPC-H|TPCH-Q01|TPC-H Q01 Analysis|Plan|"Estimate    Actual  O
        6         4  SORT l_returnflag, l_linestatus
        6         4  PROJECT CASE WHEN Expr1043 = 0 THEN NULL ELSE Expr1044 END AS Expr1003, CASE WHEN Expr1045 = 0 THEN NULL ELSE Expr1046 END AS Expr1004, CASE WHEN Expr1047 = 0 THEN NULL ELSE Expr1048 END AS Expr1005, CASE WHEN Expr1049 = 0 THEN NULL ELSE Expr1050 END AS Expr1006, CASE WHEN Expr1043 = 0 THEN NULL ELSE Expr1044 / CONVERT_IMPLICIT(decimal 19,0 ,Expr1043,0) END AS Expr1007, CASE WHEN Expr1045 = 0 THEN NULL ELSE Expr1046 / CONVERT_IMPLICIT(decimal 19,0 ,Expr1045,0) END AS Expr...
        6         4  GROUP BY HASH AGGREGATE COUNT(l_quantity) AS Expr1043, SUM(l_quantity) AS Expr1044, COUNT(l_extendedprice) AS Expr1045, SUM(l_extendedprice) AS Expr1046, COUNT(Expr1011) AS Expr1047, SUM(Expr1011) AS Expr1048, COUNT(Expr1012) AS Expr1049, SUM(Expr1012) AS Expr1050, COUNT(l_discount) AS Expr1051, SUM(l_discount) AS Expr1052, COUNT(*) AS Expr1053
- 5643000   5642532  PROJECT l_extendedprice * (1. - l_discount) AS Expr1011, l_extendedprice * (1. - l_discount) * (1. + l_tax) AS Expr1012
- 5643000   5642532  TABLE SCAN lineitem
+ 5640230   5642532  PROJECT l_extendedprice * (1. - l_discount) AS Expr1011, l_extendedprice * (1. - l_discount) * (1. + l_tax) AS Expr1012
+ 5640230   5642532  TABLE SCAN lineitem
 "|Plan
 SQL Server|63|PLAN|TPC-H|TPCH-Q02|TPC-H Q02 Analysis|SQL|"/* TPC-H Q02 */
 SELECT s_acctbal,
@@ -127,7 +127,7 @@ ORDER BY s_acctbal DESC,
 "|Query
 SQL Server|64|PLAN|TPC-H|TPCH-Q02|TPC-H Q02 Analysis|Join|614728|Rows
 SQL Server|65|PLAN|TPC-H|TPCH-Q02|TPC-H Q02 Analysis|Aggregate|473|Rows
-SQL Server|66|PLAN|TPC-H|TPCH-Q02|TPC-H Q02 Analysis|Sort|946|Rows
+SQL Server|66|PLAN|TPC-H|TPCH-Q02|TPC-H Q02 Analysis|Sort|819|Rows
 SQL Server|67|PLAN|TPC-H|TPCH-Q02|TPC-H Q02 Analysis|Scan|610825|Rows
 SQL Server|68|PLAN|TPC-H|TPCH-Q02|TPC-H Q02 Analysis|Hash|7565|Rows
 SQL Server|69|PLAN|TPC-H|TPCH-Q02|TPC-H Q02 Analysis|Mis-estimate Join <16x|0|Magnitude
@@ -185,17 +185,17 @@ SQL Server|120|PLAN|TPC-H|TPCH-Q02|TPC-H Q02 Analysis|Mis-estimate Hash +4x|0|Ma
 SQL Server|121|PLAN|TPC-H|TPCH-Q02|TPC-H Q02 Analysis|Mis-estimate Hash +8x|0|Magnitude
 SQL Server|122|PLAN|TPC-H|TPCH-Q02|TPC-H Q02 Analysis|Mis-estimate Hash >16x|0|Magnitude
 SQL Server|123|PLAN|TPC-H|TPCH-Q02|TPC-H Q02 Analysis|Plan|"Estimate    Actual  Operator
-     674       473  SORT s_acctbal, n_name, s_name, ps_partkey
-     728       473  LIMIT 0
-    1640       473  GROUP BY HASH  AGGREGATE 
-    1640       473  SORT ps_partkey, ps_supplycost
-    1640       473  INNER JOIN HASH ON r_regionkey = n_regionkey
+     231       346  SORT s_acctbal, n_name, s_name, ps_partkey
+     751       346  LIMIT 0
+    1694       473  GROUP BY HASH  AGGREGATE 
+    1694       473  SORT ps_partkey, ps_supplycost
+    1694       473  INNER JOIN HASH ON r_regionkey = n_regionkey
        1         1  │└TABLE SEEK region WHERE r_name = 'EUROPE'
-    8199      2364  INNER JOIN HASH ON n_nationkey = s_nationkey
+    8469      2364  INNER JOIN HASH ON n_nationkey = s_nationkey
       25        25  │└TABLE SEEK nation
-    8199      2364  INNER JOIN HASH ON s_suppkey = ps_suppkey
-    8200      2364  │└INNER JOIN HASH ON ps_partkey = p_partkey
-    1772       799  │ │└TABLE SEEK part WHERE p_size = 25 AND p_type LIKE '%BRASS'
+    8469      2364  INNER JOIN HASH ON s_suppkey = ps_suppkey
+    8470      2364  │└INNER JOIN HASH ON ps_partkey = p_partkey
+    1828       799  │ │└TABLE SEEK part WHERE p_size = 25 AND p_type LIKE '%BRASS'
   600000    600000  │ TABLE SCAN partsupp
    10000     10000  TABLE SEEK supplier
 "|Plan
@@ -280,14 +280,14 @@ SQL Server|182|PLAN|TPC-H|TPCH-Q03|TPC-H Q03 Analysis|Mis-estimate Hash +8x|0|Ma
 SQL Server|183|PLAN|TPC-H|TPCH-Q03|TPC-H Q03 Analysis|Mis-estimate Hash >16x|0|Magnitude
 SQL Server|184|PLAN|TPC-H|TPCH-Q03|TPC-H Q03 Analysis|Plan|"Estimate    Actual  Operator
       10        10  SORT Expr1007, o_orderdate
-  355150     10680  PROJECT CASE WHEN Expr1013 = 0 THEN NULL ELSE Expr1014 END AS Expr1007
-  355150     10680  GROUP BY HASH AGGREGATE COUNT(Expr1008) AS Expr1013, SUM(Expr1008) AS Expr1014, IN(o_orderdate) AS o_orderdate, IN(o_shippriority) AS o_shippriority
- 1089080     28114  INNER JOIN HASH ON o_orderkey = l_orderkey
-  418458    138362  │└INNER JOIN HASH ON c_custkey = o_custkey
-   30439     30236  │ │└TABLE SEEK customer WHERE c_mktsegment = 'MACHINERY'
-  687680    686085  │ TABLE SEEK orders WHERE o_orderdate < '1995-03-15'
- 3402810   3394850  PROJECT l_extendedprice * (1. - l_discount) AS Expr1008
- 3402810   3394850  TABLE SCAN lineitem
+  352852     10680  PROJECT CASE WHEN Expr1013 = 0 THEN NULL ELSE Expr1014 END AS Expr1007
+  352852     10680  GROUP BY HASH AGGREGATE COUNT(Expr1008) AS Expr1013, SUM(Expr1008) AS Expr1014, IN(o_orderdate) AS o_orderdate, IN(o_shippriority) AS o_shippriority
+ 1047040     28114  INNER JOIN HASH ON o_orderkey = l_orderkey
+  410020    138362  │└INNER JOIN HASH ON c_custkey = o_custkey
+   30089     30236  │ │└TABLE SEEK customer WHERE c_mktsegment = 'MACHINERY'
+  684664    686085  │ TABLE SEEK orders WHERE o_orderdate < '1995-03-15'
+ 3394880   3394850  PROJECT l_extendedprice * (1. - l_discount) AS Expr1008
+ 3394880   3394850  TABLE SCAN lineitem
 "|Plan
 SQL Server|185|PLAN|TPC-H|TPCH-Q04|TPC-H Q04 Analysis|SQL|"/* TPC-H Q04 */
 SELECT o_orderpriority,
@@ -365,8 +365,8 @@ SQL Server|245|PLAN|TPC-H|TPCH-Q04|TPC-H Q04 Analysis|Plan|"Estimate    Actual  
        5         5  SORT o_orderpriority
        5         5  PROJECT CONVERT_IMPLICIT int,Expr1009,0 AS Expr1006
        5         5  GROUP BY HASH AGGREGATE COUNT(*) AS Expr1009
-   42095     47831  INNER JOIN HASH ON l_orderkey = o_orderkey
-   52913     52204  │└TABLE SEEK orders WHERE o_orderdate >= '1995-02-01' AND o_orderdate < '1995-05-01'
+   41855     47831  INNER JOIN HASH ON l_orderkey = o_orderkey
+   52883     52204  │└TABLE SEEK orders WHERE o_orderdate >= '1995-02-01' AND o_orderdate < '1995-05-01'
  1799650   3791311  TABLE SCAN lineitem
 "|Plan
 SQL Server|246|PLAN|TPC-H|TPCH-Q05|TPC-H Q05 Analysis|SQL|"/* TPC-H Q05 */
@@ -453,16 +453,16 @@ SQL Server|306|PLAN|TPC-H|TPCH-Q05|TPC-H Q05 Analysis|Plan|"Estimate    Actual  
        5         5  SORT Expr1013
        5         5  PROJECT CASE WHEN Expr1019 = 0 THEN NULL ELSE Expr1020 END AS Expr1013
        5         5  GROUP BY HASH AGGREGATE COUNT(Expr1014) AS Expr1019, SUM(Expr1014) AS Expr1020
-    7839      6988  INNER JOIN HASH ON s_suppkey = l_suppkey AND n_nationkey = s_nationkey
+    7720      6988  INNER JOIN HASH ON s_suppkey = l_suppkey AND n_nationkey = s_nationkey
    10000     10000  │└TABLE SEEK supplier
-  196012    171091  INNER JOIN HASH ON o_orderkey = l_orderkey
-   42721     42896  │└INNER JOIN HASH ON c_custkey = o_custkey
+  193037    171091  INNER JOIN HASH ON o_orderkey = l_orderkey
+   42779     42896  │└INNER JOIN HASH ON c_custkey = o_custkey
    30000     30049  │ │└INNER JOIN HASH ON c_nationkey = n_nationkey
        5         5  │ │ │└INNER JOIN LOOP ON n_regionkey = r_regionkey
        1         5  │ │ │ │└TABLE SEEK region WHERE r_name = 'EUROPE'
       25        25  │ │ │ TABLE SEEK nation
   150000    150000  │ │ TABLE SEEK customer
-  213674    214017  │ TABLE SEEK orders WHERE o_orderdate >= '1995-01-01' AND o_orderdate < '1996-01-01'
+  214097    214017  │ TABLE SEEK orders WHERE o_orderdate >= '1995-01-01' AND o_orderdate < '1996-01-01'
  5998820   5998820  PROJECT l_extendedprice * (1. - l_discount) AS Expr1014
  5998820   5998820  TABLE SCAN lineitem
 "|Plan
@@ -536,8 +536,8 @@ SQL Server|366|PLAN|TPC-H|TPCH-Q06|TPC-H Q06 Analysis|Mis-estimate Hash >16x|0|M
 SQL Server|367|PLAN|TPC-H|TPCH-Q06|TPC-H Q06 Analysis|Plan|"Estimate    Actual  Operator
        1         1  PROJECT CASE WHEN Expr1012 = 0 THEN NULL ELSE Expr1013 END AS Expr1003
        1         1  GROUP BY HASH AGGREGATE COUNT(Expr1007) AS Expr1012, SUM(Expr1007) AS Expr1013
-  370873    121014  PROJECT l_extendedprice * l_discount AS Expr1007
-  370873    121014  TABLE SCAN lineitem
+  388628    121014  PROJECT l_extendedprice * l_discount AS Expr1007
+  388628    121014  TABLE SCAN lineitem
 "|Plan
 SQL Server|368|PLAN|TPC-H|TPCH-Q07|TPC-H Q07 Analysis|SQL|"/* TPC-H Q07 */
 SELECT supp_nation,
@@ -634,12 +634,12 @@ SQL Server|428|PLAN|TPC-H|TPCH-Q07|TPC-H Q07 Analysis|Plan|"Estimate    Actual  
        7        10  SORT n_name, n_name, Expr1011
        7        10  PROJECT CASE WHEN Expr1019 = 0 THEN NULL ELSE Expr1020 END AS Expr1013
        7        10  GROUP BY HASH AGGREGATE COUNT(Expr1014) AS Expr1019, SUM(Expr1014) AS Expr1020
-  132065     12302  INNER JOIN HASH ON n_nationkey as n_nationkey = c_nationkey AND (n_name as n_name = 'GERMANY' AND n_name as n_name = 'FRANCE' OR n_name as n_name = 'FRANCE' AND n_name as n_name = 'GERMANY' AND l_shipdate >= '1995-01-01' AND l_shipdate <= '1996-12-31')
+  129307     12302  INNER JOIN HASH ON n_nationkey as n_nationkey = c_nationkey AND (n_name as n_name = 'GERMANY' AND n_name as n_name = 'FRANCE' OR n_name as n_name = 'FRANCE' AND n_name as n_name = 'GERMANY' AND l_shipdate >= '1995-01-01' AND l_shipdate <= '1996-12-31')
        2         2  │└TABLE SEEK nation WHERE n_name as n_name = 'FRANCE' OR n_name as n_name = 'GERMANY'
-  479717    470749  INNER JOIN HASH ON c_custkey = o_custkey
+  478985    470749  INNER JOIN HASH ON c_custkey = o_custkey
   150000    150000  │└TABLE SEEK customer
-  479864    470749  INNER JOIN HASH ON o_orderkey = l_orderkey
-  479864    470749  │└INNER JOIN HASH ON s_suppkey = l_suppkey
+  479428    470749  INNER JOIN HASH ON o_orderkey = l_orderkey
+  479844    470749  │└INNER JOIN HASH ON s_suppkey = l_suppkey
      800       785  │ │└INNER JOIN HASH ON n_nationkey as n_nationkey = s_nationkey
        2         2  │ │ │└TABLE SEEK nation WHERE n_name as n_name = 'FRANCE' OR n_name as n_name = 'GERMANY'
    10000     10000  │ │ TABLE SEEK supplier
@@ -741,24 +741,24 @@ SQL Server|489|PLAN|TPC-H|TPCH-Q08|TPC-H Q08 Analysis|Plan|"Estimate    Actual  
        2         ∞  PROJECT Expr1017 / Expr1018 AS Expr1019
        2         2  PROJECT CASE WHEN Expr1029 = 0 THEN NULL ELSE Expr1030 END AS Expr1017, CASE WHEN Expr1031 = 0 THEN NULL ELSE Expr1032 END AS Expr1018
        2         2  GROUP BY HASH AGGREGATE COUNT(CASE WHEN n_name as n_name = 'FRANCE'THEN l_extendedprice * (1. - l_discount) ELSE 0.0000 END) AS Expr1029, SUM(CASE WHEN n_name as n_name = 'FRANCE'THEN l_extendedprice * (1. - l_discount) ELSE 0.0000 END) AS Expr1030, COUNT(Expr1020) AS Expr1031, SUM(Expr1020) AS Expr1032
-    2955      2323  INNER JOIN HASH ON n_nationkey as n_nationkey = s_nationkey
+    2608      2323  INNER JOIN HASH ON n_nationkey as n_nationkey = s_nationkey
       25        25  │└TABLE SEEK nation
-    8865      2323  INNER JOIN MERGE ON s_suppkey = l_suppkey
+    7793      2323  INNER JOIN MERGE ON s_suppkey = l_suppkey
    10000     10000  │└TABLE SEEK supplier
-    2955      2323  SORT l_suppkey
-    2955      2323  INNER JOIN HASH ON r_regionkey = n_regionkey as n_regionkey
+    2608      2323  SORT l_suppkey
+    2608      2323  INNER JOIN HASH ON r_regionkey = n_regionkey as n_regionkey
        1         1  │└TABLE SEEK region WHERE r_name = 'EUROPE'
-   14779     11656  INNER JOIN HASH ON n_nationkey as n_nationkey = c_nationkey
+   13041     11656  INNER JOIN HASH ON n_nationkey as n_nationkey = c_nationkey
       25        25  │└TABLE SEEK nation
-   14779     11656  INNER JOIN MERGE ON c_custkey = o_custkey
+   13041     11656  INNER JOIN MERGE ON c_custkey = o_custkey
   150000    149968  │└TABLE SEEK customer
-   14784     11656  SORT o_custkey
-   14784     11656  INNER JOIN MERGE ON o_orderkey = l_orderkey
-  427016    428381  │└PROJECT datepart year,o_orderdate AS Expr1015
-  427016    428381  │ TABLE SEEK orders WHERE o_orderdate >= '1995-01-01' AND o_orderdate <= '1996-12-31'
-   45267     40978  SORT l_orderkey
-   45267     40978  INNER JOIN HASH ON p_partkey = l_partkey
-    1499      1362  │└TABLE SEEK part WHERE p_type = 'SMALL POLISHED NICKEL'
+   13053     11656  SORT o_custkey
+   13053     11656  INNER JOIN MERGE ON o_orderkey = l_orderkey
+  427133    428381  │└PROJECT datepart year,o_orderdate AS Expr1015
+  427133    428381  │ TABLE SEEK orders WHERE o_orderdate >= '1995-01-01' AND o_orderdate <= '1996-12-31'
+   40629     40978  SORT l_orderkey
+   40629     40978  INNER JOIN HASH ON p_partkey = l_partkey
+    1339      1362  │└TABLE SEEK part WHERE p_type = 'SMALL POLISHED NICKEL'
  5998820   5998820  PROJECT l_extendedprice * (1. - l_discount) AS Expr1020
  5998820   5998820  TABLE SCAN lineitem
 "|Plan
@@ -853,15 +853,15 @@ SQL Server|550|PLAN|TPC-H|TPCH-Q09|TPC-H Q09 Analysis|Plan|"Estimate    Actual  
       25        25  │└TABLE SEEK nation
      175       175  SORT s_nationkey
      175       175  GROUP BY HASH AGGREGATE COUNT(Expr1017 - ps_supplycost * l_quantity) AS partialagg1018, SUM(Expr1017 - ps_supplycost * l_quantity) AS partialagg1020
-   33339    245491  INNER JOIN MERGE ON o_orderkey = l_orderkey
+   32840    245491  INNER JOIN MERGE ON o_orderkey = l_orderkey
  1500000   1499999  │└PROJECT datepart year,o_orderdate AS Expr1014
  1500000   1499999  │ TABLE SEEK orders
-   33339    245491  SORT l_orderkey
-   33339    245491  INNER JOIN HASH ON 
+   32869    245491  SORT l_orderkey
+   32869    245491  INNER JOIN HASH ON 
    10000     10000  │└TABLE SEEK supplier
-   33343    245520  INNER JOIN HASH ON l_partkey = p_partkey AND l_suppkey = ps_suppkey
-   51003     32792  │└INNER JOIN HASH ON ps_partkey = p_partkey
-   11024     10939  │ │└TABLE SEEK part WHERE p_name LIKE '%lace%'
+   32873    245520  INNER JOIN HASH ON l_partkey = p_partkey AND l_suppkey = ps_suppkey
+   43279     32792  │└INNER JOIN HASH ON ps_partkey = p_partkey
+   10819     10939  │ │└TABLE SEEK part WHERE p_name LIKE '%lace%'
   600000    600000  │ TABLE SCAN partsupp
  5998820   5998820  PROJECT l_extendedprice * (1. - l_discount) AS Expr1017
  5998820   5998820  TABLE SCAN lineitem
@@ -953,16 +953,16 @@ SQL Server|608|PLAN|TPC-H|TPCH-Q10|TPC-H Q10 Analysis|Mis-estimate Hash +4x|0|Ma
 SQL Server|609|PLAN|TPC-H|TPCH-Q10|TPC-H Q10 Analysis|Mis-estimate Hash +8x|0|Magnitude
 SQL Server|610|PLAN|TPC-H|TPCH-Q10|TPC-H Q10 Analysis|Mis-estimate Hash >16x|0|Magnitude
 SQL Server|611|PLAN|TPC-H|TPCH-Q10|TPC-H Q10 Analysis|Plan|"Estimate    Actual  Operator
-   26534     30170  SORT Expr1009
-   26534     30170  INNER JOIN HASH ON n_nationkey = c_nationkey
+   26485     30170  SORT Expr1009
+   26485     30170  INNER JOIN HASH ON n_nationkey = c_nationkey
       25        25  │└TABLE SEEK nation
-   26534     30170  INNER JOIN HASH ON c_custkey = o_custkey
-   26541     30170  │└PROJECT CASE WHEN Expr1015 = 0 THEN NULL ELSE Expr1016 END AS Expr1009
-   26541     30170  │ GROUP BY HASH AGGREGATE COUNT(Expr1010) AS Expr1015, SUM(Expr1010) AS Expr1016
-   57253    108325  │ INNER JOIN HASH ON o_orderkey = l_orderkey
-   54259     54071  │ │└TABLE SEEK orders WHERE o_orderdate >= '1994-06-01' AND o_orderdate < '1994-09-01'
- 1379620   1392748  │ PROJECT l_extendedprice * (1. - l_discount) AS Expr1010
- 1379620   1392748  │ TABLE SCAN lineitem
+   26485     30170  INNER JOIN HASH ON c_custkey = o_custkey
+   26508     30170  │└PROJECT CASE WHEN Expr1015 = 0 THEN NULL ELSE Expr1016 END AS Expr1009
+   26508     30170  │ GROUP BY HASH AGGREGATE COUNT(Expr1010) AS Expr1015, SUM(Expr1010) AS Expr1016
+   56510    108325  │ INNER JOIN HASH ON o_orderkey = l_orderkey
+   54363     54071  │ │└TABLE SEEK orders WHERE o_orderdate >= '1994-06-01' AND o_orderdate < '1994-09-01'
+ 1381930   1392748  │ PROJECT l_extendedprice * (1. - l_discount) AS Expr1010
+ 1381930   1392748  │ TABLE SCAN lineitem
   150000    150000  TABLE SEEK customer
 "|Plan
 SQL Server|612|PLAN|TPC-H|TPCH-Q11|TPC-H Q11 Analysis|SQL|"/* TPC-H Q11 */
@@ -985,9 +985,9 @@ HAVING SUM(ps_supplycost * ps_availqty)
               WHERE n_name = 'JAPAN')
 ORDER BY v DESC
 "|Query
-SQL Server|613|PLAN|TPC-H|TPCH-Q11|TPC-H Q11 Analysis|Join|1220001|Rows
+SQL Server|613|PLAN|TPC-H|TPCH-Q11|TPC-H Q11 Analysis|Join|1222806|Rows
 SQL Server|614|PLAN|TPC-H|TPCH-Q11|TPC-H Q11 Analysis|Aggregate|44516|Rows
-SQL Server|615|PLAN|TPC-H|TPCH-Q11|TPC-H Q11 Analysis|Sort|0|Rows
+SQL Server|615|PLAN|TPC-H|TPCH-Q11|TPC-H Q11 Analysis|Sort|2806|Rows
 SQL Server|616|PLAN|TPC-H|TPCH-Q11|TPC-H Q11 Analysis|Scan|1220002|Rows
 SQL Server|617|PLAN|TPC-H|TPCH-Q11|TPC-H Q11 Analysis|Hash|66314|Rows
 SQL Server|618|PLAN|TPC-H|TPCH-Q11|TPC-H Q11 Analysis|Mis-estimate Join <16x|0|Magnitude
@@ -995,10 +995,10 @@ SQL Server|619|PLAN|TPC-H|TPCH-Q11|TPC-H Q11 Analysis|Mis-estimate Join -8x|0|Ma
 SQL Server|620|PLAN|TPC-H|TPCH-Q11|TPC-H Q11 Analysis|Mis-estimate Join -4x|0|Magnitude
 SQL Server|621|PLAN|TPC-H|TPCH-Q11|TPC-H Q11 Analysis|Mis-estimate Join -2x|0|Magnitude
 SQL Server|622|PLAN|TPC-H|TPCH-Q11|TPC-H Q11 Analysis|Mis-estimate Join =|4|Magnitude
-SQL Server|623|PLAN|TPC-H|TPCH-Q11|TPC-H Q11 Analysis|Mis-estimate Join +2x|0|Magnitude
+SQL Server|623|PLAN|TPC-H|TPCH-Q11|TPC-H Q11 Analysis|Mis-estimate Join +2x|1|Magnitude
 SQL Server|624|PLAN|TPC-H|TPCH-Q11|TPC-H Q11 Analysis|Mis-estimate Join +4x|0|Magnitude
 SQL Server|625|PLAN|TPC-H|TPCH-Q11|TPC-H Q11 Analysis|Mis-estimate Join +8x|0|Magnitude
-SQL Server|626|PLAN|TPC-H|TPCH-Q11|TPC-H Q11 Analysis|Mis-estimate Join >16x|1|Magnitude
+SQL Server|626|PLAN|TPC-H|TPCH-Q11|TPC-H Q11 Analysis|Mis-estimate Join >16x|0|Magnitude
 SQL Server|627|PLAN|TPC-H|TPCH-Q11|TPC-H Q11 Analysis|Mis-estimate Aggregate <16x|0|Magnitude
 SQL Server|628|PLAN|TPC-H|TPCH-Q11|TPC-H Q11 Analysis|Mis-estimate Aggregate -8x|0|Magnitude
 SQL Server|629|PLAN|TPC-H|TPCH-Q11|TPC-H Q11 Analysis|Mis-estimate Aggregate -4x|0|Magnitude
@@ -1013,10 +1013,10 @@ SQL Server|637|PLAN|TPC-H|TPCH-Q11|TPC-H Q11 Analysis|Mis-estimate Sort -8x|0|Ma
 SQL Server|638|PLAN|TPC-H|TPCH-Q11|TPC-H Q11 Analysis|Mis-estimate Sort -4x|0|Magnitude
 SQL Server|639|PLAN|TPC-H|TPCH-Q11|TPC-H Q11 Analysis|Mis-estimate Sort -2x|0|Magnitude
 SQL Server|640|PLAN|TPC-H|TPCH-Q11|TPC-H Q11 Analysis|Mis-estimate Sort =|0|Magnitude
-SQL Server|641|PLAN|TPC-H|TPCH-Q11|TPC-H Q11 Analysis|Mis-estimate Sort +2x|0|Magnitude
+SQL Server|641|PLAN|TPC-H|TPCH-Q11|TPC-H Q11 Analysis|Mis-estimate Sort +2x|1|Magnitude
 SQL Server|642|PLAN|TPC-H|TPCH-Q11|TPC-H Q11 Analysis|Mis-estimate Sort +4x|0|Magnitude
 SQL Server|643|PLAN|TPC-H|TPCH-Q11|TPC-H Q11 Analysis|Mis-estimate Sort +8x|0|Magnitude
-SQL Server|644|PLAN|TPC-H|TPCH-Q11|TPC-H Q11 Analysis|Mis-estimate Sort >16x|1|Magnitude
+SQL Server|644|PLAN|TPC-H|TPCH-Q11|TPC-H Q11 Analysis|Mis-estimate Sort >16x|0|Magnitude
 SQL Server|645|PLAN|TPC-H|TPCH-Q11|TPC-H Q11 Analysis|Mis-estimate Scan <16x|0|Magnitude
 SQL Server|646|PLAN|TPC-H|TPCH-Q11|TPC-H Q11 Analysis|Mis-estimate Scan -8x|0|Magnitude
 SQL Server|647|PLAN|TPC-H|TPCH-Q11|TPC-H Q11 Analysis|Mis-estimate Scan -4x|0|Magnitude
@@ -1045,11 +1045,11 @@ SQL Server|669|PLAN|TPC-H|TPCH-Q11|TPC-H Q11 Analysis|Mis-estimate Hash +4x|0|Ma
 SQL Server|670|PLAN|TPC-H|TPCH-Q11|TPC-H Q11 Analysis|Mis-estimate Hash +8x|0|Magnitude
 SQL Server|671|PLAN|TPC-H|TPCH-Q11|TPC-H Q11 Analysis|Mis-estimate Hash >16x|0|Magnitude
 SQL Server|672|PLAN|TPC-H|TPCH-Q11|TPC-H Q11 Analysis|Plan|"Estimate    Actual  Operator
-    6658         0  SORT Expr1007
-    6658         0  INNER JOIN LOOP ON n_name = 'JAPAN'
-   22194     21056  │└PROJECT CASE WHEN Expr1029 = 0 THEN NULL ELSE Expr1030 END AS Expr1007
-   22194     21056  │ GROUP BY HASH AGGREGATE COUNT(Expr1017) AS Expr1029, SUM(Expr1017) AS Expr1030
-   24001     22258  │ INNER JOIN HASH ON s_suppkey = ps_suppkey
+    6778      2806  SORT Expr1007
+    6778      2806  INNER JOIN LOOP ON n_name = 'JAPAN'
+   22596     21056  │└PROJECT CASE WHEN Expr1029 = 0 THEN NULL ELSE Expr1030 END AS Expr1007
+   22596     21056  │ GROUP BY HASH AGGREGATE COUNT(Expr1017) AS Expr1029, SUM(Expr1017) AS Expr1030
+   23997     22258  │ INNER JOIN HASH ON s_suppkey = ps_suppkey
      400       371  │ │└INNER JOIN HASH ON n_nationkey = s_nationkey
        1         1  │ │ │└TABLE SEEK nation WHERE n_name = 'JAPAN'
    10000     10000  │ │ TABLE SEEK supplier
@@ -1057,7 +1057,7 @@ SQL Server|672|PLAN|TPC-H|TPCH-Q11|TPC-H Q11 Analysis|Plan|"Estimate    Actual  
   600000    600000  │ TABLE SCAN partsupp
        1         1  PROJECT CASE WHEN Expr1027 = 0 THEN NULL ELSE Expr1028 END AS Expr1015
        1         1  GROUP BY HASH AGGREGATE COUNT(Expr1018) AS Expr1027, SUM(Expr1018) AS Expr1028
-   24001     22258  INNER JOIN HASH ON s_suppkey = ps_suppkey
+   23997     22258  INNER JOIN HASH ON s_suppkey = ps_suppkey
      400       371  │└INNER JOIN HASH ON n_nationkey = s_nationkey
        1         1  │ │└TABLE SEEK nation WHERE n_name = 'JAPAN'
    10000     10000  │ TABLE SEEK supplier
@@ -1153,8 +1153,8 @@ SQL Server|732|PLAN|TPC-H|TPCH-Q12|TPC-H Q12 Analysis|Mis-estimate Hash >16x|0|M
 SQL Server|733|PLAN|TPC-H|TPCH-Q12|TPC-H Q12 Analysis|Plan|"Estimate    Actual  Operator
        2         2  SORT l_shipmode
        2         2  GROUP BY HASH AGGREGATE SUM(Expr1007) AS Expr1005, SUM(Expr1008) AS Expr1006
-  277485     29129  INNER JOIN HASH ON l_orderkey = o_orderkey
-  277485     29129  │└TABLE SCAN lineitem
+  285854     29129  INNER JOIN HASH ON l_orderkey = o_orderkey
+  286103     29129  │└TABLE SCAN lineitem
  1500000   1500000  PROJECT CASE WHEN o_orderpriority = '1-URGENT' OR o_orderpriority = '2-HIGH'THEN 1 ELSE 0 END AS Expr1007, CASE WHEN o_orderpriority <> '1-URGENT' AND o_orderpriority <> '2-HIGH'THEN 1 ELSE 0 END AS Expr1008
  1500000   1500000  TABLE SEEK orders
 "|Plan
@@ -1237,9 +1237,9 @@ SQL Server|794|PLAN|TPC-H|TPCH-Q13|TPC-H Q13 Analysis|Plan|"Estimate    Actual  
       25        48  GROUP BY HASH AGGREGATE COUNT(*) AS Expr1013
   150000    150000  PROJECT CASE WHEN Expr1004 IS NULL THEN 0 ELSE Expr1004 END AS Expr1004
   150000    150000  INNER JOIN HASH ON c_custkey = o_custkey
-   50008     50000  │└PROJECT CONVERT_IMPLICIT int,Expr1012,0 AS Expr1004
-   50008     50000  │ GROUP BY HASH AGGREGATE COUNT(*) AS Expr1012
- 1500000   1499945  │ TABLE SEEK orders WHERE  NOT o_comment LIKE ' % special % requests % '
+   50198     50000  │└PROJECT CONVERT_IMPLICIT int,Expr1012,0 AS Expr1004
+   50198     50000  │ GROUP BY HASH AGGREGATE COUNT(*) AS Expr1012
+ 1499400   1499945  │ TABLE SEEK orders WHERE  NOT o_comment LIKE ' % special % requests % '
   150000    150000  TABLE SEEK customer
 "|Plan
 SQL Server|795|PLAN|TPC-H|TPCH-Q14|TPC-H Q14 Analysis|SQL|"/* TPC-H Q14 */
@@ -1316,9 +1316,9 @@ SQL Server|855|PLAN|TPC-H|TPCH-Q14|TPC-H Q14 Analysis|Plan|"Estimate    Actual  
        1         ∞  PROJECT 100.00 * Expr1005 / Expr1006 AS Expr1007
        1         1  PROJECT CASE WHEN Expr1017 = 0 THEN NULL ELSE Expr1018 END AS Expr1005, CASE WHEN Expr1019 = 0 THEN NULL ELSE Expr1020 END AS Expr1006
        1         1  GROUP BY HASH AGGREGATE COUNT(CASE WHEN p_type LIKE 'PROMO%'THEN l_extendedprice * (1. - l_discount) ELSE 0.0000 END) AS Expr1017, SUM(CASE WHEN p_type LIKE 'PROMO%'THEN l_extendedprice * (1. - l_discount) ELSE 0.0000 END) AS Expr1018, COUNT(Expr1008) AS Expr1019, SUM(Expr1008) AS Expr1020
-   68982     68122  INNER JOIN HASH ON p_partkey = l_partkey
-   69002     68122  │└PROJECT l_extendedprice * (1. - l_discount) AS Expr1008
-   69002     68122  │ TABLE SCAN lineitem
+   68044     68122  INNER JOIN HASH ON p_partkey = l_partkey
+   68044     68122  │└PROJECT l_extendedprice * (1. - l_discount) AS Expr1008
+   68044     68122  │ TABLE SCAN lineitem
   200000    200000  TABLE SEEK part
 "|Plan
 SQL Server|856|PLAN|TPC-H|TPCH-Q15|TPC-H Q15 Analysis|SQL|"/* TPC-H Q14 */
@@ -1395,9 +1395,9 @@ SQL Server|916|PLAN|TPC-H|TPCH-Q15|TPC-H Q15 Analysis|Plan|"Estimate    Actual  
        1         ∞  PROJECT 100.00 * Expr1005 / Expr1006 AS Expr1007
        1         1  PROJECT CASE WHEN Expr1017 = 0 THEN NULL ELSE Expr1018 END AS Expr1005, CASE WHEN Expr1019 = 0 THEN NULL ELSE Expr1020 END AS Expr1006
        1         1  GROUP BY HASH AGGREGATE COUNT(CASE WHEN p_type LIKE 'PROMO%'THEN l_extendedprice * (1. - l_discount) ELSE 0.0000 END) AS Expr1017, SUM(CASE WHEN p_type LIKE 'PROMO%'THEN l_extendedprice * (1. - l_discount) ELSE 0.0000 END) AS Expr1018, COUNT(Expr1008) AS Expr1019, SUM(Expr1008) AS Expr1020
-   68982     68122  INNER JOIN HASH ON p_partkey = l_partkey
-   69002     68122  │└PROJECT l_extendedprice * (1. - l_discount) AS Expr1008
-   69002     68122  │ TABLE SCAN lineitem
+   68044     68122  INNER JOIN HASH ON p_partkey = l_partkey
+   68044     68122  │└PROJECT l_extendedprice * (1. - l_discount) AS Expr1008
+   68044     68122  │ TABLE SCAN lineitem
   200000    200000  TABLE SEEK part
 "|Plan
 SQL Server|917|PLAN|TPC-H|TPCH-Q16|TPC-H Q16 Analysis|SQL|"/* TPC-H Q16 */
@@ -1482,16 +1482,16 @@ SQL Server|974|PLAN|TPC-H|TPCH-Q16|TPC-H Q16 Analysis|Mis-estimate Hash +4x|0|Ma
 SQL Server|975|PLAN|TPC-H|TPCH-Q16|TPC-H Q16 Analysis|Mis-estimate Hash +8x|0|Magnitude
 SQL Server|976|PLAN|TPC-H|TPCH-Q16|TPC-H Q16 Analysis|Mis-estimate Hash >16x|0|Magnitude
 SQL Server|977|PLAN|TPC-H|TPCH-Q16|TPC-H Q16 Analysis|Plan|"Estimate    Actual  Operator
-   19482     15163  SORT Expr1007, p_brand, p_type, p_size
-   19482     15163  PROJECT CONVERT_IMPLICIT int,Expr1010,0 AS Expr1007
-   19482     15163  GROUP BY HASH AGGREGATE COUNT(ps_suppkey) AS Expr1010
-  106356     61203  GROUP BY HASH AGGREGATE 
-  106377     61214  INNER JOIN HASH ON ps_suppkey = s_suppkey
+   19500     15163  SORT Expr1007, p_brand, p_type, p_size
+   19500     15163  PROJECT CONVERT_IMPLICIT int,Expr1010,0 AS Expr1007
+   19500     15163  GROUP BY HASH AGGREGATE COUNT(ps_suppkey) AS Expr1010
+   92248     61203  GROUP BY HASH AGGREGATE 
+   92264     61214  INNER JOIN HASH ON ps_suppkey = s_suppkey
     2647      3159  │└TABLE SEEK supplier WHERE s_comment LIKE '%Customer%Complaints%'
-  144673     89400  LEFT ANTI JOIN LOOP ON s_comment LIKE '%Customer%Complaints%'
+  125475     89400  LEFT ANTI JOIN LOOP ON s_comment LIKE '%Customer%Complaints%'
        1     89400  │└TABLE SEEK supplier WHERE s_comment LIKE '%Customer%Complaints%'
-  144673     89400  INNER JOIN HASH ON p_partkey = ps_partkey
-   31271     29905  │└TABLE SEEK part WHERE p_brand <> 'Brand#42' AND  NOT p_type LIKE 'STANDARD ANODIZED%' AND (p_size = 3 OR p_size = 7 OR p_size = 11 OR p_size = 29 OR p_size = 31 OR p_size = 37 OR p_size = 41 OR p_size = 49)
+  125475     89400  INNER JOIN HASH ON p_partkey = ps_partkey
+   31368     29905  │└TABLE SEEK part WHERE p_brand <> 'Brand#42' AND  NOT p_type LIKE 'STANDARD ANODIZED%' AND (p_size = 3 OR p_size = 7 OR p_size = 11 OR p_size = 29 OR p_size = 31 OR p_size = 37 OR p_size = 41 OR p_size = 49)
   600000    600000  TABLE SCAN partsupp
 "|Plan
 SQL Server|978|PLAN|TPC-H|TPCH-Q17|TPC-H Q17 Analysis|SQL|"/* TPC-H Q17 */
@@ -1573,7 +1573,7 @@ SQL Server|1038|PLAN|TPC-H|TPCH-Q17|TPC-H Q17 Analysis|Plan|"Estimate    Actual 
        1       202  │ PROJECT CASE WHEN Expr1020 = 0 THEN NULL ELSE Expr1021 / CONVERT_IMPLICIT(decimal 19,0 ,Expr1020,0) END AS Expr1007
        1       202  │ GROUP BY HASH AGGREGATE COUNT(l_quantity) AS Expr1020, SUM(l_quantity) AS Expr1021
       30      6080  │ TABLE SCAN lineitem
-     998       203  TABLE SCAN lineitem
+    1031       203  TABLE SCAN lineitem
 "|Plan
 SQL Server|1039|PLAN|TPC-H|TPCH-Q18|TPC-H Q18 Analysis|SQL|"/* TPC-H Q18 */
 SELECT c_name,
@@ -1658,17 +1658,17 @@ SQL Server|1096|PLAN|TPC-H|TPCH-Q18|TPC-H Q18 Analysis|Mis-estimate Hash +4x|0|M
 SQL Server|1097|PLAN|TPC-H|TPCH-Q18|TPC-H Q18 Analysis|Mis-estimate Hash +8x|0|Magnitude
 SQL Server|1098|PLAN|TPC-H|TPCH-Q18|TPC-H Q18 Analysis|Mis-estimate Hash >16x|1|Magnitude
 SQL Server|1099|PLAN|TPC-H|TPCH-Q18|TPC-H Q18 Analysis|Plan|"Estimate    Actual  Operator
-     356         5  SORT o_totalprice, o_orderdate
-     356         5  INNER JOIN LOOP ON o_custkey = c_custkey
+     282         5  SORT o_totalprice, o_orderdate
+     282         5  INNER JOIN LOOP ON o_custkey = c_custkey
        1         5  │└TABLE SEEK customer
-     356         5  INNER JOIN LOOP ON l_orderkey = o_orderkey
+     282         5  INNER JOIN LOOP ON l_orderkey = o_orderkey
        1         5  │└TABLE SEEK orders
-     356         5  PROJECT CASE WHEN Expr1024 = 0 THEN NULL ELSE Expr1025 END AS Expr1011
-     356         5  GROUP BY HASH AGGREGATE COUNT(l_quantity) AS Expr1024, SUM(l_quantity) AS Expr1025, IN(l_orderkey) AS l_orderkey
-    1635        35  INNER JOIN HASH ON l_orderkey = l_orderkey
-     356         5  │└FILTER Expr1010 > 314.00
- 1307470   1500000  │ PROJECT CASE WHEN Expr1022 = 0 THEN NULL ELSE Expr1023 END AS Expr1010
- 1307470   1500000  │ GROUP BY HASH AGGREGATE COUNT(l_quantity) AS Expr1022, SUM(l_quantity) AS Expr1023
+     282         5  PROJECT CASE WHEN Expr1024 = 0 THEN NULL ELSE Expr1025 END AS Expr1011
+     282         5  GROUP BY HASH AGGREGATE COUNT(l_quantity) AS Expr1024, SUM(l_quantity) AS Expr1025, IN(l_orderkey) AS l_orderkey
+    1276        35  INNER JOIN HASH ON l_orderkey = l_orderkey
+     282         5  │└FILTER Expr1010 > 314.00
+ 1328270   1500000  │ PROJECT CASE WHEN Expr1022 = 0 THEN NULL ELSE Expr1023 END AS Expr1010
+ 1328270   1500000  │ GROUP BY HASH AGGREGATE COUNT(l_quantity) AS Expr1022, SUM(l_quantity) AS Expr1023
  5998820   5998820  │ TABLE SCAN lineitem
  5998820   5998820  TABLE SCAN lineitem
 "|Plan
@@ -1766,10 +1766,10 @@ SQL Server|1159|PLAN|TPC-H|TPCH-Q19|TPC-H Q19 Analysis|Mis-estimate Hash >16x|0|
 SQL Server|1160|PLAN|TPC-H|TPCH-Q19|TPC-H Q19 Analysis|Plan|"Estimate    Actual  Operator
        1         1  PROJECT CASE WHEN Expr1011 = 0 THEN NULL ELSE Expr1012 END AS Expr1005
        1         1  GROUP BY HASH AGGREGATE COUNT(Expr1006) AS Expr1011, SUM(Expr1006) AS Expr1012
-    5678        97  INNER JOIN HASH ON p_partkey = l_partkey AND (p_brand = 'Brand#11' AND (p_container = 'SM BOX' OR p_container = 'SM CASE' OR p_container = 'SM PACK' OR p_container = 'SM PKG') AND l_quantity >= 5.00 AND l_quantity <= 15.00 AND p_size <= 5 OR p_brand = 'Brand#22' AND (p_container = 'MED BAG' OR p_container = 'MED BOX' OR p_container = 'MED PACK' OR p_container = 'MED PKG') AND l_quantity >= 15.00 AND l_quantity <= 25.00 AND p_size <= 10 OR p_brand = 'Brand#33' AND (p_contai...
-    3005    200000  │└TABLE SEEK part WHERE (p_size >= 1) AND (p_brand = 'Brand#11' AND (p_container = 'SM BOX' OR p_container = 'SM CASE' OR p_container = 'SM PACK' OR p_container = 'SM PKG') AND p_size <= 5 OR p_brand = 'Brand#22' AND (p_container = 'MED BAG' OR p_container = 'MED BOX' OR p_container = 'MED PACK' OR p_container = 'MED PKG') AND p_size <= 10 OR p_brand = 'Brand#33' AND (p_container = 'LG BOX' OR p_container = 'LG CASE' OR p_container = 'LG PACK' OR p_container = 'LG PKG'...
-  377968    131301  PROJECT l_extendedprice * (1. - l_discount) AS Expr1006
-  377968    131301  TABLE SCAN lineitem
+    5685        97  INNER JOIN HASH ON p_partkey = l_partkey AND (p_brand = 'Brand#11' AND (p_container = 'SM BOX' OR p_container = 'SM CASE' OR p_container = 'SM PACK' OR p_container = 'SM PKG') AND l_quantity >= 5.00 AND l_quantity <= 15.00 AND p_size <= 5 OR p_brand = 'Brand#22' AND (p_container = 'MED BAG' OR p_container = 'MED BOX' OR p_container = 'MED PACK' OR p_container = 'MED PKG') AND l_quantity >= 15.00 AND l_quantity <= 25.00 AND p_size <= 10 OR p_brand = 'Brand#33' AND (p_contai...
+    3032    200000  │└TABLE SEEK part WHERE (p_size >= 1) AND (p_brand = 'Brand#11' AND (p_container = 'SM BOX' OR p_container = 'SM CASE' OR p_container = 'SM PACK' OR p_container = 'SM PKG') AND p_size <= 5 OR p_brand = 'Brand#22' AND (p_container = 'MED BAG' OR p_container = 'MED BOX' OR p_container = 'MED PACK' OR p_container = 'MED PKG') AND p_size <= 10 OR p_brand = 'Brand#33' AND (p_container = 'LG BOX' OR p_container = 'LG CASE' OR p_container = 'LG PACK' OR p_container = 'LG PKG'...
+  374985    131301  PROJECT l_extendedprice * (1. - l_discount) AS Expr1006
+  374985    131301  TABLE SCAN lineitem
 "|Plan
 SQL Server|1161|PLAN|TPC-H|TPCH-Q20|TPC-H Q20 Analysis|SQL|"/* TPC-H Q20 */
 SELECT s_name,
@@ -1852,22 +1852,22 @@ SQL Server|1218|PLAN|TPC-H|TPCH-Q20|TPC-H Q20 Analysis|Mis-estimate Hash +4x|0|M
 SQL Server|1219|PLAN|TPC-H|TPCH-Q20|TPC-H Q20 Analysis|Mis-estimate Hash +8x|0|Magnitude
 SQL Server|1220|PLAN|TPC-H|TPCH-Q20|TPC-H Q20 Analysis|Mis-estimate Hash >16x|0|Magnitude
 SQL Server|1221|PLAN|TPC-H|TPCH-Q20|TPC-H Q20 Analysis|Plan|"Estimate    Actual  Operator
-      55       145  SORT s_name
-      55       145  SORT s_suppkey
+      45       145  SORT s_name
+      45       145  SORT s_suppkey
        1       179  INNER JOIN LOOP ON l_partkey = p_partkey
        1       179  │└TABLE SEEK part WHERE p_name LIKE 'almond%'
-      58     15399  GROUP BY HASH AGGREGATE IN(s_name) AS s_name, IN(s_address) AS s_address
-    3509     15399  FILTER ps_availqty > 0.5 * Expr1012
-    3509     15422  PROJECT CASE WHEN Expr1018 = 0 THEN NULL ELSE Expr1019 END AS Expr1012
-    3509     15422  GROUP BY HASH  AGGREGATE COUNT(l_quantity) AS Expr1018, SUM(l_quantity) AS Expr1019, IN(s_suppkey) AS s_suppkey, IN(s_name) AS s_name, IN(s_address) AS s_address, IN(ps_availqty) AS ps_availqty, IN(l_partkey) AS l_partkey
-    3510     25071  SORT Bmk1004
-    3510     25071  INNER JOIN HASH ON l_partkey = ps_partkey AND l_suppkey = ps_suppkey
-   23996     23459  │└INNER JOIN HASH ON s_suppkey = ps_suppkey
+      57     15399  GROUP BY HASH AGGREGATE IN(s_name) AS s_name, IN(s_address) AS s_address
+    3429     15399  FILTER ps_availqty > 0.5 * Expr1012
+    3429     15422  PROJECT CASE WHEN Expr1018 = 0 THEN NULL ELSE Expr1019 END AS Expr1012
+    3429     15422  GROUP BY HASH  AGGREGATE COUNT(l_quantity) AS Expr1018, SUM(l_quantity) AS Expr1019, IN(s_suppkey) AS s_suppkey, IN(s_name) AS s_name, IN(s_address) AS s_address, IN(ps_availqty) AS ps_availqty, IN(l_partkey) AS l_partkey
+    3429     25071  SORT Bmk1004
+    3429     25071  INNER JOIN HASH ON l_partkey = ps_partkey AND l_suppkey = ps_suppkey
+   23997     23459  │└INNER JOIN HASH ON s_suppkey = ps_suppkey
      400       391  │ │└INNER JOIN HASH ON n_nationkey = s_nationkey
        1         1  │ │ │└TABLE SEEK nation WHERE n_name = 'KENYA'
    10000     10000  │ │ TABLE SEEK supplier
   600000    600000  │ TABLE SCAN partsupp
-  876204    856153  TABLE SCAN lineitem
+  856096    856153  TABLE SCAN lineitem
 "|Plan
 SQL Server|1222|PLAN|TPC-H|TPCH-Q21|TPC-H Q21 Analysis|SQL|"/* TPC-H Q21 */
 SELECT s_name, COUNT(*) AS numwait
@@ -1958,16 +1958,16 @@ SQL Server|1282|PLAN|TPC-H|TPCH-Q21|TPC-H Q21 Analysis|Plan|"Estimate    Actual 
      400       396  SORT Expr1014, s_name
      400       396  PROJECT CONVERT_IMPLICIT int,Expr1017,0 AS Expr1014
      400       396  GROUP BY HASH AGGREGATE COUNT(*) AS Expr1017
-   42595      4060  INNER JOIN HASH ON l_orderkey as l_orderkey = l_orderkey as l_orderkey AND l_suppkey as l_suppkey <> l_suppkey as l_suppkey
-   42595     74310  │└INNER JOIN HASH ON 
-   71979    144552  │ │└INNER JOIN HASH ON l_orderkey as l_orderkey = l_orderkey as l_orderkey AND l_suppkey as l_suppkey <> l_suppkey as l_suppkey
-   71979    149859  │ │ │└INNER JOIN HASH ON s_suppkey = l_suppkey as l_suppkey
+   42068      4060  INNER JOIN HASH ON l_orderkey as l_orderkey = l_orderkey as l_orderkey AND l_suppkey as l_suppkey <> l_suppkey as l_suppkey
+   42068     74310  │└INNER JOIN HASH ON 
+   71976    144552  │ │└INNER JOIN HASH ON l_orderkey as l_orderkey = l_orderkey as l_orderkey AND l_suppkey as l_suppkey <> l_suppkey as l_suppkey
+   71976    149859  │ │ │└INNER JOIN HASH ON s_suppkey = l_suppkey as l_suppkey
      400       396  │ │ │ │└INNER JOIN HASH ON n_nationkey = s_nationkey
        1         1  │ │ │ │ │└TABLE SEEK nation WHERE n_name = 'GERMANY'
    10000     10000  │ │ │ │ TABLE SEEK supplier
  1799650   3791311  │ │ │ TABLE SCAN lineitem
  5998820   5998820  │ │ TABLE SCAN lineitem
-  773720    775676  │ TABLE SEEK orders WHERE o_orderstatus = 'F'
+  777011    775676  │ TABLE SEEK orders WHERE o_orderstatus = 'F'
  1799650   3791311  TABLE SCAN lineitem
 "|Plan
 SQL Server|1283|PLAN|TPC-H|TPCH-Q22|TPC-H Q22 Analysis|SQL|"/* TPC-H Q22 */
@@ -1992,16 +1992,16 @@ ORDER BY cntrycode
 
 
 "|Query
-SQL Server|1284|PLAN|TPC-H|TPCH-Q22|TPC-H Q22 Analysis|Join|1|Rows
-SQL Server|1285|PLAN|TPC-H|TPCH-Q22|TPC-H Q22 Analysis|Aggregate|0|Rows
-SQL Server|1286|PLAN|TPC-H|TPCH-Q22|TPC-H Q22 Analysis|Sort|0|Rows
-SQL Server|1287|PLAN|TPC-H|TPCH-Q22|TPC-H Q22 Analysis|Scan|40336|Rows
-SQL Server|1288|PLAN|TPC-H|TPCH-Q22|TPC-H Q22 Analysis|Hash|40336|Rows
+SQL Server|1284|PLAN|TPC-H|TPCH-Q22|TPC-H Q22 Analysis|Join|1518407|Rows
+SQL Server|1285|PLAN|TPC-H|TPCH-Q22|TPC-H Q22 Analysis|Aggregate|48817|Rows
+SQL Server|1286|PLAN|TPC-H|TPCH-Q22|TPC-H Q22 Analysis|Sort|7|Rows
+SQL Server|1287|PLAN|TPC-H|TPCH-Q22|TPC-H Q22 Analysis|Scan|1576976|Rows
+SQL Server|1288|PLAN|TPC-H|TPCH-Q22|TPC-H Q22 Analysis|Hash|58743|Rows
 SQL Server|1289|PLAN|TPC-H|TPCH-Q22|TPC-H Q22 Analysis|Mis-estimate Join <16x|0|Magnitude
 SQL Server|1290|PLAN|TPC-H|TPCH-Q22|TPC-H Q22 Analysis|Mis-estimate Join -8x|0|Magnitude
-SQL Server|1291|PLAN|TPC-H|TPCH-Q22|TPC-H Q22 Analysis|Mis-estimate Join -4x|0|Magnitude
+SQL Server|1291|PLAN|TPC-H|TPCH-Q22|TPC-H Q22 Analysis|Mis-estimate Join -4x|2|Magnitude
 SQL Server|1292|PLAN|TPC-H|TPCH-Q22|TPC-H Q22 Analysis|Mis-estimate Join -2x|0|Magnitude
-SQL Server|1293|PLAN|TPC-H|TPCH-Q22|TPC-H Q22 Analysis|Mis-estimate Join =|2|Magnitude
+SQL Server|1293|PLAN|TPC-H|TPCH-Q22|TPC-H Q22 Analysis|Mis-estimate Join =|0|Magnitude
 SQL Server|1294|PLAN|TPC-H|TPCH-Q22|TPC-H Q22 Analysis|Mis-estimate Join +2x|0|Magnitude
 SQL Server|1295|PLAN|TPC-H|TPCH-Q22|TPC-H Q22 Analysis|Mis-estimate Join +4x|0|Magnitude
 SQL Server|1296|PLAN|TPC-H|TPCH-Q22|TPC-H Q22 Analysis|Mis-estimate Join +8x|0|Magnitude
@@ -2010,25 +2010,25 @@ SQL Server|1298|PLAN|TPC-H|TPCH-Q22|TPC-H Q22 Analysis|Mis-estimate Aggregate <1
 SQL Server|1299|PLAN|TPC-H|TPCH-Q22|TPC-H Q22 Analysis|Mis-estimate Aggregate -8x|0|Magnitude
 SQL Server|1300|PLAN|TPC-H|TPCH-Q22|TPC-H Q22 Analysis|Mis-estimate Aggregate -4x|0|Magnitude
 SQL Server|1301|PLAN|TPC-H|TPCH-Q22|TPC-H Q22 Analysis|Mis-estimate Aggregate -2x|0|Magnitude
-SQL Server|1302|PLAN|TPC-H|TPCH-Q22|TPC-H Q22 Analysis|Mis-estimate Aggregate =|2|Magnitude
+SQL Server|1302|PLAN|TPC-H|TPCH-Q22|TPC-H Q22 Analysis|Mis-estimate Aggregate =|1|Magnitude
 SQL Server|1303|PLAN|TPC-H|TPCH-Q22|TPC-H Q22 Analysis|Mis-estimate Aggregate +2x|0|Magnitude
 SQL Server|1304|PLAN|TPC-H|TPCH-Q22|TPC-H Q22 Analysis|Mis-estimate Aggregate +4x|0|Magnitude
 SQL Server|1305|PLAN|TPC-H|TPCH-Q22|TPC-H Q22 Analysis|Mis-estimate Aggregate +8x|0|Magnitude
-SQL Server|1306|PLAN|TPC-H|TPCH-Q22|TPC-H Q22 Analysis|Mis-estimate Aggregate >16x|0|Magnitude
+SQL Server|1306|PLAN|TPC-H|TPCH-Q22|TPC-H Q22 Analysis|Mis-estimate Aggregate >16x|1|Magnitude
 SQL Server|1307|PLAN|TPC-H|TPCH-Q22|TPC-H Q22 Analysis|Mis-estimate Sort <16x|0|Magnitude
 SQL Server|1308|PLAN|TPC-H|TPCH-Q22|TPC-H Q22 Analysis|Mis-estimate Sort -8x|0|Magnitude
 SQL Server|1309|PLAN|TPC-H|TPCH-Q22|TPC-H Q22 Analysis|Mis-estimate Sort -4x|0|Magnitude
 SQL Server|1310|PLAN|TPC-H|TPCH-Q22|TPC-H Q22 Analysis|Mis-estimate Sort -2x|0|Magnitude
-SQL Server|1311|PLAN|TPC-H|TPCH-Q22|TPC-H Q22 Analysis|Mis-estimate Sort =|1|Magnitude
+SQL Server|1311|PLAN|TPC-H|TPCH-Q22|TPC-H Q22 Analysis|Mis-estimate Sort =|0|Magnitude
 SQL Server|1312|PLAN|TPC-H|TPCH-Q22|TPC-H Q22 Analysis|Mis-estimate Sort +2x|0|Magnitude
 SQL Server|1313|PLAN|TPC-H|TPCH-Q22|TPC-H Q22 Analysis|Mis-estimate Sort +4x|0|Magnitude
 SQL Server|1314|PLAN|TPC-H|TPCH-Q22|TPC-H Q22 Analysis|Mis-estimate Sort +8x|0|Magnitude
-SQL Server|1315|PLAN|TPC-H|TPCH-Q22|TPC-H Q22 Analysis|Mis-estimate Sort >16x|0|Magnitude
+SQL Server|1315|PLAN|TPC-H|TPCH-Q22|TPC-H Q22 Analysis|Mis-estimate Sort >16x|1|Magnitude
 SQL Server|1316|PLAN|TPC-H|TPCH-Q22|TPC-H Q22 Analysis|Mis-estimate Scan <16x|0|Magnitude
 SQL Server|1317|PLAN|TPC-H|TPCH-Q22|TPC-H Q22 Analysis|Mis-estimate Scan -8x|0|Magnitude
-SQL Server|1318|PLAN|TPC-H|TPCH-Q22|TPC-H Q22 Analysis|Mis-estimate Scan -4x|0|Magnitude
+SQL Server|1318|PLAN|TPC-H|TPCH-Q22|TPC-H Q22 Analysis|Mis-estimate Scan -4x|1|Magnitude
 SQL Server|1319|PLAN|TPC-H|TPCH-Q22|TPC-H Q22 Analysis|Mis-estimate Scan -2x|1|Magnitude
-SQL Server|1320|PLAN|TPC-H|TPCH-Q22|TPC-H Q22 Analysis|Mis-estimate Scan =|3|Magnitude
+SQL Server|1320|PLAN|TPC-H|TPCH-Q22|TPC-H Q22 Analysis|Mis-estimate Scan =|2|Magnitude
 SQL Server|1321|PLAN|TPC-H|TPCH-Q22|TPC-H Q22 Analysis|Mis-estimate Scan +2x|0|Magnitude
 SQL Server|1322|PLAN|TPC-H|TPCH-Q22|TPC-H Q22 Analysis|Mis-estimate Scan +4x|0|Magnitude
 SQL Server|1323|PLAN|TPC-H|TPCH-Q22|TPC-H Q22 Analysis|Mis-estimate Scan +8x|0|Magnitude
@@ -2044,7 +2044,7 @@ SQL Server|1332|PLAN|TPC-H|TPCH-Q22|TPC-H Q22 Analysis|Mis-estimate Filter +8x|0
 SQL Server|1333|PLAN|TPC-H|TPCH-Q22|TPC-H Q22 Analysis|Mis-estimate Filter >16x|0|Magnitude
 SQL Server|1334|PLAN|TPC-H|TPCH-Q22|TPC-H Q22 Analysis|Mis-estimate Hash <16x|0|Magnitude
 SQL Server|1335|PLAN|TPC-H|TPCH-Q22|TPC-H Q22 Analysis|Mis-estimate Hash -8x|0|Magnitude
-SQL Server|1336|PLAN|TPC-H|TPCH-Q22|TPC-H Q22 Analysis|Mis-estimate Hash -4x|0|Magnitude
+SQL Server|1336|PLAN|TPC-H|TPCH-Q22|TPC-H Q22 Analysis|Mis-estimate Hash -4x|1|Magnitude
 SQL Server|1337|PLAN|TPC-H|TPCH-Q22|TPC-H Q22 Analysis|Mis-estimate Hash -2x|0|Magnitude
 SQL Server|1338|PLAN|TPC-H|TPCH-Q22|TPC-H Q22 Analysis|Mis-estimate Hash =|0|Magnitude
 SQL Server|1339|PLAN|TPC-H|TPCH-Q22|TPC-H Q22 Analysis|Mis-estimate Hash +2x|0|Magnitude
@@ -2052,15 +2052,15 @@ SQL Server|1340|PLAN|TPC-H|TPCH-Q22|TPC-H Q22 Analysis|Mis-estimate Hash +4x|0|M
 SQL Server|1341|PLAN|TPC-H|TPCH-Q22|TPC-H Q22 Analysis|Mis-estimate Hash +8x|0|Magnitude
 SQL Server|1342|PLAN|TPC-H|TPCH-Q22|TPC-H Q22 Analysis|Mis-estimate Hash >16x|0|Magnitude
 SQL Server|1343|PLAN|TPC-H|TPCH-Q22|TPC-H Q22 Analysis|Plan|"Estimate    Actual  Operator
-       1         0  PROJECT CONVERT_IMPLICIT int,Expr1022,0 AS Expr1010
-       1         0  GROUP BY HASH  AGGREGATE COUNT(*) AS Expr1022, SUM(c_acctbal) AS Expr1011
-       1         0  SORT Expr1009
-       1         0  LEFT ANTI JOIN LOOP ON o_custkey = c_custkey
-       1         0  │└TABLE SEEK orders WHERE o_custkey = c_custkey
-       1         0  INNER JOIN LOOP ON substring(c_phone, 1 , 2) = '27' OR substring(c_phone, 1 , 2) = '31' OR substring(c_phone, 1 , 2) = '22' OR substring(c_phone, 1 , 2) = '23' OR substring(c_phone, 1 , 2) = '19' OR substring(c_phone, 1 , 2) = '17' OR substring(c_phone, 1 , 2) = '10'
-   10170     40336  │└PROJECT substring(c_phone, 1 , 2) AS Expr1009
-   10170     40336  │ TABLE SEEK customer WHERE substring(c_phone, 1 , 2) = '27' OR substring(c_phone, 1 , 2) = '31' OR substring(c_phone, 1 , 2) = '22' OR substring(c_phone, 1 , 2) = '23' OR substring(c_phone, 1 , 2) = '19' OR substring(c_phone, 1 , 2) = '17' OR substring(c_phone, 1 , 2) = '10'
-       1         1  PROJECT CASE WHEN Expr1020 = 0 THEN NULL ELSE Expr1021 / CONVERT_IMPLICIT(decimal 19,0 ,Expr1020,0) END AS Expr1004
-       1         1  GROUP BY HASH AGGREGATE COUNT(*) AS Expr1020, SUM(c_acctbal) AS Expr1021
-     100         0  TABLE SEEK customer WHERE c_acctbal > 0.00 AND (substring(c_phone, 1 , 2) = '27' OR substring(c_phone, 1 , 2) = '31' OR substring(c_phone, 1 , 2) = '22' OR substring(c_phone, 1 , 2) = '23' OR substring(c_phone, 1 , 2) = '19' OR substring(c_phone, 1 , 2) = '17' OR substring(c_phone, 1 , 2) = '10')
+     422         7  SORT Expr1009
+     422         7  PROJECT CONVERT_IMPLICIT int,Expr1022,0 AS Expr1010
+     422         7  GROUP BY HASH AGGREGATE COUNT(*) AS Expr1022, SUM(c_acctbal) AS Expr1011
+    3033     12177  INNER JOIN HASH ON o_custkey = c_custkey
+    4557     18407  │└INNER JOIN LOOP ON substring(c_phone, 1 , 2) = '27' OR substring(c_phone, 1 , 2) = '31' OR substring(c_phone, 1 , 2) = '22' OR substring(c_phone, 1 , 2) = '23' OR substring(c_phone, 1 , 2) = '19' OR substring(c_phone, 1 , 2) = '17' OR substring(c_phone, 1 , 2) = '10'
+   10026     40336  │ │└PROJECT substring(c_phone, 1 , 2) AS Expr1009
+   10026     40336  │ │ TABLE SEEK customer WHERE substring(c_phone, 1 , 2) = '27' OR substring(c_phone, 1 , 2) = '31' OR substring(c_phone, 1 , 2) = '22' OR substring(c_phone, 1 , 2) = '23' OR substring(c_phone, 1 , 2) = '19' OR substring(c_phone, 1 , 2) = '17' OR substring(c_phone, 1 , 2) = '10'
+       1         1  │ PROJECT CASE WHEN Expr1020 = 0 THEN NULL ELSE Expr1021 / CONVERT_IMPLICIT(decimal 19,0 ,Expr1020,0) END AS Expr1004
+       1         1  │ GROUP BY HASH AGGREGATE COUNT(*) AS Expr1020, SUM(c_acctbal) AS Expr1021
+    9556     36640  │ TABLE SEEK customer WHERE c_acctbal > 0.00 AND (substring(c_phone, 1 , 2) = '27' OR substring(c_phone, 1 , 2) = '31' OR substring(c_phone, 1 , 2) = '22' OR substring(c_phone, 1 , 2) = '23' OR substring(c_phone, 1 , 2) = '19' OR substring(c_phone, 1 , 2) = '17' OR substring(c_phone, 1 , 2) = '10')
+ 1500000   1500000  TABLE SEEK orders
 "|Plan

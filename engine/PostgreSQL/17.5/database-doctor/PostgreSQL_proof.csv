@@ -77,8 +77,8 @@ PostgreSQL|59|PLAN|TPC-H|TPCH-Q01|TPC-H Q01 Analysis|Mis-estimate Hash +4x|0|Mag
 PostgreSQL|60|PLAN|TPC-H|TPCH-Q01|TPC-H Q01 Analysis|Mis-estimate Hash +8x|0|Magnitude
 PostgreSQL|61|PLAN|TPC-H|TPCH-Q01|TPC-H Q01 Analysis|Mis-estimate Hash >16x|0|Magnitude
 PostgreSQL|62|PLAN|TPC-H|TPCH-Q01|TPC-H Q01 Analysis|Plan|"Estimate    Actual  Operator
-       6         4  GROUP BY SORT l_returnflag, l_linestatus AGGREGATE SUM(l_quantity), SUM(l_extendedprice), SUM(l_extendedprice * ('1' - l_discount)), SUM(l_extendedprice * ('1' - l_discount)) * ('1' + l_tax), avg l_quantity, avg l_extendedprice, avg l_discount, COUNT(*)
-      30        20  GROUP BY SORT l_returnflag, l_linestatus AGGREGATE PARTIALSUM(l_quantity), PARTIALSUM(l_extendedprice), PARTIALSUM(l_extendedprice * ('1' - l_discount)), PARTIALSUM(l_extendedprice * ('1' - l_discount)) * ('1' + l_tax), PARTIAL avg l_quantity, PARTIAL avg l_extendedprice, PARTIAL avg l_discount, PARTIALCOUNT(*)
+       6         4  GROUP BY SORT l_returnflag, l_linestatus AGGREGATE SUM(l_quantity), SUM(l_extendedprice), SUM(l_extendedprice * ('1' - l_discount)), SUM((l_extendedprice * ('1' - l_discount)) * ('1' + l_tax)), AVG(l_quantity), AVG(l_extendedprice), AVG(l_discount), COUNT(*)
+      30        20  GROUP BY SORT l_returnflag, l_linestatus AGGREGATE PARTIALSUM(l_quantity), PARTIALSUM(l_extendedprice), PARTIALSUM(l_extendedprice * ('1' - l_discount)), PARTIALSUM((l_extendedprice * ('1' - l_discount)) * ('1' + l_tax)), PARTIALAVG(l_quantity), PARTIALAVG(l_extendedprice), PARTIALAVG(l_discount), PARTIALCOUNT(*)
  7060085   5642530  SORT l_returnflag, l_linestatus
  7060085   5642530  TABLE SCAN lineitem WHERE l_shipdate <= '1998-10-01'
 "|Plan
@@ -103,7 +103,7 @@ INNER JOIN tpch.region
 WHERE p_size = 25
   AND p_type LIKE '%BRASS'
   AND r_name = 'EUROPE'
-  AND ps_supplycost = (SELECT MIN(ps_supplycost)
+  AND ps_supplycost = (SELECT MIN(ps_supplycost) AS min_cost
                        FROM tpch.partsupp AS ps_min
                        INNER JOIN tpch.supplier AS s_min
                            ON ps_suppkey = s_suppkey
@@ -183,9 +183,9 @@ PostgreSQL|123|PLAN|TPC-H|TPCH-Q02|TPC-H Q02 Analysis|Plan|"Estimate    Actual  
        1       346  SORT s_acctbal, n_name, s_name, p_partkey
        1       346  INNER JOIN HASH ON (p_partkey = ps_partkey) AND ((SubPlan 1) = ps_supplycost)
     1145      1145  │└GROUP BY SIMPLE AGGREGATE MIN(ps_supplycost)
-    1145      1145  │ INNER JOIN LOOP ON r_regionkey = n_regionkey
+    1145      1145  │ INNER JOIN LOOP ON r_regionkey = n_regionkey AND (r_regionkey = n_regionkey)
        1         1  │ │└TABLE SCAN r_min WHERE r_name = 'EUROPE'
-    4580      3435  │ INNER JOIN LOOP ON n_nationkey = s_nationkey
+    4580      3435  │ INNER JOIN LOOP ON n_nationkey = s_nationkey AND (n_nationkey = s_nationkey)
       25        25  │ │└TABLE SCAN n_min
     4580      3435  │ INNER JOIN LOOP ON s_suppkey = ps_suppkey
        4         3  │ │└TABLE SCAN ps_min WHERE ps_partkey = p_partkey
@@ -197,7 +197,7 @@ PostgreSQL|123|PLAN|TPC-H|TPCH-Q02|TPC-H Q02 Analysis|Plan|"Estimate    Actual  
       25        25  │ │ │ TABLE SCAN nation
    10000     10000  │ │ TABLE SCAN supplier
   600000    600000  │ TABLE SCAN partsupp
-     817       799  TABLE SCAN part WHERE (p_type LIKE'%BRASS') AND (p_size = 25)
+     817       799  TABLE SCAN part WHERE (p_type LIKE '%BRASS') AND (p_size = 25)
 "|Plan
 PostgreSQL|124|PLAN|TPC-H|TPCH-Q03|TPC-H Q03 Analysis|SQL|"/* TPC-H Q03 */
 SELECT l_orderkey,
@@ -558,9 +558,9 @@ FROM (SELECT n1.n_name                          AS supp_nation,
           ON s_nationkey = n1.n_nationkey
       INNER JOIN tpch.nation n2
           ON c_nationkey = n2.n_nationkey
-      WHERE (n1.n_name = 'GERMANY' AND n2.n_name = 'FRANCE')
-         OR (n1.n_name = 'FRANCE' AND n2.n_name = 'GERMANY')
-          AND l_shipdate BETWEEN '1995-01-01' AND '1996-12-31') AS shipping
+      WHERE ((n1.n_name = 'GERMANY' AND n2.n_name = 'FRANCE')
+          OR (n1.n_name = 'FRANCE' AND n2.n_name = 'GERMANY'))
+        AND l_shipdate BETWEEN '1995-01-01' AND '1996-12-31') AS shipping
 GROUP BY supp_nation,
          cust_nation,
          l_year
@@ -570,11 +570,11 @@ ORDER BY supp_nation,
 
 
 "|Query
-PostgreSQL|369|PLAN|TPC-H|TPCH-Q07|TPC-H Q07 Analysis|Join|8150500|Rows
-PostgreSQL|370|PLAN|TPC-H|TPCH-Q07|TPC-H Q07 Analysis|Aggregate|12300|Rows
-PostgreSQL|371|PLAN|TPC-H|TPCH-Q07|TPC-H Q07 Analysis|Sort|12300|Rows
-PostgreSQL|372|PLAN|TPC-H|TPCH-Q07|TPC-H Q07 Analysis|Scan|7658824|Rows
-PostgreSQL|373|PLAN|TPC-H|TPCH-Q07|TPC-H Q07 Analysis|Hash|642665|Rows
+PostgreSQL|369|PLAN|TPC-H|TPCH-Q07|TPC-H Q07 Analysis|Join|2143470|Rows
+PostgreSQL|370|PLAN|TPC-H|TPCH-Q07|TPC-H Q07 Analysis|Aggregate|5455|Rows
+PostgreSQL|371|PLAN|TPC-H|TPCH-Q07|TPC-H Q07 Analysis|Sort|5455|Rows
+PostgreSQL|372|PLAN|TPC-H|TPCH-Q07|TPC-H Q07 Analysis|Scan|2009312|Rows
+PostgreSQL|373|PLAN|TPC-H|TPCH-Q07|TPC-H Q07 Analysis|Hash|296055|Rows
 PostgreSQL|374|PLAN|TPC-H|TPCH-Q07|TPC-H Q07 Analysis|Mis-estimate Join <16x|0|Magnitude
 PostgreSQL|375|PLAN|TPC-H|TPCH-Q07|TPC-H Q07 Analysis|Mis-estimate Join -8x|0|Magnitude
 PostgreSQL|376|PLAN|TPC-H|TPCH-Q07|TPC-H Q07 Analysis|Mis-estimate Join -4x|0|Magnitude
@@ -624,25 +624,25 @@ PostgreSQL|419|PLAN|TPC-H|TPCH-Q07|TPC-H Q07 Analysis|Mis-estimate Hash <16x|0|M
 PostgreSQL|420|PLAN|TPC-H|TPCH-Q07|TPC-H Q07 Analysis|Mis-estimate Hash -8x|0|Magnitude
 PostgreSQL|421|PLAN|TPC-H|TPCH-Q07|TPC-H Q07 Analysis|Mis-estimate Hash -4x|0|Magnitude
 PostgreSQL|422|PLAN|TPC-H|TPCH-Q07|TPC-H Q07 Analysis|Mis-estimate Hash -2x|1|Magnitude
-PostgreSQL|423|PLAN|TPC-H|TPCH-Q07|TPC-H Q07 Analysis|Mis-estimate Hash =|4|Magnitude
+PostgreSQL|423|PLAN|TPC-H|TPCH-Q07|TPC-H Q07 Analysis|Mis-estimate Hash =|3|Magnitude
 PostgreSQL|424|PLAN|TPC-H|TPCH-Q07|TPC-H Q07 Analysis|Mis-estimate Hash +2x|0|Magnitude
 PostgreSQL|425|PLAN|TPC-H|TPCH-Q07|TPC-H Q07 Analysis|Mis-estimate Hash +4x|0|Magnitude
 PostgreSQL|426|PLAN|TPC-H|TPCH-Q07|TPC-H Q07 Analysis|Mis-estimate Hash +8x|0|Magnitude
 PostgreSQL|427|PLAN|TPC-H|TPCH-Q07|TPC-H Q07 Analysis|Mis-estimate Hash >16x|0|Magnitude
 PostgreSQL|428|PLAN|TPC-H|TPCH-Q07|TPC-H Q07 Analysis|Plan|"Estimate    Actual  Operator
-   10652        10  GROUP BY SORT n_name, n_name, EXTRACT(year FROM l_shipdate) AGGREGATE SUM(l_extendedprice * ('1' - l_discount))
-   16035     12300  SORT n_name, n_name, EXTRACT(year FROM l_shipdate)
-   16035     12300  INNER JOIN HASH ON l_suppkey = s_suppkey
-    4000      3925  │└INNER JOIN HASH ON s_nationkey = n_nationkey
-       2         2  │ │└TABLE SCAN n1 WHERE (n_name = 'GERMANY') OR (n_name = 'FRANCE')
-   10000     10000  │ TABLE SCAN supplier
-  599880    491680  INNER JOIN HASH ON l_orderkey = o_orderkey
-  193550    122855  │└INNER JOIN HASH ON o_custkey = c_custkey
-    5000     11905  │ │└INNER JOIN HASH ON c_nationkey = n_nationkey
-       2         2  │ │ │└TABLE SCAN n2 WHERE (n_name = 'FRANCE') OR (n_name = 'GERMANY')
-   62500    150000  │ │ TABLE SCAN customer
- 2419355   1500000  │ TABLE SCAN orders
- 7498525   5998820  TABLE SCAN lineitem
+    5728         4  GROUP BY SORT n_name, n_name, EXTRACT(EXTRACT(YEAR FROM  l_shipdate) AGGREGATE SUM(l_extendedprice * ('1' - l_discount))
+    7160      5455  SORT n_name, n_name, EXTRACT(EXTRACT(YEAR FROM  l_shipdate)
+    7160      5455  INNER JOIN HASH ON o_custkey = c_custkey AND (((n_name = 'GERMANY') AND (n_name = 'FRANCE')) OR ((n_name = 'FRANCE') AND (n_name = 'GERMANY')))
+    5000     11905  │└INNER JOIN HASH ON c_nationkey = n_nationkey
+       2         2  │ │└TABLE SCAN n2 WHERE (n_name = 'FRANCE') OR (n_name = 'GERMANY')
+   62500    150000  │ TABLE SCAN customer
+  172050    134160  INNER JOIN LOOP ON o_orderkey = l_orderkey
+  172050    134160  │└INNER JOIN HASH ON l_suppkey = s_suppkey
+    4000      3925  │ │└INNER JOIN HASH ON s_nationkey = n_nationkey
+       2         2  │ │ │└TABLE SCAN n1 WHERE (n_name = 'GERMANY') OR (n_name = 'FRANCE')
+   10000     10000  │ │ TABLE SCAN supplier
+ 2156855   1715150  │ TABLE SCAN lineitem WHERE (l_shipdate >= '1995-01-01') AND (l_shipdate <= '1996-12-31')
+  134158    134158  TABLE SEEK orders
 "|Plan
 PostgreSQL|429|PLAN|TPC-H|TPCH-Q08|TPC-H Q08 Analysis|SQL|"/* TPC-H Q08 */
 SELECT o_year,
@@ -734,9 +734,9 @@ PostgreSQL|486|PLAN|TPC-H|TPCH-Q08|TPC-H Q08 Analysis|Mis-estimate Hash +4x|0|Ma
 PostgreSQL|487|PLAN|TPC-H|TPCH-Q08|TPC-H Q08 Analysis|Mis-estimate Hash +8x|0|Magnitude
 PostgreSQL|488|PLAN|TPC-H|TPCH-Q08|TPC-H Q08 Analysis|Mis-estimate Hash >16x|0|Magnitude
 PostgreSQL|489|PLAN|TPC-H|TPCH-Q08|TPC-H Q08 Analysis|Plan|"Estimate    Actual  Operator
-    2234         2  GROUP BY SORT EXTRACT(year FROM o_orderdate) AGGREGATE SUM(CASE WHEN(n_name = 'FRANCE') THEN(l_extendedprice * ('1' - l_discount)) ELSE'0'END) / SUM(l_extendedprice * ('1' - l_discount))
-    2793         6  GROUP BY SORT EXTRACT(year FROM o_orderdate) AGGREGATE PARTIALSUM(CASE WHEN(n_name = 'FRANCE') THEN(l_extendedprice * ('1' - l_discount)) ELSE'0'END), PARTIALSUM(l_extendedprice * ('1' - l_discount))
-    2793      2322  SORT EXTRACT(year FROM o_orderdate)
+    2234         2  GROUP BY SORT EXTRACT(EXTRACT(YEAR FROM  o_orderdate) AGGREGATE SUM(CASE WHEN(n_name = 'FRANCE') THEN(l_extendedprice * ('1' - l_discount)) ELSE'0'END) / SUM(l_extendedprice * ('1' - l_discount))
+    2793         6  GROUP BY SORT EXTRACT(EXTRACT(YEAR FROM  o_orderdate) AGGREGATE PARTIALSUM(CASE WHEN(n_name = 'FRANCE') THEN(l_extendedprice * ('1' - l_discount)) ELSE'0'END), PARTIALSUM(l_extendedprice * ('1' - l_discount))
+    2793      2322  SORT EXTRACT(EXTRACT(YEAR FROM  o_orderdate)
     2793      2322  INNER JOIN HASH ON s_nationkey = n_nationkey
       25        25  │└TABLE SCAN n2
     2793      2322  INNER JOIN LOOP ON s_suppkey = l_suppkey
@@ -780,7 +780,7 @@ ORDER BY nation,
 PostgreSQL|491|PLAN|TPC-H|TPCH-Q09|TPC-H Q09 Analysis|Join|1582052|Rows
 PostgreSQL|492|PLAN|TPC-H|TPCH-Q09|TPC-H Q09 Analysis|Aggregate|246192|Rows
 PostgreSQL|493|PLAN|TPC-H|TPCH-Q09|TPC-H Q09 Analysis|Sort|245492|Rows
-PostgreSQL|494|PLAN|TPC-H|TPCH-Q09|TPC-H Q09 Analysis|Scan|1331548|Rows
+PostgreSQL|494|PLAN|TPC-H|TPCH-Q09|TPC-H Q09 Analysis|Scan|1331549|Rows
 PostgreSQL|495|PLAN|TPC-H|TPCH-Q09|TPC-H Q09 Analysis|Hash|1014844|Rows
 PostgreSQL|496|PLAN|TPC-H|TPCH-Q09|TPC-H Q09 Analysis|Mis-estimate Join <16x|4|Magnitude
 PostgreSQL|497|PLAN|TPC-H|TPCH-Q09|TPC-H Q09 Analysis|Mis-estimate Join -8x|0|Magnitude
@@ -812,8 +812,8 @@ PostgreSQL|522|PLAN|TPC-H|TPCH-Q09|TPC-H Q09 Analysis|Mis-estimate Sort >16x|0|M
 PostgreSQL|523|PLAN|TPC-H|TPCH-Q09|TPC-H Q09 Analysis|Mis-estimate Scan <16x|0|Magnitude
 PostgreSQL|524|PLAN|TPC-H|TPCH-Q09|TPC-H Q09 Analysis|Mis-estimate Scan -8x|0|Magnitude
 PostgreSQL|525|PLAN|TPC-H|TPCH-Q09|TPC-H Q09 Analysis|Mis-estimate Scan -4x|2|Magnitude
-PostgreSQL|526|PLAN|TPC-H|TPCH-Q09|TPC-H Q09 Analysis|Mis-estimate Scan -2x|1|Magnitude
-PostgreSQL|527|PLAN|TPC-H|TPCH-Q09|TPC-H Q09 Analysis|Mis-estimate Scan =|5|Magnitude
+PostgreSQL|526|PLAN|TPC-H|TPCH-Q09|TPC-H Q09 Analysis|Mis-estimate Scan -2x|0|Magnitude
+PostgreSQL|527|PLAN|TPC-H|TPCH-Q09|TPC-H Q09 Analysis|Mis-estimate Scan =|6|Magnitude
 PostgreSQL|528|PLAN|TPC-H|TPCH-Q09|TPC-H Q09 Analysis|Mis-estimate Scan +2x|0|Magnitude
 PostgreSQL|529|PLAN|TPC-H|TPCH-Q09|TPC-H Q09 Analysis|Mis-estimate Scan +4x|0|Magnitude
 PostgreSQL|530|PLAN|TPC-H|TPCH-Q09|TPC-H Q09 Analysis|Mis-estimate Scan +8x|0|Magnitude
@@ -830,23 +830,23 @@ PostgreSQL|540|PLAN|TPC-H|TPCH-Q09|TPC-H Q09 Analysis|Mis-estimate Filter >16x|0
 PostgreSQL|541|PLAN|TPC-H|TPCH-Q09|TPC-H Q09 Analysis|Mis-estimate Hash <16x|0|Magnitude
 PostgreSQL|542|PLAN|TPC-H|TPCH-Q09|TPC-H Q09 Analysis|Mis-estimate Hash -8x|0|Magnitude
 PostgreSQL|543|PLAN|TPC-H|TPCH-Q09|TPC-H Q09 Analysis|Mis-estimate Hash -4x|0|Magnitude
-PostgreSQL|544|PLAN|TPC-H|TPCH-Q09|TPC-H Q09 Analysis|Mis-estimate Hash -2x|1|Magnitude
-PostgreSQL|545|PLAN|TPC-H|TPCH-Q09|TPC-H Q09 Analysis|Mis-estimate Hash =|1|Magnitude
+PostgreSQL|544|PLAN|TPC-H|TPCH-Q09|TPC-H Q09 Analysis|Mis-estimate Hash -2x|0|Magnitude
+PostgreSQL|545|PLAN|TPC-H|TPCH-Q09|TPC-H Q09 Analysis|Mis-estimate Hash =|2|Magnitude
 PostgreSQL|546|PLAN|TPC-H|TPCH-Q09|TPC-H Q09 Analysis|Mis-estimate Hash +2x|0|Magnitude
 PostgreSQL|547|PLAN|TPC-H|TPCH-Q09|TPC-H Q09 Analysis|Mis-estimate Hash +4x|0|Magnitude
 PostgreSQL|548|PLAN|TPC-H|TPCH-Q09|TPC-H Q09 Analysis|Mis-estimate Hash +8x|0|Magnitude
 PostgreSQL|549|PLAN|TPC-H|TPCH-Q09|TPC-H Q09 Analysis|Mis-estimate Hash >16x|0|Magnitude
 PostgreSQL|550|PLAN|TPC-H|TPCH-Q09|TPC-H Q09 Analysis|Plan|"Estimate    Actual  Operator
-     114       175  GROUP BY SORT n_name, EXTRACT(year FROM o_orderdate) AGGREGATE SUM(l_extendedprice * ('1' - l_discount)) - (ps_supplycost * l_quantity)
-     148       700  GROUP BY SORT n_name, EXTRACT(year FROM o_orderdate) AGGREGATE PARTIALSUM(l_extendedprice * ('1' - l_discount)) - (ps_supplycost * l_quantity)
-     148    245492  SORT n_name, EXTRACT(year FROM o_orderdate)
+     114       175  GROUP BY SORT n_name, EXTRACT(EXTRACT(YEAR FROM  o_orderdate) AGGREGATE SUM((l_extendedprice * ('1' - l_discount)) - (ps_supplycost * l_quantity))
+     148       700  GROUP BY SORT n_name, EXTRACT(EXTRACT(YEAR FROM  o_orderdate) AGGREGATE PARTIALSUM((l_extendedprice * ('1' - l_discount)) - (ps_supplycost * l_quantity))
+     148    245492  SORT n_name, EXTRACT(EXTRACT(YEAR FROM  o_orderdate)
      148    245492  INNER JOIN HASH ON s_nationkey = n_nationkey
       25        25  │└TABLE SCAN nation
      148    245492  INNER JOIN LOOP ON s_suppkey = l_suppkey
      148    245520  │└INNER JOIN LOOP ON o_orderkey = l_orderkey
      148    245520  │ │└INNER JOIN LOOP ON l_partkey = ps_partkey
    46920     32792  │ │ │└INNER JOIN HASH ON ps_partkey = p_partkey
-    5050     10939  │ │ │ │└TABLE SCAN part WHERE p_name LIKE'%lace%'
+   10100     10940  │ │ │ │└TABLE SCAN part WHERE p_name LIKE '%lace%'
   774192    600000  │ │ │ TABLE SCAN partsupp
    32792    229544  │ │ TABLE SEEK lineitem WHERE ps_suppkey = l_suppkey
   245520    245520  │ TABLE SEEK orders
@@ -1126,11 +1126,11 @@ PostgreSQL|730|PLAN|TPC-H|TPCH-Q12|TPC-H Q12 Analysis|Mis-estimate Hash +4x|0|Ma
 PostgreSQL|731|PLAN|TPC-H|TPCH-Q12|TPC-H Q12 Analysis|Mis-estimate Hash +8x|0|Magnitude
 PostgreSQL|732|PLAN|TPC-H|TPCH-Q12|TPC-H Q12 Analysis|Mis-estimate Hash >16x|0|Magnitude
 PostgreSQL|733|PLAN|TPC-H|TPCH-Q12|TPC-H Q12 Analysis|Plan|"Estimate    Actual  Operator
-       7         2  GROUP BY SORT l_shipmode AGGREGATE SUM(CASE WHEN(o_orderpriority = '1-URGENT') OR (o_orderpriority = '2-HIGH') THEN 1 ELSE 0 END), SUM(CASE WHEN(o_orderpriority <> '1-URGENT') AND (o_orderpriority <> '2-HIGH') THEN 1 ELSE 0 END)
-      35        10  GROUP BY SORT l_shipmode AGGREGATE PARTIALSUM(CASE WHEN(o_orderpriority = '1-URGENT') OR (o_orderpriority = '2-HIGH') THEN 1 ELSE 0 END), PARTIALSUM(CASE WHEN(o_orderpriority <> '1-URGENT') AND (o_orderpriority <> '2-HIGH') THEN 1 ELSE 0 END)
+       7         2  GROUP BY SORT l_shipmode AGGREGATE SUM(CASE WHEN((o_orderpriority = '1-URGENT') OR (o_orderpriority = '2-HIGH')) THEN 1 ELSE 0 END), SUM(CASE WHEN((o_orderpriority <> '1-URGENT') AND (o_orderpriority <> '2-HIGH')) THEN 1 ELSE 0 END)
+      35        10  GROUP BY SORT l_shipmode AGGREGATE PARTIALSUM(CASE WHEN((o_orderpriority = '1-URGENT') OR (o_orderpriority = '2-HIGH')) THEN 1 ELSE 0 END), PARTIALSUM(CASE WHEN((o_orderpriority <> '1-URGENT') AND (o_orderpriority <> '2-HIGH')) THEN 1 ELSE 0 END)
    33970     29130  SORT l_shipmode
    33970     29130  INNER JOIN LOOP ON o_orderkey = l_orderkey
-   33970     29130  │└TABLE SCAN lineitem WHERE l_shipmode IN('AIR','TRUCK') AND (l_commitdate < l_receiptdate) AND (l_shipdate < l_commitdate) AND (l_receiptdate >= '1994-01-01') AND (l_receiptdate < '1995-01-01')
+   33970     29130  │└TABLE SCAN lineitem WHERE (l_shipmode IN('AIR','TRUCK')) AND (l_commitdate < l_receiptdate) AND (l_shipdate < l_commitdate) AND (l_receiptdate >= '1994-01-01') AND (l_receiptdate < '1995-01-01')
    29129     29129  TABLE SEEK orders
 "|Plan
 PostgreSQL|734|PLAN|TPC-H|TPCH-Q13|TPC-H Q13 Analysis|SQL|"/* TPC-H Q13 */
@@ -1148,7 +1148,7 @@ GROUP BY c_count
 ORDER BY custdist DESC,
          c_count DESC"|Query
 PostgreSQL|735|PLAN|TPC-H|TPCH-Q13|TPC-H Q13 Analysis|Join|1599944|Rows
-PostgreSQL|736|PLAN|TPC-H|TPCH-Q13|TPC-H Q13 Analysis|Aggregate|2049836|Rows
+PostgreSQL|736|PLAN|TPC-H|TPCH-Q13|TPC-H Q13 Analysis|Aggregate|2049848|Rows
 PostgreSQL|737|PLAN|TPC-H|TPCH-Q13|TPC-H Q13 Analysis|Sort|1749992|Rows
 PostgreSQL|738|PLAN|TPC-H|TPCH-Q13|TPC-H Q13 Analysis|Scan|1649944|Rows
 PostgreSQL|739|PLAN|TPC-H|TPCH-Q13|TPC-H Q13 Analysis|Hash|1599944|Rows
@@ -1211,11 +1211,11 @@ PostgreSQL|794|PLAN|TPC-H|TPCH-Q13|TPC-H Q13 Analysis|Plan|"Estimate    Actual  
      200        48  GROUP BY SORT c_count AGGREGATE COUNT(*)
   150000    150000  SORT c_count
   150000    150000  GROUP BY SORT c_custkey AGGREGATE COUNT(o_orderkey)
-  600000    299892  GROUP BY SORT c_custkey AGGREGATE PARTIALCOUNT(o_orderkey)
+  600000    299904  GROUP BY SORT c_custkey AGGREGATE PARTIALCOUNT(o_orderkey)
  1935292   1599944  SORT c_custkey
  1935292   1599944  RIGHT OUTER JOIN HASH ON o_custkey = c_custkey
-  187500    150000  │└TABLE SCAN customer
- 1935292   1499944  TABLE SCAN orders WHERE o_comment NOT LIKE' % special % requests % '
+  250000    150000  │└TABLE SCAN customer
+ 1935292   1499944  TABLE SCAN orders WHERE o_comment NOT LIKE ' % special % requests % '
 "|Plan
 PostgreSQL|795|PLAN|TPC-H|TPCH-Q14|TPC-H Q14 Analysis|SQL|"/* TPC-H Q14 */
 SELECT 100.00 * SUM(CASE
@@ -1288,8 +1288,8 @@ PostgreSQL|852|PLAN|TPC-H|TPCH-Q14|TPC-H Q14 Analysis|Mis-estimate Hash +4x|0|Ma
 PostgreSQL|853|PLAN|TPC-H|TPCH-Q14|TPC-H Q14 Analysis|Mis-estimate Hash +8x|0|Magnitude
 PostgreSQL|854|PLAN|TPC-H|TPCH-Q14|TPC-H Q14 Analysis|Mis-estimate Hash >16x|0|Magnitude
 PostgreSQL|855|PLAN|TPC-H|TPCH-Q14|TPC-H Q14 Analysis|Plan|"Estimate    Actual  Operator
-       1         1  GROUP BY SIMPLE AGGREGATE (100.00 * SUM(CASE WHEN(p_type LIKE'PROMO%') THEN(l_extendedprice * ('1' - l_discount)) ELSE'0'END)) / SUM(l_extendedprice * ('1' - l_discount))
-       5         5  GROUP BY SIMPLE AGGREGATE PARTIALSUM(CASE WHEN(p_type LIKE'PROMO%') THEN(l_extendedprice * ('1' - l_discount)) ELSE'0'END), PARTIALSUM(l_extendedprice * ('1' - l_discount))
+       1         1  GROUP BY SIMPLE AGGREGATE (100.00 * SUM(CASE WHEN(p_type LIKE 'PROMO%') THEN(l_extendedprice * ('1' - l_discount)) ELSE'0'END)) / SUM(l_extendedprice * ('1' - l_discount))
+       5         5  GROUP BY SIMPLE AGGREGATE PARTIALSUM(CASE WHEN(p_type LIKE 'PROMO%') THEN(l_extendedprice * ('1' - l_discount)) ELSE'0'END), PARTIALSUM(l_extendedprice * ('1' - l_discount))
    82655     68120  INNER JOIN HASH ON l_partkey = p_partkey
   416665    200000  │└TABLE SCAN part
    82655     68120  TABLE SCAN lineitem WHERE (l_shipdate >= '1996-02-01') AND (l_shipdate < '1996-03-01')
@@ -1365,8 +1365,8 @@ PostgreSQL|913|PLAN|TPC-H|TPCH-Q15|TPC-H Q15 Analysis|Mis-estimate Hash +4x|0|Ma
 PostgreSQL|914|PLAN|TPC-H|TPCH-Q15|TPC-H Q15 Analysis|Mis-estimate Hash +8x|0|Magnitude
 PostgreSQL|915|PLAN|TPC-H|TPCH-Q15|TPC-H Q15 Analysis|Mis-estimate Hash >16x|0|Magnitude
 PostgreSQL|916|PLAN|TPC-H|TPCH-Q15|TPC-H Q15 Analysis|Plan|"Estimate    Actual  Operator
-       1         1  GROUP BY SIMPLE AGGREGATE (100.00 * SUM(CASE WHEN(p_type LIKE'PROMO%') THEN(l_extendedprice * ('1' - l_discount)) ELSE'0'END)) / SUM(l_extendedprice * ('1' - l_discount))
-       5         5  GROUP BY SIMPLE AGGREGATE PARTIALSUM(CASE WHEN(p_type LIKE'PROMO%') THEN(l_extendedprice * ('1' - l_discount)) ELSE'0'END), PARTIALSUM(l_extendedprice * ('1' - l_discount))
+       1         1  GROUP BY SIMPLE AGGREGATE (100.00 * SUM(CASE WHEN(p_type LIKE 'PROMO%') THEN(l_extendedprice * ('1' - l_discount)) ELSE'0'END)) / SUM(l_extendedprice * ('1' - l_discount))
+       5         5  GROUP BY SIMPLE AGGREGATE PARTIALSUM(CASE WHEN(p_type LIKE 'PROMO%') THEN(l_extendedprice * ('1' - l_discount)) ELSE'0'END), PARTIALSUM(l_extendedprice * ('1' - l_discount))
    82655     68120  INNER JOIN HASH ON l_partkey = p_partkey
   416665    200000  │└TABLE SCAN part
    82655     68120  TABLE SCAN lineitem WHERE (l_shipdate >= '1996-02-01') AND (l_shipdate < '1996-03-01')
@@ -1457,9 +1457,9 @@ PostgreSQL|977|PLAN|TPC-H|TPCH-Q16|TPC-H Q16 Analysis|Plan|"Estimate    Actual  
    16214     15163  GROUP BY SORT p_brand, p_type, p_size AGGREGATE COUNT(DISTINCT ps_suppkey)
    59352     61216  SORT p_brand, p_type, p_size, ps_suppkey
    59352     61216  INNER JOIN HASH ON ps_partkey = p_partkey
-   51112     29904  │└TABLE SCAN part WHERE (p_brand <> 'Brand#42') AND (p_type NOT LIKE'STANDARD ANODIZED%') AND (p_size IN('3','7','11','29','31','37','41','49'))
+   51112     29904  │└TABLE SCAN part WHERE (p_brand <> 'Brand#42') AND (p_type NOT LIKE 'STANDARD ANODIZED%') AND (p_size IN('3','7','11','29','31','37','41','49'))
   387096    410472  TABLE SCAN partsupp WHERE  NOT (IN(ps_suppkey = (hashed SubPlan 1) .col1))
-    3838      3159  TABLE SCAN supplier WHERE s_comment LIKE'%Customer%Complaints%'
+    3838      3159  TABLE SCAN supplier WHERE s_comment LIKE '%Customer%Complaints%'
 "|Plan
 PostgreSQL|978|PLAN|TPC-H|TPCH-Q17|TPC-H Q17 Analysis|SQL|"/* TPC-H Q17 */
 SELECT SUM(l_extendedprice) / 7.0 AS avg_yearly
@@ -1532,8 +1532,8 @@ PostgreSQL|1036|PLAN|TPC-H|TPCH-Q17|TPC-H Q17 Analysis|Mis-estimate Hash +8x|0|M
 PostgreSQL|1037|PLAN|TPC-H|TPCH-Q17|TPC-H Q17 Analysis|Mis-estimate Hash >16x|0|Magnitude
 PostgreSQL|1038|PLAN|TPC-H|TPCH-Q17|TPC-H Q17 Analysis|Plan|"Estimate    Actual  Operator
        1         1  GROUP BY SIMPLE AGGREGATE SUM(l_extendedprice) / 7.0
-    1930       464  INNER JOIN HASH ON l_partkey = p_partkey
-    6080      6080  │└GROUP BY SIMPLE AGGREGATE 0.2 * avg l_quantity
+    1930       464  INNER JOIN HASH ON l_partkey = p_partkey AND (l_quantity < (SubPlan 1))
+    6080      6080  │└GROUP BY SIMPLE AGGREGATE 0.2 * AVG(l_quantity)
   188480    188480  │ TABLE SEEK li
      240       201  │ TABLE SCAN part WHERE (p_brand = 'Brand#13') AND (p_container = 'MED CAN')
  5998820   5998820  TABLE SCAN lineitem
@@ -1562,7 +1562,7 @@ GROUP BY c_name,
 ORDER BY o_totalprice DESC,
          o_orderdate"|Query
 PostgreSQL|1040|PLAN|TPC-H|TPCH-Q18|TPC-H Q18 Analysis|Join|7498825|Rows
-PostgreSQL|1041|PLAN|TPC-H|TPCH-Q18|TPC-H Q18 Analysis|Aggregate|7500950|Rows
+PostgreSQL|1041|PLAN|TPC-H|TPCH-Q18|TPC-H Q18 Analysis|Aggregate|7500985|Rows
 PostgreSQL|1042|PLAN|TPC-H|TPCH-Q18|TPC-H Q18 Analysis|Sort|5998860|Rows
 PostgreSQL|1043|PLAN|TPC-H|TPCH-Q18|TPC-H Q18 Analysis|Scan|13647640|Rows
 PostgreSQL|1044|PLAN|TPC-H|TPCH-Q18|TPC-H Q18 Analysis|Hash|150040|Rows
@@ -1629,7 +1629,7 @@ PostgreSQL|1099|PLAN|TPC-H|TPCH-Q18|TPC-H Q18 Analysis|Plan|"Estimate    Actual 
   150000    150000  │ │└TABLE SCAN customer
   147762         5  │ INNER JOIN HASH ON o_orderkey = l_orderkey
   147762         5  │ │└GROUP BY SORT l_orderkey AGGREGATE 
- 2216435   1502095  │ │ GROUP BY SORT l_orderkey AGGREGATE PARTIALSUM(l_quantity)
+ 2216435   1502130  │ │ GROUP BY SORT l_orderkey AGGREGATE PARTIALSUM(l_quantity)
  7498525   5998820  │ │ SORT l_orderkey
  7498525   5998820  │ │ TABLE SCAN lineitem_1
  1500000   1500000  │ TABLE SCAN orders
@@ -1730,8 +1730,8 @@ PostgreSQL|1160|PLAN|TPC-H|TPCH-Q19|TPC-H Q19 Analysis|Plan|"Estimate    Actual 
        1         1  GROUP BY SIMPLE AGGREGATE SUM(l_extendedprice * ('1' - l_discount))
        3         3  GROUP BY SIMPLE AGGREGATE PARTIALSUM(l_extendedprice * ('1' - l_discount))
      129        96  INNER JOIN LOOP ON l_partkey = p_partkey
-     594       513  │└TABLE SCAN part WHERE (p_size >= 1) AND (p_brand = 'Brand#11') AND p_container IN('""SM CASE""','""SM BOX""','""SM PACK""','""SM PKG""') AND (p_size <= 5) OR (p_brand = 'Brand#22') AND p_container IN('""MED BAG""','""MED BOX""','""MED PKG""','""MED PACK""') AND (p_size <= 10) OR (p_brand = 'Brand#33') AND p_container IN('""LG CASE""','""LG BOX""','""LG PACK""','""LG PKG""') AND (p_size <= 15)
-     513       513  TABLE SEEK lineitem WHERE l_shipmode IN('AIR','""AIR REG""') AND (l_shipinstruct = 'DELIVER IN PERSON') AND (l_quantity >= '5') AND (l_quantity <= '15') OR (l_quantity >= '15') AND (l_quantity <= '25') OR (l_quantity >= '25') AND (l_quantity <= '35') AND (p_brand = 'Brand#11') AND p_container IN('""SM CASE""','""SM BOX""','""SM PACK""','""SM PKG""') AND (l_quantity >= '5') AND (l_quantity <= '15') AND (p_size <= 5) OR (p_brand = 'Brand#22') AND p_container IN('""MED BAG""','""MED BOX""'...
+     594       513  │└TABLE SCAN part WHERE (p_size >= 1) AND (((p_brand = 'Brand#11') AND (p_container IN('""SM CASE""','""SM BOX""','""SM PACK""','""SM PKG""')) AND (p_size <= 5)) OR ((p_brand = 'Brand#22') AND (p_container IN('""MED BAG""','""MED BOX""','""MED PKG""','""MED PACK""')) AND (p_size <= 10)) OR ((p_brand = 'Brand#33') AND (p_container IN('""LG CASE""','""LG BOX""','""LG PACK""','""LG PKG""')) AND (p_size <= 15)))
+     513       513  TABLE SEEK lineitem WHERE (l_shipmode IN('AIR','""AIR REG""')) AND (l_shipinstruct = 'DELIVER IN PERSON') AND (((l_quantity >= '5') AND (l_quantity <= '15')) OR ((l_quantity >= '15') AND (l_quantity <= '25')) OR ((l_quantity >= '25') AND (l_quantity <= '35'))) AND (((p_brand = 'Brand#11') AND (p_container IN('""SM CASE""','""SM BOX""','""SM PACK""','""SM PKG""')) AND (l_quantity >= '5') AND (l_quantity <= '15') AND (p_size <= 5)) OR ((p_brand = 'Brand#22') AND (p_container IN('""MED ...
 "|Plan
 PostgreSQL|1161|PLAN|TPC-H|TPCH-Q20|TPC-H Q20 Analysis|SQL|"/* TPC-H Q20 */
 SELECT s_name,
@@ -1815,15 +1815,15 @@ PostgreSQL|1219|PLAN|TPC-H|TPCH-Q20|TPC-H Q20 Analysis|Mis-estimate Hash +8x|0|M
 PostgreSQL|1220|PLAN|TPC-H|TPCH-Q20|TPC-H Q20 Analysis|Mis-estimate Hash >16x|0|Magnitude
 PostgreSQL|1221|PLAN|TPC-H|TPCH-Q20|TPC-H Q20 Analysis|Plan|"Estimate    Actual  Operator
       81       145  SORT s_name
-      81       145  INNER JOIN LOOP ON n_nationkey = s_nationkey
+      81       145  INNER JOIN LOOP ON n_nationkey = s_nationkey AND (n_nationkey = s_nationkey)
        1         1  │└TABLE SCAN nation WHERE n_name = 'KENYA'
-    2019      3397  LEFT SEMI JOIN LOOP ON s_suppkey = ps_suppkey
+    2019      3397  LEFT SEMI JOIN LOOP ON s_suppkey = ps_suppkey AND (s_suppkey = ps_suppkey)
    10000     10000  │└TABLE SCAN supplier
     2020      4151  INNER JOIN LOOP ON p_partkey = ps_partkey
   200000    393475  │└TABLE SCAN partsupp WHERE ps_availqty > (SubPlan 1)
   600000    600000  │ GROUP BY SIMPLE AGGREGATE 0.5 * SUM(l_quantity)
   600000    600000  │ TABLE SEEK lineitem WHERE (l_shipdate >= '1993-01-01') AND (l_shipdate < '1994-01-01') AND (l_suppkey = ps_suppkey)
-  393475    393475  TABLE SEEK part WHERE p_name LIKE'almond%'
+  393475    393475  TABLE SEEK part WHERE p_name LIKE 'almond%'
 "|Plan
 PostgreSQL|1222|PLAN|TPC-H|TPCH-Q21|TPC-H Q21 Analysis|SQL|"/* TPC-H Q21 */
 SELECT s_name, COUNT(*) AS numwait
@@ -1836,11 +1836,11 @@ INNER JOIN tpch.nation
     ON s_nationkey = n_nationkey
 WHERE o_orderstatus = 'F'
   AND l1.l_receiptdate > l1.l_commitdate
-  AND EXISTS (SELECT *
+  AND EXISTS (SELECT 1
               FROM tpch.lineitem l2
               WHERE l2.l_orderkey = l1.l_orderkey
                 AND l2.l_suppkey <> l1.l_suppkey)
-  AND NOT EXISTS (SELECT *
+  AND NOT EXISTS (SELECT 1
                   FROM tpch.lineitem l3
                   WHERE l3.l_orderkey = l1.l_orderkey
                     AND l3.l_suppkey <> l1.l_suppkey
@@ -1915,9 +1915,9 @@ PostgreSQL|1282|PLAN|TPC-H|TPCH-Q21|TPC-H Q21 Analysis|Plan|"Estimate    Actual 
        1       396  GROUP BY SORT s_name AGGREGATE COUNT(*)
        1      4060  SORT s_name
        1      4060  INNER JOIN LOOP ON o_orderkey = l_orderkey
-       5      7980  │└LEFT SEMI JOIN HASH ON l_orderkey = l_orderkey
+       5      7980  │└LEFT SEMI JOIN HASH ON l_orderkey = l_orderkey AND (l_suppkey <> l_suppkey)
  7498525   5998820  │ │└TABLE SCAN l2
-       5     13285  │ RIGHT ANTI JOIN HASH ON l_orderkey = l_orderkey
+       5     13285  │ RIGHT ANTI JOIN HASH ON l_orderkey = l_orderkey AND (l_suppkey <> l_suppkey)
    99690    149860  │ │└INNER JOIN HASH ON l_suppkey = s_suppkey
     2000      1980  │ │ │└INNER JOIN HASH ON s_nationkey = n_nationkey
        1         1  │ │ │ │└TABLE SCAN nation WHERE n_name = 'GERMANY'
@@ -1933,12 +1933,12 @@ SELECT cntrycode,
 FROM (SELECT LEFT(c_phone,2) AS cntrycode,
              c_acctbal
       FROM tpch.customer
-      WHERE LEFT(c_phone, 2) IN
+      WHERE LEFT(c_phone,2) IN
             ('10', '17', '19', '23', '22', '31', '27')
         AND c_acctbal > (SELECT AVG(c_acctbal)
                          FROM tpch.customer
                          WHERE c_acctbal > 0.00
-                           AND LEFT(c_phone, 2) IN
+                           AND LEFT(c_phone,2) IN
                                ('10', '17', '19', '23', '22', '31', '27'))
         AND NOT EXISTS (SELECT *
                         FROM tpch.orders
@@ -1980,8 +1980,8 @@ PostgreSQL|1312|PLAN|TPC-H|TPCH-Q22|TPC-H Q22 Analysis|Mis-estimate Sort +2x|0|M
 PostgreSQL|1313|PLAN|TPC-H|TPCH-Q22|TPC-H Q22 Analysis|Mis-estimate Sort +4x|0|Magnitude
 PostgreSQL|1314|PLAN|TPC-H|TPCH-Q22|TPC-H Q22 Analysis|Mis-estimate Sort +8x|0|Magnitude
 PostgreSQL|1315|PLAN|TPC-H|TPCH-Q22|TPC-H Q22 Analysis|Mis-estimate Sort >16x|0|Magnitude
-PostgreSQL|1316|PLAN|TPC-H|TPCH-Q22|TPC-H Q22 Analysis|Mis-estimate Scan <16x|1|Magnitude
-PostgreSQL|1317|PLAN|TPC-H|TPCH-Q22|TPC-H Q22 Analysis|Mis-estimate Scan -8x|0|Magnitude
+PostgreSQL|1316|PLAN|TPC-H|TPCH-Q22|TPC-H Q22 Analysis|Mis-estimate Scan <16x|0|Magnitude
+PostgreSQL|1317|PLAN|TPC-H|TPCH-Q22|TPC-H Q22 Analysis|Mis-estimate Scan -8x|1|Magnitude
 PostgreSQL|1318|PLAN|TPC-H|TPCH-Q22|TPC-H Q22 Analysis|Mis-estimate Scan -4x|0|Magnitude
 PostgreSQL|1319|PLAN|TPC-H|TPCH-Q22|TPC-H Q22 Analysis|Mis-estimate Scan -2x|0|Magnitude
 PostgreSQL|1320|PLAN|TPC-H|TPCH-Q22|TPC-H Q22 Analysis|Mis-estimate Scan =|1|Magnitude
@@ -1998,8 +1998,8 @@ PostgreSQL|1330|PLAN|TPC-H|TPCH-Q22|TPC-H Q22 Analysis|Mis-estimate Filter +2x|0
 PostgreSQL|1331|PLAN|TPC-H|TPCH-Q22|TPC-H Q22 Analysis|Mis-estimate Filter +4x|0|Magnitude
 PostgreSQL|1332|PLAN|TPC-H|TPCH-Q22|TPC-H Q22 Analysis|Mis-estimate Filter +8x|0|Magnitude
 PostgreSQL|1333|PLAN|TPC-H|TPCH-Q22|TPC-H Q22 Analysis|Mis-estimate Filter >16x|0|Magnitude
-PostgreSQL|1334|PLAN|TPC-H|TPCH-Q22|TPC-H Q22 Analysis|Mis-estimate Hash <16x|1|Magnitude
-PostgreSQL|1335|PLAN|TPC-H|TPCH-Q22|TPC-H Q22 Analysis|Mis-estimate Hash -8x|0|Magnitude
+PostgreSQL|1334|PLAN|TPC-H|TPCH-Q22|TPC-H Q22 Analysis|Mis-estimate Hash <16x|0|Magnitude
+PostgreSQL|1335|PLAN|TPC-H|TPCH-Q22|TPC-H Q22 Analysis|Mis-estimate Hash -8x|1|Magnitude
 PostgreSQL|1336|PLAN|TPC-H|TPCH-Q22|TPC-H Q22 Analysis|Mis-estimate Hash -4x|0|Magnitude
 PostgreSQL|1337|PLAN|TPC-H|TPCH-Q22|TPC-H Q22 Analysis|Mis-estimate Hash -2x|0|Magnitude
 PostgreSQL|1338|PLAN|TPC-H|TPCH-Q22|TPC-H Q22 Analysis|Mis-estimate Hash =|0|Magnitude
@@ -2008,9 +2008,9 @@ PostgreSQL|1340|PLAN|TPC-H|TPCH-Q22|TPC-H Q22 Analysis|Mis-estimate Hash +4x|0|M
 PostgreSQL|1341|PLAN|TPC-H|TPCH-Q22|TPC-H Q22 Analysis|Mis-estimate Hash +8x|0|Magnitude
 PostgreSQL|1342|PLAN|TPC-H|TPCH-Q22|TPC-H Q22 Analysis|Mis-estimate Hash >16x|0|Magnitude
 PostgreSQL|1343|PLAN|TPC-H|TPCH-Q22|TPC-H Q22 Analysis|Plan|"Estimate    Actual  Operator
-    1186         7  GROUP BY SORT ""left""(c_phone , 2) AGGREGATE COUNT(*), SUM(c_acctbal)
-    1532     12180  SORT ""left""(c_phone , 2)
+    1186         7  GROUP BY SORT ""left""(c_phone,2) AGGREGATE COUNT(*), SUM(c_acctbal)
+    1532     12180  SORT ""left""(c_phone,2)
     1532     12180  RIGHT ANTI JOIN HASH ON o_custkey = c_custkey
-     729     18412  │└TABLE SCAN customer WHERE (c_acctbal > (InitPlan 1) .col1) AND (""left""(c_phone , 2) IN('10','17','19','23','22','31','27'))
+    1458     18412  │└TABLE SCAN customer WHERE (c_acctbal > (InitPlan 1) .col1) AND (""left""(c_phone,2) IN('10','17','19','23','22','31','27'))
  1935484   1500000  TABLE SCAN orders
 "|Plan

@@ -1,0 +1,99 @@
+ENGINE|ID|CATEGORIES|TAGS|THEOREM|THEOREM_DESCRIPTION|PROOF_NAME|PROOF_VALUE|PROOF_UNIT
+ClickHouse|0|PLAN, TEST|CONFIG|CONFIG-VERSION|Version of Engine|version|26.1.4.35|version
+ClickHouse|2|PLAN|TPC-H|TPCH-Q12|TPC-H Q12 Analysis|SQL|"/* TPC-H Q12 */
+SELECT l_shipmode,
+       SUM(CASE
+               WHEN o_orderpriority = '1-URGENT'
+                   OR o_orderpriority = '2-HIGH'
+                   THEN 1
+               ELSE 0
+           END) AS high_line_count,
+       SUM(CASE
+               WHEN o_orderpriority <> '1-URGENT'
+                   AND o_orderpriority <> '2-HIGH'
+                   THEN 1
+               ELSE 0
+           END) AS low_line_count
+FROM tpch.lineitem
+INNER JOIN tpch.orders
+    ON o_orderkey = l_orderkey
+WHERE l_shipmode IN ('AIR', 'TRUCK')
+  AND l_commitdate < l_receiptdate
+  AND l_shipdate < l_commitdate
+  AND l_receiptdate >= '1994-01-01'
+  AND l_receiptdate < '1995-01-01'
+GROUP BY l_shipmode
+ORDER BY l_shipmode
+
+
+"|Query
+ClickHouse|3|PLAN|TPC-H|TPCH-Q12|TPC-H Q12 Analysis|Join|30837|Rows
+ClickHouse|4|PLAN|TPC-H|TPCH-Q12|TPC-H Q12 Analysis|Aggregate|30837|Rows
+ClickHouse|5|PLAN|TPC-H|TPCH-Q12|TPC-H Q12 Analysis|Sort|2|Rows
+ClickHouse|6|PLAN|TPC-H|TPCH-Q12|TPC-H Q12 Analysis|Distribute|0|Rows
+ClickHouse|7|PLAN|TPC-H|TPCH-Q12|TPC-H Q12 Analysis|Seek|0|Rows
+ClickHouse|8|PLAN|TPC-H|TPCH-Q12|TPC-H Q12 Analysis|Scan|1530837|Rows
+ClickHouse|9|PLAN|TPC-H|TPCH-Q12|TPC-H Q12 Analysis|Hash|1500000|Rows
+ClickHouse|10|PLAN|TPC-H|TPCH-Q12|TPC-H Q12 Analysis|Mis-estimate Join <16x|0|Magnitude
+ClickHouse|11|PLAN|TPC-H|TPCH-Q12|TPC-H Q12 Analysis|Mis-estimate Join -8x|0|Magnitude
+ClickHouse|12|PLAN|TPC-H|TPCH-Q12|TPC-H Q12 Analysis|Mis-estimate Join -4x|0|Magnitude
+ClickHouse|13|PLAN|TPC-H|TPCH-Q12|TPC-H Q12 Analysis|Mis-estimate Join -2x|0|Magnitude
+ClickHouse|14|PLAN|TPC-H|TPCH-Q12|TPC-H Q12 Analysis|Mis-estimate Join =|0|Magnitude
+ClickHouse|15|PLAN|TPC-H|TPCH-Q12|TPC-H Q12 Analysis|Mis-estimate Join +2x|0|Magnitude
+ClickHouse|16|PLAN|TPC-H|TPCH-Q12|TPC-H Q12 Analysis|Mis-estimate Join +4x|0|Magnitude
+ClickHouse|17|PLAN|TPC-H|TPCH-Q12|TPC-H Q12 Analysis|Mis-estimate Join +8x|0|Magnitude
+ClickHouse|18|PLAN|TPC-H|TPCH-Q12|TPC-H Q12 Analysis|Mis-estimate Join >16x|0|Magnitude
+ClickHouse|19|PLAN|TPC-H|TPCH-Q12|TPC-H Q12 Analysis|Mis-estimate Aggregate <16x|0|Magnitude
+ClickHouse|20|PLAN|TPC-H|TPCH-Q12|TPC-H Q12 Analysis|Mis-estimate Aggregate -8x|0|Magnitude
+ClickHouse|21|PLAN|TPC-H|TPCH-Q12|TPC-H Q12 Analysis|Mis-estimate Aggregate -4x|0|Magnitude
+ClickHouse|22|PLAN|TPC-H|TPCH-Q12|TPC-H Q12 Analysis|Mis-estimate Aggregate -2x|0|Magnitude
+ClickHouse|23|PLAN|TPC-H|TPCH-Q12|TPC-H Q12 Analysis|Mis-estimate Aggregate =|0|Magnitude
+ClickHouse|24|PLAN|TPC-H|TPCH-Q12|TPC-H Q12 Analysis|Mis-estimate Aggregate +2x|0|Magnitude
+ClickHouse|25|PLAN|TPC-H|TPCH-Q12|TPC-H Q12 Analysis|Mis-estimate Aggregate +4x|0|Magnitude
+ClickHouse|26|PLAN|TPC-H|TPCH-Q12|TPC-H Q12 Analysis|Mis-estimate Aggregate +8x|0|Magnitude
+ClickHouse|27|PLAN|TPC-H|TPCH-Q12|TPC-H Q12 Analysis|Mis-estimate Aggregate >16x|0|Magnitude
+ClickHouse|28|PLAN|TPC-H|TPCH-Q12|TPC-H Q12 Analysis|Mis-estimate Sort <16x|0|Magnitude
+ClickHouse|29|PLAN|TPC-H|TPCH-Q12|TPC-H Q12 Analysis|Mis-estimate Sort -8x|0|Magnitude
+ClickHouse|30|PLAN|TPC-H|TPCH-Q12|TPC-H Q12 Analysis|Mis-estimate Sort -4x|0|Magnitude
+ClickHouse|31|PLAN|TPC-H|TPCH-Q12|TPC-H Q12 Analysis|Mis-estimate Sort -2x|0|Magnitude
+ClickHouse|32|PLAN|TPC-H|TPCH-Q12|TPC-H Q12 Analysis|Mis-estimate Sort =|0|Magnitude
+ClickHouse|33|PLAN|TPC-H|TPCH-Q12|TPC-H Q12 Analysis|Mis-estimate Sort +2x|0|Magnitude
+ClickHouse|34|PLAN|TPC-H|TPCH-Q12|TPC-H Q12 Analysis|Mis-estimate Sort +4x|0|Magnitude
+ClickHouse|35|PLAN|TPC-H|TPCH-Q12|TPC-H Q12 Analysis|Mis-estimate Sort +8x|0|Magnitude
+ClickHouse|36|PLAN|TPC-H|TPCH-Q12|TPC-H Q12 Analysis|Mis-estimate Sort >16x|0|Magnitude
+ClickHouse|37|PLAN|TPC-H|TPCH-Q12|TPC-H Q12 Analysis|Mis-estimate Scan <16x|0|Magnitude
+ClickHouse|38|PLAN|TPC-H|TPCH-Q12|TPC-H Q12 Analysis|Mis-estimate Scan -8x|0|Magnitude
+ClickHouse|39|PLAN|TPC-H|TPCH-Q12|TPC-H Q12 Analysis|Mis-estimate Scan -4x|0|Magnitude
+ClickHouse|40|PLAN|TPC-H|TPCH-Q12|TPC-H Q12 Analysis|Mis-estimate Scan -2x|0|Magnitude
+ClickHouse|41|PLAN|TPC-H|TPCH-Q12|TPC-H Q12 Analysis|Mis-estimate Scan =|0|Magnitude
+ClickHouse|42|PLAN|TPC-H|TPCH-Q12|TPC-H Q12 Analysis|Mis-estimate Scan +2x|0|Magnitude
+ClickHouse|43|PLAN|TPC-H|TPCH-Q12|TPC-H Q12 Analysis|Mis-estimate Scan +4x|0|Magnitude
+ClickHouse|44|PLAN|TPC-H|TPCH-Q12|TPC-H Q12 Analysis|Mis-estimate Scan +8x|0|Magnitude
+ClickHouse|45|PLAN|TPC-H|TPCH-Q12|TPC-H Q12 Analysis|Mis-estimate Scan >16x|0|Magnitude
+ClickHouse|46|PLAN|TPC-H|TPCH-Q12|TPC-H Q12 Analysis|Mis-estimate Filter <16x|0|Magnitude
+ClickHouse|47|PLAN|TPC-H|TPCH-Q12|TPC-H Q12 Analysis|Mis-estimate Filter -8x|0|Magnitude
+ClickHouse|48|PLAN|TPC-H|TPCH-Q12|TPC-H Q12 Analysis|Mis-estimate Filter -4x|0|Magnitude
+ClickHouse|49|PLAN|TPC-H|TPCH-Q12|TPC-H Q12 Analysis|Mis-estimate Filter -2x|0|Magnitude
+ClickHouse|50|PLAN|TPC-H|TPCH-Q12|TPC-H Q12 Analysis|Mis-estimate Filter =|0|Magnitude
+ClickHouse|51|PLAN|TPC-H|TPCH-Q12|TPC-H Q12 Analysis|Mis-estimate Filter +2x|0|Magnitude
+ClickHouse|52|PLAN|TPC-H|TPCH-Q12|TPC-H Q12 Analysis|Mis-estimate Filter +4x|0|Magnitude
+ClickHouse|53|PLAN|TPC-H|TPCH-Q12|TPC-H Q12 Analysis|Mis-estimate Filter +8x|0|Magnitude
+ClickHouse|54|PLAN|TPC-H|TPCH-Q12|TPC-H Q12 Analysis|Mis-estimate Filter >16x|0|Magnitude
+ClickHouse|55|PLAN|TPC-H|TPCH-Q12|TPC-H Q12 Analysis|Mis-estimate Hash <16x|0|Magnitude
+ClickHouse|56|PLAN|TPC-H|TPCH-Q12|TPC-H Q12 Analysis|Mis-estimate Hash -8x|0|Magnitude
+ClickHouse|57|PLAN|TPC-H|TPCH-Q12|TPC-H Q12 Analysis|Mis-estimate Hash -4x|0|Magnitude
+ClickHouse|58|PLAN|TPC-H|TPCH-Q12|TPC-H Q12 Analysis|Mis-estimate Hash -2x|0|Magnitude
+ClickHouse|59|PLAN|TPC-H|TPCH-Q12|TPC-H Q12 Analysis|Mis-estimate Hash =|0|Magnitude
+ClickHouse|60|PLAN|TPC-H|TPCH-Q12|TPC-H Q12 Analysis|Mis-estimate Hash +2x|0|Magnitude
+ClickHouse|61|PLAN|TPC-H|TPCH-Q12|TPC-H Q12 Analysis|Mis-estimate Hash +4x|0|Magnitude
+ClickHouse|62|PLAN|TPC-H|TPCH-Q12|TPC-H Q12 Analysis|Mis-estimate Hash +8x|0|Magnitude
+ClickHouse|63|PLAN|TPC-H|TPCH-Q12|TPC-H Q12 Analysis|Mis-estimate Hash >16x|0|Magnitude
+ClickHouse|64|PLAN|TPC-H|TPCH-Q12|TPC-H Q12 Analysis|Plan|"Estimate    Actual  Operator
+       -         2  PROJECT countIf((o_orderpriority = '1-URGENT') OR (o_orderpriority = '2-HIGH')), countIf((o_orderpriority <> '1-URGENT') AND (o_orderpriority <> '2-HIGH'))
+       -         2  SORT l_shipmode
+       -         2  AGGREGATE countIf((o_orderpriority = '1-URGENT') OR (o_orderpriority = '2-HIGH')), countIf((o_orderpriority <> '1-URGENT') AND (o_orderpriority <> '2-HIGH')) GROUP BY HASH l_shipmode
+       -     30837  PROJECT o_orderpriority = '1-URGENT', o_orderpriority <> '1-URGENT', o_orderpriority = '2-HIGH', o_orderpriority <> '2-HIGH', (o_orderpriority = '1-URGENT') OR (o_orderpriority = '2-HIGH'), (o_orderpriority <> '1-URGENT') AND (o_orderpriority <> '2-HIGH')
+       -     30837  INNER JOIN HASH ON l_orderkey = o_orderkey
+       -   1500000  │└TABLE SCAN orders
+       -     30837  TABLE SCAN lineitem WHERE (l_commitdate < '1995-01-01') AND (l_shipdate < '1995-01-01') AND (l_receiptdate >= '1994-01-01') AND (l_receiptdate < '1995-01-01') AND l_shipmode IN('AIR','TRUCK') AND (l_shipdate < l_commitdate) AND (l_commitdate < l_receiptdate)
+"|Plan

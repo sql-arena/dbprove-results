@@ -1,0 +1,109 @@
+{
+  "engine": "PostgreSQL",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 1,
+          "+8x": 1,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 1,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 1,
+          "+8x": 1,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 1,
+          "=": 1,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 1,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 30845,
+        "distribute": 0,
+        "hash": 30835,
+        "join": 30837,
+        "scan": 30835,
+        "seek": 30837,
+        "sort": 30835
+      },
+      "plan": "Estimate    Actual  Operator\n      30         2  AGGREGATE SUM(CASE WHEN ((o_orderpriority = '1-URGENT') OR (o_orderpriority = '2-HIGH')) THEN 1 ELSE 0 END), SUM(CASE WHEN ((o_orderpriority <> '1-URGENT') AND (o_orderpriority <> '2-HIGH')) THEN 1 ELSE 0 END) GROUP BY SORT l_shipmode\n      40        10  AGGREGATE PARTIAL SUM(CASE WHEN ((o_orderpriority = '1-URGENT') OR (o_orderpriority = '2-HIGH')) THEN 1 ELSE 0 END), PARTIAL SUM(CASE WHEN ((o_orderpriority <> '1-URGENT') AND (o_orderpriority <> '2-HIGH')) THEN 1 ELSE 0 END) GROUP BY SORT l_shipmode\n      40     30835  SORT l_shipmode\n      40     30835  INNER JOIN LOOP ON o_orderkey = l_orderkey\n      40     30835  │└TABLE SCAN lineitem AS lineitem WHERE (l_shipmode IN('AIR','TRUCK')) AND (l_commitdate < l_receiptdate) AND (l_shipdate < l_commitdate) AND (l_receiptdate >= '1994-01-01') AND (l_receiptdate < '1995-01-01')\n   30837     30837  TABLE SEEK orders AS orders\n",
+      "sql": "/* TPC-H Q12 */\nSELECT l_shipmode,\n       SUM(CASE\n               WHEN o_orderpriority = '1-URGENT'\n                   OR o_orderpriority = '2-HIGH'\n                   THEN 1\n               ELSE 0\n           END) AS high_line_count,\n       SUM(CASE\n               WHEN o_orderpriority <> '1-URGENT'\n                   AND o_orderpriority <> '2-HIGH'\n                   THEN 1\n               ELSE 0\n           END) AS low_line_count\nFROM tpch_sf1.lineitem\nINNER JOIN tpch_sf1.orders\n    ON o_orderkey = l_orderkey\nWHERE l_shipmode IN ('AIR', 'TRUCK')\n  AND l_commitdate < l_receiptdate\n  AND l_shipdate < l_commitdate\n  AND l_receiptdate >= '1994-01-01'\n  AND l_receiptdate < '1995-01-01'\nGROUP BY l_shipmode\nORDER BY l_shipmode\n\n\n",
+      "startTime": "2026-06-23T12:47:47.818778Z",
+      "status": "OK",
+      "timeMs": 171.107
+    }
+  ],
+  "runtime": {
+    "avgMs": 171.107,
+    "bestMs": 171.107,
+    "maxMs": 171.107,
+    "minMs": 171.107,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "TPC-H Q12 Analysis",
+    "displayName": "TPCH-Q12",
+    "name": "PLAN-TPC-H-Q12",
+    "tags": [
+      "TPC-H"
+    ]
+  },
+  "version": "14.23"
+}

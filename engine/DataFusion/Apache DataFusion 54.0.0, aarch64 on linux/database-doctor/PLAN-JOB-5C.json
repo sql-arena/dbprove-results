@@ -1,0 +1,110 @@
+{
+  "engine": "DataFusion",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 1
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 1,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 1
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 2,
+          ">16x": 2
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 4
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 6,
+          ">16x": 1
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 679,
+        "distribute": 1750536,
+        "hash": 2978,
+        "join": 2468923,
+        "scan": 12947637,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  PROJECT american_movie\n       1         1  AGGREGATE MIN(title)\n  306427        10  DISTRIBUTE GATHER\n  306427        10  AGGREGATE MIN(title)\n  306427       669  INNER JOIN HASH ON movie_id = id AND movie_id = id\n  306427       691  │└DISTRIBUTE HASH ON movie_id, movie_id\n  306427       691  │ INNER JOIN HASH ON id = info_type_id\n     113       113  │ │└TABLE SCAN info_type\n  306427       691  │ INNER JOIN HASH ON movie_id = movie_id\n  260913       798  │ │└DISTRIBUTE GATHER\n  260913       798  │ │ INNER JOIN HASH ON id = company_type_id\n       1         1  │ │ │└DISTRIBUTE GATHER\n       1         1  │ │ │ FILTER kind = 'production companies'\n       4         4  │ │ │ DISTRIBUTE ROUND ROBIN\n       4         4  │ │ │ TABLE SCAN company_type WHERE kind = 'production companies'\n  521826     12526  │ │ FILTER note NOT  LIKE '%(TV)%' AND note LIKE '%(USA)%'\n 2609129   1376261  │ │ TABLE SCAN movie_companies WHERE (note NOT  LIKE '%(TV)%' AND note LIKE '%(USA)%') AND (((company_type_id >= 2) AND (company_type_id <= 2)) AND company_type_id IN 2)\n 2967144    706674  │ FILTER info IN('Sweden','Norway','Germany','Denmark','Swedish','Denish','Norwegian','German','USA','American')\n14835720   9042947  │ TABLE SCAN movie_info WHERE (info IN('Sweden','Norway','Germany','Denmark','Swedish','Denish','Norwegian','German','USA','American') AND (((movie_id >= 67175) AND (movie_id <= 2518573)) AND TRUE)) AND (((info_type_id >= 1) AND (info_type_id <= 113)) AND info_type_id IN(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71...\n  523722   1749032  DISTRIBUTE HASH ON id, id\n  523722   1749032  FILTER production_year > 1990\n 2528312   2528312  TABLE SCAN title WHERE ((production_year > 1990) AND CASE MOD(HASH_REPARTITION(id,id),10) WHEN 1 THEN ((((id >= 293492) AND (id <= 2506376)) AND ((id >= 293492) AND (id <= 2506376))) AND struct(id,id) IN( < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr >...\n",
+      "sql": "SELECT MIN(t.title) AS american_movie\nFROM job.company_type AS ct,\n     job.info_type AS it,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.title AS t\nWHERE ct.kind = 'production companies'\n  AND mc.note NOT LIKE '%(TV)%'\n  AND mc.note LIKE '%(USA)%'\n  AND mi.info IN ('Sweden',\n                  'Norway',\n                  'Germany',\n                  'Denmark',\n                  'Swedish',\n                  'Denish',\n                  'Norwegian',\n                  'German',\n                  'USA',\n                  'American')\n  AND t.production_year > 1990\n  AND t.id = mi.movie_id\n  AND t.id = mc.movie_id\n  AND mc.movie_id = mi.movie_id\n  AND ct.id = mc.company_type_id\n  AND it.id = mi.info_type_id;\n",
+      "startTime": "2026-06-23T17:15:56.205351Z",
+      "status": "OK",
+      "timeMs": 233.062
+    }
+  ],
+  "runtime": {
+    "avgMs": 233.062,
+    "bestMs": 233.062,
+    "maxMs": 233.062,
+    "minMs": 233.062,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "iceberg",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 5C Analysis",
+    "displayName": "JOB-5C",
+    "name": "PLAN-JOB-5C",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "Apache DataFusion 54.0.0, aarch64 on linux"
+}

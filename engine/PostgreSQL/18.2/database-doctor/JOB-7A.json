@@ -1,0 +1,110 @@
+{
+  "engine": "PostgreSQL",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 1,
+          "-8x": 2,
+          "<16x": 3,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 8,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 32,
+        "distribute": 0,
+        "hash": 238519,
+        "join": 238519,
+        "scan": 1,
+        "seek": 238514,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(name), MIN(title)\n       1        32  INNER JOIN LOOP ON id = info_type_id\n       1        32  │└INNER JOIN LOOP ON person_id = person_id AND person_id = id AND (person_id = id)\n       1        14  │ │└INNER JOIN LOOP ON person_id = person_id AND id = person_id AND (id = person_id)\n     959     17559  │ │ │└INNER JOIN LOOP ON id = person_id\n    8442    105262  │ │ │ │└INNER JOIN LOOP ON movie_id = id\n     221      1467  │ │ │ │ │└INNER JOIN LOOP ON id = linked_movie_id\n    1666      5186  │ │ │ │ │ │└INNER JOIN LOOP ON link_type_id = id\n       1         1  │ │ │ │ │ │ │└TABLE SCAN link_type AS lt WHERE lt.link = 'features'\n    1875      5186  │ │ │ │ │ │ TABLE SEEK movie_link AS ml\n    5186      5186  │ │ │ │ │ TABLE SEEK title AS t WHERE (t.production_year >= 1980) AND (t.production_year <= 1995)\n   55746    105257  │ │ │ │ TABLE SEEK cast_info AS ci\n  105262    105262  │ │ │ TABLE SEEK name AS n WHERE (n.name_pcode_cf >= 'A') AND (n.name_pcode_cf <= 'F') AND ((n.gender = 'm') OR ((n.gender = 'f') AND (n.name LIKE 'B%')))\n   17559     17559  │ │ TABLE SEEK person_info AS pi WHERE pi.note = 'Volker Boehm'\n      28        32  │ TABLE SEEK aka_name AS an WHERE an.name LIKE '%a%'\n      32        32  TABLE SEEK info_type AS it WHERE it.info = 'mini biography'\n",
+      "sql": "SELECT MIN(n.name) AS of_person,\n       MIN(t.title) AS biography_movie\nFROM job.aka_name AS an,\n     job.cast_info AS ci,\n     job.info_type AS it,\n     job.link_type AS lt,\n     job.movie_link AS ml,\n     job.name AS n,\n     job.person_info AS pi,\n     job.title AS t\nWHERE an.name LIKE '%a%'\n  AND it.info ='mini biography'\n  AND lt.link ='features'\n  AND n.name_pcode_cf BETWEEN 'A' AND 'F'\n  AND (n.gender='m'\n       OR (n.gender = 'f'\n           AND n.name LIKE 'B%'))\n  AND pi.note ='Volker Boehm'\n  AND t.production_year BETWEEN 1980 AND 1995\n  AND n.id = an.person_id\n  AND n.id = pi.person_id\n  AND ci.person_id = n.id\n  AND t.id = ci.movie_id\n  AND ml.linked_movie_id = t.id\n  AND lt.id = ml.link_type_id\n  AND it.id = pi.info_type_id\n  AND pi.person_id = an.person_id\n  AND pi.person_id = ci.person_id\n  AND an.person_id = ci.person_id\n  AND ci.movie_id = ml.linked_movie_id;\n",
+      "startTime": "2026-06-17T12:34:00.536563Z",
+      "status": "OK",
+      "timeMs": 3472.459
+    }
+  ],
+  "runtime": {
+    "avgMs": 3472.459,
+    "bestMs": 3472.459,
+    "maxMs": 3472.459,
+    "minMs": 3472.459,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 7A Analysis",
+    "displayName": "JOB-7A",
+    "name": "JOB-7A",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "18.2"
+}

@@ -1,0 +1,99 @@
+QUERY id: 0
+  PROJECTION COLUMNS
+    l_shipmode String
+    high_line_count UInt64
+    low_line_count UInt64
+  PROJECTION
+    LIST id: 1, nodes: 3
+      COLUMN id: 2, column_name: l_shipmode, result_type: String, source_id: 3
+      FUNCTION id: 4, function_name: countIf, function_type: aggregate, result_type: UInt64
+        ARGUMENTS
+          LIST id: 5, nodes: 1
+            FUNCTION id: 6, function_name: or, function_type: ordinary, result_type: UInt8
+              ARGUMENTS
+                LIST id: 7, nodes: 2
+                  FUNCTION id: 8, function_name: equals, function_type: ordinary, result_type: UInt8
+                    ARGUMENTS
+                      LIST id: 9, nodes: 2
+                        COLUMN id: 10, column_name: o_orderpriority, result_type: String, source_id: 11
+                        CONSTANT id: 12, constant_value: '1-URGENT', constant_value_type: String
+                  FUNCTION id: 13, function_name: equals, function_type: ordinary, result_type: UInt8
+                    ARGUMENTS
+                      LIST id: 14, nodes: 2
+                        COLUMN id: 15, column_name: o_orderpriority, result_type: String, source_id: 11
+                        CONSTANT id: 16, constant_value: '2-HIGH', constant_value_type: String
+      FUNCTION id: 17, function_name: countIf, function_type: aggregate, result_type: UInt64
+        ARGUMENTS
+          LIST id: 18, nodes: 1
+            FUNCTION id: 19, function_name: and, function_type: ordinary, result_type: UInt8
+              ARGUMENTS
+                LIST id: 20, nodes: 2
+                  FUNCTION id: 21, function_name: notEquals, function_type: ordinary, result_type: UInt8
+                    ARGUMENTS
+                      LIST id: 22, nodes: 2
+                        COLUMN id: 23, column_name: o_orderpriority, result_type: String, source_id: 11
+                        CONSTANT id: 24, constant_value: '1-URGENT', constant_value_type: String
+                  FUNCTION id: 25, function_name: notEquals, function_type: ordinary, result_type: UInt8
+                    ARGUMENTS
+                      LIST id: 26, nodes: 2
+                        COLUMN id: 27, column_name: o_orderpriority, result_type: String, source_id: 11
+                        CONSTANT id: 28, constant_value: '2-HIGH', constant_value_type: String
+  JOIN TREE
+    JOIN id: 29, strictness: ALL, kind: INNER
+      LEFT TABLE EXPRESSION
+        TABLE id: 3, alias: __table1, table_name: tpch_sf1.lineitem
+      RIGHT TABLE EXPRESSION
+        TABLE id: 11, alias: __table2, table_name: tpch_sf1.orders
+      JOIN EXPRESSION
+        FUNCTION id: 30, function_name: equals, function_type: ordinary, result_type: UInt8
+          ARGUMENTS
+            LIST id: 31, nodes: 2
+              COLUMN id: 32, column_name: o_orderkey, result_type: Int32, source_id: 11
+              COLUMN id: 33, column_name: l_orderkey, result_type: Int32, source_id: 3
+  WHERE
+    FUNCTION id: 34, function_name: and, function_type: ordinary, result_type: UInt8
+      ARGUMENTS
+        LIST id: 35, nodes: 7
+          FUNCTION id: 36, function_name: in, function_type: ordinary, result_type: UInt8
+            ARGUMENTS
+              LIST id: 37, nodes: 2
+                COLUMN id: 38, column_name: l_shipmode, result_type: String, source_id: 3
+                CONSTANT id: 39, constant_value: Tuple_('AIR', 'TRUCK'), constant_value_type: Tuple(String, String)
+          FUNCTION id: 40, function_name: less, function_type: ordinary, result_type: UInt8
+            ARGUMENTS
+              LIST id: 41, nodes: 2
+                COLUMN id: 42, column_name: l_commitdate, result_type: Date, source_id: 3
+                COLUMN id: 43, column_name: l_receiptdate, result_type: Date, source_id: 3
+          FUNCTION id: 44, function_name: less, function_type: ordinary, result_type: UInt8
+            ARGUMENTS
+              LIST id: 45, nodes: 2
+                COLUMN id: 46, column_name: l_shipdate, result_type: Date, source_id: 3
+                COLUMN id: 47, column_name: l_commitdate, result_type: Date, source_id: 3
+          FUNCTION id: 48, function_name: greaterOrEquals, function_type: ordinary, result_type: UInt8
+            ARGUMENTS
+              LIST id: 49, nodes: 2
+                COLUMN id: 50, column_name: l_receiptdate, result_type: Date, source_id: 3
+                CONSTANT id: 51, constant_value: '1994-01-01', constant_value_type: String
+          FUNCTION id: 52, function_name: less, function_type: ordinary, result_type: UInt8
+            ARGUMENTS
+              LIST id: 53, nodes: 2
+                COLUMN id: 54, column_name: l_receiptdate, result_type: Date, source_id: 3
+                CONSTANT id: 55, constant_value: '1995-01-01', constant_value_type: String
+          FUNCTION id: 56, function_name: less, function_type: ordinary, result_type: UInt8
+            ARGUMENTS
+              LIST id: 57, nodes: 2
+                COLUMN id: 58, column_name: l_commitdate, result_type: Date, source_id: 3
+                CONSTANT id: 59, constant_value: '1995-01-01', constant_value_type: String
+          FUNCTION id: 60, function_name: less, function_type: ordinary, result_type: UInt8
+            ARGUMENTS
+              LIST id: 61, nodes: 2
+                COLUMN id: 62, column_name: l_shipdate, result_type: Date, source_id: 3
+                CONSTANT id: 63, constant_value: '1995-01-01', constant_value_type: String
+  GROUP BY
+    LIST id: 64, nodes: 1
+      COLUMN id: 65, column_name: l_shipmode, result_type: String, source_id: 3
+  ORDER BY
+    LIST id: 66, nodes: 1
+      SORT id: 67, sort_direction: ASCENDING, with_fill: 0
+        EXPRESSION l_shipmode
+          COLUMN id: 68, column_name: l_shipmode, result_type: String, source_id: 3

@@ -1,0 +1,109 @@
+{
+  "engine": "ClickHouse",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 71636,
+        "distribute": 0,
+        "hash": 200000,
+        "join": 71636,
+        "scan": 271636,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       -         1  PROJECT (100. * a4) / a5 AS promo_revenue\n       -         1  AGGREGATE sumIf(a10,a12) AS a4, SUM(a10) AS a5\n       -     71636  PROJECT l_extendedprice * (1 - l_discount) AS a10, startsWith(p_type,'PROMO') AS a12\n       -     71636  PROJECT l_extendedprice, l_discount, p_type\n       -     71636  INNER JOIN HASH ON PROJECTION_343.l_partkey = PROJECTION_340.p_partkey\n       -    200000  │└PROJECT p_partkey, p_type\n       -    200000  │ PROJECT p_type, p_partkey\n       -    200000  │ TABLE SCAN part\n       -     71636  PROJECT l_partkey, l_extendedprice, l_discount\n       -     71636  PROJECT l_partkey, l_extendedprice, l_discount\n       -     71636  TABLE SCAN lineitem WHERE (l_shipdate >= '1996-02-01') AND (l_shipdate < '1996-03-01')\n",
+      "sql": "/* TPC-H Q14 */\nSELECT 100.00 * SUM(CASE\n                        WHEN p_type LIKE 'PROMO%'\n                            THEN l_extendedprice * (1 - l_discount)\n                        ELSE 0\n    END) / SUM(l_extendedprice * (1 - l_discount)) AS promo_revenue\nFROM tpch_sf1.lineitem\nINNER JOIN tpch_sf1.part\n    ON l_partkey = p_partkey\nWHERE l_shipdate >= '1996-02-01'\n  AND l_shipdate < '1996-03-01'",
+      "startTime": "2026-06-23T11:15:02.726706Z",
+      "status": "OK",
+      "timeMs": 37.905
+    }
+  ],
+  "runtime": {
+    "avgMs": 37.905,
+    "bestMs": 37.905,
+    "maxMs": 37.905,
+    "minMs": 37.905,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "TPC-H Q14 Analysis",
+    "displayName": "TPCH-Q14",
+    "name": "PLAN-TPC-H-Q14",
+    "tags": [
+      "TPC-H"
+    ]
+  },
+  "version": "26.1.12.23"
+}

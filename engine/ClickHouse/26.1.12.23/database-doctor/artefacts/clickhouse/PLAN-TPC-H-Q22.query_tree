@@ -1,0 +1,119 @@
+QUERY id: 0
+  PROJECTION COLUMNS
+    cntrycode String
+    numcust UInt64
+    totacctbal Decimal(38, 0)
+  PROJECTION
+    LIST id: 1, nodes: 3
+      COLUMN id: 2, column_name: cntrycode, result_type: String, source_id: 3
+      FUNCTION id: 4, function_name: count, function_type: aggregate, result_type: UInt64
+      FUNCTION id: 5, function_name: sum, function_type: aggregate, result_type: Decimal(38, 0)
+        ARGUMENTS
+          LIST id: 6, nodes: 1
+            COLUMN id: 7, column_name: c_acctbal, result_type: Decimal(10, 0), source_id: 3
+  JOIN TREE
+    QUERY id: 3, alias: __table1, is_subquery: 1
+      PROJECTION COLUMNS
+        cntrycode String
+        c_acctbal Decimal(10, 0)
+      PROJECTION
+        LIST id: 8, nodes: 2
+          FUNCTION id: 9, function_name: left, function_type: ordinary, result_type: String
+            ARGUMENTS
+              LIST id: 10, nodes: 2
+                COLUMN id: 11, column_name: c_phone, result_type: String, source_id: 12
+                CONSTANT id: 13, constant_value: UInt64_2, constant_value_type: UInt8
+          COLUMN id: 14, column_name: c_acctbal, result_type: Decimal(10, 0), source_id: 12
+      JOIN TREE
+        TABLE id: 12, alias: __table2, table_name: tpch_sf1.customer
+      WHERE
+        FUNCTION id: 15, function_name: and, function_type: ordinary, result_type: Nullable(UInt8)
+          ARGUMENTS
+            LIST id: 16, nodes: 3
+              FUNCTION id: 17, function_name: in, function_type: ordinary, result_type: UInt8
+                ARGUMENTS
+                  LIST id: 18, nodes: 2
+                    FUNCTION id: 19, function_name: left, function_type: ordinary, result_type: String
+                      ARGUMENTS
+                        LIST id: 20, nodes: 2
+                          COLUMN id: 21, column_name: c_phone, result_type: String, source_id: 12
+                          CONSTANT id: 22, constant_value: UInt64_2, constant_value_type: UInt8
+                    CONSTANT id: 23, constant_value: Tuple_('10', '17', '19', '23', '22', '31', '27'), constant_value_type: Tuple(String, String, String, String, String, String, String)
+              FUNCTION id: 24, function_name: greater, function_type: ordinary, result_type: Nullable(UInt8)
+                ARGUMENTS
+                  LIST id: 25, nodes: 2
+                    COLUMN id: 26, column_name: c_acctbal, result_type: Decimal(10, 0), source_id: 12
+                    CONSTANT id: 27, constant_value: Float64_4979.819810133222, constant_value_type: Nullable(Float64)
+                      EXPRESSION
+                        QUERY id: 28, is_subquery: 1
+                          PROJECTION COLUMNS
+                            AVG(c_acctbal) Float64
+                          PROJECTION
+                            LIST id: 29, nodes: 1
+                              FUNCTION id: 30, function_name: avg, function_type: aggregate, result_type: Float64
+                                ARGUMENTS
+                                  LIST id: 31, nodes: 1
+                                    COLUMN id: 32, column_name: c_acctbal, result_type: Decimal(10, 0), source_id: 33
+                          JOIN TREE
+                            TABLE id: 33, table_name: tpch_sf1.customer
+                          WHERE
+                            FUNCTION id: 34, function_name: and, function_type: ordinary, result_type: UInt8
+                              ARGUMENTS
+                                LIST id: 35, nodes: 2
+                                  FUNCTION id: 36, function_name: greater, function_type: ordinary, result_type: UInt8
+                                    ARGUMENTS
+                                      LIST id: 37, nodes: 2
+                                        COLUMN id: 38, column_name: c_acctbal, result_type: Decimal(10, 0), source_id: 33
+                                        CONSTANT id: 39, constant_value: Float64_0, constant_value_type: Float64
+                                  FUNCTION id: 40, function_name: in, function_type: ordinary, result_type: UInt8
+                                    ARGUMENTS
+                                      LIST id: 41, nodes: 2
+                                        FUNCTION id: 42, function_name: left, function_type: ordinary, result_type: String
+                                          ARGUMENTS
+                                            LIST id: 43, nodes: 2
+                                              COLUMN id: 44, column_name: c_phone, result_type: String, source_id: 33
+                                              CONSTANT id: 45, constant_value: UInt64_2, constant_value_type: UInt8
+                                        CONSTANT id: 46, constant_value: Tuple_('10', '17', '19', '23', '22', '31', '27'), constant_value_type: Tuple(String, String, String, String, String, String, String)
+              FUNCTION id: 47, function_name: not, function_type: ordinary, result_type: UInt8
+                ARGUMENTS
+                  LIST id: 48, nodes: 1
+                    FUNCTION id: 49, function_name: exists, function_type: ordinary, result_type: UInt8
+                      ARGUMENTS
+                        LIST id: 50, nodes: 1
+                          QUERY id: 51, alias: __table3, is_subquery: 1, is_correlated: 1
+                            CORRELATED COLUMNS
+                              LIST id: 52, nodes: 1
+                                COLUMN id: 53, column_name: c_custkey, result_type: Int32, source_id: 12
+                            PROJECTION COLUMNS
+                              1 UInt64
+                            PROJECTION
+                              LIST id: 54, nodes: 1
+                                CONSTANT id: 55, constant_value: UInt64_1, constant_value_type: UInt64
+                            JOIN TREE
+                              QUERY id: 56, alias: __table4, is_subquery: 1, is_correlated: 1
+                                CORRELATED COLUMNS
+                                  LIST id: 57, nodes: 1
+                                    COLUMN id: 53, column_name: c_custkey, result_type: Int32, source_id: 12
+                                PROJECTION COLUMNS
+                                  o_orderkey Int32
+                                PROJECTION
+                                  LIST id: 58, nodes: 1
+                                    COLUMN id: 59, column_name: o_orderkey, result_type: Int32, source_id: 60
+                                JOIN TREE
+                                  TABLE id: 60, alias: __table5, table_name: tpch_sf1.orders
+                                WHERE
+                                  FUNCTION id: 61, function_name: equals, function_type: ordinary, result_type: UInt8
+                                    ARGUMENTS
+                                      LIST id: 62, nodes: 2
+                                        COLUMN id: 63, column_name: o_custkey, result_type: Int32, source_id: 60
+                                        COLUMN id: 53, column_name: c_custkey, result_type: Int32, source_id: 12
+                            LIMIT
+                              CONSTANT id: 64, constant_value: UInt64_1, constant_value_type: UInt64
+  GROUP BY
+    LIST id: 65, nodes: 1
+      COLUMN id: 66, column_name: cntrycode, result_type: String, source_id: 3
+  ORDER BY
+    LIST id: 67, nodes: 1
+      SORT id: 68, sort_direction: ASCENDING, with_fill: 0
+        EXPRESSION cntrycode
+          COLUMN id: 69, column_name: cntrycode, result_type: String, source_id: 3

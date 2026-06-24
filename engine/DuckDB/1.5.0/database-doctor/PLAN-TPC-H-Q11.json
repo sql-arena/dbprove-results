@@ -1,0 +1,109 @@
+{
+  "engine": "DuckDB",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 2,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 1,
+          "=": 2,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 3,
+          ">16x": 1
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 60321,
+        "distribute": 0,
+        "hash": 31762,
+        "join": 826452,
+        "scan": 858258,
+        "seek": 0,
+        "sort": 1225
+      },
+      "plan": "Estimate    Actual  Operator\n       -      1225  SORT SUM(ps_supplycost * ps_availqty)\n      57      1225  PROJECT ps_partkey, v\n      57      1225  SEQUENCE\n   30769     30160  ├─MATERIALISE AS m___common_subplan_1\n   30769     30160  │ INNER JOIN HASH ON ps_suppkey = s_suppkey\n     384       377  │ │└INNER JOIN HASH ON s_nationkey = n_nationkey\n       1         1  │ │ │└TABLE SCAN nation WHERE n_name = 'JAPAN'\n   10000       377  │ │ TABLE SCAN supplier\n  800000    797560  │ TABLE SCAN partsupp\n      57      1225  └─INNER JOIN LOOP ON CAST(SUM(ps_supplycost * CAST(ps_availqty AS DECIMAL(18,0))) AS DECIMAL(38,6)) > SUBQUERY\n       1         1    │└PROJECT CASE WHEN (#1 > 1) THEN (\"error\"('More than one row returned by a subquery used as an expression - scalar subqueries can only return a single row. Use \"SET scalar_subquery_error_on_multiple_rows=false\" to revert to previous behavior of returning a random row.')) ELSE #0 END\n       -         1    │ AGGREGATE \"first\" #0, count_star()\n       1         1    │ PROJECT SUM(ps_supplycost * CAST(ps_availqty AS DECIMAL(18,0))) * 0.0001\n       -         1    │ AGGREGATE SUM(#0)\n       0     30160    │ PROJECT ps_supplycost * CAST(ps_availqty AS DECIMAL(18,0))\n   30769     30160    │ SCAN MATERIALISED __common_subplan_1\n   23979     28515    AGGREGATE SUM(#1) GROUP BY HASH #0\n   30769     30160    PROJECT ps_partkey, ps_supplycost * CAST(ps_availqty AS DECIMAL(18,0))\n   30769     30160    SCAN MATERIALISED __common_subplan_1\n",
+      "sql": "/* TPC-H Q11 */\nSELECT ps_partkey,\n       SUM(ps_supplycost * ps_availqty) AS v\nFROM tpch_sf1.partsupp\nINNER JOIN tpch_sf1.supplier\n    ON ps_suppkey = s_suppkey\nINNER JOIN tpch_sf1.nation\n    ON s_nationkey = n_nationkey\nWHERE n_name = 'JAPAN'\nGROUP BY ps_partkey\nHAVING SUM(ps_supplycost * ps_availqty)\n           > (SELECT SUM(ps_supplycost * ps_availqty) * 0.0001\n              FROM tpch_sf1.partsupp\n              INNER JOIN tpch_sf1.supplier\n                  ON ps_suppkey = s_suppkey\n              INNER JOIN tpch_sf1.nation\n                  ON s_nationkey = n_nationkey\n              WHERE n_name = 'JAPAN')\nORDER BY v DESC\n",
+      "startTime": "2026-06-22T16:08:56.166256Z",
+      "status": "OK",
+      "timeMs": 3.244
+    }
+  ],
+  "runtime": {
+    "avgMs": 3.244,
+    "bestMs": 3.244,
+    "maxMs": 3.244,
+    "minMs": 3.244,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "TPC-H Q11 Analysis",
+    "displayName": "TPCH-Q11",
+    "name": "PLAN-TPC-H-Q11",
+    "tags": [
+      "TPC-H"
+    ]
+  },
+  "version": "1.5.0"
+}

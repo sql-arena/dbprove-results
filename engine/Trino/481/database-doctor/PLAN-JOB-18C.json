@@ -1,0 +1,110 @@
+{
+  "engine": "Trino",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 1,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 4
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 8,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 28074,
+        "distribute": 5836900,
+        "hash": 5984292,
+        "join": 1747252,
+        "scan": 59156128,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  PROJECT min AS movie_budget, min_35 AS movie_votes, min_36 AS movie_title\n       1         1  AGGREGATE MIN(min_37) AS min, MIN(min_38) AS min_35, MIN(min_39) AS min_36\n       -         1  DISTRIBUTE GATHER\n       -         1  AGGREGATE MIN(info_11) AS min_37, MIN(info_19) AS min_38, MIN(title) AS min_39\n       -     28073  INNER JOIN HASH ON movie_id = id_28\n 2528312   2528312  │└DISTRIBUTE HASH ON id_28\n 2528312   2528312  │ PROJECT id AS id_28, title\n 2528312   2528312  │ TABLE SCAN title\n       -     28073  INNER JOIN HASH ON person_id = id_24\n       -   1739579  │└DISTRIBUTE HASH ON id_24\n 4167491   1739579  │ PROJECT id AS id_24\n 4167491   1739579  │ FILTER gender = 'm'\n 4167491   4167491  │ TABLE SCAN name\n       -     54155  INNER JOIN HASH ON info_type_id_18 = id_4\n       -         1  │└DISTRIBUTE GATHER\n     113         1  │ PROJECT id AS id_4\n     113         1  │ FILTER info = 'votes'\n     113       113  │ TABLE SCAN info_type\n       -    162621  INNER JOIN HASH ON movie_id = movie_id_17\n 1380035   1380035  │└DISTRIBUTE HASH ON movie_id_17\n 1380035   1380035  │ PROJECT movie_id AS movie_id_17, info_type_id AS info_type_id_18, info AS info_19\n 1380035   1380035  │ TABLE SCAN movie_info_idx\n       -     93240  INNER JOIN HASH ON info_type_id = id_0\n       -         1  │└DISTRIBUTE GATHER\n     113         1  │ PROJECT id AS id_0\n     113         1  │ FILTER info = 'genres'\n     113       113  │ TABLE SCAN info_type\n       -     95066  INNER JOIN HASH ON movie_id = movie_id_10\n13352148    188971  │└DISTRIBUTE HASH ON movie_id_10\n14835720    188971  │ PROJECT movie_id AS movie_id_10, info_type_id, info AS info_11\n14835720    188971  │ FILTER info IN('Action','Crime','Horror','Sci-Fi','Thriller','War')\n14835720  14835720  │ TABLE SCAN movie_info\n36244344   1244716  FILTER note IN('(head writer)','(story editor)','(story)','(writer)','(written by)')\n36244344  36244344  TABLE SCAN cast_info\n",
+      "sql": "SELECT MIN(mi.info) AS movie_budget,\n       MIN(mi_idx.info) AS movie_votes,\n       MIN(t.title) AS movie_title\nFROM job.cast_info AS ci,\n     job.info_type AS it1,\n     job.info_type AS it2,\n     job.movie_info AS mi,\n     job.movie_info_idx AS mi_idx,\n     job.name AS n,\n     job.title AS t\nWHERE ci.note IN ('(writer)',\n                  '(head writer)',\n                  '(written by)',\n                  '(story)',\n                  '(story editor)')\n  AND it1.info = 'genres'\n  AND it2.info = 'votes'\n  AND mi.info IN ('Horror',\n                  'Action',\n                  'Sci-Fi',\n                  'Thriller',\n                  'Crime',\n                  'War')\n  AND n.gender = 'm'\n  AND t.id = mi.movie_id\n  AND t.id = mi_idx.movie_id\n  AND t.id = ci.movie_id\n  AND ci.movie_id = mi.movie_id\n  AND ci.movie_id = mi_idx.movie_id\n  AND mi.movie_id = mi_idx.movie_id\n  AND n.id = ci.person_id\n  AND it1.id = mi.info_type_id\n  AND it2.id = mi_idx.info_type_id;\n",
+      "startTime": "2026-06-23T15:22:22.857374Z",
+      "status": "OK",
+      "timeMs": 1603.068
+    }
+  ],
+  "runtime": {
+    "avgMs": 1603.068,
+    "bestMs": 1603.068,
+    "maxMs": 1603.068,
+    "minMs": 1603.068,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "iceberg",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 18C Analysis",
+    "displayName": "JOB-18C",
+    "name": "PLAN-JOB-18C",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "481"
+}

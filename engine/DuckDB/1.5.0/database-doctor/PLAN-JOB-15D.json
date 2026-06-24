@@ -1,0 +1,110 @@
+{
+  "engine": "DuckDB",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 1,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 1
+        },
+        "hash": {
+          "+2x": 2,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 6,
+          "=": 0,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 7,
+          "=": 1,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 2,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 1,
+          "=": 2,
+          ">16x": 3
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 11347,
+        "distribute": 0,
+        "hash": 3178173,
+        "join": 5010573,
+        "scan": 4808959,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       -         1  AGGREGATE MIN(#0), MIN(#1)\n      21     11347  PROJECT title, title\n      21     11347  INNER JOIN HASH ON id = keyword_id\n      20     11347  │└INNER JOIN HASH ON movie_id = movie_id\n      11       875  │ │└INNER JOIN HASH ON company_type_id = id\n       4         2  │ │ │└TABLE SCAN company_type WHERE id <= 2\n      11       875  │ │ INNER JOIN HASH ON info_type_id = id\n       2         1  │ │ │└FILTER id <= 110\n       2         1  │ │ │ TABLE SCAN info_type WHERE info = 'release dates'\n     645       875  │ │ INNER JOIN HASH ON movie_id = movie_id\n     540    218489  │ │ │└INNER JOIN HASH ON id = movie_id\n    2655    627946  │ │ │ │└INNER JOIN HASH ON movie_id = movie_id\n   18253   1153647  │ │ │ │ │└INNER JOIN HASH ON company_id = id\n    1644     84843  │ │ │ │ │ │└TABLE SCAN company_name WHERE country_code = 'us'\n 2609129   2608947  │ │ │ │ │ TABLE SCAN movie_companies WHERE movie_id >= 50 AND movie_id <= 2525672\n  361379    361379  │ │ │ │ TABLE SCAN aka_title\n  505662   1748361  │ │ │ FILTER id BETWEEN 50 AND 2525672\n  505662   1748997  │ │ │ TABLE SCAN title WHERE production_year > 1990\n 2967144       251  │ │ FILTER movie_id BETWEEN 50 AND 2525672\n 2967144       251  │ │ TABLE SCAN movie_info WHERE contains(note,'internet')\n 4523930      2812  │ TABLE SCAN movie_keyword WHERE movie_id >= 50 AND movie_id <= 2525672\n  134170      1727  TABLE SCAN keyword\n",
+      "sql": "SELECT MIN(aka_t.title) AS aka_title,\n       MIN(t.title) AS internet_movie_title\nFROM job.aka_title AS aka_t,\n     job.company_name AS cn,\n     job.company_type AS ct,\n     job.info_type AS it1,\n     job.keyword AS k,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.movie_keyword AS mk,\n     job.title AS t\nWHERE cn.country_code = '[us]'\n  AND it1.info = 'release dates'\n  AND mi.note LIKE '%internet%'\n  AND t.production_year > 1990\n  AND t.id = aka_t.movie_id\n  AND t.id = mi.movie_id\n  AND t.id = mk.movie_id\n  AND t.id = mc.movie_id\n  AND mk.movie_id = mi.movie_id\n  AND mk.movie_id = mc.movie_id\n  AND mk.movie_id = aka_t.movie_id\n  AND mi.movie_id = mc.movie_id\n  AND mi.movie_id = aka_t.movie_id\n  AND mc.movie_id = aka_t.movie_id\n  AND k.id = mk.keyword_id\n  AND it1.id = mi.info_type_id\n  AND cn.id = mc.company_id\n  AND ct.id = mc.company_type_id;\n",
+      "startTime": "2026-06-23T14:00:49.012184Z",
+      "status": "OK",
+      "timeMs": 60.28
+    }
+  ],
+  "runtime": {
+    "avgMs": 60.28,
+    "bestMs": 60.28,
+    "maxMs": 60.28,
+    "minMs": 60.28,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 15D Analysis",
+    "displayName": "JOB-15D",
+    "name": "PLAN-JOB-15D",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "1.5.0"
+}

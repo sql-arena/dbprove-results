@@ -1,0 +1,110 @@
+{
+  "engine": "PostgreSQL",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 3,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 5,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 975004,
+        "distribute": 0,
+        "hash": 600000,
+        "join": 1500000,
+        "scan": 1500000,
+        "seek": 600000,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE COUNT(o_orderkey)\n       4         4  AGGREGATE PARTIAL COUNT(o_orderkey)\n  241935    375000  INNER JOIN HASH ON (o_custkey + 1) = (c_custkey + 1)\n  600000    600000  │└AGGREGATE c_custkey GROUP BY HASH c_custkey + 1\n  600000    600000  │ TABLE SEEK customer AS c\n 1935484   1500000  TABLE SCAN orders AS o\n",
+      "sql": "SELECT COUNT(o.o_orderkey)\nFROM tpch_sf1.orders AS o\nWHERE EXISTS (\n  SELECT 1\n  FROM tpch_sf1.customer AS c\n  WHERE c.c_custkey + 1 = o.o_custkey + 1\n);\n",
+      "startTime": "2026-06-23T12:47:52.288796Z",
+      "status": "OK",
+      "timeMs": 145.718
+    }
+  ],
+  "runtime": {
+    "avgMs": 145.718,
+    "bestMs": 145.718,
+    "maxMs": 145.718,
+    "minMs": 145.718,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Count ORDERS rows with a matching CUSTOMER via EXISTS on +1 adjusted keys",
+    "displayName": "PLAN_JOIN_CHECK-SEMI-ORDERS-CUSTOMER-PLUS1",
+    "name": "PLAN_JOIN_CHECK-SEMI-ORDERS-CUSTOMER-PLUS1",
+    "tags": [
+      "PLAN_JOIN_CHECK",
+      "join"
+    ]
+  },
+  "version": "14.23"
+}

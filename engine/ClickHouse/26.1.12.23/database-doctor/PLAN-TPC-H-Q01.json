@@ -1,0 +1,109 @@
+{
+  "engine": "ClickHouse",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 5962146,
+        "distribute": 0,
+        "hash": 0,
+        "join": 0,
+        "scan": 5962146,
+        "seek": 0,
+        "sort": 4
+      },
+      "plan": "Estimate    Actual  Operator\n       -         4  PROJECT l_returnflag, l_linestatus, a1 AS sum_qty, a2 AS sum_base_price, a3 AS sum_disc_price, a4 AS sum_charge, a5 AS avg_qty, a6 AS avg_price, a7 AS avg_disc, a8 AS count_order\n       -         4  SORT l_returnflag, l_linestatus\n       -         4  PROJECT l_returnflag, l_linestatus, a1, a2, a3, a4, a5, a6, a7, a8\n       -         4  AGGREGATE SUM(l_quantity) AS a1, SUM(l_extendedprice) AS a2, SUM(a17) AS a3, SUM(a19) AS a4, AVG(l_quantity) AS a5, AVG(l_extendedprice) AS a6, AVG(l_discount) AS a7, COUNT() AS a8 GROUP BY HASH l_returnflag, l_linestatus\n       -   5962146  PROJECT l_returnflag, l_linestatus, l_quantity, l_extendedprice, l_extendedprice * (1 - l_discount) AS a17, (l_extendedprice * (1 - l_discount)) * (1 + l_tax) AS a19, l_discount\n       -   5962146  PROJECT l_returnflag, l_linestatus, l_quantity, l_extendedprice, l_discount, l_tax\n       -   5962146  TABLE SCAN lineitem WHERE l_shipdate <= '1998-10-01'\n",
+      "sql": "/* TPC-H Q01 */\nSELECT l_returnflag,\n       l_linestatus,\n       SUM(l_quantity)                                       AS sum_qty,\n       SUM(l_extendedprice)                                  AS sum_base_price,\n       SUM(l_extendedprice * (1 - l_discount))               AS sum_disc_price,\n       SUM(l_extendedprice * (1 - l_discount) * (1 + l_tax)) AS sum_charge,\n       AVG(l_quantity)                                       AS avg_qty,\n       AVG(l_extendedprice)                                  AS avg_price,\n       AVG(l_discount)                                       AS avg_disc,\n       COUNT(*)                                              AS count_order\nFROM tpch_sf1.lineitem\nWHERE l_shipdate <= '1998-10-01'\nGROUP BY l_returnflag,\n         l_linestatus\nORDER BY l_returnflag,\n         l_linestatus",
+      "startTime": "2026-06-23T11:14:08.718145Z",
+      "status": "OK",
+      "timeMs": 712.092
+    }
+  ],
+  "runtime": {
+    "avgMs": 712.092,
+    "bestMs": 712.092,
+    "maxMs": 712.092,
+    "minMs": 712.092,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "TPC-H Q01 Analysis",
+    "displayName": "TPCH-Q01",
+    "name": "PLAN-TPC-H-Q01",
+    "tags": [
+      "TPC-H"
+    ]
+  },
+  "version": "26.1.12.23"
+}

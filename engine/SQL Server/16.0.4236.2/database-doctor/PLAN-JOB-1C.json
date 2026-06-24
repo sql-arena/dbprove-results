@@ -1,0 +1,110 @@
+{
+  "engine": "SQL Server",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 1,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 2,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 3,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 2,
+          ">16x": 5
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 1,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 1,
+          "-8x": 0,
+          "<16x": 4,
+          "=": 4,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 4,
+        "distribute": 0,
+        "hash": 18027,
+        "join": 1380224,
+        "scan": 17838,
+        "seek": 1380315,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(partialagg1031) AS Expr1010, MIN(partialagg1032) AS Expr1011, MIN(partialagg1033) AS Expr1012\n       5         1  AGGREGATE MIN(note as note) AS partialagg1031, MIN(title as title) AS partialagg1032, MIN(production_year as production_year) AS partialagg1033\n    1541         3  INNER JOIN HASH ON mc.company_type_id = ct.id\n       1         1  │└FILTER kind as kind = 'production companies'\n       4         4  │ INNER JOIN LOOP ON Bmk1000 = Bmk1000\n       1         4  │ │└TABLE SEEK company_type AS ct\n       4         4  │ TABLE SEEK company_type AS ct\n    3083         3  INNER JOIN LOOP ON Bmk1008 = Bmk1008\n       0        23  │└TABLE SEEK title AS t WHERE production_year as production_year > 2010\n   20101        23  PROJECT BmkToPage Bmk1008 AS Expr1193\n   20101        23  INNER JOIN LOOP ON mi_idx.movie_id = t.id\n       1        23  │└TABLE SEEK title AS t\n   20101        23  INNER JOIN HASH ON mi_idx.info_type_id = it.id\n       1         1  │└FILTER info as info = 'top 250 rank'\n     113       113  │ INNER JOIN LOOP ON Bmk1002 = Bmk1002\n       1       113  │ │└TABLE SEEK info_type AS it\n     113       113  │ TABLE SEEK info_type AS it\n   10051        23  INNER JOIN HASH ON mi_idx.movie_id = mc.movie_id\n   17961     17838  │└TABLE SCAN movie_companies AS mc WHERE  NOT note as note LIKE '%(as Metro-Goldwyn-Mayer Pictures)%' AND note as note LIKE '%(co-production)%' AND BLOOM(company_type_id as company_type_id)\n   13800   1380035  TABLE SEEK movie_info_idx AS mi_idx WHERE BLOOM(info_type_id as info_type_id) AND BLOOM(movie_id as movie_id)\n",
+      "sql": "SELECT MIN(mc.note) AS production_note,\n       MIN(t.title) AS movie_title,\n       MIN(t.production_year) AS movie_year\nFROM job.company_type AS ct,\n     job.info_type AS it,\n     job.movie_companies AS mc,\n     job.movie_info_idx AS mi_idx,\n     job.title AS t\nWHERE ct.kind = 'production companies'\n  AND it.info = 'top 250 rank'\n  AND mc.note NOT LIKE '%(as Metro-Goldwyn-Mayer Pictures)%'\n  AND (mc.note LIKE '%(co-production)%')\n  AND t.production_year >2010\n  AND ct.id = mc.company_type_id\n  AND t.id = mc.movie_id\n  AND t.id = mi_idx.movie_id\n  AND mc.movie_id = mi_idx.movie_id\n  AND it.id = mi_idx.info_type_id;\n",
+      "startTime": "2026-06-23T08:19:52.243239Z",
+      "status": "OK",
+      "timeMs": 222.542
+    }
+  ],
+  "runtime": {
+    "avgMs": 222.542,
+    "bestMs": 222.542,
+    "maxMs": 222.542,
+    "minMs": 222.542,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 1C Analysis",
+    "displayName": "JOB-1C",
+    "name": "PLAN-JOB-1C",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "16.0.4236.2"
+}

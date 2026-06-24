@@ -1,0 +1,879 @@
+{
+  "0": {
+    "children": [
+      {
+        "children": [],
+        "descriptor": {
+          "sourceFragmentIds": "[1]"
+        },
+        "details": [],
+        "estimates": [],
+        "id": "1135",
+        "name": "RemoteMerge",
+        "outputs": [
+          {
+            "name": "expr_gid",
+            "type": "varchar"
+          },
+          {
+            "name": "count",
+            "type": "bigint"
+          },
+          {
+            "name": "sum",
+            "type": "decimal(38,0)"
+          }
+        ]
+      }
+    ],
+    "descriptor": {
+      "columnNames": "[cntrycode, numcust, totacctbal]"
+    },
+    "details": [
+      "cntrycode := expr_gid",
+      "numcust := count",
+      "totacctbal := sum"
+    ],
+    "estimates": [
+      {
+        "cpuCost": 0.0,
+        "memoryCost": 0.0,
+        "networkCost": 0.0,
+        "outputRowCount": "NaN",
+        "outputSizeInBytes": "NaN"
+      }
+    ],
+    "id": "36",
+    "name": "Output",
+    "outputs": [
+      {
+        "name": "expr_gid",
+        "type": "varchar"
+      },
+      {
+        "name": "count",
+        "type": "bigint"
+      },
+      {
+        "name": "sum",
+        "type": "decimal(38,0)"
+      }
+    ]
+  },
+  "1": {
+    "children": [
+      {
+        "children": [
+          {
+            "children": [],
+            "descriptor": {
+              "sourceFragmentIds": "[2]"
+            },
+            "details": [],
+            "estimates": [],
+            "id": "1134",
+            "name": "RemoteSource",
+            "outputs": [
+              {
+                "name": "expr_gid",
+                "type": "varchar"
+              },
+              {
+                "name": "count",
+                "type": "bigint"
+              },
+              {
+                "name": "sum",
+                "type": "decimal(38,0)"
+              }
+            ]
+          }
+        ],
+        "descriptor": {
+          "orderBy": "[expr_gid ASC NULLS LAST]"
+        },
+        "details": [],
+        "estimates": [],
+        "id": "1136",
+        "name": "PartialSort",
+        "outputs": [
+          {
+            "name": "expr_gid",
+            "type": "varchar"
+          },
+          {
+            "name": "count",
+            "type": "bigint"
+          },
+          {
+            "name": "sum",
+            "type": "decimal(38,0)"
+          }
+        ]
+      }
+    ],
+    "descriptor": {
+      "orderBy": "[expr_gid ASC NULLS LAST]"
+    },
+    "details": [],
+    "estimates": [
+      {
+        "cpuCost": 0.0,
+        "memoryCost": 0.0,
+        "networkCost": 0.0,
+        "outputRowCount": "NaN",
+        "outputSizeInBytes": "NaN"
+      }
+    ],
+    "id": "1376",
+    "name": "LocalMerge",
+    "outputs": [
+      {
+        "name": "expr_gid",
+        "type": "varchar"
+      },
+      {
+        "name": "count",
+        "type": "bigint"
+      },
+      {
+        "name": "sum",
+        "type": "decimal(38,0)"
+      }
+    ]
+  },
+  "2": {
+    "children": [
+      {
+        "children": [
+          {
+            "children": [],
+            "descriptor": {
+              "sourceFragmentIds": "[3]"
+            },
+            "details": [],
+            "estimates": [],
+            "id": "1450",
+            "name": "RemoteSource",
+            "outputs": [
+              {
+                "name": "expr_gid",
+                "type": "varchar"
+              },
+              {
+                "name": "count_14",
+                "type": "bigint"
+              },
+              {
+                "name": "sum_15",
+                "type": "varbinary"
+              }
+            ]
+          }
+        ],
+        "descriptor": {
+          "arguments": "[expr_gid::varchar]",
+          "isReplicateNullsAndAny": "",
+          "partitioning": "HASH"
+        },
+        "details": [],
+        "estimates": [
+          {
+            "cpuCost": "NaN",
+            "memoryCost": 0.0,
+            "networkCost": 0.0,
+            "outputRowCount": "NaN",
+            "outputSizeInBytes": "NaN"
+          }
+        ],
+        "id": "1444",
+        "name": "LocalExchange",
+        "outputs": [
+          {
+            "name": "expr_gid",
+            "type": "varchar"
+          },
+          {
+            "name": "count_14",
+            "type": "bigint"
+          },
+          {
+            "name": "sum_15",
+            "type": "varbinary"
+          }
+        ]
+      }
+    ],
+    "descriptor": {
+      "keys": "[expr_gid]",
+      "type": "FINAL"
+    },
+    "details": [
+      "count := count(count_14)",
+      "sum := sum(sum_15)"
+    ],
+    "estimates": [
+      {
+        "cpuCost": "NaN",
+        "memoryCost": "NaN",
+        "networkCost": 0.0,
+        "outputRowCount": "NaN",
+        "outputSizeInBytes": "NaN"
+      }
+    ],
+    "id": "28",
+    "name": "Aggregate",
+    "outputs": [
+      {
+        "name": "expr_gid",
+        "type": "varchar"
+      },
+      {
+        "name": "count",
+        "type": "bigint"
+      },
+      {
+        "name": "sum",
+        "type": "decimal(38,0)"
+      }
+    ]
+  },
+  "3": {
+    "children": [
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [
+                  {
+                    "children": [
+                      {
+                        "children": [
+                          {
+                            "children": [],
+                            "descriptor": {
+                              "dynamicFilters": "{c_acctbal > #df_1241}",
+                              "filterPredicate": "(substring(c_phone, bigint '1', bigint '2') IN (varchar '10', varchar '17', varchar '19', varchar '23', varchar '22', varchar '31', varchar '27'))",
+                              "table": "tpch:tpch_sf1.customer$data@2623080481205651460"
+                            },
+                            "details": [
+                              "c_acctbal := 6:c_acctbal:decimal(38,0)",
+                              "c_phone := 5:c_phone:varchar",
+                              "c_custkey := 1:c_custkey:integer"
+                            ],
+                            "estimates": [
+                              {
+                                "cpuCost": 8785592.0,
+                                "memoryCost": 0.0,
+                                "networkCost": 0.0,
+                                "outputRowCount": 150000.0,
+                                "outputSizeInBytes": 8785592.0
+                              },
+                              {
+                                "cpuCost": 8785592.0,
+                                "memoryCost": 0.0,
+                                "networkCost": 0.0,
+                                "outputRowCount": 135000.0,
+                                "outputSizeInBytes": 7907032.8
+                              }
+                            ],
+                            "id": "1242",
+                            "name": "ScanFilter",
+                            "outputs": [
+                              {
+                                "name": "c_custkey",
+                                "type": "integer"
+                              },
+                              {
+                                "name": "c_phone",
+                                "type": "varchar"
+                              },
+                              {
+                                "name": "c_acctbal",
+                                "type": "decimal(38,0)"
+                              }
+                            ]
+                          },
+                          {
+                            "children": [
+                              {
+                                "children": [],
+                                "descriptor": {
+                                  "sourceFragmentIds": "[4]"
+                                },
+                                "details": [],
+                                "estimates": [],
+                                "id": "1130",
+                                "name": "RemoteSource",
+                                "outputs": [
+                                  {
+                                    "name": "avg",
+                                    "type": "decimal(38,0)"
+                                  }
+                                ]
+                              }
+                            ],
+                            "descriptor": {
+                              "arguments": "[]",
+                              "isReplicateNullsAndAny": "",
+                              "partitioning": "SINGLE"
+                            },
+                            "details": [],
+                            "estimates": [
+                              {
+                                "cpuCost": 0.0,
+                                "memoryCost": 0.0,
+                                "networkCost": 0.0,
+                                "outputRowCount": 1.0,
+                                "outputSizeInBytes": 17.0
+                              }
+                            ],
+                            "id": "1372",
+                            "name": "LocalExchange",
+                            "outputs": [
+                              {
+                                "name": "avg",
+                                "type": "decimal(38,0)"
+                              }
+                            ]
+                          }
+                        ],
+                        "descriptor": {},
+                        "details": [
+                          "Distribution: REPLICATED",
+                          "dynamicFilterAssignments = {avg -> #df_1241}"
+                        ],
+                        "estimates": [
+                          {
+                            "cpuCost": 18109082.6,
+                            "memoryCost": 17.0,
+                            "networkCost": 0.0,
+                            "outputRowCount": 135000.0,
+                            "outputSizeInBytes": 10202032.8
+                          }
+                        ],
+                        "id": "12",
+                        "name": "CrossJoin",
+                        "outputs": [
+                          {
+                            "name": "c_custkey",
+                            "type": "integer"
+                          },
+                          {
+                            "name": "c_phone",
+                            "type": "varchar"
+                          },
+                          {
+                            "name": "c_acctbal",
+                            "type": "decimal(38,0)"
+                          },
+                          {
+                            "name": "avg",
+                            "type": "decimal(38,0)"
+                          }
+                        ]
+                      }
+                    ],
+                    "descriptor": {
+                      "filterPredicate": "(c_acctbal > avg)"
+                    },
+                    "details": [],
+                    "estimates": [
+                      {
+                        "cpuCost": 10202032.8,
+                        "memoryCost": 0.0,
+                        "networkCost": 0.0,
+                        "outputRowCount": "NaN",
+                        "outputSizeInBytes": "NaN"
+                      },
+                      {
+                        "cpuCost": "NaN",
+                        "memoryCost": 0.0,
+                        "networkCost": 0.0,
+                        "outputRowCount": "NaN",
+                        "outputSizeInBytes": "NaN"
+                      }
+                    ],
+                    "id": "1247",
+                    "name": "FilterProject",
+                    "outputs": [
+                      {
+                        "name": "c_custkey",
+                        "type": "integer"
+                      },
+                      {
+                        "name": "c_phone",
+                        "type": "varchar"
+                      },
+                      {
+                        "name": "c_acctbal",
+                        "type": "decimal(38,0)"
+                      }
+                    ]
+                  },
+                  {
+                    "children": [
+                      {
+                        "children": [],
+                        "descriptor": {
+                          "sourceFragmentIds": "[6]"
+                        },
+                        "details": [],
+                        "estimates": [],
+                        "id": "1132",
+                        "name": "RemoteSource",
+                        "outputs": [
+                          {
+                            "name": "subquerytrue",
+                            "type": "boolean"
+                          },
+                          {
+                            "name": "o_custkey",
+                            "type": "integer"
+                          }
+                        ]
+                      }
+                    ],
+                    "descriptor": {
+                      "arguments": "[o_custkey::integer]",
+                      "isReplicateNullsAndAny": "",
+                      "partitioning": "HASH"
+                    },
+                    "details": [],
+                    "estimates": [
+                      {
+                        "cpuCost": "NaN",
+                        "memoryCost": 0.0,
+                        "networkCost": 0.0,
+                        "outputRowCount": "NaN",
+                        "outputSizeInBytes": "NaN"
+                      }
+                    ],
+                    "id": "1374",
+                    "name": "LocalExchange",
+                    "outputs": [
+                      {
+                        "name": "subquerytrue",
+                        "type": "boolean"
+                      },
+                      {
+                        "name": "o_custkey",
+                        "type": "integer"
+                      }
+                    ]
+                  }
+                ],
+                "descriptor": {
+                  "criteria": "(c_custkey = o_custkey)",
+                  "distribution": "REPLICATED"
+                },
+                "details": [
+                  "Distribution: REPLICATED"
+                ],
+                "estimates": [
+                  {
+                    "cpuCost": "NaN",
+                    "memoryCost": "NaN",
+                    "networkCost": 0.0,
+                    "outputRowCount": "NaN",
+                    "outputSizeInBytes": "NaN"
+                  }
+                ],
+                "id": "13",
+                "name": "LeftJoin",
+                "outputs": [
+                  {
+                    "name": "c_phone",
+                    "type": "varchar"
+                  },
+                  {
+                    "name": "c_acctbal",
+                    "type": "decimal(38,0)"
+                  },
+                  {
+                    "name": "subquerytrue",
+                    "type": "boolean"
+                  }
+                ]
+              }
+            ],
+            "descriptor": {
+              "filterPredicate": "$not(COALESCE(subquerytrue, boolean 'false'))"
+            },
+            "details": [],
+            "estimates": [
+              {
+                "cpuCost": "NaN",
+                "memoryCost": 0.0,
+                "networkCost": 0.0,
+                "outputRowCount": "NaN",
+                "outputSizeInBytes": "NaN"
+              },
+              {
+                "cpuCost": "NaN",
+                "memoryCost": 0.0,
+                "networkCost": 0.0,
+                "outputRowCount": "NaN",
+                "outputSizeInBytes": "NaN"
+              }
+            ],
+            "id": "170",
+            "name": "FilterProject",
+            "outputs": [
+              {
+                "name": "c_phone",
+                "type": "varchar"
+              },
+              {
+                "name": "c_acctbal",
+                "type": "decimal(38,0)"
+              }
+            ]
+          }
+        ],
+        "descriptor": {},
+        "details": [
+          "expr_gid := substring(c_phone, bigint '1', bigint '2')"
+        ],
+        "estimates": [
+          {
+            "cpuCost": "NaN",
+            "memoryCost": 0.0,
+            "networkCost": 0.0,
+            "outputRowCount": "NaN",
+            "outputSizeInBytes": "NaN"
+          }
+        ],
+        "id": "147",
+        "name": "Project",
+        "outputs": [
+          {
+            "name": "c_acctbal",
+            "type": "decimal(38,0)"
+          },
+          {
+            "name": "expr_gid",
+            "type": "varchar"
+          }
+        ]
+      }
+    ],
+    "descriptor": {
+      "keys": "[expr_gid]",
+      "type": "PARTIAL"
+    },
+    "details": [
+      "count_14 := count(*)",
+      "sum_15 := sum(c_acctbal)"
+    ],
+    "estimates": [],
+    "id": "1448",
+    "name": "Aggregate",
+    "outputs": [
+      {
+        "name": "expr_gid",
+        "type": "varchar"
+      },
+      {
+        "name": "count_14",
+        "type": "bigint"
+      },
+      {
+        "name": "sum_15",
+        "type": "varbinary"
+      }
+    ]
+  },
+  "4": {
+    "children": [
+      {
+        "children": [
+          {
+            "children": [],
+            "descriptor": {
+              "sourceFragmentIds": "[5]"
+            },
+            "details": [],
+            "estimates": [],
+            "id": "1465",
+            "name": "RemoteSource",
+            "outputs": [
+              {
+                "name": "avg_16",
+                "type": "varbinary"
+              }
+            ]
+          }
+        ],
+        "descriptor": {
+          "arguments": "[]",
+          "isReplicateNullsAndAny": "",
+          "partitioning": "SINGLE"
+        },
+        "details": [],
+        "estimates": [
+          {
+            "cpuCost": 0.0,
+            "memoryCost": 0.0,
+            "networkCost": 0.0,
+            "outputRowCount": 122727.37314067844,
+            "outputSizeInBytes": 6750005.522737315
+          }
+        ],
+        "id": "1459",
+        "name": "LocalExchange",
+        "outputs": [
+          {
+            "name": "avg_16",
+            "type": "varbinary"
+          }
+        ]
+      }
+    ],
+    "descriptor": {
+      "keys": "",
+      "type": "FINAL"
+    },
+    "details": [
+      "avg := avg(avg_16)"
+    ],
+    "estimates": [
+      {
+        "cpuCost": 6750005.522737315,
+        "memoryCost": 17.0,
+        "networkCost": 0.0,
+        "outputRowCount": 1.0,
+        "outputSizeInBytes": 17.0
+      }
+    ],
+    "id": "6",
+    "name": "Aggregate",
+    "outputs": [
+      {
+        "name": "avg",
+        "type": "decimal(38,0)"
+      }
+    ]
+  },
+  "5": {
+    "children": [
+      {
+        "children": [],
+        "descriptor": {
+          "filterPredicate": "((c_acctbal_5 > decimal(38,0) '0') AND (substring(c_phone_4, bigint '1', bigint '2') IN (varchar '10', varchar '17', varchar '19', varchar '23', varchar '22', varchar '31', varchar '27')))",
+          "table": "tpch:tpch_sf1.customer$data@2623080481205651460"
+        },
+        "details": [
+          "c_acctbal_5 := 6:c_acctbal:decimal(38,0)",
+          "c_phone_4 := 5:c_phone:varchar"
+        ],
+        "estimates": [
+          {
+            "cpuCost": 8035592.0,
+            "memoryCost": 0.0,
+            "networkCost": 0.0,
+            "outputRowCount": 150000.0,
+            "outputSizeInBytes": 2550000.0
+          },
+          {
+            "cpuCost": 8035592.0,
+            "memoryCost": 0.0,
+            "networkCost": 0.0,
+            "outputRowCount": 122727.37314067844,
+            "outputSizeInBytes": 2086365.3433915335
+          },
+          {
+            "cpuCost": 2086365.3433915335,
+            "memoryCost": 0.0,
+            "networkCost": 0.0,
+            "outputRowCount": 122727.37314067844,
+            "outputSizeInBytes": 2086365.3433915335
+          }
+        ],
+        "id": "187",
+        "name": "ScanFilterProject",
+        "outputs": [
+          {
+            "name": "c_acctbal_5",
+            "type": "decimal(38,0)"
+          }
+        ]
+      }
+    ],
+    "descriptor": {
+      "keys": "",
+      "type": "PARTIAL"
+    },
+    "details": [
+      "avg_16 := avg(c_acctbal_5)"
+    ],
+    "estimates": [
+      {
+        "cpuCost": "NaN",
+        "memoryCost": "NaN",
+        "networkCost": "NaN",
+        "outputRowCount": 122727.37314067844,
+        "outputSizeInBytes": 6750005.522737315
+      }
+    ],
+    "id": "1463",
+    "name": "Aggregate",
+    "outputs": [
+      {
+        "name": "avg_16",
+        "type": "varbinary"
+      }
+    ]
+  },
+  "6": {
+    "children": [
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [],
+                "descriptor": {
+                  "sourceFragmentIds": "[7]"
+                },
+                "details": [],
+                "estimates": [],
+                "id": "1480",
+                "name": "RemoteSource",
+                "outputs": [
+                  {
+                    "name": "o_custkey",
+                    "type": "integer"
+                  }
+                ]
+              }
+            ],
+            "descriptor": {
+              "arguments": "[o_custkey::integer]",
+              "isReplicateNullsAndAny": "",
+              "partitioning": "HASH"
+            },
+            "details": [],
+            "estimates": [
+              {
+                "cpuCost": 7500000.0,
+                "memoryCost": 0.0,
+                "networkCost": 0.0,
+                "outputRowCount": 1500000.0,
+                "outputSizeInBytes": 7500000.0
+              }
+            ],
+            "id": "1474",
+            "name": "LocalExchange",
+            "outputs": [
+              {
+                "name": "o_custkey",
+                "type": "integer"
+              }
+            ]
+          }
+        ],
+        "descriptor": {
+          "keys": "[o_custkey]",
+          "type": "FINAL"
+        },
+        "details": [],
+        "estimates": [
+          {
+            "cpuCost": 7500000.0,
+            "memoryCost": "NaN",
+            "networkCost": 0.0,
+            "outputRowCount": "NaN",
+            "outputSizeInBytes": "NaN"
+          }
+        ],
+        "id": "386",
+        "name": "Aggregate",
+        "outputs": [
+          {
+            "name": "o_custkey",
+            "type": "integer"
+          }
+        ]
+      }
+    ],
+    "descriptor": {},
+    "details": [
+      "subquerytrue := boolean 'true'"
+    ],
+    "estimates": [
+      {
+        "cpuCost": "NaN",
+        "memoryCost": 0.0,
+        "networkCost": 0.0,
+        "outputRowCount": "NaN",
+        "outputSizeInBytes": "NaN"
+      }
+    ],
+    "id": "480",
+    "name": "Project",
+    "outputs": [
+      {
+        "name": "subquerytrue",
+        "type": "boolean"
+      },
+      {
+        "name": "o_custkey",
+        "type": "integer"
+      }
+    ]
+  },
+  "7": {
+    "children": [
+      {
+        "children": [],
+        "descriptor": {
+          "table": "tpch:tpch_sf1.orders$data@5236834971936874361"
+        },
+        "details": [
+          "o_custkey := 2:o_custkey:integer"
+        ],
+        "estimates": [
+          {
+            "cpuCost": 7500000.0,
+            "memoryCost": 0.0,
+            "networkCost": 0.0,
+            "outputRowCount": 1500000.0,
+            "outputSizeInBytes": 7500000.0
+          }
+        ],
+        "id": "14",
+        "name": "TableScan",
+        "outputs": [
+          {
+            "name": "o_custkey",
+            "type": "integer"
+          }
+        ]
+      }
+    ],
+    "descriptor": {
+      "keys": "[o_custkey]",
+      "type": "PARTIAL"
+    },
+    "details": [],
+    "estimates": [
+      {
+        "cpuCost": "NaN",
+        "memoryCost": "NaN",
+        "networkCost": "NaN",
+        "outputRowCount": 1500000.0,
+        "outputSizeInBytes": 7500000.0
+      }
+    ],
+    "id": "1478",
+    "name": "Aggregate",
+    "outputs": [
+      {
+        "name": "o_custkey",
+        "type": "integer"
+      }
+    ]
+  }
+}

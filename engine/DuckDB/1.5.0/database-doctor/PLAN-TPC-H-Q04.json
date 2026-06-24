@@ -1,0 +1,109 @@
+{
+  "engine": "DuckDB",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 1,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 1,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 1,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 1
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 1,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 1
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 2,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 1
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 51276,
+        "distribute": 0,
+        "hash": 248261,
+        "join": 350930,
+        "scan": 300175,
+        "seek": 0,
+        "sort": 5
+      },
+      "plan": "Estimate    Actual  Operator\n       -         5  SORT o_orderpriority\n       5         5  AGGREGATE count_star() GROUP BY HASH #0\n   60000     51276  PROJECT o_orderpriority\n   60000         0  RIGHT SEMI INNER JOIN HASH ON o_orderkey IS NOT DISTINCT FROM o_orderkey\n  271684     55935  │└AGGREGATE  GROUP BY HASH #0\n   60000     51276  │ RIGHT SEMI INNER JOIN HASH ON o_orderkey IS NOT DISTINCT FROM o_orderkey\n       -         0  │ │└SCAN EMPTY\n  684972    141050  │ PROJECT o_orderkey\n  684972    141050  │ INNER JOIN HASH ON l_orderkey = o_orderkey\n  271684         0  │ │└SCAN MATERIALISED\n 1200243    153945  │ FILTER l_commitdate < l_receiptdate\n 6001215    244240  │ TABLE SCAN lineitem\n  300000     55935  TABLE SCAN orders WHERE o_orderdate >= '1995-02-01' AND o_orderdate < '1995-05-01'\n",
+      "sql": "/* TPC-H Q04 */\nSELECT o_orderpriority,\n       COUNT(*) AS order_count\nFROM tpch_sf1.orders\nWHERE o_orderdate >= '1995-02-01'\n  AND o_orderdate < '1995-05-01'\n  AND EXISTS (SELECT *\n              FROM tpch_sf1.lineitem\n              WHERE l_orderkey = o_orderkey\n                AND l_commitdate < l_receiptdate)\nGROUP BY o_orderpriority\nORDER BY o_orderpriority\n",
+      "startTime": "2026-06-22T16:08:55.956911Z",
+      "status": "OK",
+      "timeMs": 10.436
+    }
+  ],
+  "runtime": {
+    "avgMs": 10.436,
+    "bestMs": 10.436,
+    "maxMs": 10.436,
+    "minMs": 10.436,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "TPC-H Q04 Analysis",
+    "displayName": "TPCH-Q04",
+    "name": "PLAN-TPC-H-Q04",
+    "tags": [
+      "TPC-H"
+    ]
+  },
+  "version": "1.5.0"
+}

@@ -1,0 +1,110 @@
+{
+  "engine": "Trino",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 2,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 4,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 1800001,
+        "distribute": 300001,
+        "hash": 1500000,
+        "join": 1500000,
+        "scan": 1650000,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  PROJECT count AS _col0\n       1         1  AGGREGATE COUNT(count_3) AS count\n       -         1  DISTRIBUTE GATHER\n       -         1  AGGREGATE COUNT(o_orderkey) AS count_3\n       -   1500000  INNER JOIN HASH ON o_custkey = c_custkey\n       -    150000  │└DISTRIBUTE GATHER\n       -    150000  │ GROUP BY HASH c_custkey\n  150000    150000  │ DISTRIBUTE HASH ON c_custkey\n  150000    150000  │ GROUP BY PARTIAL c_custkey\n  150000    150000  │ TABLE SCAN customer\n 1500000   1500000  TABLE SCAN orders\n",
+      "sql": "SELECT COUNT(o.o_orderkey)\nFROM tpch_sf1.orders AS o\nWHERE EXISTS (\n  SELECT 1\n  FROM tpch_sf1.customer AS c\n  WHERE c.c_custkey = o.o_custkey\n);\n",
+      "startTime": "2026-06-23T11:49:48.212166Z",
+      "status": "OK",
+      "timeMs": 373.197
+    }
+  ],
+  "runtime": {
+    "avgMs": 373.197,
+    "bestMs": 373.197,
+    "maxMs": 373.197,
+    "minMs": 373.197,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "iceberg",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Count ORDERS rows with a matching CUSTOMER via EXISTS",
+    "displayName": "PLAN_JOIN_CHECK-SEMI-ORDERS-CUSTOMER",
+    "name": "PLAN_JOIN_CHECK-SEMI-ORDERS-CUSTOMER",
+    "tags": [
+      "PLAN_JOIN_CHECK",
+      "join"
+    ]
+  },
+  "version": "481"
+}

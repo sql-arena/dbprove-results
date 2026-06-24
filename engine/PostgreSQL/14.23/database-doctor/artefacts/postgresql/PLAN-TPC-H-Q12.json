@@ -1,0 +1,360 @@
+[
+  {
+    "Execution Time": 200.286,
+    "Plan": {
+      "Actual Loops": 1,
+      "Actual Rows": 2,
+      "Actual Startup Time": 193.933,
+      "Actual Total Time": 200.258,
+      "Async Capable": false,
+      "Group Key": [
+        "lineitem.l_shipmode"
+      ],
+      "Node Type": "Aggregate",
+      "Output": [
+        "lineitem.l_shipmode",
+        "sum(CASE WHEN ((orders.o_orderpriority = '1-URGENT'::text) OR (orders.o_orderpriority = '2-HIGH'::text)) THEN 1 ELSE 0 END)",
+        "sum(CASE WHEN ((orders.o_orderpriority <> '1-URGENT'::text) AND (orders.o_orderpriority <> '2-HIGH'::text)) THEN 1 ELSE 0 END)"
+      ],
+      "Parallel Aware": false,
+      "Partial Mode": "Finalize",
+      "Plan Rows": 30,
+      "Plan Width": 48,
+      "Plans": [
+        {
+          "Actual Loops": 1,
+          "Actual Rows": 10,
+          "Actual Startup Time": 193.351,
+          "Actual Total Time": 200.246,
+          "Async Capable": false,
+          "Node Type": "Gather Merge",
+          "Output": [
+            "lineitem.l_shipmode",
+            "(PARTIAL sum(CASE WHEN ((orders.o_orderpriority = '1-URGENT'::text) OR (orders.o_orderpriority = '2-HIGH'::text)) THEN 1 ELSE 0 END))",
+            "(PARTIAL sum(CASE WHEN ((orders.o_orderpriority <> '1-URGENT'::text) AND (orders.o_orderpriority <> '2-HIGH'::text)) THEN 1 ELSE 0 END))"
+          ],
+          "Parallel Aware": false,
+          "Parent Relationship": "Outer",
+          "Plan Rows": 32,
+          "Plan Width": 48,
+          "Plans": [
+            {
+              "Actual Loops": 5,
+              "Actual Rows": 2,
+              "Actual Startup Time": 190.009,
+              "Actual Total Time": 190.351,
+              "Async Capable": false,
+              "Group Key": [
+                "lineitem.l_shipmode"
+              ],
+              "Node Type": "Aggregate",
+              "Output": [
+                "lineitem.l_shipmode",
+                "PARTIAL sum(CASE WHEN ((orders.o_orderpriority = '1-URGENT'::text) OR (orders.o_orderpriority = '2-HIGH'::text)) THEN 1 ELSE 0 END)",
+                "PARTIAL sum(CASE WHEN ((orders.o_orderpriority <> '1-URGENT'::text) AND (orders.o_orderpriority <> '2-HIGH'::text)) THEN 1 ELSE 0 END)"
+              ],
+              "Parallel Aware": false,
+              "Parent Relationship": "Outer",
+              "Partial Mode": "Partial",
+              "Plan Rows": 8,
+              "Plan Width": 48,
+              "Plans": [
+                {
+                  "Actual Loops": 5,
+                  "Actual Rows": 6167,
+                  "Actual Startup Time": 189.679,
+                  "Actual Total Time": 189.832,
+                  "Async Capable": false,
+                  "Node Type": "Sort",
+                  "Output": [
+                    "lineitem.l_shipmode",
+                    "orders.o_orderpriority"
+                  ],
+                  "Parallel Aware": false,
+                  "Parent Relationship": "Outer",
+                  "Plan Rows": 8,
+                  "Plan Width": 64,
+                  "Plans": [
+                    {
+                      "Actual Loops": 5,
+                      "Actual Rows": 6167,
+                      "Actual Startup Time": 0.04,
+                      "Actual Total Time": 188.36,
+                      "Async Capable": false,
+                      "Inner Unique": true,
+                      "Join Type": "Inner",
+                      "Node Type": "Nested Loop",
+                      "Output": [
+                        "lineitem.l_shipmode",
+                        "orders.o_orderpriority"
+                      ],
+                      "Parallel Aware": false,
+                      "Parent Relationship": "Outer",
+                      "Plan Rows": 8,
+                      "Plan Width": 64,
+                      "Plans": [
+                        {
+                          "Actual Loops": 5,
+                          "Actual Rows": 6167,
+                          "Actual Startup Time": 0.026,
+                          "Actual Total Time": 175.913,
+                          "Alias": "lineitem",
+                          "Async Capable": false,
+                          "Filter": "((lineitem.l_shipmode = ANY ('{AIR,TRUCK}'::text[])) AND (lineitem.l_commitdate < lineitem.l_receiptdate) AND (lineitem.l_shipdate < lineitem.l_commitdate) AND (lineitem.l_receiptdate >= '1994-01-01'::date) AND (lineitem.l_receiptdate < '1995-01-01'::date))",
+                          "Node Type": "Seq Scan",
+                          "Output": [
+                            "lineitem.l_orderkey",
+                            "lineitem.l_partkey",
+                            "lineitem.l_suppkey",
+                            "lineitem.l_linenumber",
+                            "lineitem.l_quantity",
+                            "lineitem.l_extendedprice",
+                            "lineitem.l_discount",
+                            "lineitem.l_tax",
+                            "lineitem.l_returnflag",
+                            "lineitem.l_linestatus",
+                            "lineitem.l_shipdate",
+                            "lineitem.l_commitdate",
+                            "lineitem.l_receiptdate",
+                            "lineitem.l_shipinstruct",
+                            "lineitem.l_shipmode",
+                            "lineitem.l_comment"
+                          ],
+                          "Parallel Aware": true,
+                          "Parent Relationship": "Outer",
+                          "Plan Rows": 8,
+                          "Plan Width": 36,
+                          "Relation Name": "lineitem",
+                          "Rows Removed by Filter": 1194076,
+                          "Schema": "tpch_sf1",
+                          "Startup Cost": 0.0,
+                          "Total Cost": 132300.83,
+                          "Workers": [
+                            {
+                              "Actual Loops": 1,
+                              "Actual Rows": 6856,
+                              "Actual Startup Time": 0.007,
+                              "Actual Total Time": 173.579,
+                              "Worker Number": 0
+                            },
+                            {
+                              "Actual Loops": 1,
+                              "Actual Rows": 7315,
+                              "Actual Startup Time": 0.008,
+                              "Actual Total Time": 175.131,
+                              "Worker Number": 1
+                            },
+                            {
+                              "Actual Loops": 1,
+                              "Actual Rows": 4220,
+                              "Actual Startup Time": 0.071,
+                              "Actual Total Time": 175.042,
+                              "Worker Number": 2
+                            },
+                            {
+                              "Actual Loops": 1,
+                              "Actual Rows": 7348,
+                              "Actual Startup Time": 0.042,
+                              "Actual Total Time": 175.293,
+                              "Worker Number": 3
+                            }
+                          ]
+                        },
+                        {
+                          "Actual Loops": 30837,
+                          "Actual Rows": 1,
+                          "Actual Startup Time": 0.002,
+                          "Actual Total Time": 0.002,
+                          "Alias": "orders",
+                          "Async Capable": false,
+                          "Index Cond": "(orders.o_orderkey = lineitem.l_orderkey)",
+                          "Index Name": "pk_orders",
+                          "Node Type": "Index Scan",
+                          "Output": [
+                            "orders.o_orderkey",
+                            "orders.o_custkey",
+                            "orders.o_orderstatus",
+                            "orders.o_totalprice",
+                            "orders.o_orderdate",
+                            "orders.o_orderpriority",
+                            "orders.o_clerk",
+                            "orders.o_shippriority",
+                            "orders.o_comment"
+                          ],
+                          "Parallel Aware": false,
+                          "Parent Relationship": "Inner",
+                          "Plan Rows": 1,
+                          "Plan Width": 36,
+                          "Relation Name": "orders",
+                          "Rows Removed by Index Recheck": 0,
+                          "Scan Direction": "Forward",
+                          "Schema": "tpch_sf1",
+                          "Startup Cost": 0.43,
+                          "Total Cost": 2.65,
+                          "Workers": [
+                            {
+                              "Actual Loops": 6856,
+                              "Actual Rows": 1,
+                              "Actual Startup Time": 0.002,
+                              "Actual Total Time": 0.002,
+                              "Worker Number": 0
+                            },
+                            {
+                              "Actual Loops": 7315,
+                              "Actual Rows": 1,
+                              "Actual Startup Time": 0.002,
+                              "Actual Total Time": 0.002,
+                              "Worker Number": 1
+                            },
+                            {
+                              "Actual Loops": 4220,
+                              "Actual Rows": 1,
+                              "Actual Startup Time": 0.003,
+                              "Actual Total Time": 0.003,
+                              "Worker Number": 2
+                            },
+                            {
+                              "Actual Loops": 7348,
+                              "Actual Rows": 1,
+                              "Actual Startup Time": 0.002,
+                              "Actual Total Time": 0.002,
+                              "Worker Number": 3
+                            }
+                          ]
+                        }
+                      ],
+                      "Startup Cost": 0.43,
+                      "Total Cost": 132321.99,
+                      "Workers": [
+                        {
+                          "Actual Loops": 1,
+                          "Actual Rows": 6856,
+                          "Actual Startup Time": 0.02,
+                          "Actual Total Time": 186.019,
+                          "Worker Number": 0
+                        },
+                        {
+                          "Actual Loops": 1,
+                          "Actual Rows": 7315,
+                          "Actual Startup Time": 0.023,
+                          "Actual Total Time": 188.238,
+                          "Worker Number": 1
+                        },
+                        {
+                          "Actual Loops": 1,
+                          "Actual Rows": 4220,
+                          "Actual Startup Time": 0.084,
+                          "Actual Total Time": 187.888,
+                          "Worker Number": 2
+                        },
+                        {
+                          "Actual Loops": 1,
+                          "Actual Rows": 7348,
+                          "Actual Startup Time": 0.059,
+                          "Actual Total Time": 188.186,
+                          "Worker Number": 3
+                        }
+                      ]
+                    }
+                  ],
+                  "Sort Key": [
+                    "lineitem.l_shipmode"
+                  ],
+                  "Sort Method": "quicksort",
+                  "Sort Space Type": "Memory",
+                  "Sort Space Used": 463,
+                  "Startup Cost": 132322.11,
+                  "Total Cost": 132322.13,
+                  "Workers": [
+                    {
+                      "Actual Loops": 1,
+                      "Actual Rows": 6856,
+                      "Actual Startup Time": 187.287,
+                      "Actual Total Time": 187.427,
+                      "Sort Method": "quicksort",
+                      "Sort Space Type": "Memory",
+                      "Sort Space Used": 558,
+                      "Worker Number": 0
+                    },
+                    {
+                      "Actual Loops": 1,
+                      "Actual Rows": 7315,
+                      "Actual Startup Time": 189.513,
+                      "Actual Total Time": 189.662,
+                      "Sort Method": "quicksort",
+                      "Sort Space Type": "Memory",
+                      "Sort Space Used": 582,
+                      "Worker Number": 1
+                    },
+                    {
+                      "Actual Loops": 1,
+                      "Actual Rows": 4220,
+                      "Actual Startup Time": 189.444,
+                      "Actual Total Time": 189.53,
+                      "Sort Method": "quicksort",
+                      "Sort Space Type": "Memory",
+                      "Sort Space Used": 417,
+                      "Worker Number": 2
+                    },
+                    {
+                      "Actual Loops": 1,
+                      "Actual Rows": 7348,
+                      "Actual Startup Time": 189.447,
+                      "Actual Total Time": 189.601,
+                      "Sort Method": "quicksort",
+                      "Sort Space Type": "Memory",
+                      "Sort Space Used": 584,
+                      "Worker Number": 3
+                    }
+                  ]
+                }
+              ],
+              "Startup Cost": 132322.11,
+              "Strategy": "Sorted",
+              "Total Cost": 132322.35,
+              "Workers": [
+                {
+                  "Actual Loops": 1,
+                  "Actual Rows": 2,
+                  "Actual Startup Time": 187.587,
+                  "Actual Total Time": 187.887,
+                  "Worker Number": 0
+                },
+                {
+                  "Actual Loops": 1,
+                  "Actual Rows": 2,
+                  "Actual Startup Time": 189.837,
+                  "Actual Total Time": 190.159,
+                  "Worker Number": 1
+                },
+                {
+                  "Actual Loops": 1,
+                  "Actual Rows": 2,
+                  "Actual Startup Time": 189.641,
+                  "Actual Total Time": 189.827,
+                  "Worker Number": 2
+                },
+                {
+                  "Actual Loops": 1,
+                  "Actual Rows": 2,
+                  "Actual Startup Time": 189.771,
+                  "Actual Total Time": 190.103,
+                  "Worker Number": 3
+                }
+              ]
+            }
+          ],
+          "Startup Cost": 133322.17,
+          "Total Cost": 133326.22,
+          "Workers Launched": 4,
+          "Workers Planned": 4
+        }
+      ],
+      "Startup Cost": 133322.17,
+      "Strategy": "Sorted",
+      "Total Cost": 133326.76
+    },
+    "Planning Time": 0.081,
+    "Triggers": []
+  }
+]

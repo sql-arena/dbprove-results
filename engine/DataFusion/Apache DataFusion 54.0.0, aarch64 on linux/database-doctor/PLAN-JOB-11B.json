@@ -1,0 +1,110 @@
+{
+  "engine": "DataFusion",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 1
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 1,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 2,
+          ">16x": 2
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 1,
+          "+8x": 1,
+          "-2x": 0,
+          "-4x": 1,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 2,
+          ">16x": 2
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 1,
+          "-2x": 1,
+          "-4x": 1,
+          "-8x": 1,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 3
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 1,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 8,
+          ">16x": 1
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 24,
+        "distribute": 439155,
+        "hash": 1791679,
+        "join": 7314288,
+        "scan": 6545137,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  PROJECT from_company, movie_link_type, sequel_movie\n       1         1  AGGREGATE MIN(name), MIN(link), MIN(title)\n    6313        10  DISTRIBUTE GATHER\n    6313        10  AGGREGATE MIN(name), MIN(link), MIN(title)\n    6313        14  INNER JOIN HASH ON movie_id = id AND movie_id = id AND movie_id = id\n    6313       102  │└DISTRIBUTE GATHER\n    6313       102  │ PROJECT name, movie_id, movie_id, movie_id, link\n    6313       102  │ INNER JOIN HASH ON id = link_type_id\n       4         1  │ │└DISTRIBUTE GATHER\n       4         1  │ │ FILTER link LIKE '%follows%'\n      18        18  │ │ DISTRIBUTE ROUND ROBIN\n      18        18  │ │ TABLE SCAN link_type WHERE link LIKE '%follows%'\n   26834       422  │ INNER JOIN HASH ON movie_id = movie_id AND movie_id = movie_id\n   26834      2293  │ │└DISTRIBUTE GATHER\n   26834      2293  │ │ INNER JOIN HASH ON id = keyword_id\n   26834         1  │ │ │└DISTRIBUTE GATHER\n   26834         1  │ │ │ FILTER keyword = 'sequel'\n  134170    134170  │ │ │ DISTRIBUTE ROUND ROBIN\n  134170    134170  │ │ │ TABLE SCAN keyword WHERE keyword = 'sequel'\n   93458   1337515  │ │ INNER JOIN HASH ON movie_id = movie_id\n   52183    224256  │ │ │└DISTRIBUTE GATHER\n   52183    224256  │ │ │ INNER JOIN HASH ON id = company_type_id\n       1         1  │ │ │ │└DISTRIBUTE GATHER\n       1         1  │ │ │ │ FILTER kind = 'production companies'\n       4         4  │ │ │ │ DISTRIBUTE ROUND ROBIN\n       4         4  │ │ │ │ TABLE SCAN company_type WHERE kind = 'production companies'\n  104366    225118  │ │ │ INNER JOIN HASH ON id = company_id\n   47000     48302  │ │ │ │└DISTRIBUTE GATHER\n   47000     48302  │ │ │ │ FILTER (country_code <> 'pl') AND (name LIKE '%Film%' OR name LIKE '%Warner%')\n  234997    234997  │ │ │ │ TABLE SCAN company_name WHERE (country_code <> 'pl') AND (name LIKE '%Film%' OR name LIKE '%Warner%')\n  521826   1197292  │ │ │ FILTER note IS NULL\n 2609129   1376261  │ │ │ TABLE SCAN movie_companies WHERE (note IS NULL AND (((company_id >= 9) AND (company_id <= 234994)) AND TRUE)) AND (((company_type_id >= 2) AND (company_type_id <= 2)) AND company_type_id IN 2)\n 4523930   4523930  │ │ TABLE SCAN movie_keyword WHERE (((movie_id >= 50) AND (movie_id <= 2525744)) AND TRUE) AND (((keyword_id >= 398) AND (keyword_id <= 398)) AND keyword_id IN 398)\n   29997     29997  │ DISTRIBUTE ROUND ROBIN\n   29997     29997  │ TABLE SCAN movie_link WHERE ((((movie_id >= 31741) AND (movie_id <= 2525558)) AND ((movie_id >= 31741) AND (movie_id <= 2525558))) AND TRUE) AND (((link_type_id >= 1) AND (link_type_id <= 1)) AND link_type_id IN 1)\n  505663         2  FILTER (production_year = 1998) AND title LIKE '%Money%'\n 2528312    245760  TABLE SCAN title WHERE ((production_year = 1998) AND title LIKE '%Money%') AND (((((id >= 31741) AND (id <= 138935)) AND ((id >= 31741) AND (id <= 138935))) AND ((id >= 31741) AND (id <= 138935))) AND struct(id,id,id) IN( < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < ...\n",
+      "sql": "SELECT MIN(cn.name) AS from_company,\n       MIN(lt.link) AS movie_link_type,\n       MIN(t.title) AS sequel_movie\nFROM job.company_name AS cn,\n     job.company_type AS ct,\n     job.keyword AS k,\n     job.link_type AS lt,\n     job.movie_companies AS mc,\n     job.movie_keyword AS mk,\n     job.movie_link AS ml,\n     job.title AS t\nWHERE cn.country_code !='[pl]'\n  AND (cn.name LIKE '%Film%'\n       OR cn.name LIKE '%Warner%')\n  AND ct.kind ='production companies'\n  AND k.keyword ='sequel'\n  AND lt.link LIKE '%follows%'\n  AND mc.note IS NULL\n  AND t.production_year = 1998\n  AND t.title LIKE '%Money%'\n  AND lt.id = ml.link_type_id\n  AND ml.movie_id = t.id\n  AND t.id = mk.movie_id\n  AND mk.keyword_id = k.id\n  AND t.id = mc.movie_id\n  AND mc.company_type_id = ct.id\n  AND mc.company_id = cn.id\n  AND ml.movie_id = mk.movie_id\n  AND ml.movie_id = mc.movie_id\n  AND mk.movie_id = mc.movie_id;\n",
+      "startTime": "2026-06-23T16:40:56.364638Z",
+      "status": "OK",
+      "timeMs": 43.072
+    }
+  ],
+  "runtime": {
+    "avgMs": 43.072,
+    "bestMs": 43.072,
+    "maxMs": 43.072,
+    "minMs": 43.072,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "iceberg",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 11B Analysis",
+    "displayName": "JOB-11B",
+    "name": "PLAN-JOB-11B",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "Apache DataFusion 54.0.0, aarch64 on linux"
+}

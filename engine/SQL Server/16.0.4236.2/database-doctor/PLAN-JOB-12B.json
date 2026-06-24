@@ -1,0 +1,110 @@
+{
+  "engine": "SQL Server",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 2,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 1,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 3,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 3,
+          ">16x": 2
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 2,
+          "+8x": 2,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 2,
+          ">16x": 4
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 1,
+          "-8x": 0,
+          "<16x": 5,
+          "=": 5,
+          ">16x": 1
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 14,
+        "distribute": 0,
+        "hash": 2806,
+        "join": 3989340,
+        "scan": 2712,
+        "seek": 3989464,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(partialagg1061) AS Expr1016, MIN(partialagg1062) AS Expr1017\n       5         4  AGGREGATE MIN(info as info) AS partialagg1061, MIN(title as title) AS partialagg1062\n    2354        10  INNER JOIN HASH ON mc.movie_id = t.id\n    1351         2  │└INNER JOIN HASH ON mi.movie_id = t.id\n    1604         2  │ │└INNER JOIN HASH ON mi_idx.info_type_id = it2.id\n       1         1  │ │ │└FILTER info as info = 'bottom 10 rank'\n     113       113  │ │ │ TABLE SCAN info_type AS it2\n     802         2  │ │ INNER JOIN HASH ON mi_idx.movie_id = t.id\n     669      2597  │ │ │└TABLE SCAN title AS t WHERE (production_year as production_year > 2000) AND (title as title LIKE 'Birdemic%' OR title as title LIKE '%Movie%')\n    1380   1380035  │ │ TABLE SEEK movie_info_idx AS mi_idx WHERE BLOOM(info_type_id as info_type_id) AND BLOOM(movie_id as movie_id)\n      21         2  │ INNER JOIN HASH ON mi.info_type_id = it1.id\n       1         1  │ │└FILTER info as info = 'budget'\n     113       113  │ │ INNER JOIN LOOP ON Bmk1004 = Bmk1004\n       1       113  │ │ │└TABLE SEEK info_type AS it1\n     113       113  │ │ TABLE SEEK info_type AS it1\n   14835         2  │ TABLE SCAN movie_info AS mi WHERE BLOOM(movie_id as movie_id) AND BLOOM(info_type_id as info_type_id)\n      93        10  INNER JOIN HASH ON mc.company_type_id = ct.id\n       2         2  │└FILTER kind as kind = 'distributors' OR kind as kind = 'production companies'\n       4         4  │ INNER JOIN LOOP ON Bmk1002 = Bmk1002\n       1         4  │ │└TABLE SEEK company_type AS ct\n       4         4  │ TABLE SEEK company_type AS ct\n      93        10  FILTER country_code as country_code = 'us'\n     260        33  INNER JOIN LOOP ON Bmk1000 = Bmk1000\n       1        33  │└TABLE SEEK company_name AS cn\n     260        33  INNER JOIN LOOP ON mc.company_id = cn.id\n       1        33  │└TABLE SEEK company_name AS cn\n     260   2609129  TABLE SEEK movie_companies AS mc WHERE BLOOM(movie_id as movie_id)\n",
+      "sql": "SELECT MIN(mi.info) AS budget,\n       MIN(t.title) AS unsuccsessful_movie\nFROM job.company_name AS cn,\n     job.company_type AS ct,\n     job.info_type AS it1,\n     job.info_type AS it2,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.movie_info_idx AS mi_idx,\n     job.title AS t\nWHERE cn.country_code ='[us]'\n  AND ct.kind IS NOT NULL\n  AND (ct.kind ='production companies'\n       OR ct.kind = 'distributors')\n  AND it1.info ='budget'\n  AND it2.info ='bottom 10 rank'\n  AND t.production_year >2000\n  AND (t.title LIKE 'Birdemic%'\n       OR t.title LIKE '%Movie%')\n  AND t.id = mi.movie_id\n  AND t.id = mi_idx.movie_id\n  AND mi.info_type_id = it1.id\n  AND mi_idx.info_type_id = it2.id\n  AND t.id = mc.movie_id\n  AND ct.id = mc.company_type_id\n  AND cn.id = mc.company_id\n  AND mc.movie_id = mi.movie_id\n  AND mc.movie_id = mi_idx.movie_id\n  AND mi.movie_id = mi_idx.movie_id;\n",
+      "startTime": "2026-06-23T08:17:48.301000Z",
+      "status": "OK",
+      "timeMs": 703.734
+    }
+  ],
+  "runtime": {
+    "avgMs": 703.734,
+    "bestMs": 703.734,
+    "maxMs": 703.734,
+    "minMs": 703.734,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 12B Analysis",
+    "displayName": "JOB-12B",
+    "name": "PLAN-JOB-12B",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "16.0.4236.2"
+}

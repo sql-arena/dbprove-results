@@ -1,0 +1,109 @@
+{
+  "engine": "PostgreSQL",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 1,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 3,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 5,
+          "=": 2,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 1,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 8,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 1,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 2645,
+        "distribute": 0,
+        "hash": 40045,
+        "join": 6074398,
+        "scan": 6002645,
+        "seek": 60253,
+        "sort": 2645
+      },
+      "plan": "Estimate    Actual  Operator\n      30         2  AGGREGATE SUM(CASE WHEN (n_name = 'FRANCE') THEN (l_extendedprice * ('1' - l_discount)) ELSE '0' END) / SUM(l_extendedprice * ('1' - l_discount)) GROUP BY SORT EXTRACT(year FROM o_orderdate)\n      40      2645  SORT EXTRACT(year FROM o_orderdate)\n      40      2645  INNER JOIN LOOP ON n_nationkey = s_nationkey\n      40      2645  │└INNER JOIN LOOP ON s_suppkey = l_suppkey\n       8       529  │ │└INNER JOIN HASH ON c_nationkey = n_nationkey\n       5         5  │ │ │└INNER JOIN HASH ON n_regionkey = r_regionkey\n       1         1  │ │ │ │└TABLE SCAN region AS region WHERE r_name = 'EUROPE'\n      25        25  │ │ │ TABLE SCAN nation AS n1\n     190     12905  │ │ INNER JOIN LOOP ON c_custkey = o_custkey\n     190     12905  │ │ │└INNER JOIN LOOP ON o_orderkey = l_orderkey\n    7502      8411  │ │ │ │└INNER JOIN HASH ON l_partkey = p_partkey\n    1668      1404  │ │ │ │ │└TABLE SCAN part AS part WHERE p_type = 'SMALL POLISHED NICKEL'\n 7501520   6001215  │ │ │ │ TABLE SCAN lineitem AS lineitem\n   42054     42054  │ │ │ TABLE SEEK orders AS orders WHERE (o_orderdate >= '1995-01-01') AND (o_orderdate <= '1996-12-31')\n   12905     12905  │ │ TABLE SEEK customer AS customer\n    2647      2647  │ TABLE SEEK supplier AS supplier\n    2647      2647  TABLE SEEK nation AS n2\n",
+      "sql": "/* TPC-H Q08 */\nSELECT o_year,\n       SUM(CASE\n               WHEN nation = 'FRANCE'\n                   THEN volume\n               ELSE 0\n           END) / SUM(volume) AS mkt_share\nFROM (SELECT EXTRACT(YEAR FROM o_orderdate)     AS o_year,\n             l_extendedprice * (1 - l_discount) AS volume,\n             n2.n_name                          AS nation\n      FROM tpch_sf1.lineitem\n      INNER JOIN tpch_sf1.orders\n          ON o_orderkey = l_orderkey\n      INNER JOIN tpch_sf1.part\n          ON l_partkey = p_partkey\n      INNER JOIN tpch_sf1.supplier\n          ON l_suppkey = s_suppkey\n      INNER JOIN tpch_sf1.customer\n          ON o_custkey = c_custkey\n      INNER JOIN tpch_sf1.nation n1\n          ON c_nationkey = n1.n_nationkey\n      INNER JOIN tpch_sf1.region\n          ON n1.n_regionkey = r_regionkey\n      INNER JOIN tpch_sf1.nation n2\n          ON s_nationkey = n2.n_nationkey\n      WHERE r_name = 'EUROPE'\n        AND o_orderdate BETWEEN '1995-01-01' AND '1996-12-31'\n        AND p_type = 'SMALL POLISHED NICKEL') AS all_nations\nGROUP BY o_year\nORDER BY o_year",
+      "startTime": "2026-06-23T12:47:46.886408Z",
+      "status": "OK",
+      "timeMs": 247.398
+    }
+  ],
+  "runtime": {
+    "avgMs": 247.398,
+    "bestMs": 247.398,
+    "maxMs": 247.398,
+    "minMs": 247.398,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "TPC-H Q08 Analysis",
+    "displayName": "TPCH-Q08",
+    "name": "PLAN-TPC-H-Q08",
+    "tags": [
+      "TPC-H"
+    ]
+  },
+  "version": "14.23"
+}

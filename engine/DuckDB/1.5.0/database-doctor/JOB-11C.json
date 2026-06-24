@@ -1,0 +1,110 @@
+{
+  "engine": "DuckDB",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 1,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 2
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 1,
+          "-8x": 0,
+          "<16x": 3,
+          "=": 3,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 1,
+          "-8x": 0,
+          "<16x": 6,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 1,
+          "+4x": 1,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 2,
+          ">16x": 3
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 6946,
+        "distribute": 0,
+        "hash": 1816758,
+        "join": 1094330,
+        "scan": 286721,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       -         1  AGGREGATE MIN(#0), MIN(#1), MIN(#2)\n      23      6946  PROJECT name, note, title\n      23      6946  INNER JOIN HASH ON link_type_id = id\n      18        17  │└TABLE SCAN link_type WHERE id <= 17\n      23      6946  INNER JOIN HASH ON id = keyword_id\n     113    780776  │└INNER JOIN HASH ON movie_id = movie_id\n      63      8393  │ │└INNER JOIN HASH ON company_type_id = id\n       1         1  │ │ │└FILTER id <= 2\n       1         3  │ │ │ TABLE SCAN company_type WHERE kind != 'production companies' AND (kind IS NOT NULL)\n     252      8402  │ │ INNER JOIN HASH ON id = company_id\n     626    104935  │ │ │└INNER JOIN HASH ON movie_id = id\n    6035     29726  │ │ │ │└INNER JOIN HASH ON id = movie_id\n   29997     29997  │ │ │ │ │└TABLE SCAN movie_link\n  505662    177923  │ │ │ │ FILTER id BETWEEN 2 AND 186175\n  505662    226724  │ │ │ │ TABLE SCAN title WHERE production_year > 1950\n  521825      7709  │ │ │ FILTER movie_id <= 186175\n  521825      7719  │ │ │ TABLE SCAN movie_companies WHERE note IS NOT NULL\n   46999        89  │ │ TABLE SCAN company_name WHERE country_code != 'pl' AND (prefix(name,'20th Century Fox') OR prefix(name,'Twentieth Century Fox'))\n 4523930      1616  │ TABLE SCAN movie_keyword WHERE movie_id <= 186175\n   26834         3  FILTER (keyword = 'sequel') OR (keyword = 'revenge') OR (keyword = 'based-on-novel')\n  134170     20556  TABLE SCAN keyword WHERE keyword IN('sequel','revenge','based-on-novel')\n",
+      "sql": "SELECT MIN(cn.name) AS from_company,\n       MIN(mc.note) AS production_note,\n       MIN(t.title) AS movie_based_on_book\nFROM job.company_name AS cn,\n     job.company_type AS ct,\n     job.keyword AS k,\n     job.link_type AS lt,\n     job.movie_companies AS mc,\n     job.movie_keyword AS mk,\n     job.movie_link AS ml,\n     job.title AS t\nWHERE cn.country_code !='[pl]'\n  AND (cn.name LIKE '20th Century Fox%'\n       OR cn.name LIKE 'Twentieth Century Fox%')\n  AND ct.kind != 'production companies'\n  AND ct.kind IS NOT NULL\n  AND k.keyword IN ('sequel',\n                    'revenge',\n                    'based-on-novel')\n  AND mc.note IS NOT NULL\n  AND t.production_year > 1950\n  AND lt.id = ml.link_type_id\n  AND ml.movie_id = t.id\n  AND t.id = mk.movie_id\n  AND mk.keyword_id = k.id\n  AND t.id = mc.movie_id\n  AND mc.company_type_id = ct.id\n  AND mc.company_id = cn.id\n  AND ml.movie_id = mk.movie_id\n  AND ml.movie_id = mc.movie_id\n  AND mk.movie_id = mc.movie_id;\n",
+      "startTime": "2026-06-17T11:56:24.347767Z",
+      "status": "OK",
+      "timeMs": 42.681
+    }
+  ],
+  "runtime": {
+    "avgMs": 42.681,
+    "bestMs": 42.681,
+    "maxMs": 42.681,
+    "minMs": 42.681,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 11C Analysis",
+    "displayName": "JOB-11C",
+    "name": "JOB-11C",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "1.5.0"
+}

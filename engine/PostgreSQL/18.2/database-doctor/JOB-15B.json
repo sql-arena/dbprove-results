@@ -1,0 +1,110 @@
+{
+  "engine": "PostgreSQL",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 2,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 2,
+          "-4x": 0,
+          "-8x": 3,
+          "<16x": 1,
+          "=": 2,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 2,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 1,
+          "=": 8,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 39,
+        "distribute": 0,
+        "hash": 713,
+        "join": 713,
+        "scan": 2,
+        "seek": 712,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(info), MIN(title)\n       2         2  AGGREGATE PARTIAL MIN(info), PARTIAL MIN(title)\n      10        37  INNER JOIN LOOP ON id = keyword_id\n      10        37  │└INNER JOIN LOOP ON movie_id = id\n       2         3  │ │└INNER JOIN LOOP ON id = info_type_id\n       2         3  │ │ │└INNER JOIN LOOP ON movie_id = id\n       2        26  │ │ │ │└INNER JOIN LOOP ON id = movie_id\n       2        27  │ │ │ │ │└INNER JOIN LOOP ON id = company_type_id\n       2        27  │ │ │ │ │ │└INNER JOIN LOOP ON movie_id = movie_id\n       2       278  │ │ │ │ │ │ │└INNER JOIN LOOP ON company_id = id\n       2         2  │ │ │ │ │ │ │ │└TABLE SCAN company_name AS cn WHERE (cn.country_code = 'us') AND (cn.name = 'YouTube')\n       1       278  │ │ │ │ │ │ │ TABLE SEEK movie_companies AS mc WHERE (mc.note LIKE '%(200%)%') AND (mc.note LIKE '%(worldwide)%')\n     834       278  │ │ │ │ │ │ TABLE SEEK aka_title AS aka_t\n      27        27  │ │ │ │ │ TABLE SEEK company_type AS ct\n      27        27  │ │ │ │ TABLE SEEK title AS t WHERE (t.production_year >= 2005) AND (t.production_year <= 2010)\n      26        26  │ │ │ TABLE SEEK movie_info AS mi WHERE (mi.note LIKE '%internet%') AND (mi.info LIKE 'USA:% 200%')\n       3         3  │ │ TABLE SEEK info_type AS it1 WHERE it1.info = 'release dates'\n     138        36  │ TABLE SEEK movie_keyword AS mk\n      37        37  TABLE SEEK keyword AS k\n",
+      "sql": "SELECT MIN(mi.info) AS release_date,\n       MIN(t.title) AS youtube_movie\nFROM job.aka_title AS aka_t,\n     job.company_name AS cn,\n     job.company_type AS ct,\n     job.info_type AS it1,\n     job.keyword AS k,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.movie_keyword AS mk,\n     job.title AS t\nWHERE cn.country_code = '[us]'\n  AND cn.name = 'YouTube'\n  AND it1.info = 'release dates'\n  AND mc.note LIKE '%(200%)%'\n  AND mc.note LIKE '%(worldwide)%'\n  AND mi.note LIKE '%internet%'\n  AND mi.info LIKE 'USA:% 200%'\n  AND t.production_year BETWEEN 2005 AND 2010\n  AND t.id = aka_t.movie_id\n  AND t.id = mi.movie_id\n  AND t.id = mk.movie_id\n  AND t.id = mc.movie_id\n  AND mk.movie_id = mi.movie_id\n  AND mk.movie_id = mc.movie_id\n  AND mk.movie_id = aka_t.movie_id\n  AND mi.movie_id = mc.movie_id\n  AND mi.movie_id = aka_t.movie_id\n  AND mc.movie_id = aka_t.movie_id\n  AND k.id = mk.keyword_id\n  AND it1.id = mi.info_type_id\n  AND cn.id = mc.company_id\n  AND ct.id = mc.company_type_id;\n",
+      "startTime": "2026-06-17T12:23:18.806699Z",
+      "status": "OK",
+      "timeMs": 56.52
+    }
+  ],
+  "runtime": {
+    "avgMs": 56.52,
+    "bestMs": 56.52,
+    "maxMs": 56.52,
+    "minMs": 56.52,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 15B Analysis",
+    "displayName": "JOB-15B",
+    "name": "JOB-15B",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "18.2"
+}

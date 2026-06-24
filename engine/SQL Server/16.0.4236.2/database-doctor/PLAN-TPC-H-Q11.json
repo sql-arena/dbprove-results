@@ -1,0 +1,109 @@
+{
+  "engine": "SQL Server",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 1,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 2,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 2,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 4,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 1,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 6,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 1,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 4,
+          "<16x": 2,
+          "=": 4,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 1,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 60697,
+        "distribute": 0,
+        "hash": 59856,
+        "join": 51812,
+        "scan": 0,
+        "seek": 1620100,
+        "sort": 1225
+      },
+      "plan": "Estimate    Actual  Operator\n    9046      1225  SORT Expr1009\n    9046      1225  INNER JOIN LOOP ON Bmk1006 = Bmk1006\n   30156     28515  │└AGGREGATE SUM(Expr1021) AS Expr1009 GROUP BY HASH ps_partkey\n   32028     30160  │ INNER JOIN HASH ON ps_suppkey = s_suppkey\n     400       377  │ │└INNER JOIN HASH ON s_nationkey = n_nationkey\n       1         1  │ │ │└FILTER n_name = 'JAPAN'\n      25        25  │ │ │ INNER JOIN LOOP ON Bmk1006 = Bmk1006\n       1        25  │ │ │ │└TABLE SEEK nation\n      25        25  │ │ │ TABLE SEEK nation\n    1000     10000  │ │ TABLE SEEK supplier WHERE BLOOM(s_nationkey)\n   80000     30160  │ PROJECT ps_supplycost * CONVERT_IMPLICIT(decimal(10,0),ps_availqty,0) AS Expr1021\n   80000    800000  │ TABLE SEEK partsupp WHERE BLOOM(ps_suppkey)\n       1         1  PROJECT CASE WHEN globalagg1027 = 0 THEN NULL ELSE globalagg1029 END AS Expr1019\n       1         1  AGGREGATE SUM(partialagg1026) AS globalagg1027, SUM(partialagg1028) AS globalagg1029\n     400       377  INNER JOIN HASH ON ps_suppkey = s_suppkey\n     400       377  │└INNER JOIN HASH ON s_nationkey = n_nationkey\n       1         1  │ │└FILTER n_name = 'JAPAN'\n      25        25  │ │ INNER JOIN LOOP ON Bmk1016 = Bmk1016\n       1        25  │ │ │└TABLE SEEK nation\n      25        25  │ │ TABLE SEEK nation\n    1000     10000  │ TABLE SEEK supplier WHERE BLOOM(s_nationkey)\n     999       377  AGGREGATE COUNT(Expr1022) AS partialagg1026, SUM(Expr1022) AS partialagg1028 GROUP BY HASH ps_suppkey\n   80000     30160  PROJECT ps_supplycost * CONVERT_IMPLICIT(decimal(10,0),ps_availqty,0) AS Expr1022\n   80000    800000  TABLE SEEK partsupp WHERE BLOOM(ps_suppkey)\n",
+      "sql": "/* TPC-H Q11 */\nSELECT ps_partkey,\n       SUM(ps_supplycost * ps_availqty) AS v\nFROM tpch_sf1.partsupp\nINNER JOIN tpch_sf1.supplier\n    ON ps_suppkey = s_suppkey\nINNER JOIN tpch_sf1.nation\n    ON s_nationkey = n_nationkey\nWHERE n_name = 'JAPAN'\nGROUP BY ps_partkey\nHAVING SUM(ps_supplycost * ps_availqty)\n           > (SELECT SUM(ps_supplycost * ps_availqty) * 0.0001\n              FROM tpch_sf1.partsupp\n              INNER JOIN tpch_sf1.supplier\n                  ON ps_suppkey = s_suppkey\n              INNER JOIN tpch_sf1.nation\n                  ON s_nationkey = n_nationkey\n              WHERE n_name = 'JAPAN')\nORDER BY v DESC\n",
+      "startTime": "2026-06-22T16:16:17.823665Z",
+      "status": "OK",
+      "timeMs": 76.235
+    }
+  ],
+  "runtime": {
+    "avgMs": 76.235,
+    "bestMs": 76.235,
+    "maxMs": 76.235,
+    "minMs": 76.235,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "TPC-H Q11 Analysis",
+    "displayName": "TPCH-Q11",
+    "name": "PLAN-TPC-H-Q11",
+    "tags": [
+      "TPC-H"
+    ]
+  },
+  "version": "16.0.4236.2"
+}

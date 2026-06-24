@@ -1,0 +1,162 @@
+QUERY id: 0
+  PROJECTION COLUMNS
+    s_name String
+    numwait UInt64
+  PROJECTION
+    LIST id: 1, nodes: 2
+      COLUMN id: 2, column_name: s_name, result_type: String, source_id: 3
+      FUNCTION id: 4, function_name: count, function_type: aggregate, result_type: UInt64
+  JOIN TREE
+    JOIN id: 5, strictness: ALL, kind: INNER
+      LEFT TABLE EXPRESSION
+        JOIN id: 6, strictness: ALL, kind: INNER
+          LEFT TABLE EXPRESSION
+            JOIN id: 7, strictness: ALL, kind: INNER
+              LEFT TABLE EXPRESSION
+                TABLE id: 8, alias: __table1, table_name: tpch_sf1.lineitem
+              RIGHT TABLE EXPRESSION
+                TABLE id: 9, alias: __table2, table_name: tpch_sf1.orders
+              JOIN EXPRESSION
+                FUNCTION id: 10, function_name: equals, function_type: ordinary, result_type: UInt8
+                  ARGUMENTS
+                    LIST id: 11, nodes: 2
+                      COLUMN id: 12, column_name: l_orderkey, result_type: Int32, source_id: 8
+                      COLUMN id: 13, column_name: o_orderkey, result_type: Int32, source_id: 9
+          RIGHT TABLE EXPRESSION
+            TABLE id: 3, alias: __table3, table_name: tpch_sf1.supplier
+          JOIN EXPRESSION
+            FUNCTION id: 14, function_name: equals, function_type: ordinary, result_type: UInt8
+              ARGUMENTS
+                LIST id: 15, nodes: 2
+                  COLUMN id: 16, column_name: l_suppkey, result_type: Int32, source_id: 8
+                  COLUMN id: 17, column_name: s_suppkey, result_type: Int32, source_id: 3
+      RIGHT TABLE EXPRESSION
+        TABLE id: 18, alias: __table4, table_name: tpch_sf1.nation
+      JOIN EXPRESSION
+        FUNCTION id: 19, function_name: equals, function_type: ordinary, result_type: UInt8
+          ARGUMENTS
+            LIST id: 20, nodes: 2
+              COLUMN id: 21, column_name: s_nationkey, result_type: Int32, source_id: 3
+              COLUMN id: 22, column_name: n_nationkey, result_type: Int32, source_id: 18
+  WHERE
+    FUNCTION id: 23, function_name: and, function_type: ordinary, result_type: UInt8
+      ARGUMENTS
+        LIST id: 24, nodes: 5
+          FUNCTION id: 25, function_name: equals, function_type: ordinary, result_type: UInt8
+            ARGUMENTS
+              LIST id: 26, nodes: 2
+                COLUMN id: 27, column_name: o_orderstatus, result_type: String, source_id: 9
+                CONSTANT id: 28, constant_value: 'F', constant_value_type: String
+          FUNCTION id: 29, function_name: greater, function_type: ordinary, result_type: UInt8
+            ARGUMENTS
+              LIST id: 30, nodes: 2
+                COLUMN id: 31, column_name: l_receiptdate, result_type: Date, source_id: 8
+                COLUMN id: 32, column_name: l_commitdate, result_type: Date, source_id: 8
+          FUNCTION id: 33, function_name: exists, function_type: ordinary, result_type: UInt8
+            ARGUMENTS
+              LIST id: 34, nodes: 1
+                QUERY id: 35, alias: __table5, is_subquery: 1, is_correlated: 1
+                  CORRELATED COLUMNS
+                    LIST id: 36, nodes: 2
+                      COLUMN id: 37, column_name: l_orderkey, result_type: Int32, source_id: 8
+                      COLUMN id: 38, column_name: l_suppkey, result_type: Int32, source_id: 8
+                  PROJECTION COLUMNS
+                    1 UInt64
+                  PROJECTION
+                    LIST id: 39, nodes: 1
+                      CONSTANT id: 40, constant_value: UInt64_1, constant_value_type: UInt64
+                  JOIN TREE
+                    QUERY id: 41, alias: __table6, is_subquery: 1, is_correlated: 1
+                      CORRELATED COLUMNS
+                        LIST id: 42, nodes: 2
+                          COLUMN id: 37, column_name: l_orderkey, result_type: Int32, source_id: 8
+                          COLUMN id: 38, column_name: l_suppkey, result_type: Int32, source_id: 8
+                      PROJECTION COLUMNS
+                        1 UInt8
+                      PROJECTION
+                        LIST id: 43, nodes: 1
+                          CONSTANT id: 44, constant_value: UInt64_1, constant_value_type: UInt8
+                      JOIN TREE
+                        TABLE id: 45, alias: __table7, table_name: tpch_sf1.lineitem
+                      WHERE
+                        FUNCTION id: 46, function_name: and, function_type: ordinary, result_type: UInt8
+                          ARGUMENTS
+                            LIST id: 47, nodes: 2
+                              FUNCTION id: 48, function_name: equals, function_type: ordinary, result_type: UInt8
+                                ARGUMENTS
+                                  LIST id: 49, nodes: 2
+                                    COLUMN id: 50, column_name: l_orderkey, result_type: Int32, source_id: 45
+                                    COLUMN id: 37, column_name: l_orderkey, result_type: Int32, source_id: 8
+                              FUNCTION id: 51, function_name: notEquals, function_type: ordinary, result_type: UInt8
+                                ARGUMENTS
+                                  LIST id: 52, nodes: 2
+                                    COLUMN id: 53, column_name: l_suppkey, result_type: Int32, source_id: 45
+                                    COLUMN id: 38, column_name: l_suppkey, result_type: Int32, source_id: 8
+                  LIMIT
+                    CONSTANT id: 54, constant_value: UInt64_1, constant_value_type: UInt64
+          FUNCTION id: 55, function_name: not, function_type: ordinary, result_type: UInt8
+            ARGUMENTS
+              LIST id: 56, nodes: 1
+                FUNCTION id: 57, function_name: exists, function_type: ordinary, result_type: UInt8
+                  ARGUMENTS
+                    LIST id: 58, nodes: 1
+                      QUERY id: 59, alias: __table8, is_subquery: 1, is_correlated: 1
+                        CORRELATED COLUMNS
+                          LIST id: 60, nodes: 2
+                            COLUMN id: 61, column_name: l_orderkey, result_type: Int32, source_id: 8
+                            COLUMN id: 62, column_name: l_suppkey, result_type: Int32, source_id: 8
+                        PROJECTION COLUMNS
+                          1 UInt64
+                        PROJECTION
+                          LIST id: 63, nodes: 1
+                            CONSTANT id: 64, constant_value: UInt64_1, constant_value_type: UInt64
+                        JOIN TREE
+                          QUERY id: 65, alias: __table9, is_subquery: 1, is_correlated: 1
+                            CORRELATED COLUMNS
+                              LIST id: 66, nodes: 2
+                                COLUMN id: 61, column_name: l_orderkey, result_type: Int32, source_id: 8
+                                COLUMN id: 62, column_name: l_suppkey, result_type: Int32, source_id: 8
+                            PROJECTION COLUMNS
+                              1 UInt8
+                            PROJECTION
+                              LIST id: 67, nodes: 1
+                                CONSTANT id: 68, constant_value: UInt64_1, constant_value_type: UInt8
+                            JOIN TREE
+                              TABLE id: 69, alias: __table10, table_name: tpch_sf1.lineitem
+                            WHERE
+                              FUNCTION id: 70, function_name: and, function_type: ordinary, result_type: UInt8
+                                ARGUMENTS
+                                  LIST id: 71, nodes: 3
+                                    FUNCTION id: 72, function_name: equals, function_type: ordinary, result_type: UInt8
+                                      ARGUMENTS
+                                        LIST id: 73, nodes: 2
+                                          COLUMN id: 74, column_name: l_orderkey, result_type: Int32, source_id: 69
+                                          COLUMN id: 61, column_name: l_orderkey, result_type: Int32, source_id: 8
+                                    FUNCTION id: 75, function_name: notEquals, function_type: ordinary, result_type: UInt8
+                                      ARGUMENTS
+                                        LIST id: 76, nodes: 2
+                                          COLUMN id: 77, column_name: l_suppkey, result_type: Int32, source_id: 69
+                                          COLUMN id: 62, column_name: l_suppkey, result_type: Int32, source_id: 8
+                                    FUNCTION id: 78, function_name: greater, function_type: ordinary, result_type: UInt8
+                                      ARGUMENTS
+                                        LIST id: 79, nodes: 2
+                                          COLUMN id: 80, column_name: l_receiptdate, result_type: Date, source_id: 69
+                                          COLUMN id: 81, column_name: l_commitdate, result_type: Date, source_id: 69
+                        LIMIT
+                          CONSTANT id: 82, constant_value: UInt64_1, constant_value_type: UInt64
+          FUNCTION id: 83, function_name: equals, function_type: ordinary, result_type: UInt8
+            ARGUMENTS
+              LIST id: 84, nodes: 2
+                COLUMN id: 85, column_name: n_name, result_type: String, source_id: 18
+                CONSTANT id: 86, constant_value: 'GERMANY', constant_value_type: String
+  GROUP BY
+    LIST id: 87, nodes: 1
+      COLUMN id: 88, column_name: s_name, result_type: String, source_id: 3
+  ORDER BY
+    LIST id: 89, nodes: 2
+      SORT id: 90, sort_direction: DESCENDING, with_fill: 0
+        EXPRESSION numwait
+          FUNCTION id: 91, function_name: count, function_type: aggregate, result_type: UInt64
+      SORT id: 92, sort_direction: ASCENDING, with_fill: 0
+        EXPRESSION s_name
+          COLUMN id: 93, column_name: s_name, result_type: String, source_id: 3

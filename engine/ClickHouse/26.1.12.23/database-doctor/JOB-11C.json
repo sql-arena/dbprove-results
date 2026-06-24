@@ -1,0 +1,110 @@
+{
+  "engine": "ClickHouse",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 0,
+        "distribute": 0,
+        "hash": 7163074,
+        "join": 0,
+        "scan": 9584610,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       -         ∞  PROJECT a1 AS from_company, a2 AS production_note, a3 AS movie_based_on_book\n       -         ∞  AGGREGATE MIN(name) AS a1, MIN(note) AS a2, MIN(title) AS a3\n       -         ∞  PROJECT name, note, title\n       -         ∞  PROJECT name, note, title\n       -         ∞  INNER JOIN HASH ON PROJECTION_131.keyword_id = PROJECTION_128.id\n       -         ∞  │└PROJECT id\n       -         ∞  │ FILTER (1 AND in(keyword,__set_String_3121726789508643859_9359213533155979499)) AS a38\n       -    134170  │ TABLE SCAN keyword WHERE TRUE\n       -         ∞  PROJECT keyword_id, name, note, title\n       -         ∞  PROJECT name, note, keyword_id, title\n       -         ∞  INNER JOIN HASH ON tuple(PROJECTION_137.movie_id,PROJECTION_137.movie_id,PROJECTION_137.id) = tuple(PROJECTION_134.movie_id,PROJECTION_134.movie_id,PROJECTION_134.movie_id)\n       -   4523930  │└PROJECT movie_id AS movie_id_right, keyword_id\n       -   4523930  │ PROJECT movie_id, keyword_id\n       -   4523930  │ TABLE SCAN movie_keyword\n       -         ∞  PROJECT movie_id_left, movie_id AS movie_id_left_2, id, name, note, title\n       -         ∞  PROJECT name, note, movie_id, movie_id, title, id\n       -         ∞  INNER JOIN HASH ON tuple(PROJECTION_143.movie_id,PROJECTION_143.movie_id) = tuple(PROJECTION_140.id,PROJECTION_140.id)\n       -         ∞  │└PROJECT id, title\n       -         ∞  │ FILTER (1 AND production_year > 1950_UInt16) AS a34\n       -   2287271  │ TABLE SCAN title WHERE production_year > 1950\n       -         ∞  PROJECT movie_id, movie_id, name, note\n       -         ∞  PROJECT name, note, movie_id, movie_id\n       -         ∞  INNER JOIN HASH ON PROJECTION_149.link_type_id = PROJECTION_146.id\n       -        18  │└PROJECT id\n       -        18  │ PROJECT id\n       -        18  │ TABLE SCAN link_type\n       -         ∞  PROJECT link_type_id, name, note, movie_id, movie_id\n       -         ∞  PROJECT name, note, movie_id, movie_id, link_type_id\n       -         ∞  INNER JOIN HASH ON PROJECTION_155.movie_id = PROJECTION_152.movie_id\n       -     29997  │└PROJECT movie_id AS movie_id_right, link_type_id\n       -     29997  │ PROJECT movie_id, link_type_id\n       -     29997  │ TABLE SCAN movie_link\n       -         ∞  PROJECT movie_id AS movie_id_left, name, note\n       -         ∞  PROJECT name, note, movie_id\n       -         ∞  INNER JOIN HASH ON PROJECTION_161.company_type_id = PROJECTION_158.id\n       -         ∞  │└PROJECT id\n       -         ∞  │ FILTER (kind <> 'production companies'_String AND 1) AS a30\n       -         3  │ TABLE SCAN company_type WHERE kind <> 'production companies'\n       -         ∞  PROJECT company_type_id, name, note, movie_id\n       -         ∞  PROJECT name, note, company_type_id, movie_id\n       -         ∞  INNER JOIN HASH ON PROJECTION_167.id = PROJECTION_164.company_id\n       -   2609129  │└PROJECT company_id, note, company_type_id, movie_id\n       -   2609129  │ PROJECT note, company_id, company_type_id, movie_id\n       -   2609129  │ TABLE SCAN movie_companies\n       -         ∞  PROJECT id, name\n       -         ∞  FILTER (country_code <> 'pl'_String AND  OR (startsWith(name,'20th Century Fox'_String),startsWith(name,'Twentieth Century Fox'_String)) AND 1) AS a16\n       -        92  TABLE SCAN company_name WHERE (country_code <> 'pl') AND (startsWith(name,'20th Century Fox') OR startsWith(name,'Twentieth Century Fox'))\n",
+      "sql": "SELECT MIN(cn.name) AS from_company,\n       MIN(mc.note) AS production_note,\n       MIN(t.title) AS movie_based_on_book\nFROM job.company_name AS cn,\n     job.company_type AS ct,\n     job.keyword AS k,\n     job.link_type AS lt,\n     job.movie_companies AS mc,\n     job.movie_keyword AS mk,\n     job.movie_link AS ml,\n     job.title AS t\nWHERE cn.country_code !='[pl]'\n  AND (cn.name LIKE '20th Century Fox%'\n       OR cn.name LIKE 'Twentieth Century Fox%')\n  AND ct.kind != 'production companies'\n  AND ct.kind IS NOT NULL\n  AND k.keyword IN ('sequel',\n                    'revenge',\n                    'based-on-novel')\n  AND mc.note IS NOT NULL\n  AND t.production_year > 1950\n  AND lt.id = ml.link_type_id\n  AND ml.movie_id = t.id\n  AND t.id = mk.movie_id\n  AND mk.keyword_id = k.id\n  AND t.id = mc.movie_id\n  AND mc.company_type_id = ct.id\n  AND mc.company_id = cn.id\n  AND ml.movie_id = mk.movie_id\n  AND ml.movie_id = mc.movie_id\n  AND mk.movie_id = mc.movie_id;\n",
+      "startTime": "2026-06-22T09:11:42.896686Z",
+      "status": "OK",
+      "timeMs": 171.793
+    }
+  ],
+  "runtime": {
+    "avgMs": 171.793,
+    "bestMs": 171.793,
+    "maxMs": 171.793,
+    "minMs": 171.793,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 11C Analysis",
+    "displayName": "JOB-11C",
+    "name": "JOB-11C",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "26.1.12.23"
+}

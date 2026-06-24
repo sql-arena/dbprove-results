@@ -1,0 +1,257 @@
+[
+  {
+    "Execution Time": 727.885,
+    "Plan": {
+      "Actual Loops": 1,
+      "Actual Rows": 4,
+      "Actual Startup Time": 726.233,
+      "Actual Total Time": 727.506,
+      "Async Capable": false,
+      "Node Type": "Sort",
+      "Output": [
+        "l_returnflag",
+        "l_linestatus",
+        "(sum(l_quantity))",
+        "(sum(l_extendedprice))",
+        "(sum((l_extendedprice * ('1'::numeric - l_discount))))",
+        "(sum(((l_extendedprice * ('1'::numeric - l_discount)) * ('1'::numeric + l_tax))))",
+        "(avg(l_quantity))",
+        "(avg(l_extendedprice))",
+        "(avg(l_discount))",
+        "(count(*))"
+      ],
+      "Parallel Aware": false,
+      "Plan Rows": 40000,
+      "Plan Width": 296,
+      "Plans": [
+        {
+          "Actual Loops": 1,
+          "Actual Rows": 4,
+          "Actual Startup Time": 726.117,
+          "Actual Total Time": 727.5,
+          "Async Capable": false,
+          "Disk Usage": 0,
+          "Group Key": [
+            "lineitem.l_returnflag",
+            "lineitem.l_linestatus"
+          ],
+          "HashAgg Batches": 1,
+          "Node Type": "Aggregate",
+          "Output": [
+            "l_returnflag",
+            "l_linestatus",
+            "sum(l_quantity)",
+            "sum(l_extendedprice)",
+            "sum((l_extendedprice * ('1'::numeric - l_discount)))",
+            "sum(((l_extendedprice * ('1'::numeric - l_discount)) * ('1'::numeric + l_tax)))",
+            "avg(l_quantity)",
+            "avg(l_extendedprice)",
+            "avg(l_discount)",
+            "count(*)"
+          ],
+          "Parallel Aware": false,
+          "Parent Relationship": "Outer",
+          "Partial Mode": "Finalize",
+          "Peak Memory Usage": 1569,
+          "Plan Rows": 40000,
+          "Plan Width": 296,
+          "Planned Partitions": 0,
+          "Plans": [
+            {
+              "Actual Loops": 1,
+              "Actual Rows": 20,
+              "Actual Startup Time": 725.772,
+              "Actual Total Time": 727.31,
+              "Async Capable": false,
+              "Node Type": "Gather",
+              "Output": [
+                "l_returnflag",
+                "l_linestatus",
+                "(PARTIAL sum(l_quantity))",
+                "(PARTIAL sum(l_extendedprice))",
+                "(PARTIAL sum((l_extendedprice * ('1'::numeric - l_discount))))",
+                "(PARTIAL sum(((l_extendedprice * ('1'::numeric - l_discount)) * ('1'::numeric + l_tax))))",
+                "(PARTIAL avg(l_quantity))",
+                "(PARTIAL avg(l_extendedprice))",
+                "(PARTIAL avg(l_discount))",
+                "(PARTIAL count(*))"
+              ],
+              "Parallel Aware": false,
+              "Parent Relationship": "Outer",
+              "Plan Rows": 160000,
+              "Plan Width": 296,
+              "Plans": [
+                {
+                  "Actual Loops": 5,
+                  "Actual Rows": 4,
+                  "Actual Startup Time": 721.637,
+                  "Actual Total Time": 721.751,
+                  "Async Capable": false,
+                  "Disk Usage": 0,
+                  "Group Key": [
+                    "lineitem.l_returnflag",
+                    "lineitem.l_linestatus"
+                  ],
+                  "HashAgg Batches": 1,
+                  "Node Type": "Aggregate",
+                  "Output": [
+                    "l_returnflag",
+                    "l_linestatus",
+                    "PARTIAL sum(l_quantity)",
+                    "PARTIAL sum(l_extendedprice)",
+                    "PARTIAL sum((l_extendedprice * ('1'::numeric - l_discount)))",
+                    "PARTIAL sum(((l_extendedprice * ('1'::numeric - l_discount)) * ('1'::numeric + l_tax)))",
+                    "PARTIAL avg(l_quantity)",
+                    "PARTIAL avg(l_extendedprice)",
+                    "PARTIAL avg(l_discount)",
+                    "PARTIAL count(*)"
+                  ],
+                  "Parallel Aware": false,
+                  "Parent Relationship": "Outer",
+                  "Partial Mode": "Partial",
+                  "Peak Memory Usage": 1569,
+                  "Plan Rows": 40000,
+                  "Plan Width": 296,
+                  "Planned Partitions": 0,
+                  "Plans": [
+                    {
+                      "Actual Loops": 5,
+                      "Actual Rows": 1192429,
+                      "Actual Startup Time": 0.008,
+                      "Actual Total Time": 220.694,
+                      "Alias": "lineitem",
+                      "Async Capable": false,
+                      "Filter": "(lineitem.l_shipdate <= '1998-10-01'::date)",
+                      "Node Type": "Seq Scan",
+                      "Output": [
+                        "l_orderkey",
+                        "l_partkey",
+                        "l_suppkey",
+                        "l_linenumber",
+                        "l_quantity",
+                        "l_extendedprice",
+                        "l_discount",
+                        "l_tax",
+                        "l_returnflag",
+                        "l_linestatus",
+                        "l_shipdate",
+                        "l_commitdate",
+                        "l_receiptdate",
+                        "l_shipinstruct",
+                        "l_shipmode",
+                        "l_comment"
+                      ],
+                      "Parallel Aware": true,
+                      "Parent Relationship": "Outer",
+                      "Plan Rows": 500101,
+                      "Plan Width": 136,
+                      "Relation Name": "lineitem",
+                      "Rows Removed by Filter": 7814,
+                      "Schema": "tpch_sf1",
+                      "Startup Cost": 0.0,
+                      "Total Cost": 117297.8,
+                      "Workers": [
+                        {
+                          "Actual Loops": 1,
+                          "Actual Rows": 724216,
+                          "Actual Startup Time": 0.006,
+                          "Actual Total Time": 221.149,
+                          "Worker Number": 0
+                        },
+                        {
+                          "Actual Loops": 1,
+                          "Actual Rows": 1489605,
+                          "Actual Startup Time": 0.005,
+                          "Actual Total Time": 236.609,
+                          "Worker Number": 1
+                        },
+                        {
+                          "Actual Loops": 1,
+                          "Actual Rows": 1463517,
+                          "Actual Startup Time": 0.01,
+                          "Actual Total Time": 232.049,
+                          "Worker Number": 2
+                        },
+                        {
+                          "Actual Loops": 1,
+                          "Actual Rows": 1485739,
+                          "Actual Startup Time": 0.015,
+                          "Actual Total Time": 232.503,
+                          "Worker Number": 3
+                        }
+                      ]
+                    }
+                  ],
+                  "Startup Cost": 134801.33,
+                  "Strategy": "Hashed",
+                  "Total Cost": 135701.33,
+                  "Workers": [
+                    {
+                      "Actual Loops": 1,
+                      "Actual Rows": 4,
+                      "Actual Startup Time": 720.985,
+                      "Actual Total Time": 721.092,
+                      "Disk Usage": 0,
+                      "HashAgg Batches": 1,
+                      "Peak Memory Usage": 1569,
+                      "Worker Number": 0
+                    },
+                    {
+                      "Actual Loops": 1,
+                      "Actual Rows": 4,
+                      "Actual Startup Time": 721.194,
+                      "Actual Total Time": 721.296,
+                      "Disk Usage": 0,
+                      "HashAgg Batches": 1,
+                      "Peak Memory Usage": 1569,
+                      "Worker Number": 1
+                    },
+                    {
+                      "Actual Loops": 1,
+                      "Actual Rows": 4,
+                      "Actual Startup Time": 719.113,
+                      "Actual Total Time": 719.19,
+                      "Disk Usage": 0,
+                      "HashAgg Batches": 1,
+                      "Peak Memory Usage": 1569,
+                      "Worker Number": 2
+                    },
+                    {
+                      "Actual Loops": 1,
+                      "Actual Rows": 4,
+                      "Actual Startup Time": 721.235,
+                      "Actual Total Time": 721.359,
+                      "Disk Usage": 0,
+                      "HashAgg Batches": 1,
+                      "Peak Memory Usage": 1569,
+                      "Worker Number": 3
+                    }
+                  ]
+                }
+              ],
+              "Single Copy": false,
+              "Startup Cost": 135801.33,
+              "Total Cost": 152701.33,
+              "Workers Launched": 4,
+              "Workers Planned": 4
+            }
+          ],
+          "Startup Cost": 157901.33,
+          "Strategy": "Hashed",
+          "Total Cost": 159001.33
+        }
+      ],
+      "Sort Key": [
+        "lineitem.l_returnflag",
+        "lineitem.l_linestatus"
+      ],
+      "Sort Method": "quicksort",
+      "Sort Space Type": "Memory",
+      "Sort Space Used": 25,
+      "Startup Cost": 162058.87,
+      "Total Cost": 162158.87
+    },
+    "Planning Time": 0.072,
+    "Triggers": []
+  }
+]

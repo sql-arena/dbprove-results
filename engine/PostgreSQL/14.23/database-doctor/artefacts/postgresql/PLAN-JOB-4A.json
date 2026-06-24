@@ -1,0 +1,264 @@
+[
+  {
+    "Execution Time": 26.244,
+    "Plan": {
+      "Actual Loops": 1,
+      "Actual Rows": 1,
+      "Actual Startup Time": 26.196,
+      "Actual Total Time": 26.197,
+      "Async Capable": false,
+      "Node Type": "Aggregate",
+      "Output": [
+        "min(mi_idx.info)",
+        "min(t.title)"
+      ],
+      "Parallel Aware": false,
+      "Partial Mode": "Simple",
+      "Plan Rows": 1,
+      "Plan Width": 64,
+      "Plans": [
+        {
+          "Actual Loops": 1,
+          "Actual Rows": 740,
+          "Actual Startup Time": 0.558,
+          "Actual Total Time": 26.154,
+          "Async Capable": false,
+          "Inner Unique": true,
+          "Join Filter": "(mi_idx.movie_id = t.id)",
+          "Join Type": "Inner",
+          "Node Type": "Nested Loop",
+          "Output": [
+            "mi_idx.info",
+            "t.title"
+          ],
+          "Parallel Aware": false,
+          "Parent Relationship": "Outer",
+          "Plan Rows": 2,
+          "Plan Width": 22,
+          "Plans": [
+            {
+              "Actual Loops": 1,
+              "Actual Rows": 5820,
+              "Actual Startup Time": 0.302,
+              "Actual Total Time": 18.097,
+              "Async Capable": false,
+              "Inner Unique": false,
+              "Join Filter": "(mi_idx.info_type_id = it.id)",
+              "Join Type": "Inner",
+              "Node Type": "Nested Loop",
+              "Output": [
+                "mi_idx.info",
+                "mi_idx.movie_id",
+                "mk.movie_id"
+              ],
+              "Parallel Aware": false,
+              "Parent Relationship": "Outer",
+              "Plan Rows": 4,
+              "Plan Width": 13,
+              "Plans": [
+                {
+                  "Actual Loops": 1,
+                  "Actual Rows": 1,
+                  "Actual Startup Time": 0.007,
+                  "Actual Total Time": 0.007,
+                  "Alias": "it",
+                  "Async Capable": false,
+                  "Index Cond": "(it.info = 'rating'::text)",
+                  "Index Name": "info_info_type",
+                  "Node Type": "Index Scan",
+                  "Output": [
+                    "it.id",
+                    "it.info"
+                  ],
+                  "Parallel Aware": false,
+                  "Parent Relationship": "Outer",
+                  "Plan Rows": 1,
+                  "Plan Width": 4,
+                  "Relation Name": "info_type",
+                  "Rows Removed by Index Recheck": 0,
+                  "Scan Direction": "Forward",
+                  "Schema": "job",
+                  "Startup Cost": 0.14,
+                  "Total Cost": 2.36
+                },
+                {
+                  "Actual Loops": 1,
+                  "Actual Rows": 8433,
+                  "Actual Startup Time": 0.295,
+                  "Actual Total Time": 17.734,
+                  "Async Capable": false,
+                  "Inner Unique": false,
+                  "Join Type": "Inner",
+                  "Node Type": "Nested Loop",
+                  "Output": [
+                    "mk.movie_id",
+                    "mi_idx.info",
+                    "mi_idx.movie_id",
+                    "mi_idx.info_type_id"
+                  ],
+                  "Parallel Aware": false,
+                  "Parent Relationship": "Inner",
+                  "Plan Rows": 491,
+                  "Plan Width": 17,
+                  "Plans": [
+                    {
+                      "Actual Loops": 1,
+                      "Actual Rows": 12951,
+                      "Actual Startup Time": 0.29,
+                      "Actual Total Time": 6.564,
+                      "Async Capable": false,
+                      "Inner Unique": false,
+                      "Join Type": "Inner",
+                      "Node Type": "Nested Loop",
+                      "Output": [
+                        "mk.movie_id"
+                      ],
+                      "Parallel Aware": false,
+                      "Parent Relationship": "Outer",
+                      "Plan Rows": 438,
+                      "Plan Width": 4,
+                      "Plans": [
+                        {
+                          "Actual Loops": 1,
+                          "Actual Rows": 30,
+                          "Actual Startup Time": 0.279,
+                          "Actual Total Time": 5.547,
+                          "Alias": "k",
+                          "Async Capable": false,
+                          "Filter": "(k.keyword ~~ '%sequel%'::text)",
+                          "Node Type": "Seq Scan",
+                          "Output": [
+                            "k.id",
+                            "k.keyword",
+                            "k.phonetic_code"
+                          ],
+                          "Parallel Aware": false,
+                          "Parent Relationship": "Outer",
+                          "Plan Rows": 13,
+                          "Plan Width": 4,
+                          "Relation Name": "keyword",
+                          "Rows Removed by Filter": 134140,
+                          "Schema": "job",
+                          "Startup Cost": 0.0,
+                          "Total Cost": 2626.12
+                        },
+                        {
+                          "Actual Loops": 30,
+                          "Actual Rows": 432,
+                          "Actual Startup Time": 0.002,
+                          "Actual Total Time": 0.018,
+                          "Alias": "mk",
+                          "Async Capable": false,
+                          "Heap Fetches": 0,
+                          "Index Cond": "(mk.keyword_id = k.id)",
+                          "Index Name": "keyword_id_movie_id_movie_keyword",
+                          "Node Type": "Index Only Scan",
+                          "Output": [
+                            "mk.keyword_id",
+                            "mk.movie_id"
+                          ],
+                          "Parallel Aware": false,
+                          "Parent Relationship": "Inner",
+                          "Plan Rows": 301,
+                          "Plan Width": 8,
+                          "Relation Name": "movie_keyword",
+                          "Rows Removed by Index Recheck": 0,
+                          "Scan Direction": "Forward",
+                          "Schema": "job",
+                          "Startup Cost": 0.43,
+                          "Total Cost": 6.8
+                        }
+                      ],
+                      "Startup Cost": 0.43,
+                      "Total Cost": 2753.65
+                    },
+                    {
+                      "Actual Loops": 12951,
+                      "Actual Rows": 1,
+                      "Actual Startup Time": 0.001,
+                      "Actual Total Time": 0.001,
+                      "Alias": "mi_idx",
+                      "Async Capable": false,
+                      "Filter": "(mi_idx.info > '5.0'::text)",
+                      "Index Cond": "(mi_idx.movie_id = mk.movie_id)",
+                      "Index Name": "movie_id_movie_info_idx",
+                      "Node Type": "Index Scan",
+                      "Output": [
+                        "mi_idx.id",
+                        "mi_idx.movie_id",
+                        "mi_idx.info_type_id",
+                        "mi_idx.info",
+                        "mi_idx.note"
+                      ],
+                      "Parallel Aware": false,
+                      "Parent Relationship": "Inner",
+                      "Plan Rows": 1,
+                      "Plan Width": 13,
+                      "Relation Name": "movie_info_idx",
+                      "Rows Removed by Filter": 1,
+                      "Rows Removed by Index Recheck": 0,
+                      "Scan Direction": "Forward",
+                      "Schema": "job",
+                      "Startup Cost": 0.43,
+                      "Total Cost": 0.49
+                    }
+                  ],
+                  "Startup Cost": 0.86,
+                  "Total Cost": 2972.7
+                }
+              ],
+              "Rows Removed by Join Filter": 2613,
+              "Startup Cost": 1.0,
+              "Total Cost": 2981.2
+            },
+            {
+              "Actual Loops": 5820,
+              "Actual Rows": 0,
+              "Actual Startup Time": 0.001,
+              "Actual Total Time": 0.001,
+              "Alias": "t",
+              "Async Capable": false,
+              "Filter": "(t.production_year > 2005)",
+              "Index Cond": "(t.id = mk.movie_id)",
+              "Index Name": "dbprove_pk_title",
+              "Node Type": "Index Scan",
+              "Output": [
+                "t.id",
+                "t.title",
+                "t.imdb_index",
+                "t.kind_id",
+                "t.production_year",
+                "t.imdb_id",
+                "t.phonetic_code",
+                "t.episode_of_id",
+                "t.season_nr",
+                "t.episode_nr",
+                "t.series_years",
+                "t.md5sum"
+              ],
+              "Parallel Aware": false,
+              "Parent Relationship": "Inner",
+              "Plan Rows": 1,
+              "Plan Width": 21,
+              "Relation Name": "title",
+              "Rows Removed by Filter": 1,
+              "Rows Removed by Index Recheck": 0,
+              "Scan Direction": "Forward",
+              "Schema": "job",
+              "Startup Cost": 0.43,
+              "Total Cost": 0.46
+            }
+          ],
+          "Rows Removed by Join Filter": 0,
+          "Startup Cost": 1.43,
+          "Total Cost": 2983.09
+        }
+      ],
+      "Startup Cost": 2983.1,
+      "Strategy": "Plain",
+      "Total Cost": 2983.11
+    },
+    "Planning Time": 0.422,
+    "Triggers": []
+  }
+]

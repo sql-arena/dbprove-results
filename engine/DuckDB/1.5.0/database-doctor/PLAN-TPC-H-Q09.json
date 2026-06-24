@@ -1,0 +1,109 @@
+{
+  "engine": "DuckDB",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 1
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 1,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 4,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 2,
+          "+4x": 0,
+          "+8x": 1,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 2,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 1,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 5,
+          ">16x": 1
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 327148,
+        "distribute": 0,
+        "hash": 3437148,
+        "join": 7465475,
+        "scan": 8322111,
+        "seek": 0,
+        "sort": 175
+      },
+      "plan": "Estimate    Actual  Operator\n       -       175  SORT profit.nation, profit.o_year\n 4934640       175  AGGREGATE SUM(#2) GROUP BY HASH #0, #1\n 5118056    327148  PROJECT nation, o_year, amount\n 5118056    327148  PROJECT nation, o_year, amount\n 5118056    327148  INNER JOIN HASH ON l_suppkey = s_suppkey AND p_partkey = ps_partkey\n  769230    800000  │└INNER JOIN HASH ON ps_suppkey = s_suppkey\n    9615     10000  │ │└INNER JOIN HASH ON s_nationkey = n_nationkey\n      25        25  │ │ │└TABLE SCAN nation\n   10000     10000  │ │ TABLE SCAN supplier\n  800000    800000  │ TABLE SCAN partsupp\n 1269050    327148  INNER JOIN HASH ON l_orderkey = o_orderkey\n 1500000   1500000  │└TABLE SCAN orders\n 1258545    327148  INNER JOIN HASH ON l_partkey = p_partkey\n   40000     10907  │└TABLE SCAN part WHERE contains(p_name,'lace')\n 6001215   6001179  TABLE SCAN lineitem\n",
+      "sql": "/* TPC-H Q09 */\nSELECT nation,\n       o_year,\n       SUM(amount) AS sum_profit\nFROM (SELECT n_name                                                          AS nation,\n             EXTRACT(YEAR FROM o_orderdate)                                  AS o_year,\n             l_extendedprice * (1 - l_discount) - ps_supplycost * l_quantity AS amount\n      FROM tpch_sf1.lineitem\n      INNER JOIN tpch_sf1.orders\n          ON l_orderkey = o_orderkey\n      INNER JOIN tpch_sf1.partsupp\n          ON l_suppkey = ps_suppkey\n          AND l_partkey = ps_partkey\n      INNER JOIN tpch_sf1.part\n          ON l_partkey = p_partkey\n      INNER JOIN tpch_sf1.supplier\n          ON l_suppkey = s_suppkey\n      INNER JOIN tpch_sf1.nation\n          ON s_nationkey = n_nationkey\n      WHERE p_name LIKE '%lace%') AS profit\nGROUP BY nation,\n         o_year\nORDER BY nation,\n         o_year DESC",
+      "startTime": "2026-06-22T16:08:56.073103Z",
+      "status": "OK",
+      "timeMs": 36.188
+    }
+  ],
+  "runtime": {
+    "avgMs": 36.188,
+    "bestMs": 36.188,
+    "maxMs": 36.188,
+    "minMs": 36.188,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "TPC-H Q09 Analysis",
+    "displayName": "TPCH-Q09",
+    "name": "PLAN-TPC-H-Q09",
+    "tags": [
+      "TPC-H"
+    ]
+  },
+  "version": "1.5.0"
+}

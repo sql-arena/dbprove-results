@@ -1,0 +1,110 @@
+{
+  "engine": "PostgreSQL",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 2,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 1,
+          "<16x": 6,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 9,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 4710,
+        "distribute": 0,
+        "hash": 253338,
+        "join": 453539,
+        "scan": 192840,
+        "seek": 237209,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(name), MIN(info), MIN(title)\n       3      4710  INNER JOIN LOOP ON id = company_id\n       6     15537  │└INNER JOIN LOOP ON id = company_type_id\n      30     45006  │ │└INNER JOIN LOOP ON movie_id = id\n       2      2655  │ │ │└INNER JOIN HASH ON info_type_id = id\n       3         3  │ │ │ │└TABLE SEEK info_type AS it1\n     615      7965  │ │ │ INNER JOIN LOOP ON movie_id = id\n     879     52305  │ │ │ │└INNER JOIN LOOP ON id = movie_id\n     709     40524  │ │ │ │ │└INNER JOIN HASH ON info_type_id = id\n       3         3  │ │ │ │ │ │└TABLE SEEK info_type AS it2\n  240348    192840  │ │ │ │ │ TABLE SCAN movie_info_idx AS mi_idx WHERE mi_idx.info > '7.0'\n  121572    121572  │ │ │ │ TABLE SEEK title AS t WHERE (t.production_year >= 2000) AND (t.production_year <= 2010)\n   52304     52304  │ │ │ TABLE SEEK movie_info AS mi WHERE mi.info IN('Drama','Horror','Western','Family')\n   39820     47784  │ │ TABLE SEEK movie_companies AS mc\n       6         6  │ TABLE SEEK company_type AS ct WHERE ct.kind = 'production companies'\n   15537     15537  TABLE SEEK company_name AS cn WHERE cn.country_code = 'us'\n",
+      "sql": "SELECT MIN(cn.name) AS movie_company,\n       MIN(mi_idx.info) AS rating,\n       MIN(t.title) AS mainstream_movie\nFROM job.company_name AS cn,\n     job.company_type AS ct,\n     job.info_type AS it1,\n     job.info_type AS it2,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.movie_info_idx AS mi_idx,\n     job.title AS t\nWHERE cn.country_code = '[us]'\n  AND ct.kind = 'production companies'\n  AND it1.info = 'genres'\n  AND it2.info = 'rating'\n  AND mi.info IN ('Drama',\n                  'Horror',\n                  'Western',\n                  'Family')\n  AND mi_idx.info > '7.0'\n  AND t.production_year BETWEEN 2000 AND 2010\n  AND t.id = mi.movie_id\n  AND t.id = mi_idx.movie_id\n  AND mi.info_type_id = it1.id\n  AND mi_idx.info_type_id = it2.id\n  AND t.id = mc.movie_id\n  AND ct.id = mc.company_type_id\n  AND cn.id = mc.company_id\n  AND mc.movie_id = mi.movie_id\n  AND mc.movie_id = mi_idx.movie_id\n  AND mi.movie_id = mi_idx.movie_id;\n",
+      "startTime": "2026-06-23T15:42:10.029444Z",
+      "status": "OK",
+      "timeMs": 7104.079
+    }
+  ],
+  "runtime": {
+    "avgMs": 7104.079,
+    "bestMs": 7104.079,
+    "maxMs": 7104.079,
+    "minMs": 7104.079,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 12C Analysis",
+    "displayName": "JOB-12C",
+    "name": "PLAN-JOB-12C",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "14.23"
+}

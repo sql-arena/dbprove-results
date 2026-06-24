@@ -1,0 +1,109 @@
+{
+  "engine": "PostgreSQL",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 2,
+          "=": 2,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 2,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 4,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 2,
+          "-8x": 0,
+          "<16x": 2,
+          "=": 6,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 2,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 43616,
+        "distribute": 0,
+        "hash": 18096,
+        "join": 1603016,
+        "scan": 1600002,
+        "seek": 3016,
+        "sort": 29757
+      },
+      "plan": "Estimate    Actual  Operator\n      67      1225  SEQUENCE\n       1         1  ├─AGGREGATE SUM(ps_supplycost * ps_availqty) * 0.0001\n       4         4  │ AGGREGATE PARTIAL SUM(ps_supplycost * ps_availqty)\n   10323      7540  │ INNER JOIN HASH ON ps_suppkey = s_suppkey\n    1600      1508  │ │└INNER JOIN LOOP ON s_nationkey = n_nationkey\n       1         1  │ │ │└TABLE SCAN nation AS nation_1 WHERE nation_1.n_name = 'JAPAN'\n     200      1508  │ │ TABLE SEEK supplier AS supplier_1\n 1032260    800000  │ TABLE SCAN partsupp AS partsupp_1\n      67      1225  └─SORT SUM(ps_supplycost * ps_availqty)\n      67      1225    AGGREGATE SUM(ps_supplycost * ps_availqty) GROUP BY SORT ps_partkey\n     800     28532    SORT ps_partkey\n     800     28532    AGGREGATE PARTIAL SUM(ps_supplycost * ps_availqty) GROUP BY HASH ps_partkey\n   10323      7540    INNER JOIN HASH ON ps_suppkey = s_suppkey\n    1600      1508    │└INNER JOIN LOOP ON s_nationkey = n_nationkey\n       1         1    │ │└TABLE SCAN nation AS nation WHERE n_name = 'JAPAN'\n     200      1508    │ TABLE SEEK supplier AS supplier\n 1032260    800000    TABLE SCAN partsupp AS partsupp\n",
+      "sql": "/* TPC-H Q11 */\nSELECT ps_partkey,\n       SUM(ps_supplycost * ps_availqty) AS v\nFROM tpch_sf1.partsupp\nINNER JOIN tpch_sf1.supplier\n    ON ps_suppkey = s_suppkey\nINNER JOIN tpch_sf1.nation\n    ON s_nationkey = n_nationkey\nWHERE n_name = 'JAPAN'\nGROUP BY ps_partkey\nHAVING SUM(ps_supplycost * ps_availqty)\n           > (SELECT SUM(ps_supplycost * ps_availqty) * 0.0001\n              FROM tpch_sf1.partsupp\n              INNER JOIN tpch_sf1.supplier\n                  ON ps_suppkey = s_suppkey\n              INNER JOIN tpch_sf1.nation\n                  ON s_nationkey = n_nationkey\n              WHERE n_name = 'JAPAN')\nORDER BY v DESC\n",
+      "startTime": "2026-06-23T12:47:47.721307Z",
+      "status": "OK",
+      "timeMs": 67.459
+    }
+  ],
+  "runtime": {
+    "avgMs": 67.459,
+    "bestMs": 67.459,
+    "maxMs": 67.459,
+    "minMs": 67.459,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "TPC-H Q11 Analysis",
+    "displayName": "TPCH-Q11",
+    "name": "PLAN-TPC-H-Q11",
+    "tags": [
+      "TPC-H"
+    ]
+  },
+  "version": "14.23"
+}

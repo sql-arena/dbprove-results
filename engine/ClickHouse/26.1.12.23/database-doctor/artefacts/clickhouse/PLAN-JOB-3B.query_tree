@@ -1,0 +1,68 @@
+QUERY id: 0
+  PROJECTION COLUMNS
+    movie_title String
+  PROJECTION
+    LIST id: 1, nodes: 1
+      FUNCTION id: 2, function_name: min, function_type: aggregate, result_type: String
+        ARGUMENTS
+          LIST id: 3, nodes: 1
+            COLUMN id: 4, column_name: title, result_type: String, source_id: 5
+  JOIN TREE
+    JOIN id: 6, strictness: ALL, kind: INNER
+      LEFT TABLE EXPRESSION
+        JOIN id: 7, strictness: ALL, kind: INNER
+          LEFT TABLE EXPRESSION
+            JOIN id: 8, strictness: ALL, kind: INNER
+              LEFT TABLE EXPRESSION
+                TABLE id: 9, alias: __table1, table_name: job.keyword
+              RIGHT TABLE EXPRESSION
+                TABLE id: 10, alias: __table3, table_name: job.movie_keyword
+              JOIN EXPRESSION
+                FUNCTION id: 11, function_name: equals, function_type: ordinary, result_type: UInt8
+                  ARGUMENTS
+                    LIST id: 12, nodes: 2
+                      COLUMN id: 13, column_name: id, result_type: Int32, source_id: 9
+                      COLUMN id: 14, column_name: keyword_id, result_type: Int32, source_id: 10
+          RIGHT TABLE EXPRESSION
+            TABLE id: 15, alias: __table2, table_name: job.movie_info
+          JOIN EXPRESSION
+            FUNCTION id: 16, function_name: equals, function_type: ordinary, result_type: UInt8
+              ARGUMENTS
+                LIST id: 17, nodes: 2
+                  COLUMN id: 18, column_name: movie_id, result_type: Int32, source_id: 10
+                  COLUMN id: 19, column_name: movie_id, result_type: Int32, source_id: 15
+      RIGHT TABLE EXPRESSION
+        TABLE id: 5, alias: __table4, table_name: job.title
+      JOIN EXPRESSION
+        FUNCTION id: 20, function_name: and, function_type: ordinary, result_type: UInt8
+          ARGUMENTS
+            LIST id: 21, nodes: 2
+              FUNCTION id: 22, function_name: equals, function_type: ordinary, result_type: UInt8
+                ARGUMENTS
+                  LIST id: 23, nodes: 2
+                    COLUMN id: 24, column_name: id, result_type: Int32, source_id: 5
+                    COLUMN id: 25, column_name: movie_id, result_type: Int32, source_id: 15
+              FUNCTION id: 26, function_name: equals, function_type: ordinary, result_type: UInt8
+                ARGUMENTS
+                  LIST id: 27, nodes: 2
+                    COLUMN id: 28, column_name: id, result_type: Int32, source_id: 5
+                    COLUMN id: 29, column_name: movie_id, result_type: Int32, source_id: 10
+  WHERE
+    FUNCTION id: 30, function_name: and, function_type: ordinary, result_type: UInt8
+      ARGUMENTS
+        LIST id: 31, nodes: 3
+          FUNCTION id: 32, function_name: like, function_type: ordinary, result_type: UInt8
+            ARGUMENTS
+              LIST id: 33, nodes: 2
+                COLUMN id: 34, column_name: keyword, result_type: String, source_id: 9
+                CONSTANT id: 35, constant_value: '%sequel%', constant_value_type: String
+          FUNCTION id: 36, function_name: in, function_type: ordinary, result_type: UInt8
+            ARGUMENTS
+              LIST id: 37, nodes: 2
+                COLUMN id: 38, column_name: info, result_type: String, source_id: 15
+                CONSTANT id: 39, constant_value: 'Bulgaria', constant_value_type: String
+          FUNCTION id: 40, function_name: greater, function_type: ordinary, result_type: UInt8
+            ARGUMENTS
+              LIST id: 41, nodes: 2
+                COLUMN id: 42, column_name: production_year, result_type: Int32, source_id: 5
+                CONSTANT id: 43, constant_value: UInt64_2010, constant_value_type: UInt16

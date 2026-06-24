@@ -1,0 +1,110 @@
+{
+  "engine": "SQL Server",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 1,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 1,
+          "=": 1,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 2,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 3,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 5,
+          "=": 2,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 1928,
+        "distribute": 0,
+        "hash": 6602884,
+        "join": 40930509,
+        "scan": 1,
+        "seek": 45454189,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(partialagg1027) AS Expr1014\n       5        10  AGGREGATE MIN(name as name) AS partialagg1027\n     768      1918  INNER JOIN HASH ON mc.movie_id = mk.movie_id\n      72       250  │└INNER JOIN HASH ON mk.keyword_id = k.id\n       1         1  │ │└TABLE SCAN keyword AS k WHERE keyword as keyword = 'character-name-in-title'\n      36       250  │ FILTER name as name LIKE 'X%'\n    1621   1038393  │ INNER JOIN LOOP ON Bmk1010 = Bmk1010\n       1   1038393  │ │└TABLE SEEK name AS n\n    1621   1038393  │ PROJECT BmkToPage Bmk1010 AS Expr1145\n    1621   1038393  │ INNER JOIN LOOP ON ci.person_id = n.id\n       1   1038393  │ │└TABLE SEEK name AS n\n    1621   1038393  │ INNER JOIN HASH ON ci.movie_id = mk.movie_id\n      45   4523930  │ │└TABLE SEEK movie_keyword AS mk WHERE BLOOM(keyword_id as keyword_id)\n      36  36244344  │ TABLE SEEK cast_info AS ci WHERE BLOOM(movie_id as movie_id)\n     260   2609129  TABLE SEEK movie_companies AS mc WHERE BLOOM(movie_id as movie_id)\n",
+      "sql": "SELECT MIN(n.name) AS member_in_charnamed_movie,\n       MIN(n.name) AS a1\nFROM job.cast_info AS ci,\n     job.company_name AS cn,\n     job.keyword AS k,\n     job.movie_companies AS mc,\n     job.movie_keyword AS mk,\n     job.name AS n,\n     job.title AS t\nWHERE k.keyword ='character-name-in-title'\n  AND n.name LIKE 'X%'\n  AND n.id = ci.person_id\n  AND ci.movie_id = t.id\n  AND t.id = mk.movie_id\n  AND mk.keyword_id = k.id\n  AND t.id = mc.movie_id\n  AND mc.company_id = cn.id\n  AND ci.movie_id = mc.movie_id\n  AND ci.movie_id = mk.movie_id\n  AND mc.movie_id = mk.movie_id;\n",
+      "startTime": "2026-06-23T08:18:24.286130Z",
+      "status": "OK",
+      "timeMs": 882.015
+    }
+  ],
+  "runtime": {
+    "avgMs": 882.015,
+    "bestMs": 882.015,
+    "maxMs": 882.015,
+    "minMs": 882.015,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 17C Analysis",
+    "displayName": "JOB-17C",
+    "name": "PLAN-JOB-17C",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "16.0.4236.2"
+}

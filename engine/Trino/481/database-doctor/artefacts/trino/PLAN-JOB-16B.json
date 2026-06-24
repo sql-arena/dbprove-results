@@ -1,0 +1,1056 @@
+{
+  "0": {
+    "children": [
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [],
+                "descriptor": {
+                  "sourceFragmentIds": "[1]"
+                },
+                "details": [],
+                "estimates": [],
+                "id": "1849",
+                "name": "RemoteSource",
+                "outputs": [
+                  {
+                    "name": "min_47",
+                    "type": "varchar"
+                  },
+                  {
+                    "name": "min_48",
+                    "type": "varchar"
+                  }
+                ]
+              }
+            ],
+            "descriptor": {
+              "arguments": "[]",
+              "isReplicateNullsAndAny": "",
+              "partitioning": "SINGLE"
+            },
+            "details": [],
+            "estimates": [
+              {
+                "cpuCost": 0.0,
+                "memoryCost": 0.0,
+                "networkCost": 0.0,
+                "outputRowCount": "NaN",
+                "outputSizeInBytes": "NaN"
+              }
+            ],
+            "id": "1843",
+            "name": "LocalExchange",
+            "outputs": [
+              {
+                "name": "min_47",
+                "type": "varchar"
+              },
+              {
+                "name": "min_48",
+                "type": "varchar"
+              }
+            ]
+          }
+        ],
+        "descriptor": {
+          "keys": "",
+          "type": "FINAL"
+        },
+        "details": [
+          "min := min(min_47)",
+          "min_46 := min(min_48)"
+        ],
+        "estimates": [
+          {
+            "cpuCost": "NaN",
+            "memoryCost": 110.0,
+            "networkCost": 0.0,
+            "outputRowCount": 1.0,
+            "outputSizeInBytes": 110.0
+          }
+        ],
+        "id": "19",
+        "name": "Aggregate",
+        "outputs": [
+          {
+            "name": "min",
+            "type": "varchar"
+          },
+          {
+            "name": "min_46",
+            "type": "varchar"
+          }
+        ]
+      }
+    ],
+    "descriptor": {
+      "columnNames": "[cool_actor_pseudonym, series_named_after_char]"
+    },
+    "details": [
+      "cool_actor_pseudonym := min",
+      "series_named_after_char := min_46"
+    ],
+    "estimates": [
+      {
+        "cpuCost": 0.0,
+        "memoryCost": 0.0,
+        "networkCost": 0.0,
+        "outputRowCount": 1.0,
+        "outputSizeInBytes": 110.0
+      }
+    ],
+    "id": "24",
+    "name": "Output",
+    "outputs": [
+      {
+        "name": "min",
+        "type": "varchar"
+      },
+      {
+        "name": "min_46",
+        "type": "varchar"
+      }
+    ]
+  },
+  "1": {
+    "children": [
+      {
+        "children": [
+          {
+            "children": [],
+            "descriptor": {
+              "sourceFragmentIds": "[2]"
+            },
+            "details": [],
+            "estimates": [],
+            "id": "1379",
+            "name": "RemoteSource",
+            "outputs": [
+              {
+                "name": "name",
+                "type": "varchar"
+              },
+              {
+                "name": "movie_id",
+                "type": "integer"
+              }
+            ]
+          },
+          {
+            "children": [
+              {
+                "children": [],
+                "descriptor": {
+                  "sourceFragmentIds": "[9]"
+                },
+                "details": [],
+                "estimates": [],
+                "id": "1380",
+                "name": "RemoteSource",
+                "outputs": [
+                  {
+                    "name": "id_38",
+                    "type": "integer"
+                  },
+                  {
+                    "name": "title",
+                    "type": "varchar"
+                  }
+                ]
+              }
+            ],
+            "descriptor": {
+              "arguments": "[id_38::integer]",
+              "isReplicateNullsAndAny": "",
+              "partitioning": "HASH"
+            },
+            "details": [],
+            "estimates": [
+              {
+                "cpuCost": 126399788.0,
+                "memoryCost": 0.0,
+                "networkCost": 0.0,
+                "outputRowCount": 2528312.0,
+                "outputSizeInBytes": 126399788.0
+              }
+            ],
+            "id": "1745",
+            "name": "LocalExchange",
+            "outputs": [
+              {
+                "name": "id_38",
+                "type": "integer"
+              },
+              {
+                "name": "title",
+                "type": "varchar"
+              }
+            ]
+          }
+        ],
+        "descriptor": {
+          "criteria": "(movie_id = id_38)",
+          "distribution": "PARTITIONED"
+        },
+        "details": [
+          "Distribution: PARTITIONED",
+          "dynamicFilterAssignments = {id_38 -> #df_1500}"
+        ],
+        "estimates": [
+          {
+            "cpuCost": "NaN",
+            "memoryCost": 126399788.0,
+            "networkCost": 0.0,
+            "outputRowCount": "NaN",
+            "outputSizeInBytes": "NaN"
+          }
+        ],
+        "id": "1018",
+        "name": "InnerJoin",
+        "outputs": [
+          {
+            "name": "name",
+            "type": "varchar"
+          },
+          {
+            "name": "title",
+            "type": "varchar"
+          }
+        ]
+      }
+    ],
+    "descriptor": {
+      "keys": "",
+      "type": "PARTIAL"
+    },
+    "details": [
+      "min_47 := min(name)",
+      "min_48 := min(title)"
+    ],
+    "estimates": [],
+    "id": "1847",
+    "name": "Aggregate",
+    "outputs": [
+      {
+        "name": "min_47",
+        "type": "varchar"
+      },
+      {
+        "name": "min_48",
+        "type": "varchar"
+      }
+    ]
+  },
+  "2": {
+    "children": [
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [
+                  {
+                    "children": [
+                      {
+                        "children": [
+                          {
+                            "children": [],
+                            "descriptor": {
+                              "dynamicFilters": "{movie_id = #df_1500, person_id_1 = #df_1501, movie_id = #df_1503, movie_id = #df_1505, person_id_1 = #df_1506}",
+                              "filterPredicate": "",
+                              "table": "tpch:job.cast_info$data@909070630666253127"
+                            },
+                            "details": [
+                              "movie_id := 3:movie_id:integer",
+                              "person_id_1 := 2:person_id:integer"
+                            ],
+                            "estimates": [
+                              {
+                                "cpuCost": 362443440.0,
+                                "memoryCost": 0.0,
+                                "networkCost": 0.0,
+                                "outputRowCount": 36244344.0,
+                                "outputSizeInBytes": 362443440.0
+                              },
+                              {
+                                "cpuCost": 362443440.0,
+                                "memoryCost": 0.0,
+                                "networkCost": 0.0,
+                                "outputRowCount": 36244344.0,
+                                "outputSizeInBytes": 362443440.0
+                              }
+                            ],
+                            "id": "1507",
+                            "name": "ScanFilter",
+                            "outputs": [
+                              {
+                                "name": "person_id_1",
+                                "type": "integer"
+                              },
+                              {
+                                "name": "movie_id",
+                                "type": "integer"
+                              }
+                            ]
+                          },
+                          {
+                            "children": [
+                              {
+                                "children": [],
+                                "descriptor": {
+                                  "sourceFragmentIds": "[3]"
+                                },
+                                "details": [],
+                                "estimates": [],
+                                "id": "1373",
+                                "name": "RemoteSource",
+                                "outputs": [
+                                  {
+                                    "name": "person_id",
+                                    "type": "integer"
+                                  },
+                                  {
+                                    "name": "name",
+                                    "type": "varchar"
+                                  }
+                                ]
+                              }
+                            ],
+                            "descriptor": {
+                              "arguments": "[]",
+                              "isReplicateNullsAndAny": "",
+                              "partitioning": "SINGLE"
+                            },
+                            "details": [],
+                            "estimates": [
+                              {
+                                "cpuCost": 0.0,
+                                "memoryCost": 0.0,
+                                "networkCost": 0.0,
+                                "outputRowCount": 901343.0,
+                                "outputSizeInBytes": 36772880.0
+                              }
+                            ],
+                            "id": "1739",
+                            "name": "LocalExchange",
+                            "outputs": [
+                              {
+                                "name": "person_id",
+                                "type": "integer"
+                              },
+                              {
+                                "name": "name",
+                                "type": "varchar"
+                              }
+                            ]
+                          }
+                        ],
+                        "descriptor": {
+                          "criteria": "(person_id_1 = person_id)",
+                          "distribution": "REPLICATED"
+                        },
+                        "details": [
+                          "Distribution: REPLICATED",
+                          "dynamicFilterAssignments = {person_id -> #df_1506}"
+                        ],
+                        "estimates": [
+                          {
+                            "cpuCost": "NaN",
+                            "memoryCost": 36772880.0,
+                            "networkCost": 0.0,
+                            "outputRowCount": "NaN",
+                            "outputSizeInBytes": "NaN"
+                          }
+                        ],
+                        "id": "1012",
+                        "name": "InnerJoin",
+                        "outputs": [
+                          {
+                            "name": "person_id_1",
+                            "type": "integer"
+                          },
+                          {
+                            "name": "movie_id",
+                            "type": "integer"
+                          },
+                          {
+                            "name": "name",
+                            "type": "varchar"
+                          }
+                        ]
+                      },
+                      {
+                        "children": [
+                          {
+                            "children": [],
+                            "descriptor": {
+                              "sourceFragmentIds": "[4]"
+                            },
+                            "details": [],
+                            "estimates": [],
+                            "id": "1374",
+                            "name": "RemoteSource",
+                            "outputs": [
+                              {
+                                "name": "movie_id_17",
+                                "type": "integer"
+                              },
+                              {
+                                "name": "company_id",
+                                "type": "integer"
+                              }
+                            ]
+                          }
+                        ],
+                        "descriptor": {
+                          "arguments": "[movie_id_17::integer]",
+                          "isReplicateNullsAndAny": "",
+                          "partitioning": "HASH"
+                        },
+                        "details": [],
+                        "estimates": [
+                          {
+                            "cpuCost": 26091290.0,
+                            "memoryCost": 0.0,
+                            "networkCost": 0.0,
+                            "outputRowCount": 2609129.0,
+                            "outputSizeInBytes": 26091290.0
+                          }
+                        ],
+                        "id": "1740",
+                        "name": "LocalExchange",
+                        "outputs": [
+                          {
+                            "name": "movie_id_17",
+                            "type": "integer"
+                          },
+                          {
+                            "name": "company_id",
+                            "type": "integer"
+                          }
+                        ]
+                      }
+                    ],
+                    "descriptor": {
+                      "criteria": "(movie_id = movie_id_17)",
+                      "distribution": "REPLICATED"
+                    },
+                    "details": [
+                      "Distribution: REPLICATED",
+                      "dynamicFilterAssignments = {movie_id_17 -> #df_1505}"
+                    ],
+                    "estimates": [
+                      {
+                        "cpuCost": "NaN",
+                        "memoryCost": 26091290.0,
+                        "networkCost": 0.0,
+                        "outputRowCount": "NaN",
+                        "outputSizeInBytes": "NaN"
+                      }
+                    ],
+                    "id": "1013",
+                    "name": "InnerJoin",
+                    "outputs": [
+                      {
+                        "name": "movie_id",
+                        "type": "integer"
+                      },
+                      {
+                        "name": "person_id_1",
+                        "type": "integer"
+                      },
+                      {
+                        "name": "name",
+                        "type": "varchar"
+                      },
+                      {
+                        "name": "company_id",
+                        "type": "integer"
+                      }
+                    ]
+                  },
+                  {
+                    "children": [
+                      {
+                        "children": [],
+                        "descriptor": {
+                          "sourceFragmentIds": "[5]"
+                        },
+                        "details": [],
+                        "estimates": [],
+                        "id": "1375",
+                        "name": "RemoteSource",
+                        "outputs": [
+                          {
+                            "name": "id_5",
+                            "type": "integer"
+                          }
+                        ]
+                      }
+                    ],
+                    "descriptor": {
+                      "arguments": "[]",
+                      "isReplicateNullsAndAny": "",
+                      "partitioning": "SINGLE"
+                    },
+                    "details": [],
+                    "estimates": [
+                      {
+                        "cpuCost": 0.0,
+                        "memoryCost": 0.0,
+                        "networkCost": 0.0,
+                        "outputRowCount": "NaN",
+                        "outputSizeInBytes": "NaN"
+                      }
+                    ],
+                    "id": "1741",
+                    "name": "LocalExchange",
+                    "outputs": [
+                      {
+                        "name": "id_5",
+                        "type": "integer"
+                      }
+                    ]
+                  }
+                ],
+                "descriptor": {
+                  "criteria": "(company_id = id_5)",
+                  "distribution": "REPLICATED"
+                },
+                "details": [
+                  "Distribution: REPLICATED",
+                  "dynamicFilterAssignments = {id_5 -> #df_1504}"
+                ],
+                "estimates": [
+                  {
+                    "cpuCost": "NaN",
+                    "memoryCost": "NaN",
+                    "networkCost": 0.0,
+                    "outputRowCount": "NaN",
+                    "outputSizeInBytes": "NaN"
+                  }
+                ],
+                "id": "1014",
+                "name": "InnerJoin",
+                "outputs": [
+                  {
+                    "name": "person_id_1",
+                    "type": "integer"
+                  },
+                  {
+                    "name": "name",
+                    "type": "varchar"
+                  },
+                  {
+                    "name": "movie_id",
+                    "type": "integer"
+                  }
+                ]
+              },
+              {
+                "children": [
+                  {
+                    "children": [],
+                    "descriptor": {
+                      "sourceFragmentIds": "[6]"
+                    },
+                    "details": [],
+                    "estimates": [],
+                    "id": "1376",
+                    "name": "RemoteSource",
+                    "outputs": [
+                      {
+                        "name": "movie_id_23",
+                        "type": "integer"
+                      },
+                      {
+                        "name": "keyword_id",
+                        "type": "integer"
+                      }
+                    ]
+                  }
+                ],
+                "descriptor": {
+                  "arguments": "[movie_id_23::integer]",
+                  "isReplicateNullsAndAny": "",
+                  "partitioning": "HASH"
+                },
+                "details": [],
+                "estimates": [
+                  {
+                    "cpuCost": 45239300.0,
+                    "memoryCost": 0.0,
+                    "networkCost": 0.0,
+                    "outputRowCount": 4523930.0,
+                    "outputSizeInBytes": 45239300.0
+                  }
+                ],
+                "id": "1742",
+                "name": "LocalExchange",
+                "outputs": [
+                  {
+                    "name": "movie_id_23",
+                    "type": "integer"
+                  },
+                  {
+                    "name": "keyword_id",
+                    "type": "integer"
+                  }
+                ]
+              }
+            ],
+            "descriptor": {
+              "criteria": "(movie_id = movie_id_23)",
+              "distribution": "REPLICATED"
+            },
+            "details": [
+              "Distribution: REPLICATED",
+              "dynamicFilterAssignments = {movie_id_23 -> #df_1503}"
+            ],
+            "estimates": [
+              {
+                "cpuCost": "NaN",
+                "memoryCost": 45239300.0,
+                "networkCost": 0.0,
+                "outputRowCount": "NaN",
+                "outputSizeInBytes": "NaN"
+              }
+            ],
+            "id": "1015",
+            "name": "InnerJoin",
+            "outputs": [
+              {
+                "name": "person_id_1",
+                "type": "integer"
+              },
+              {
+                "name": "name",
+                "type": "varchar"
+              },
+              {
+                "name": "movie_id",
+                "type": "integer"
+              },
+              {
+                "name": "keyword_id",
+                "type": "integer"
+              }
+            ]
+          },
+          {
+            "children": [
+              {
+                "children": [],
+                "descriptor": {
+                  "sourceFragmentIds": "[7]"
+                },
+                "details": [],
+                "estimates": [],
+                "id": "1377",
+                "name": "RemoteSource",
+                "outputs": [
+                  {
+                    "name": "id_12",
+                    "type": "integer"
+                  }
+                ]
+              }
+            ],
+            "descriptor": {
+              "arguments": "[]",
+              "isReplicateNullsAndAny": "",
+              "partitioning": "SINGLE"
+            },
+            "details": [],
+            "estimates": [
+              {
+                "cpuCost": 0.0,
+                "memoryCost": 0.0,
+                "networkCost": 0.0,
+                "outputRowCount": "NaN",
+                "outputSizeInBytes": "NaN"
+              }
+            ],
+            "id": "1743",
+            "name": "LocalExchange",
+            "outputs": [
+              {
+                "name": "id_12",
+                "type": "integer"
+              }
+            ]
+          }
+        ],
+        "descriptor": {
+          "criteria": "(keyword_id = id_12)",
+          "distribution": "REPLICATED"
+        },
+        "details": [
+          "Distribution: REPLICATED",
+          "dynamicFilterAssignments = {id_12 -> #df_1502}"
+        ],
+        "estimates": [
+          {
+            "cpuCost": "NaN",
+            "memoryCost": "NaN",
+            "networkCost": 0.0,
+            "outputRowCount": "NaN",
+            "outputSizeInBytes": "NaN"
+          }
+        ],
+        "id": "1016",
+        "name": "InnerJoin",
+        "outputs": [
+          {
+            "name": "person_id_1",
+            "type": "integer"
+          },
+          {
+            "name": "name",
+            "type": "varchar"
+          },
+          {
+            "name": "movie_id",
+            "type": "integer"
+          }
+        ]
+      },
+      {
+        "children": [
+          {
+            "children": [],
+            "descriptor": {
+              "sourceFragmentIds": "[8]"
+            },
+            "details": [],
+            "estimates": [],
+            "id": "1378",
+            "name": "RemoteSource",
+            "outputs": [
+              {
+                "name": "id_27",
+                "type": "integer"
+              }
+            ]
+          }
+        ],
+        "descriptor": {
+          "arguments": "[id_27::integer]",
+          "isReplicateNullsAndAny": "",
+          "partitioning": "HASH"
+        },
+        "details": [],
+        "estimates": [
+          {
+            "cpuCost": 20837455.0,
+            "memoryCost": 0.0,
+            "networkCost": 0.0,
+            "outputRowCount": 4167491.0,
+            "outputSizeInBytes": 20837455.0
+          }
+        ],
+        "id": "1744",
+        "name": "LocalExchange",
+        "outputs": [
+          {
+            "name": "id_27",
+            "type": "integer"
+          }
+        ]
+      }
+    ],
+    "descriptor": {
+      "criteria": "(person_id_1 = id_27)",
+      "distribution": "REPLICATED"
+    },
+    "details": [
+      "Distribution: REPLICATED",
+      "dynamicFilterAssignments = {id_27 -> #df_1501}"
+    ],
+    "estimates": [
+      {
+        "cpuCost": "NaN",
+        "memoryCost": 20837455.0,
+        "networkCost": 0.0,
+        "outputRowCount": "NaN",
+        "outputSizeInBytes": "NaN"
+      }
+    ],
+    "id": "1017",
+    "name": "InnerJoin",
+    "outputs": [
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "movie_id",
+        "type": "integer"
+      }
+    ]
+  },
+  "3": {
+    "children": [],
+    "descriptor": {
+      "dynamicFilters": "{person_id = #df_1501}",
+      "filterPredicate": "",
+      "table": "tpch:job.aka_name$data@720045701629650505"
+    },
+    "details": [
+      "person_id := 2:person_id:integer",
+      "name := 3:name:varchar"
+    ],
+    "estimates": [
+      {
+        "cpuCost": 36772880.0,
+        "memoryCost": 0.0,
+        "networkCost": 0.0,
+        "outputRowCount": 901343.0,
+        "outputSizeInBytes": 36772880.0
+      },
+      {
+        "cpuCost": 36772880.0,
+        "memoryCost": 0.0,
+        "networkCost": 0.0,
+        "outputRowCount": 901343.0,
+        "outputSizeInBytes": 36772880.0
+      }
+    ],
+    "id": "1508",
+    "name": "ScanFilter",
+    "outputs": [
+      {
+        "name": "person_id",
+        "type": "integer"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      }
+    ]
+  },
+  "4": {
+    "children": [],
+    "descriptor": {
+      "dynamicFilters": "{movie_id_17 = #df_1500, movie_id_17 = #df_1503, company_id = #df_1504}",
+      "filterPredicate": "",
+      "table": "tpch:job.movie_companies$data@1561219061519572579"
+    },
+    "details": [
+      "movie_id_17 := 2:movie_id:integer",
+      "company_id := 3:company_id:integer"
+    ],
+    "estimates": [
+      {
+        "cpuCost": 26091290.0,
+        "memoryCost": 0.0,
+        "networkCost": 0.0,
+        "outputRowCount": 2609129.0,
+        "outputSizeInBytes": 26091290.0
+      },
+      {
+        "cpuCost": 26091290.0,
+        "memoryCost": 0.0,
+        "networkCost": 0.0,
+        "outputRowCount": 2609129.0,
+        "outputSizeInBytes": 26091290.0
+      }
+    ],
+    "id": "1512",
+    "name": "ScanFilter",
+    "outputs": [
+      {
+        "name": "movie_id_17",
+        "type": "integer"
+      },
+      {
+        "name": "company_id",
+        "type": "integer"
+      }
+    ]
+  },
+  "5": {
+    "children": [],
+    "descriptor": {
+      "filterPredicate": "(country_code = varchar '[us]')",
+      "table": "tpch:job.company_name$data@6092117486611478019"
+    },
+    "details": [
+      "id_5 := 1:id:integer",
+      "country_code := 3:country_code:varchar"
+    ],
+    "estimates": [
+      {
+        "cpuCost": 2922081.0,
+        "memoryCost": 0.0,
+        "networkCost": 0.0,
+        "outputRowCount": 234997.0,
+        "outputSizeInBytes": 1174985.0
+      },
+      {
+        "cpuCost": 2922081.0,
+        "memoryCost": 0.0,
+        "networkCost": 0.0,
+        "outputRowCount": "NaN",
+        "outputSizeInBytes": "NaN"
+      },
+      {
+        "cpuCost": "NaN",
+        "memoryCost": 0.0,
+        "networkCost": 0.0,
+        "outputRowCount": "NaN",
+        "outputSizeInBytes": "NaN"
+      }
+    ],
+    "id": "619",
+    "name": "ScanFilterProject",
+    "outputs": [
+      {
+        "name": "id_5",
+        "type": "integer"
+      }
+    ]
+  },
+  "6": {
+    "children": [],
+    "descriptor": {
+      "dynamicFilters": "{movie_id_23 = #df_1500, keyword_id = #df_1502}",
+      "filterPredicate": "",
+      "table": "tpch:job.movie_keyword$data@7786234686298433446"
+    },
+    "details": [
+      "movie_id_23 := 2:movie_id:integer",
+      "keyword_id := 3:keyword_id:integer"
+    ],
+    "estimates": [
+      {
+        "cpuCost": 45239300.0,
+        "memoryCost": 0.0,
+        "networkCost": 0.0,
+        "outputRowCount": 4523930.0,
+        "outputSizeInBytes": 45239300.0
+      },
+      {
+        "cpuCost": 45239300.0,
+        "memoryCost": 0.0,
+        "networkCost": 0.0,
+        "outputRowCount": 4523930.0,
+        "outputSizeInBytes": 45239300.0
+      }
+    ],
+    "id": "1520",
+    "name": "ScanFilter",
+    "outputs": [
+      {
+        "name": "movie_id_23",
+        "type": "integer"
+      },
+      {
+        "name": "keyword_id",
+        "type": "integer"
+      }
+    ]
+  },
+  "7": {
+    "children": [],
+    "descriptor": {
+      "filterPredicate": "(keyword = varchar 'character-name-in-title')",
+      "table": "tpch:job.keyword$data@6872083987512267903"
+    },
+    "details": [
+      "id_12 := 1:id:integer",
+      "keyword := 2:keyword:varchar"
+    ],
+    "estimates": [
+      {
+        "cpuCost": 6159582.0,
+        "memoryCost": 0.0,
+        "networkCost": 0.0,
+        "outputRowCount": 134170.0,
+        "outputSizeInBytes": 670850.0
+      },
+      {
+        "cpuCost": 6159582.0,
+        "memoryCost": 0.0,
+        "networkCost": 0.0,
+        "outputRowCount": "NaN",
+        "outputSizeInBytes": "NaN"
+      },
+      {
+        "cpuCost": "NaN",
+        "memoryCost": 0.0,
+        "networkCost": 0.0,
+        "outputRowCount": "NaN",
+        "outputSizeInBytes": "NaN"
+      }
+    ],
+    "id": "607",
+    "name": "ScanFilterProject",
+    "outputs": [
+      {
+        "name": "id_12",
+        "type": "integer"
+      }
+    ]
+  },
+  "8": {
+    "children": [],
+    "descriptor": {
+      "table": "tpch:job.name$data@7436545057500477154"
+    },
+    "details": [
+      "id_27 := 1:id:integer"
+    ],
+    "estimates": [
+      {
+        "cpuCost": 20837455.0,
+        "memoryCost": 0.0,
+        "networkCost": 0.0,
+        "outputRowCount": 4167491.0,
+        "outputSizeInBytes": 20837455.0
+      }
+    ],
+    "id": "11",
+    "name": "TableScan",
+    "outputs": [
+      {
+        "name": "id_27",
+        "type": "integer"
+      }
+    ]
+  },
+  "9": {
+    "children": [],
+    "descriptor": {
+      "table": "tpch:job.title$data@7947281040488845847"
+    },
+    "details": [
+      "id_38 := 1:id:integer",
+      "title := 2:title:varchar"
+    ],
+    "estimates": [
+      {
+        "cpuCost": 126399788.0,
+        "memoryCost": 0.0,
+        "networkCost": 0.0,
+        "outputRowCount": 2528312.0,
+        "outputSizeInBytes": 126399788.0
+      }
+    ],
+    "id": "13",
+    "name": "TableScan",
+    "outputs": [
+      {
+        "name": "id_38",
+        "type": "integer"
+      },
+      {
+        "name": "title",
+        "type": "varchar"
+      }
+    ]
+  }
+}

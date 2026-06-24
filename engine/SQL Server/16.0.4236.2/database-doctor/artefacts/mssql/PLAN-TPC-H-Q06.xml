@@ -1,0 +1,305 @@
+<?xml version="1.0"?>
+<ShowPlanXML xmlns="http://schemas.microsoft.com/sqlserver/2004/07/showplan" Version="1.564" Build="16.0.4236.2">
+  <BatchSequence>
+    <Batch>
+      <Statements>
+        <StmtSimple StatementText="SELECT SUM([l_extendedprice]*[l_discount]) [revenue] FROM [tpch_sf1].[lineitem] WHERE [l_shipdate]>=@1 AND [l_shipdate]&lt;@2 AND [l_discount]>=@3 AND [l_discount]&lt;=@4 AND [l_quantity]&lt;@5" StatementId="1" StatementCompId="1" StatementType="SELECT" StatementSqlHandle="0x0900FFAF46E13678DA8D182C27E8AF13EF500000000000000000000000000000000000000000000000000000" DatabaseContextSettingsId="1" ParentObjectId="0" StatementParameterizationType="0" RetrievedFromCache="false" StatementSubTreeCost="74.2224" StatementEstRows="1" SecurityPolicyApplied="false" StatementOptmLevel="FULL" QueryHash="0xFB4793A9ABF214F4" QueryPlanHash="0xCB499605D7489133" CardinalityEstimationModelVersion="160" BatchModeOnRowStoreUsed="true">
+          <StatementSetOptions QUOTED_IDENTIFIER="true" ARITHABORT="false" CONCAT_NULL_YIELDS_NULL="true" ANSI_NULLS="true" ANSI_PADDING="true" ANSI_WARNINGS="true" NUMERIC_ROUNDABORT="false" />
+          <QueryPlan DegreeOfParallelism="10" MemoryGrant="30968" CachedPlanSize="56" CompileTime="92" CompileCPU="11" CompileMemory="552">
+            <ThreadStat Branches="1" UsedThreads="10">
+              <ThreadReservation NodeId="0" ReservedThreads="6" />
+              <ThreadReservation NodeId="1" ReservedThreads="5" />
+            </ThreadStat>
+            <MissingIndexes>
+              <MissingIndexGroup Impact="89.1283">
+                <MissingIndex Database="[dbprove]" Schema="[tpch_sf1]" Table="[lineitem]">
+                  <ColumnGroup Usage="INEQUALITY">
+                    <Column Name="[l_quantity]" ColumnId="5" />
+                    <Column Name="[l_discount]" ColumnId="7" />
+                    <Column Name="[l_shipdate]" ColumnId="11" />
+                  </ColumnGroup>
+                  <ColumnGroup Usage="INCLUDE">
+                    <Column Name="[l_extendedprice]" ColumnId="6" />
+                  </ColumnGroup>
+                </MissingIndex>
+              </MissingIndexGroup>
+            </MissingIndexes>
+            <MemoryGrantInfo SerialRequiredMemory="3072" SerialDesiredMemory="3104" RequiredMemory="30888" DesiredMemory="30968" RequestedMemory="30968" GrantWaitTime="0" MaxQueryMemory="1500320" GrantedMemory="30968" MaxUsedMemory="3496" LastRequestedMemory="30968" IsMemoryGrantFeedbackAdjusted="No: Accurate Grant" />
+            <OptimizerHardwareDependentProperties EstimatedAvailableMemoryGrant="97873" EstimatedPagesCached="61171" EstimatedAvailableDegreeOfParallelism="5" MaxCompileMemory="5213064" />
+            <OptimizerStatsUsage>
+              <StatisticsInfo LastUpdate="2026-06-22T16:16:13.77" ModificationCount="0" SamplingPercent="2.35069" Statistics="[_WA_Sys_00000005_05D8E0BE]" Table="[lineitem]" Schema="[tpch_sf1]" Database="[dbprove]" />
+              <StatisticsInfo LastUpdate="2026-06-22T16:16:08.55" ModificationCount="0" SamplingPercent="2.35069" Statistics="[_WA_Sys_0000000B_05D8E0BE]" Table="[lineitem]" Schema="[tpch_sf1]" Database="[dbprove]" />
+              <StatisticsInfo LastUpdate="2026-06-22T16:16:13.73" ModificationCount="0" SamplingPercent="2.35069" Statistics="[_WA_Sys_00000007_05D8E0BE]" Table="[lineitem]" Schema="[tpch_sf1]" Database="[dbprove]" />
+            </OptimizerStatsUsage>
+            <WaitStats>
+              <Wait WaitType="LATCH_EX" WaitTimeMs="37" WaitCount="99" />
+              <Wait WaitType="CXSYNC_PORT" WaitTimeMs="18" WaitCount="11" />
+              <Wait WaitType="CXROWSET_SYNC" WaitTimeMs="8" WaitCount="16" />
+              <Wait WaitType="HTBUILD" WaitTimeMs="6" WaitCount="18" />
+              <Wait WaitType="HTDELETE" WaitTimeMs="1" WaitCount="18" />
+              <Wait WaitType="SESSION_WAIT_STATS_CHILDREN" WaitTimeMs="1" WaitCount="10" />
+              <Wait WaitType="SOS_SCHEDULER_YIELD" WaitTimeMs="1" WaitCount="244" />
+            </WaitStats>
+            <QueryTimeStats ElapsedTime="122" CpuTime="1146" />
+            <RelOp NodeId="0" PhysicalOp="Parallelism" LogicalOp="Gather Streams" EstimateRows="1" EstimateIO="0" EstimateCPU="0.0285028" AvgRowSize="24" EstimatedTotalSubtreeCost="74.2224" Parallel="1" EstimateRebinds="0" EstimateRewinds="0" EstimatedExecutionMode="Row">
+              <OutputList>
+                <ColumnReference Column="Expr1003" />
+              </OutputList>
+              <RunTimeInformation>
+                <RunTimeCountersPerThread Thread="0" ActualRows="1" Batches="0" ActualElapsedms="121" ActualCPUms="0" ActualEndOfScans="1" ActualExecutions="1" ActualExecutionMode="Row" />
+              </RunTimeInformation>
+              <Parallelism>
+                <RelOp NodeId="1" PhysicalOp="Compute Scalar" LogicalOp="Compute Scalar" EstimateRows="1" EstimateIO="0" EstimateCPU="0" AvgRowSize="24" EstimatedTotalSubtreeCost="74.1939" Parallel="1" EstimateRebinds="0" EstimateRewinds="0" EstimatedExecutionMode="Batch">
+                  <OutputList>
+                    <ColumnReference Column="Expr1003" />
+                  </OutputList>
+                  <RunTimeInformation>
+                    <RunTimeCountersPerThread Thread="10" ActualRows="0" Batches="0" ActualElapsedms="0" ActualCPUms="0" ActualScans="0" ActualLogicalReads="0" ActualPhysicalReads="0" ActualReadAheads="0" ActualLobLogicalReads="0" ActualLobPhysicalReads="0" ActualLobReadAheads="0" ActualEndOfScans="0" ActualExecutions="1" ActualExecutionMode="Batch" />
+                    <RunTimeCountersPerThread Thread="9" ActualRows="0" Batches="0" ActualElapsedms="0" ActualCPUms="0" ActualScans="0" ActualLogicalReads="0" ActualPhysicalReads="0" ActualReadAheads="0" ActualLobLogicalReads="0" ActualLobPhysicalReads="0" ActualLobReadAheads="0" ActualEndOfScans="0" ActualExecutions="1" ActualExecutionMode="Batch" />
+                    <RunTimeCountersPerThread Thread="8" ActualRows="0" Batches="0" ActualElapsedms="0" ActualCPUms="0" ActualScans="0" ActualLogicalReads="0" ActualPhysicalReads="0" ActualReadAheads="0" ActualLobLogicalReads="0" ActualLobPhysicalReads="0" ActualLobReadAheads="0" ActualEndOfScans="0" ActualExecutions="1" ActualExecutionMode="Batch" />
+                    <RunTimeCountersPerThread Thread="7" ActualRows="0" Batches="0" ActualElapsedms="0" ActualCPUms="0" ActualScans="0" ActualLogicalReads="0" ActualPhysicalReads="0" ActualReadAheads="0" ActualLobLogicalReads="0" ActualLobPhysicalReads="0" ActualLobReadAheads="0" ActualEndOfScans="0" ActualExecutions="1" ActualExecutionMode="Batch" />
+                    <RunTimeCountersPerThread Thread="6" ActualRows="0" Batches="0" ActualElapsedms="0" ActualCPUms="0" ActualScans="0" ActualLogicalReads="0" ActualPhysicalReads="0" ActualReadAheads="0" ActualLobLogicalReads="0" ActualLobPhysicalReads="0" ActualLobReadAheads="0" ActualEndOfScans="0" ActualExecutions="1" ActualExecutionMode="Batch" />
+                    <RunTimeCountersPerThread Thread="5" ActualRows="1" Batches="1" ActualElapsedms="0" ActualCPUms="0" ActualScans="0" ActualLogicalReads="0" ActualPhysicalReads="0" ActualReadAheads="0" ActualLobLogicalReads="0" ActualLobPhysicalReads="0" ActualLobReadAheads="0" ActualEndOfScans="0" ActualExecutions="1" ActualExecutionMode="Batch" />
+                    <RunTimeCountersPerThread Thread="4" ActualRows="0" Batches="0" ActualElapsedms="0" ActualCPUms="0" ActualScans="0" ActualLogicalReads="0" ActualPhysicalReads="0" ActualReadAheads="0" ActualLobLogicalReads="0" ActualLobPhysicalReads="0" ActualLobReadAheads="0" ActualEndOfScans="0" ActualExecutions="1" ActualExecutionMode="Batch" />
+                    <RunTimeCountersPerThread Thread="3" ActualRows="0" Batches="0" ActualElapsedms="0" ActualCPUms="0" ActualScans="0" ActualLogicalReads="0" ActualPhysicalReads="0" ActualReadAheads="0" ActualLobLogicalReads="0" ActualLobPhysicalReads="0" ActualLobReadAheads="0" ActualEndOfScans="0" ActualExecutions="1" ActualExecutionMode="Batch" />
+                    <RunTimeCountersPerThread Thread="2" ActualRows="0" Batches="0" ActualElapsedms="0" ActualCPUms="0" ActualScans="0" ActualLogicalReads="0" ActualPhysicalReads="0" ActualReadAheads="0" ActualLobLogicalReads="0" ActualLobPhysicalReads="0" ActualLobReadAheads="0" ActualEndOfScans="0" ActualExecutions="1" ActualExecutionMode="Batch" />
+                    <RunTimeCountersPerThread Thread="1" ActualRows="0" Batches="0" ActualElapsedms="0" ActualCPUms="0" ActualScans="0" ActualLogicalReads="0" ActualPhysicalReads="0" ActualReadAheads="0" ActualLobLogicalReads="0" ActualLobPhysicalReads="0" ActualLobReadAheads="0" ActualEndOfScans="0" ActualExecutions="1" ActualExecutionMode="Batch" />
+                    <RunTimeCountersPerThread Thread="0" ActualRows="0" Batches="0" ActualElapsedms="0" ActualCPUms="0" ActualEndOfScans="0" ActualExecutions="0" ActualExecutionMode="Batch" />
+                  </RunTimeInformation>
+                  <ComputeScalar>
+                    <DefinedValues>
+                      <DefinedValue>
+                        <ColumnReference Column="Expr1003" />
+                        <ScalarOperator ScalarString="CASE WHEN [Expr1012]=(0) THEN NULL ELSE [Expr1013] END">
+                          <IF>
+                            <Condition>
+                              <ScalarOperator>
+                                <Compare CompareOp="EQ">
+                                  <ScalarOperator>
+                                    <Identifier>
+                                      <ColumnReference Column="Expr1012" />
+                                    </Identifier>
+                                  </ScalarOperator>
+                                  <ScalarOperator>
+                                    <Const ConstValue="(0)" />
+                                  </ScalarOperator>
+                                </Compare>
+                              </ScalarOperator>
+                            </Condition>
+                            <Then>
+                              <ScalarOperator>
+                                <Const ConstValue="NULL" />
+                              </ScalarOperator>
+                            </Then>
+                            <Else>
+                              <ScalarOperator>
+                                <Identifier>
+                                  <ColumnReference Column="Expr1013" />
+                                </Identifier>
+                              </ScalarOperator>
+                            </Else>
+                          </IF>
+                        </ScalarOperator>
+                      </DefinedValue>
+                    </DefinedValues>
+                    <RelOp NodeId="2" PhysicalOp="Hash Match" LogicalOp="Aggregate" EstimateRows="1" EstimateIO="0" EstimateCPU="0.00577917" AvgRowSize="24" EstimatedTotalSubtreeCost="74.1939" Parallel="1" EstimateRebinds="0" EstimateRewinds="0" EstimatedExecutionMode="Batch">
+                      <OutputList>
+                        <ColumnReference Column="Expr1012" />
+                        <ColumnReference Column="Expr1013" />
+                      </OutputList>
+                      <MemoryFractions Input="1" Output="1" />
+                      <RunTimeInformation>
+                        <RunTimeCountersPerThread Thread="10" ActualRows="0" Batches="0" ActualElapsedms="1" ActualCPUms="0" ActualScans="0" ActualLogicalReads="0" ActualPhysicalReads="0" ActualReadAheads="0" ActualLobLogicalReads="0" ActualLobPhysicalReads="0" ActualLobReadAheads="0" ActualEndOfScans="0" ActualExecutions="1" ActualExecutionMode="Batch" />
+                        <RunTimeCountersPerThread Thread="9" ActualRows="0" Batches="0" ActualElapsedms="1" ActualCPUms="0" ActualScans="0" ActualLogicalReads="0" ActualPhysicalReads="0" ActualReadAheads="0" ActualLobLogicalReads="0" ActualLobPhysicalReads="0" ActualLobReadAheads="0" ActualEndOfScans="0" ActualExecutions="1" ActualExecutionMode="Batch" />
+                        <RunTimeCountersPerThread Thread="8" ActualRows="0" Batches="0" ActualElapsedms="0" ActualCPUms="0" ActualScans="0" ActualLogicalReads="0" ActualPhysicalReads="0" ActualReadAheads="0" ActualLobLogicalReads="0" ActualLobPhysicalReads="0" ActualLobReadAheads="0" ActualEndOfScans="0" ActualExecutions="1" ActualExecutionMode="Batch" />
+                        <RunTimeCountersPerThread Thread="7" ActualRows="0" Batches="0" ActualElapsedms="0" ActualCPUms="0" ActualScans="0" ActualLogicalReads="0" ActualPhysicalReads="0" ActualReadAheads="0" ActualLobLogicalReads="0" ActualLobPhysicalReads="0" ActualLobReadAheads="0" ActualEndOfScans="0" ActualExecutions="1" ActualExecutionMode="Batch" />
+                        <RunTimeCountersPerThread Thread="6" ActualRows="0" Batches="0" ActualElapsedms="1" ActualCPUms="0" ActualScans="0" ActualLogicalReads="0" ActualPhysicalReads="0" ActualReadAheads="0" ActualLobLogicalReads="0" ActualLobPhysicalReads="0" ActualLobReadAheads="0" ActualEndOfScans="0" ActualExecutions="1" ActualExecutionMode="Batch" />
+                        <RunTimeCountersPerThread Thread="5" ActualRows="1" Batches="1" ActualElapsedms="0" ActualCPUms="0" ActualScans="0" ActualLogicalReads="0" ActualPhysicalReads="0" ActualReadAheads="0" ActualLobLogicalReads="0" ActualLobPhysicalReads="0" ActualLobReadAheads="0" ActualEndOfScans="0" ActualExecutions="1" ActualExecutionMode="Batch" />
+                        <RunTimeCountersPerThread Thread="4" ActualRows="0" Batches="0" ActualElapsedms="0" ActualCPUms="0" ActualScans="0" ActualLogicalReads="0" ActualPhysicalReads="0" ActualReadAheads="0" ActualLobLogicalReads="0" ActualLobPhysicalReads="0" ActualLobReadAheads="0" ActualEndOfScans="0" ActualExecutions="1" ActualExecutionMode="Batch" />
+                        <RunTimeCountersPerThread Thread="3" ActualRows="0" Batches="0" ActualElapsedms="0" ActualCPUms="0" ActualScans="0" ActualLogicalReads="0" ActualPhysicalReads="0" ActualReadAheads="0" ActualLobLogicalReads="0" ActualLobPhysicalReads="0" ActualLobReadAheads="0" ActualEndOfScans="0" ActualExecutions="1" ActualExecutionMode="Batch" />
+                        <RunTimeCountersPerThread Thread="2" ActualRows="0" Batches="0" ActualElapsedms="1" ActualCPUms="0" ActualScans="0" ActualLogicalReads="0" ActualPhysicalReads="0" ActualReadAheads="0" ActualLobLogicalReads="0" ActualLobPhysicalReads="0" ActualLobReadAheads="0" ActualEndOfScans="0" ActualExecutions="1" ActualExecutionMode="Batch" />
+                        <RunTimeCountersPerThread Thread="1" ActualRows="0" Batches="0" ActualElapsedms="1" ActualCPUms="0" ActualScans="0" ActualLogicalReads="0" ActualPhysicalReads="0" ActualReadAheads="0" ActualLobLogicalReads="0" ActualLobPhysicalReads="0" ActualLobReadAheads="0" ActualEndOfScans="0" ActualExecutions="1" ActualExecutionMode="Batch" />
+                        <RunTimeCountersPerThread Thread="0" ActualRows="0" Batches="0" ActualElapsedms="0" ActualCPUms="0" ActualEndOfScans="0" ActualExecutions="0" ActualExecutionMode="Batch" />
+                      </RunTimeInformation>
+                      <Hash>
+                        <DefinedValues>
+                          <DefinedValue>
+                            <ColumnReference Column="Expr1012" />
+                            <ScalarOperator ScalarString="COUNT_BIG([Expr1007])">
+                              <Aggregate Distinct="0" AggType="COUNT_BIG">
+                                <ScalarOperator>
+                                  <Identifier>
+                                    <ColumnReference Column="Expr1007" />
+                                  </Identifier>
+                                </ScalarOperator>
+                              </Aggregate>
+                            </ScalarOperator>
+                          </DefinedValue>
+                          <DefinedValue>
+                            <ColumnReference Column="Expr1013" />
+                            <ScalarOperator ScalarString="SUM([Expr1007])">
+                              <Aggregate Distinct="0" AggType="SUM">
+                                <ScalarOperator>
+                                  <Identifier>
+                                    <ColumnReference Column="Expr1007" />
+                                  </Identifier>
+                                </ScalarOperator>
+                              </Aggregate>
+                            </ScalarOperator>
+                          </DefinedValue>
+                        </DefinedValues>
+                        <HashKeysBuild />
+                        <RelOp NodeId="3" PhysicalOp="Compute Scalar" LogicalOp="Compute Scalar" EstimateRows="400409" EstimateIO="0" EstimateCPU="0.0120024" AvgRowSize="45" EstimatedTotalSubtreeCost="72.0517" Parallel="1" EstimateRebinds="0" EstimateRewinds="0" EstimatedExecutionMode="Batch">
+                          <OutputList>
+                            <ColumnReference Column="Expr1007" />
+                          </OutputList>
+                          <RunTimeInformation>
+                            <RunTimeCountersPerThread Thread="10" ActualRows="11958" Batches="14" ActualElapsedms="0" ActualCPUms="0" ActualScans="0" ActualLogicalReads="0" ActualPhysicalReads="0" ActualReadAheads="0" ActualLobLogicalReads="0" ActualLobPhysicalReads="0" ActualLobReadAheads="0" ActualEndOfScans="0" ActualExecutions="1" ActualExecutionMode="Batch" />
+                            <RunTimeCountersPerThread Thread="9" ActualRows="8809" Batches="10" ActualElapsedms="0" ActualCPUms="0" ActualScans="0" ActualLogicalReads="0" ActualPhysicalReads="0" ActualReadAheads="0" ActualLobLogicalReads="0" ActualLobPhysicalReads="0" ActualLobReadAheads="0" ActualEndOfScans="0" ActualExecutions="1" ActualExecutionMode="Batch" />
+                            <RunTimeCountersPerThread Thread="8" ActualRows="10881" Batches="13" ActualElapsedms="0" ActualCPUms="0" ActualScans="0" ActualLogicalReads="0" ActualPhysicalReads="0" ActualReadAheads="0" ActualLobLogicalReads="0" ActualLobPhysicalReads="0" ActualLobReadAheads="0" ActualEndOfScans="0" ActualExecutions="1" ActualExecutionMode="Batch" />
+                            <RunTimeCountersPerThread Thread="7" ActualRows="12678" Batches="15" ActualElapsedms="0" ActualCPUms="0" ActualScans="0" ActualLogicalReads="0" ActualPhysicalReads="0" ActualReadAheads="0" ActualLobLogicalReads="0" ActualLobPhysicalReads="0" ActualLobReadAheads="0" ActualEndOfScans="0" ActualExecutions="1" ActualExecutionMode="Batch" />
+                            <RunTimeCountersPerThread Thread="6" ActualRows="12169" Batches="14" ActualElapsedms="0" ActualCPUms="0" ActualScans="0" ActualLogicalReads="0" ActualPhysicalReads="0" ActualReadAheads="0" ActualLobLogicalReads="0" ActualLobPhysicalReads="0" ActualLobReadAheads="0" ActualEndOfScans="0" ActualExecutions="1" ActualExecutionMode="Batch" />
+                            <RunTimeCountersPerThread Thread="5" ActualRows="9732" Batches="11" ActualElapsedms="0" ActualCPUms="0" ActualScans="0" ActualLogicalReads="0" ActualPhysicalReads="0" ActualReadAheads="0" ActualLobLogicalReads="0" ActualLobPhysicalReads="0" ActualLobReadAheads="0" ActualEndOfScans="0" ActualExecutions="1" ActualExecutionMode="Batch" />
+                            <RunTimeCountersPerThread Thread="4" ActualRows="12441" Batches="14" ActualElapsedms="0" ActualCPUms="0" ActualScans="0" ActualLogicalReads="0" ActualPhysicalReads="0" ActualReadAheads="0" ActualLobLogicalReads="0" ActualLobPhysicalReads="0" ActualLobReadAheads="0" ActualEndOfScans="0" ActualExecutions="1" ActualExecutionMode="Batch" />
+                            <RunTimeCountersPerThread Thread="3" ActualRows="11387" Batches="13" ActualElapsedms="0" ActualCPUms="0" ActualScans="0" ActualLogicalReads="0" ActualPhysicalReads="0" ActualReadAheads="0" ActualLobLogicalReads="0" ActualLobPhysicalReads="0" ActualLobReadAheads="0" ActualEndOfScans="0" ActualExecutions="1" ActualExecutionMode="Batch" />
+                            <RunTimeCountersPerThread Thread="2" ActualRows="11248" Batches="13" ActualElapsedms="0" ActualCPUms="0" ActualScans="0" ActualLogicalReads="0" ActualPhysicalReads="0" ActualReadAheads="0" ActualLobLogicalReads="0" ActualLobPhysicalReads="0" ActualLobReadAheads="0" ActualEndOfScans="0" ActualExecutions="1" ActualExecutionMode="Batch" />
+                            <RunTimeCountersPerThread Thread="1" ActualRows="12811" Batches="15" ActualElapsedms="0" ActualCPUms="0" ActualScans="0" ActualLogicalReads="0" ActualPhysicalReads="0" ActualReadAheads="0" ActualLobLogicalReads="0" ActualLobPhysicalReads="0" ActualLobReadAheads="0" ActualEndOfScans="0" ActualExecutions="1" ActualExecutionMode="Batch" />
+                            <RunTimeCountersPerThread Thread="0" ActualRows="0" Batches="0" ActualElapsedms="0" ActualCPUms="0" ActualEndOfScans="0" ActualExecutions="0" ActualExecutionMode="Batch" />
+                          </RunTimeInformation>
+                          <ComputeScalar>
+                            <DefinedValues>
+                              <DefinedValue>
+                                <ColumnReference Column="Expr1007" />
+                                <ScalarOperator ScalarString="[dbprove].[tpch_sf1].[lineitem].[l_extendedprice]*[dbprove].[tpch_sf1].[lineitem].[l_discount]">
+                                  <Arithmetic Operation="MULT">
+                                    <ScalarOperator>
+                                      <Identifier>
+                                        <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[lineitem]" Column="l_extendedprice" />
+                                      </Identifier>
+                                    </ScalarOperator>
+                                    <ScalarOperator>
+                                      <Identifier>
+                                        <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[lineitem]" Column="l_discount" />
+                                      </Identifier>
+                                    </ScalarOperator>
+                                  </Arithmetic>
+                                </ScalarOperator>
+                              </DefinedValue>
+                            </DefinedValues>
+                            <RelOp NodeId="4" PhysicalOp="Table Scan" LogicalOp="Table Scan" EstimateRows="400409" EstimatedRowsRead="6.00122e+06" EstimateIO="70.7194" EstimateCPU="1.3203" AvgRowSize="37" EstimatedTotalSubtreeCost="72.0397" TableCardinality="6.00122e+06" Parallel="1" EstimateRebinds="0" EstimateRewinds="0" EstimatedExecutionMode="Batch">
+                              <OutputList>
+                                <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[lineitem]" Column="l_extendedprice" />
+                                <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[lineitem]" Column="l_discount" />
+                              </OutputList>
+                              <RunTimeInformation>
+                                <RunTimeCountersPerThread Thread="10" ActualRows="11958" Batches="14" ActualElapsedms="118" ActualCPUms="113" ActualScans="1" ActualLogicalReads="9984" ActualPhysicalReads="0" ActualReadAheads="0" ActualLobLogicalReads="0" ActualLobPhysicalReads="0" ActualLobReadAheads="0" ActualRowsRead="627614" ActualEndOfScans="0" ActualExecutions="1" ActualExecutionMode="Batch" />
+                                <RunTimeCountersPerThread Thread="9" ActualRows="8809" Batches="10" ActualElapsedms="118" ActualCPUms="114" ActualScans="1" ActualLogicalReads="7424" ActualPhysicalReads="0" ActualReadAheads="0" ActualLobLogicalReads="0" ActualLobPhysicalReads="0" ActualLobReadAheads="0" ActualRowsRead="466763" ActualEndOfScans="0" ActualExecutions="1" ActualExecutionMode="Batch" />
+                                <RunTimeCountersPerThread Thread="8" ActualRows="10881" Batches="13" ActualElapsedms="118" ActualCPUms="114" ActualScans="1" ActualLogicalReads="9088" ActualPhysicalReads="0" ActualReadAheads="0" ActualLobLogicalReads="0" ActualLobPhysicalReads="0" ActualLobReadAheads="0" ActualRowsRead="571326" ActualEndOfScans="0" ActualExecutions="1" ActualExecutionMode="Batch" />
+                                <RunTimeCountersPerThread Thread="7" ActualRows="12678" Batches="15" ActualElapsedms="118" ActualCPUms="113" ActualScans="1" ActualLogicalReads="10604" ActualPhysicalReads="0" ActualReadAheads="0" ActualLobLogicalReads="0" ActualLobPhysicalReads="0" ActualLobReadAheads="0" ActualRowsRead="666578" ActualEndOfScans="0" ActualExecutions="1" ActualExecutionMode="Batch" />
+                                <RunTimeCountersPerThread Thread="6" ActualRows="12169" Batches="14" ActualElapsedms="118" ActualCPUms="114" ActualScans="1" ActualLogicalReads="10240" ActualPhysicalReads="0" ActualReadAheads="0" ActualLobLogicalReads="0" ActualLobPhysicalReads="0" ActualLobReadAheads="0" ActualRowsRead="643586" ActualEndOfScans="0" ActualExecutions="1" ActualExecutionMode="Batch" />
+                                <RunTimeCountersPerThread Thread="5" ActualRows="9732" Batches="11" ActualElapsedms="118" ActualCPUms="114" ActualScans="1" ActualLogicalReads="8192" ActualPhysicalReads="0" ActualReadAheads="0" ActualLobLogicalReads="0" ActualLobPhysicalReads="0" ActualLobReadAheads="0" ActualRowsRead="514786" ActualEndOfScans="0" ActualExecutions="1" ActualExecutionMode="Batch" />
+                                <RunTimeCountersPerThread Thread="4" ActualRows="12441" Batches="14" ActualElapsedms="119" ActualCPUms="112" ActualScans="1" ActualLogicalReads="10496" ActualPhysicalReads="0" ActualReadAheads="0" ActualLobLogicalReads="0" ActualLobPhysicalReads="0" ActualLobReadAheads="0" ActualRowsRead="659850" ActualEndOfScans="0" ActualExecutions="1" ActualExecutionMode="Batch" />
+                                <RunTimeCountersPerThread Thread="3" ActualRows="11387" Batches="13" ActualElapsedms="119" ActualCPUms="114" ActualScans="1" ActualLogicalReads="9472" ActualPhysicalReads="0" ActualReadAheads="0" ActualLobLogicalReads="0" ActualLobPhysicalReads="0" ActualLobReadAheads="0" ActualRowsRead="595433" ActualEndOfScans="0" ActualExecutions="1" ActualExecutionMode="Batch" />
+                                <RunTimeCountersPerThread Thread="2" ActualRows="11248" Batches="13" ActualElapsedms="118" ActualCPUms="114" ActualScans="1" ActualLogicalReads="9472" ActualPhysicalReads="0" ActualReadAheads="0" ActualLobLogicalReads="0" ActualLobPhysicalReads="0" ActualLobReadAheads="0" ActualRowsRead="595502" ActualEndOfScans="0" ActualExecutions="1" ActualExecutionMode="Batch" />
+                                <RunTimeCountersPerThread Thread="1" ActualRows="12811" Batches="15" ActualElapsedms="117" ActualCPUms="114" ActualScans="1" ActualLogicalReads="10496" ActualPhysicalReads="0" ActualReadAheads="0" ActualLobLogicalReads="0" ActualLobPhysicalReads="0" ActualLobReadAheads="0" ActualRowsRead="659777" ActualEndOfScans="0" ActualExecutions="1" ActualExecutionMode="Batch" />
+                                <RunTimeCountersPerThread Thread="0" ActualRows="0" Batches="0" ActualElapsedms="0" ActualCPUms="0" ActualEndOfScans="0" ActualExecutions="0" ActualExecutionMode="Batch" />
+                              </RunTimeInformation>
+                              <IndexScan Ordered="0" ForcedIndex="0" ForceSeek="0" ForceScan="0" NoExpandHint="0" Storage="RowStore">
+                                <DefinedValues>
+                                  <DefinedValue>
+                                    <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[lineitem]" Column="l_extendedprice" />
+                                  </DefinedValue>
+                                  <DefinedValue>
+                                    <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[lineitem]" Column="l_discount" />
+                                  </DefinedValue>
+                                </DefinedValues>
+                                <Object Database="[dbprove]" Schema="[tpch_sf1]" Table="[lineitem]" IndexKind="Heap" Storage="RowStore" />
+                                <Predicate>
+                                  <ScalarOperator ScalarString="[dbprove].[tpch_sf1].[lineitem].[l_shipdate]>='1994-01-01' AND [dbprove].[tpch_sf1].[lineitem].[l_shipdate]&lt;'1995-01-01' AND [dbprove].[tpch_sf1].[lineitem].[l_discount]>=(0.04) AND [dbprove].[tpch_sf1].[lineitem].[l_discount]&lt;=(0.06) AND [dbprove].[tpch_sf1].[lineitem].[l_quantity]&lt;(24.00)">
+                                    <Logical Operation="AND">
+                                      <ScalarOperator>
+                                        <Compare CompareOp="GE">
+                                          <ScalarOperator>
+                                            <Identifier>
+                                              <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[lineitem]" Column="l_shipdate" />
+                                            </Identifier>
+                                          </ScalarOperator>
+                                          <ScalarOperator>
+                                            <Const ConstValue="'1994-01-01'" />
+                                          </ScalarOperator>
+                                        </Compare>
+                                      </ScalarOperator>
+                                      <ScalarOperator>
+                                        <Compare CompareOp="LT">
+                                          <ScalarOperator>
+                                            <Identifier>
+                                              <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[lineitem]" Column="l_shipdate" />
+                                            </Identifier>
+                                          </ScalarOperator>
+                                          <ScalarOperator>
+                                            <Const ConstValue="'1995-01-01'" />
+                                          </ScalarOperator>
+                                        </Compare>
+                                      </ScalarOperator>
+                                      <ScalarOperator>
+                                        <Compare CompareOp="GE">
+                                          <ScalarOperator>
+                                            <Identifier>
+                                              <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[lineitem]" Column="l_discount" />
+                                            </Identifier>
+                                          </ScalarOperator>
+                                          <ScalarOperator>
+                                            <Const ConstValue="(0.04)" />
+                                          </ScalarOperator>
+                                        </Compare>
+                                      </ScalarOperator>
+                                      <ScalarOperator>
+                                        <Compare CompareOp="LE">
+                                          <ScalarOperator>
+                                            <Identifier>
+                                              <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[lineitem]" Column="l_discount" />
+                                            </Identifier>
+                                          </ScalarOperator>
+                                          <ScalarOperator>
+                                            <Const ConstValue="(0.06)" />
+                                          </ScalarOperator>
+                                        </Compare>
+                                      </ScalarOperator>
+                                      <ScalarOperator>
+                                        <Compare CompareOp="LT">
+                                          <ScalarOperator>
+                                            <Identifier>
+                                              <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[lineitem]" Column="l_quantity" />
+                                            </Identifier>
+                                          </ScalarOperator>
+                                          <ScalarOperator>
+                                            <Const ConstValue="(24.00)" />
+                                          </ScalarOperator>
+                                        </Compare>
+                                      </ScalarOperator>
+                                    </Logical>
+                                  </ScalarOperator>
+                                </Predicate>
+                              </IndexScan>
+                            </RelOp>
+                          </ComputeScalar>
+                        </RelOp>
+                      </Hash>
+                    </RelOp>
+                  </ComputeScalar>
+                </RelOp>
+              </Parallelism>
+            </RelOp>
+            <ParameterList>
+              <ColumnReference Column="@5" ParameterDataType="tinyint" ParameterCompiledValue="(24)" ParameterRuntimeValue="(24)" />
+              <ColumnReference Column="@4" ParameterDataType="numeric(2,2)" ParameterCompiledValue="(0.06)" ParameterRuntimeValue="(0.06)" />
+              <ColumnReference Column="@3" ParameterDataType="numeric(2,2)" ParameterCompiledValue="(0.04)" ParameterRuntimeValue="(0.04)" />
+              <ColumnReference Column="@2" ParameterDataType="varchar(8000)" ParameterCompiledValue="'1995-01-01'" ParameterRuntimeValue="'1995-01-01'" />
+              <ColumnReference Column="@1" ParameterDataType="varchar(8000)" ParameterCompiledValue="'1994-01-01'" ParameterRuntimeValue="'1994-01-01'" />
+            </ParameterList>
+          </QueryPlan>
+        </StmtSimple>
+      </Statements>
+    </Batch>
+  </BatchSequence>
+</ShowPlanXML>

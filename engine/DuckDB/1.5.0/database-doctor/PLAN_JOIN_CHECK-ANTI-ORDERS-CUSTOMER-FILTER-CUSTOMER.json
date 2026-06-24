@@ -1,0 +1,110 @@
+{
+  "engine": "DuckDB",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 1
+        },
+        "hash": {
+          "+2x": 1,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 2,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 1,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 1
+        },
+        "scan": {
+          "+2x": 1,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 2,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 0,
+        "distribute": 0,
+        "hash": 1599991,
+        "join": 3000001,
+        "scan": 3000001,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       -         1  AGGREGATE count_star()\n  300000         0  LEFT SEMI JOIN HASH ON o_custkey IS NOT DISTINCT FROM o_custkey\n  110042     99996  │└AGGREGATE  GROUP BY HASH #0\n  300000   1499994  │ LEFT ANTI JOIN HASH ON o_custkey IS NOT DISTINCT FROM o_custkey\n       1         1  │ │└PROJECT o_custkey\n       1         1  │ │ INNER JOIN HASH ON o_custkey = c_custkey\n       2         1  │ │ │└TABLE SCAN customer WHERE c_custkey = 1\n  110042         1  │ │ FILTER o_custkey = 1\n  110042         0  │ │ SCAN MATERIALISED\n  300000   1500000  │ SCAN MATERIALISED\n 1500000   1500000  TABLE SCAN orders\n",
+      "sql": "SELECT COUNT(o.o_orderkey)\nFROM tpch_sf1.orders AS o\nWHERE NOT EXISTS (\n  SELECT 1\n  FROM tpch_sf1.customer AS c\n  WHERE c.c_custkey = o.o_custkey\n    AND c.c_custkey = 1\n);\n",
+      "startTime": "2026-06-22T16:32:02.043525Z",
+      "status": "OK",
+      "timeMs": 10.083
+    }
+  ],
+  "runtime": {
+    "avgMs": 10.083,
+    "bestMs": 10.083,
+    "maxMs": 10.083,
+    "minMs": 10.083,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Count ORDERS rows without a matching CUSTOMER via NOT EXISTS with a one-sided CUSTOMER key filter",
+    "displayName": "PLAN_JOIN_CHECK-ANTI-ORDERS-CUSTOMER-FILTER-CUSTOMER",
+    "name": "PLAN_JOIN_CHECK-ANTI-ORDERS-CUSTOMER-FILTER-CUSTOMER",
+    "tags": [
+      "PLAN_JOIN_CHECK",
+      "join"
+    ]
+  },
+  "version": "1.5.0"
+}

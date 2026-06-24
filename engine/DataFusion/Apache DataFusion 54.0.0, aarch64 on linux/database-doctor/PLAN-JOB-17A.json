@@ -1,0 +1,110 @@
+{
+  "engine": "DataFusion",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 1
+        },
+        "filter": {
+          "+2x": 1,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 1
+        },
+        "hash": {
+          "+2x": 2,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 3,
+          ">16x": 1
+        },
+        "join": {
+          "+2x": 2,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 1,
+          "-8x": 0,
+          "<16x": 1,
+          "=": 1,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 8,
+          ">16x": 1
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 258299,
+        "distribute": 81848211,
+        "hash": 1032400133,
+        "join": 1998714189,
+        "scan": 50442373,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  PROJECT member_in_charnamed_american_movie, a1\n       1         1  AGGREGATE MIN(name)\n  833499        10  DISTRIBUTE GATHER\n  833499        10  AGGREGATE MIN(name)\n  833499    258289  INNER JOIN HASH ON movie_id = id AND movie_id = id AND movie_id = id\n  833499    258289  │└DISTRIBUTE HASH ON movie_id, movie_id, movie_id\n  833499    258289  │ PROJECT movie_id, movie_id, movie_id, name\n  833499    258289  │ INNER JOIN HASH ON id = person_id\n  833499    343399  │ │└DISTRIBUTE HASH ON id\n  833499    343399  │ │ FILTER name LIKE 'B%'\n 4167491   4167491  │ │ TABLE SCAN name WHERE name LIKE 'B%' AND (name < 'B, Khaz')\n 2682007   2832555  │ DISTRIBUTE HASH ON person_id\n 2682007   2832555  │ INNER JOIN HASH ON id = keyword_id\n   26834         1  │ │└DISTRIBUTE GATHER\n   26834         1  │ │ FILTER keyword = 'character-name-in-title'\n  134170    134170  │ │ DISTRIBUTE ROUND ROBIN\n  134170    134170  │ │ TABLE SCAN keyword WHERE keyword = 'character-name-in-title'\n13410035      916M  │ PROJECT person_id, movie_id, movie_id, movie_id, keyword_id\n13410035      916M  │ INNER JOIN HASH ON movie_id = movie_id AND movie_id = movie_id\n 4523930   4523930  │ │└DISTRIBUTE HASH ON movie_id, movie_id\n 4523930   4523930  │ │ TABLE SCAN movie_keyword WHERE ((keyword_id >= 117) AND (keyword_id <= 117)) AND keyword_id IN 117\n 7487593  32289229  │ DISTRIBUTE HASH ON movie_id, movie_id\n 7487593  32289229  │ INNER JOIN HASH ON id = company_id\n   47000     84843  │ │└DISTRIBUTE GATHER\n   47000     84843  │ │ FILTER country_code = 'us'\n  234997    234997  │ │ TABLE SCAN company_name WHERE country_code = 'us'\n37437492  80274241  │ PROJECT person_id, movie_id, movie_id, company_id\n37437492  80274241  │ INNER JOIN HASH ON movie_id = movie_id\n 2609129   2609129  │ │└DISTRIBUTE HASH ON movie_id\n 2609129   2609129  │ │ TABLE SCAN movie_companies WHERE (((company_id >= 1) AND (company_id <= 234997)) AND TRUE) AND CASE MOD(HASH_REPARTITION(movie_id,movie_id),10) WHEN 1 THEN ((((movie_id >= 64) AND (movie_id <= 2525771)) AND ((movie_id >= 64) AND (movie_id <= 2525771))) AND TRUE) WHEN 3 THEN ((((movie_id >= 11) AND (movie_id <= 2525785)) AND ((movie_id >= 11) AND (movie_id <= 2525785))) AND TRUE) WHEN 5 THEN ((((movie_id >= 211) AND (movie_id <= 2525833)) AND ((movie_id >= 211) AND ...\n36244344  36244344  │ DISTRIBUTE HASH ON movie_id\n36244344  36244344  │ TABLE SCAN cast_info WHERE CASE MOD(HASH_REPARTITION movie_id,10) WHEN 0 THEN (((movie_id >= 67) AND (movie_id <= 2525735)) AND TRUE) WHEN 1 THEN (((movie_id >= 45) AND (movie_id <= 2525732)) AND TRUE) WHEN 2 THEN (((movie_id >= 24) AND (movie_id <= 2525742)) AND TRUE) WHEN 3 THEN (((movie_id >= 2) AND (movie_id <= 2525729)) AND TRUE) WHEN 4 THEN (((movie_id >= 55) AND (movie_id <= 2525738)) AND TRUE) WHEN 5 THEN (((movie_id >= 54) AND (movie_id <= 2525731)) AND TRUE) ...\n 2528312   2528312  DISTRIBUTE HASH ON id, id, id\n 2528312   2528312  TABLE SCAN title WHERE CASE MOD(HASH_REPARTITION(id,id,id),10) WHEN 0 THEN (((((id >= 3532) AND (id <= 2523559)) AND ((id >= 3532) AND (id <= 2523559))) AND ((id >= 3532) AND (id <= 2523559))) AND TRUE) WHEN 1 THEN (((((id >= 6313) AND (id <= 2521264)) AND ((id >= 6313) AND (id <= 2521264))) AND ((id >= 6313) AND (id <= 2521264))) AND TRUE) WHEN 2 THEN (((((id >= 11165) AND (id <= 2519716)) AND ((id >= 11165) AND (id <= 2519716))) AND ((id >= 11165) AND (id <= 2519716))) A...\n",
+      "sql": "SELECT MIN(n.name) AS member_in_charnamed_american_movie,\n       MIN(n.name) AS a1\nFROM job.cast_info AS ci,\n     job.company_name AS cn,\n     job.keyword AS k,\n     job.movie_companies AS mc,\n     job.movie_keyword AS mk,\n     job.name AS n,\n     job.title AS t\nWHERE cn.country_code ='[us]'\n  AND k.keyword ='character-name-in-title'\n  AND n.name LIKE 'B%'\n  AND n.id = ci.person_id\n  AND ci.movie_id = t.id\n  AND t.id = mk.movie_id\n  AND mk.keyword_id = k.id\n  AND t.id = mc.movie_id\n  AND mc.company_id = cn.id\n  AND ci.movie_id = mc.movie_id\n  AND ci.movie_id = mk.movie_id\n  AND mc.movie_id = mk.movie_id;\n",
+      "startTime": "2026-06-23T16:41:29.758078Z",
+      "status": "OK",
+      "timeMs": 3373.72
+    }
+  ],
+  "runtime": {
+    "avgMs": 3373.72,
+    "bestMs": 3373.72,
+    "maxMs": 3373.72,
+    "minMs": 3373.72,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "iceberg",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 17A Analysis",
+    "displayName": "JOB-17A",
+    "name": "PLAN-JOB-17A",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "Apache DataFusion 54.0.0, aarch64 on linux"
+}

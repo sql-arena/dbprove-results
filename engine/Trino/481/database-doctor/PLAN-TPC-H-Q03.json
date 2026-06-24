@@ -1,0 +1,109 @@
+{
+  "engine": "Trino",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 1,
+          "+4x": 1,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 3,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 1,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 41138,
+        "distribute": 802378,
+        "hash": 757254,
+        "join": 3393107,
+        "scan": 7651215,
+        "seek": 0,
+        "sort": 45124
+      },
+      "plan": "Estimate    Actual  Operator\n      10        10  PROJECT l_orderkey, sum AS revenue, o_orderdate, o_shippriority\n      10        10  LIMIT 10\n      10     11281  SORT sum, o_orderdate\n       -     11281  DISTRIBUTE GATHER\n       -     11281  SORT sum, o_orderdate\n       -     11281  DISTRIBUTE GATHER\n       -     11281  SORT sum, o_orderdate\n       -     11281  DISTRIBUTE ROUND ROBIN\n       -     11281  SORT sum, o_orderdate\n       -     11281  AGGREGATE SUM(sum_6) AS sum GROUP BY HASH l_orderkey, o_orderdate, o_shippriority\n       -     11281  DISTRIBUTE HASH ON l_orderkey, o_orderdate, o_shippriority\n       -     11281  AGGREGATE SUM(expr) AS sum_6 GROUP BY PARTIAL l_orderkey, o_orderdate, o_shippriority\n       -     29857  PROJECT l_extendedprice * (1 - l_discount) AS expr, l_orderkey, o_orderdate, o_shippriority\n       -     29857  INNER JOIN HASH ON o_custkey = c_custkey\n       -     29949  │└DISTRIBUTE GATHER\n  150000     29949  │ FILTER c_mktsegment = 'MACHINERY'\n  150000    150000  │ TABLE SCAN customer\n       -    151331  INNER JOIN HASH ON l_orderkey = o_orderkey\n  729106    727305  │└DISTRIBUTE HASH ON o_orderkey\n 1500000    727305  │ FILTER o_orderdate < '1995-03-15'\n 1500000   1500000  │ TABLE SCAN orders\n 6001215   3241776  FILTER l_shipdate > '1995-03-15'\n 6001215   6001215  TABLE SCAN lineitem\n",
+      "sql": "/* TPC-H Q03 */\nSELECT l_orderkey,\n       SUM(l_extendedprice * (1 - l_discount)) AS revenue,\n       o_orderdate,\n       o_shippriority\nFROM tpch_sf1.lineitem\nINNER JOIN tpch_sf1.orders\n    ON l_orderkey = o_orderkey\nINNER JOIN tpch_sf1.customer\n    ON o_custkey = c_custkey\nWHERE c_mktsegment = 'MACHINERY'\n  AND o_orderdate < '1995-03-15'\n  AND l_shipdate > '1995-03-15'\nGROUP BY l_orderkey,\n         o_orderdate,\n         o_shippriority\nORDER BY revenue DESC,\n         o_orderdate\nLIMIT 10\n",
+      "startTime": "2026-06-23T11:48:14.792252Z",
+      "status": "OK",
+      "timeMs": 712.896
+    }
+  ],
+  "runtime": {
+    "avgMs": 712.896,
+    "bestMs": 712.896,
+    "maxMs": 712.896,
+    "minMs": 712.896,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "iceberg",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "TPC-H Q03 Analysis",
+    "displayName": "TPCH-Q03",
+    "name": "PLAN-TPC-H-Q03",
+    "tags": [
+      "TPC-H"
+    ]
+  },
+  "version": "481"
+}

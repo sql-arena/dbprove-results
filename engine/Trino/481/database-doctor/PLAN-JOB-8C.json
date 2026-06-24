@@ -1,0 +1,110 @@
+{
+  "engine": "Trino",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 1,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 1
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 8,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 1,
+        "distribute": 10206277,
+        "hash": 130353157,
+        "join": 210897213,
+        "scan": 46685628,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  PROJECT min AS writer_pseudo_name, min_40 AS movie_title\n       1         1  AGGREGATE MIN(min_41) AS min, MIN(min_42) AS min_40\n       -         1  DISTRIBUTE GATHER\n       -         1  AGGREGATE MIN(name) AS min_41, MIN(title) AS min_42\n       -         0  INNER JOIN HASH ON movie_id = id_33\n 2528312   2528312  │└DISTRIBUTE HASH ON id_33\n 2528312   2528312  │ PROJECT id AS id_33, title\n 2528312   2528312  │ TABLE SCAN title\n       -         0  INNER JOIN HASH ON role_id = id_29\n       -         1  │└DISTRIBUTE GATHER\n      12         1  │ PROJECT id AS id_29\n      12         1  │ FILTER role = 'writer'\n      12        12  │ TABLE SCAN role_type\n       -         0  INNER JOIN HASH ON person_id_1 = id_18\n 4167491   4167491  │└DISTRIBUTE HASH ON id_18\n 4167491   4167491  │ PROJECT id AS id_18\n 4167491   4167491  │ TABLE SCAN name\n       -         0  INNER JOIN HASH ON company_id = id_5\n       -         0  │└DISTRIBUTE GATHER\n  234997         0  │ PROJECT id AS id_5\n  234997         0  │ FILTER country_code = 'us'\n  234997    234997  │ TABLE SCAN company_name\n       -  87239860  INNER JOIN HASH ON movie_id = movie_id_13\n 2609129   2609129  │└DISTRIBUTE HASH ON movie_id_13\n 2609129   2609129  │ PROJECT movie_id AS movie_id_13, company_id\n 2609129   2609129  │ TABLE SCAN movie_companies\n       -  36417493  INNER JOIN HASH ON person_id_1 = person_id\n  901343    901343  │└DISTRIBUTE GATHER\n  901343    901343  │ TABLE SCAN aka_name\n36244344  36244344  PROJECT person_id AS person_id_1, movie_id, role_id\n36244344  36244344  TABLE SCAN cast_info\n",
+      "sql": "SELECT MIN(a1.name) AS writer_pseudo_name,\n       MIN(t.title) AS movie_title\nFROM job.aka_name AS a1,\n     job.cast_info AS ci,\n     job.company_name AS cn,\n     job.movie_companies AS mc,\n     job.name AS n1,\n     job.role_type AS rt,\n     job.title AS t\nWHERE cn.country_code ='[us]'\n  AND rt.role ='writer'\n  AND a1.person_id = n1.id\n  AND n1.id = ci.person_id\n  AND ci.movie_id = t.id\n  AND t.id = mc.movie_id\n  AND mc.company_id = cn.id\n  AND ci.role_id = rt.id\n  AND a1.person_id = ci.person_id\n  AND ci.movie_id = mc.movie_id;\n",
+      "startTime": "2026-06-23T15:35:44.772095Z",
+      "status": "OK",
+      "timeMs": 4009.408
+    }
+  ],
+  "runtime": {
+    "avgMs": 4009.408,
+    "bestMs": 4009.408,
+    "maxMs": 4009.408,
+    "minMs": 4009.408,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "iceberg",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 8C Analysis",
+    "displayName": "JOB-8C",
+    "name": "PLAN-JOB-8C",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "481"
+}

@@ -1,0 +1,44 @@
+QUERY id: 0
+  PROJECTION COLUMNS
+    COUNT(c_custkey) UInt64
+  PROJECTION
+    LIST id: 1, nodes: 1
+      FUNCTION id: 2, function_name: count, function_type: aggregate, result_type: UInt64
+        ARGUMENTS
+          LIST id: 3, nodes: 1
+            COLUMN id: 4, column_name: c_custkey, result_type: Int32, source_id: 5
+  JOIN TREE
+    TABLE id: 5, alias: __table1, table_name: tpch_sf1.customer
+  WHERE
+    FUNCTION id: 6, function_name: exists, function_type: ordinary, result_type: UInt8
+      ARGUMENTS
+        LIST id: 7, nodes: 1
+          QUERY id: 8, alias: __table2, is_subquery: 1, is_correlated: 1
+            CORRELATED COLUMNS
+              LIST id: 9, nodes: 1
+                COLUMN id: 10, column_name: c_custkey, result_type: Int32, source_id: 5
+            PROJECTION COLUMNS
+              1 UInt64
+            PROJECTION
+              LIST id: 11, nodes: 1
+                CONSTANT id: 12, constant_value: UInt64_1, constant_value_type: UInt64
+            JOIN TREE
+              QUERY id: 13, alias: __table3, is_subquery: 1, is_correlated: 1
+                CORRELATED COLUMNS
+                  LIST id: 14, nodes: 1
+                    COLUMN id: 10, column_name: c_custkey, result_type: Int32, source_id: 5
+                PROJECTION COLUMNS
+                  1 UInt8
+                PROJECTION
+                  LIST id: 15, nodes: 1
+                    CONSTANT id: 16, constant_value: UInt64_1, constant_value_type: UInt8
+                JOIN TREE
+                  TABLE id: 17, alias: __table4, table_name: tpch_sf1.orders
+                WHERE
+                  FUNCTION id: 18, function_name: equals, function_type: ordinary, result_type: UInt8
+                    ARGUMENTS
+                      LIST id: 19, nodes: 2
+                        COLUMN id: 20, column_name: o_custkey, result_type: Int32, source_id: 17
+                        COLUMN id: 10, column_name: c_custkey, result_type: Int32, source_id: 5
+            LIMIT
+              CONSTANT id: 21, constant_value: UInt64_1, constant_value_type: UInt64

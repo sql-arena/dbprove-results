@@ -1,0 +1,110 @@
+{
+  "engine": "SQL Server",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 1,
+          "=": 1,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 1,
+          "=": 2,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 2,
+          "=": 2,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 8,
+          "=": 1,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 1,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 6,
+          "=": 5,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 2,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 65648,
+        "distribute": 0,
+        "hash": 748727,
+        "join": 1981254,
+        "scan": 1655387,
+        "seek": 158876,
+        "sort": 108310
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(partialagg1047) AS Expr1014, MIN(partialagg1048) AS Expr1015, MIN(partialagg1049) AS Expr1016\n      22     11493  FILTER gender as gender = 'm'\n      53     25170  INNER JOIN LOOP ON Bmk1010 = Bmk1010\n       1     25170  │└TABLE SEEK name AS n\n      53     25170  PROJECT BmkToPage Bmk1010 AS Expr1061\n      53     25170  INNER JOIN LOOP ON ci.person_id = n.id\n       1     25170  │└TABLE SEEK name AS n\n      53     25170  AGGREGATE MIN(info as info) AS partialagg1047, MIN(info as info) AS partialagg1048, MIN(title as title) AS partialagg1049 GROUP BY SORT person_id\n    1799     54155  SORT person_id\n    1799     54155  INNER JOIN LOOP ON Bmk1012 = Bmk1012\n       1     54155  │└TABLE SEEK title AS t\n    1799     54155  SORT Expr1051\n    1799     54155  PROJECT BmkToPage Bmk1012 AS Expr1051\n    1799     54155  INNER JOIN LOOP ON mi_idx.movie_id = t.id\n       1     54155  │└TABLE SEEK title AS t\n    1799     54155  INNER JOIN HASH ON mi_idx.info_type_id = it2.id\n       1         1  │└FILTER info as info = 'votes'\n     113       113  │ INNER JOIN LOOP ON Bmk1004 = Bmk1004\n       1       113  │ │└TABLE SEEK info_type AS it2\n     113       113  │ TABLE SEEK info_type AS it2\n    8997    162621  INNER JOIN HASH ON mi_idx.movie_id = mi.movie_id\n    1640     93241  │└INNER JOIN HASH ON ci.movie_id = mi.movie_id\n    1666    186594  │ │└INNER JOIN HASH ON mi.info_type_id = it1.id\n       1         1  │ │ │└FILTER info as info = 'genres'\n     113       113  │ │ │ TABLE SCAN info_type AS it1\n  116663    186594  │ │ TABLE SCAN movie_info AS mi WHERE (PROBE(Bitmap1054,info_type_id as info_type_id,N'IN ROW')) AND (info as info = 'Action' OR info as info = 'Crime' OR info as info = 'Horror' OR info as info = 'Sci-Fi' OR info as info = 'Thriller' OR info as info = 'War')\n  995705     88645  │ TABLE SCAN cast_info AS ci WHERE (PROBE(Bitmap1055,movie_id as movie_id,N'IN ROW')) AND (note as note = '(head writer)' OR note as note = '(story editor)' OR note as note = '(story)' OR note as note = '(writer)' OR note as note = '(written by)')\n 1380040   1380035  TABLE SCAN movie_info_idx AS mi_idx WHERE PROBE(Bitmap1056,movie_id as movie_id,N'IN ROW')\n",
+      "sql": "SELECT MIN(mi.info) AS movie_budget,\n       MIN(mi_idx.info) AS movie_votes,\n       MIN(t.title) AS movie_title\nFROM job.cast_info AS ci,\n     job.info_type AS it1,\n     job.info_type AS it2,\n     job.movie_info AS mi,\n     job.movie_info_idx AS mi_idx,\n     job.name AS n,\n     job.title AS t\nWHERE ci.note IN ('(writer)',\n                  '(head writer)',\n                  '(written by)',\n                  '(story)',\n                  '(story editor)')\n  AND it1.info = 'genres'\n  AND it2.info = 'votes'\n  AND mi.info IN ('Horror',\n                  'Action',\n                  'Sci-Fi',\n                  'Thriller',\n                  'Crime',\n                  'War')\n  AND n.gender = 'm'\n  AND t.id = mi.movie_id\n  AND t.id = mi_idx.movie_id\n  AND t.id = ci.movie_id\n  AND ci.movie_id = mi.movie_id\n  AND ci.movie_id = mi_idx.movie_id\n  AND mi.movie_id = mi_idx.movie_id\n  AND n.id = ci.person_id\n  AND it1.id = mi.info_type_id\n  AND it2.id = mi_idx.info_type_id;\n",
+      "startTime": "2026-06-23T08:18:40.921846Z",
+      "status": "OK",
+      "timeMs": 3504.13
+    }
+  ],
+  "runtime": {
+    "avgMs": 3504.13,
+    "bestMs": 3504.13,
+    "maxMs": 3504.13,
+    "minMs": 3504.13,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 18C Analysis",
+    "displayName": "JOB-18C",
+    "name": "PLAN-JOB-18C",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "16.0.4236.2"
+}

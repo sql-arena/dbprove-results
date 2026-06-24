@@ -1,0 +1,110 @@
+{
+  "engine": "Trino",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 2,
+          "+8x": 1,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 5
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 11,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 1,
+        "distribute": 5665107,
+        "hash": 6697260,
+        "join": 6063359,
+        "scan": 64661800,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  PROJECT min AS voicing_actress, min_61 AS voiced_movie\n       1         1  AGGREGATE MIN(min_62) AS min, MIN(min_63) AS min_61\n       -         1  DISTRIBUTE GATHER\n       -         1  AGGREGATE MIN(name_40) AS min_62, MIN(title) AS min_63\n       -         0  INNER JOIN HASH ON movie_id = id_54\n   70682    574556  │└DISTRIBUTE HASH ON id_54\n 2528312    574556  │ PROJECT id AS id_54, title\n 2528312    574556  │ FILTER production_year BETWEEN 2005 AND 2009\n 2528312   2528312  │ TABLE SCAN title\n       -         0  INNER JOIN HASH ON role_id = id_50\n       -         1  │└DISTRIBUTE GATHER\n      12         1  │ PROJECT id AS id_50\n      12         1  │ FILTER role = 'actress'\n      12        12  │ TABLE SCAN role_type\n       -         0  INNER JOIN HASH ON person_id_10 = id_39\n       -      6768  │└DISTRIBUTE HASH ON id_39\n 4167491      6768  │ PROJECT id AS id_39, name AS name_40\n 4167491      6768  │ FILTER (gender = 'f') AND (name LIKE '%Ang%')\n 4167491   4167491  │ TABLE SCAN name\n       -         0  INNER JOIN HASH ON info_type_id = id_22\n       -         1  │└DISTRIBUTE GATHER\n     113         1  │ PROJECT id AS id_22\n     113         1  │ FILTER info = 'release dates'\n     113       113  │ TABLE SCAN info_type\n       -         0  INNER JOIN HASH ON movie_id = movie_id_33\n13352148    451104  │└DISTRIBUTE HASH ON movie_id_33\n14835720    451104  │ PROJECT movie_id AS movie_id_33, info_type_id\n14835720    451104  │ FILTER (((info >= 'Japan:') AND (info < 'Japan;')) OR ((info >= 'USA:') AND (info < 'USA;'))) AND ((info LIKE 'Japan:%200%') OR (info LIKE 'USA:%200%'))\n14835720  14835720  │ TABLE SCAN movie_info\n       -         0  INNER JOIN HASH ON company_id = id_14\n       -         0  │└DISTRIBUTE GATHER\n  234997         0  │ PROJECT id AS id_14\n  234997         0  │ FILTER country_code = 'us'\n  234997    234997  │ TABLE SCAN company_name\n       -    717888  INNER JOIN HASH ON movie_id = movie_id_27\n 1203425    590994  │└DISTRIBUTE HASH ON movie_id_27\n 2609129    590994  │ PROJECT movie_id AS movie_id_27, company_id\n 2609129    590994  │ FILTER  NOT (note IS NULL) AND ((note LIKE '%(USA)%') OR (note LIKE '%(worldwide)%'))\n 2609129   2609129  │ TABLE SCAN movie_companies\n       -   1732265  INNER JOIN HASH ON person_role_id = id_0\n 3140339   3140339  │└DISTRIBUTE HASH ON id_0\n 3140339   3140339  │ PROJECT id AS id_0\n 3140339   3140339  │ TABLE SCAN char_name\n       -   1806603  INNER JOIN HASH ON person_id_10 = person_id\n  901343    901343  │└DISTRIBUTE GATHER\n  901343    901343  │ TABLE SCAN aka_name\n36244344    867477  PROJECT person_id AS person_id_10, movie_id, person_role_id, role_id\n36244344    867477  FILTER note IN('(voice)','(voice) (uncredited)','(voice: English version)','(voice: Japanese version)')\n36244344  36244344  TABLE SCAN cast_info\n",
+      "sql": "SELECT MIN(n.name) AS voicing_actress,\n       MIN(t.title) AS voiced_movie\nFROM job.aka_name AS an,\n     job.char_name AS chn,\n     job.cast_info AS ci,\n     job.company_name AS cn,\n     job.info_type AS it,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.name AS n,\n     job.role_type AS rt,\n     job.title AS t\nWHERE ci.note IN ('(voice)',\n                  '(voice: Japanese version)',\n                  '(voice) (uncredited)',\n                  '(voice: English version)')\n  AND cn.country_code ='[us]'\n  AND it.info = 'release dates'\n  AND mc.note IS NOT NULL\n  AND (mc.note LIKE '%(USA)%'\n       OR mc.note LIKE '%(worldwide)%')\n  AND mi.info IS NOT NULL\n  AND (mi.info LIKE 'Japan:%200%'\n       OR mi.info LIKE 'USA:%200%')\n  AND n.gender ='f'\n  AND n.name LIKE '%Ang%'\n  AND rt.role ='actress'\n  AND t.production_year BETWEEN 2005 AND 2009\n  AND t.id = mi.movie_id\n  AND t.id = mc.movie_id\n  AND t.id = ci.movie_id\n  AND mc.movie_id = ci.movie_id\n  AND mc.movie_id = mi.movie_id\n  AND mi.movie_id = ci.movie_id\n  AND cn.id = mc.company_id\n  AND it.id = mi.info_type_id\n  AND n.id = ci.person_id\n  AND rt.id = ci.role_id\n  AND n.id = an.person_id\n  AND ci.person_id = an.person_id\n  AND chn.id = ci.person_role_id;\n",
+      "startTime": "2026-06-23T15:22:32.480862Z",
+      "status": "OK",
+      "timeMs": 2116.233
+    }
+  ],
+  "runtime": {
+    "avgMs": 2116.233,
+    "bestMs": 2116.233,
+    "maxMs": 2116.233,
+    "minMs": 2116.233,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "iceberg",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 19A Analysis",
+    "displayName": "JOB-19A",
+    "name": "PLAN-JOB-19A",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "481"
+}

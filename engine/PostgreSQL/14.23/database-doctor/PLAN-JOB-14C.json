@@ -1,0 +1,110 @@
+{
+  "engine": "PostgreSQL",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 7,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 1,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 1,
+          "=": 7,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 4115,
+        "distribute": 0,
+        "hash": 128489,
+        "join": 118317,
+        "scan": 2,
+        "seek": 100995,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(info), MIN(title)\n       1      4115  INNER JOIN LOOP ON id = info_type_id\n       1      4709  │└INNER JOIN LOOP ON movie_id = movie_id AND id = movie_id AND (id = movie_id)\n       1      5949  │ │└INNER JOIN LOOP ON id = info_type_id\n      45     17788  │ │ │└INNER JOIN LOOP ON movie_id = movie_id AND id = movie_id AND (id = movie_id)\n      15      8073  │ │ │ │└INNER JOIN HASH ON kind_id = id\n       2         2  │ │ │ │ │└TABLE SCAN kind_type AS kt WHERE kt.kind IN('movie','episode')\n      54      9739  │ │ │ │ INNER JOIN LOOP ON id = movie_id\n     135     37091  │ │ │ │ │└INNER JOIN LOOP ON keyword_id = id\n       4         3  │ │ │ │ │ │└TABLE SEEK keyword AS k\n     903     37092  │ │ │ │ │ TABLE SEEK movie_keyword AS mk\n   37091     37091  │ │ │ │ TABLE SEEK title AS t WHERE t.production_year > 2005\n   24219     16146  │ │ │ TABLE SEEK movie_info_idx AS mi_idx WHERE mi_idx.info < '8.5'\n       5         5  │ │ TABLE SEEK info_type AS it2 WHERE it2.info = 'rating'\n   11898      5949  │ TABLE SEEK movie_info AS mi WHERE mi.info IN('Sweden','Norway','Germany','Denmark','Swedish','Danish','Norwegian','German','USA','American')\n    4709      4709  TABLE SEEK info_type AS it1 WHERE it1.info = 'countries'\n",
+      "sql": "SELECT MIN(mi_idx.info) AS rating,\n       MIN(t.title) AS north_european_dark_production\nFROM job.info_type AS it1,\n     job.info_type AS it2,\n     job.keyword AS k,\n     job.kind_type AS kt,\n     job.movie_info AS mi,\n     job.movie_info_idx AS mi_idx,\n     job.movie_keyword AS mk,\n     job.title AS t\nWHERE it1.info = 'countries'\n  AND it2.info = 'rating'\n  AND k.keyword IS NOT NULL\n  AND k.keyword IN ('murder',\n                    'murder-in-title',\n                    'blood',\n                    'violence')\n  AND kt.kind IN ('movie',\n                  'episode')\n  AND mi.info IN ('Sweden',\n                  'Norway',\n                  'Germany',\n                  'Denmark',\n                  'Swedish',\n                  'Danish',\n                  'Norwegian',\n                  'German',\n                  'USA',\n                  'American')\n  AND mi_idx.info < '8.5'\n  AND t.production_year > 2005\n  AND kt.id = t.kind_id\n  AND t.id = mi.movie_id\n  AND t.id = mk.movie_id\n  AND t.id = mi_idx.movie_id\n  AND mk.movie_id = mi.movie_id\n  AND mk.movie_id = mi_idx.movie_id\n  AND mi.movie_id = mi_idx.movie_id\n  AND k.id = mk.keyword_id\n  AND it1.id = mi.info_type_id\n  AND it2.id = mi_idx.info_type_id;\n",
+      "startTime": "2026-06-23T15:42:21.639263Z",
+      "status": "OK",
+      "timeMs": 513.369
+    }
+  ],
+  "runtime": {
+    "avgMs": 513.369,
+    "bestMs": 513.369,
+    "maxMs": 513.369,
+    "minMs": 513.369,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 14C Analysis",
+    "displayName": "JOB-14C",
+    "name": "PLAN-JOB-14C",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "14.23"
+}

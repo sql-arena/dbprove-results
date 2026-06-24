@@ -1,0 +1,110 @@
+{
+  "engine": "DataFusion",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 1
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 1,
+          "+8x": 0,
+          "-2x": 2,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 2,
+          ">16x": 1
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 3,
+          "=": 2,
+          ">16x": 1
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 2,
+          "<16x": 5,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 1,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 8,
+          ">16x": 1
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 68195,
+        "distribute": 2458881,
+        "hash": 32538163,
+        "join": 67791832,
+        "scan": 44266804,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  PROJECT cast_member_name, cast_member_info\n       1         1  AGGREGATE MIN(name), MIN(info)\n    6493        10  DISTRIBUTE GATHER\n    6493        10  AGGREGATE MIN(name), MIN(info)\n    6493     68185  INNER JOIN HASH ON movie_id = id AND linked_movie_id = id\n    6493    109842  │└DISTRIBUTE GATHER\n    6493    109842  │ INNER JOIN HASH ON id = info_type_id\n      23         1  │ │└DISTRIBUTE GATHER\n      23         1  │ │ FILTER info = 'mini biography'\n     113       113  │ │ DISTRIBUTE ROUND ROBIN\n     113       113  │ │ TABLE SCAN info_type WHERE info = 'mini biography'\n    7058    109842  │ INNER JOIN HASH ON id = person_id AND person_id = person_id AND person_id = person_id\n    7058    271703  │ │└DISTRIBUTE GATHER\n    7058    271703  │ │ INNER JOIN HASH ON person_id = id AND person_id = id\n    7058   1391095  │ │ │└DISTRIBUTE GATHER\n    7058   1391095  │ │ │ INNER JOIN HASH ON id = link_type_id\n       4         4  │ │ │ │└DISTRIBUTE GATHER\n       4         4  │ │ │ │ FILTER link IN('references','referenced in','features','featured in')\n      18        18  │ │ │ │ DISTRIBUTE ROUND ROBIN\n      18        18  │ │ │ │ TABLE SCAN link_type WHERE link IN('references','referenced in','features','featured in')\n   29997   1668423  │ │ │ PROJECT person_id, person_id, movie_id, linked_movie_id, link_type_id\n   29997   1668423  │ │ │ INNER JOIN HASH ON linked_movie_id = movie_id\n   29997     29997  │ │ │ │└TABLE SCAN movie_link WHERE ((link_type_id >= 5) AND (link_type_id <= 10)) AND link_type_id IN(5,6,9,10)\n 1608530  27596163  │ │ │ INNER JOIN HASH ON person_id = person_id\n  180269    686095  │ │ │ │└DISTRIBUTE GATHER\n  180269    686095  │ │ │ │ FILTER name IS NOT NULL AND (name LIKE '%a%' OR name LIKE 'A%')\n  901343    901343  │ │ │ │ TABLE SCAN aka_name WHERE name IS NOT NULL AND (name LIKE '%a%' OR name LIKE 'A%')\n36244344  36244344  │ │ │ TABLE SCAN cast_info WHERE (((person_id >= 5) AND (person_id <= 4167489)) AND TRUE) AND (((movie_id >= 284) AND (movie_id <= 2524994)) AND TRUE)\n  833499    507621  │ │ FILTER ((name_pcode_cf >= 'A') AND (name_pcode_cf <= 'F')) AND ((gender = 'm') OR ((gender = 'f') AND name LIKE 'A%'))\n 4167491   1599013  │ │ TABLE SCAN name WHERE (((name_pcode_cf >= 'A') AND (name_pcode_cf <= 'F')) AND ((gender = 'm') OR ((gender = 'f') AND name LIKE 'A%'))) AND ((((id >= 56) AND (id <= 4061868)) AND ((id >= 56) AND (id <= 4061868))) AND TRUE)\n  592733     84183  │ FILTER note IS NOT NULL\n 2963664   2963664  │ TABLE SCAN person_info WHERE (note IS NOT NULL AND (((((person_id >= 207) AND (person_id <= 1782027)) AND ((person_id >= 207) AND (person_id <= 1782027))) AND ((person_id >= 207) AND (person_id <= 1782027))) AND TRUE)) AND (((info_type_id >= 19) AND (info_type_id <= 19)) AND info_type_id IN 19)\n  559841   1555597  FILTER (production_year >= 1980) AND (production_year <= 2010)\n 2528312   2528312  TABLE SCAN title WHERE ((production_year >= 1980) AND (production_year <= 2010)) AND ((((id >= 2032) AND (id <= 2524994)) AND ((id >= 2032) AND (id <= 2524994))) AND TRUE)\n",
+      "sql": "SELECT MIN(n.name) AS cast_member_name,\n       MIN(pi.info) AS cast_member_info\nFROM job.aka_name AS an,\n     job.cast_info AS ci,\n     job.info_type AS it,\n     job.link_type AS lt,\n     job.movie_link AS ml,\n     job.name AS n,\n     job.person_info AS pi,\n     job.title AS t\nWHERE an.name IS NOT NULL\n  AND (an.name LIKE '%a%'\n       OR an.name LIKE 'A%')\n  AND it.info ='mini biography'\n  AND lt.link IN ('references',\n                  'referenced in',\n                  'features',\n                  'featured in')\n  AND n.name_pcode_cf BETWEEN 'A' AND 'F'\n  AND (n.gender='m'\n       OR (n.gender = 'f'\n           AND n.name LIKE 'A%'))\n  AND pi.note IS NOT NULL\n  AND t.production_year BETWEEN 1980 AND 2010\n  AND n.id = an.person_id\n  AND n.id = pi.person_id\n  AND ci.person_id = n.id\n  AND t.id = ci.movie_id\n  AND ml.linked_movie_id = t.id\n  AND lt.id = ml.link_type_id\n  AND it.id = pi.info_type_id\n  AND pi.person_id = an.person_id\n  AND pi.person_id = ci.person_id\n  AND an.person_id = ci.person_id\n  AND ci.movie_id = ml.linked_movie_id;\n",
+      "startTime": "2026-06-23T17:16:06.620683Z",
+      "status": "OK",
+      "timeMs": 492.112
+    }
+  ],
+  "runtime": {
+    "avgMs": 492.112,
+    "bestMs": 492.112,
+    "maxMs": 492.112,
+    "minMs": 492.112,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "iceberg",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 7C Analysis",
+    "displayName": "JOB-7C",
+    "name": "PLAN-JOB-7C",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "Apache DataFusion 54.0.0, aarch64 on linux"
+}

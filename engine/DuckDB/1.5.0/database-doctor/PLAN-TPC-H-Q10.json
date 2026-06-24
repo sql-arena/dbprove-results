@@ -1,0 +1,109 @@
+{
+  "engine": "DuckDB",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 1,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 2,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 2,
+          "+4x": 1,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 1,
+          "+4x": 1,
+          "+8x": 1,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 1
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 115050,
+        "distribute": 0,
+        "hash": 215372,
+        "join": 220603,
+        "scan": 220628,
+        "seek": 0,
+        "sort": 38182
+      },
+      "plan": "Estimate    Actual  Operator\n       -     38182  SORT SUM(l_extendedprice * (1 - l_discount))\n  409397     38182  PROJECT c_custkey, c_name, revenue, c_acctbal, n_name, c_address, c_phone, c_comment\n  409397     38182  AGGREGATE SUM(#7) GROUP BY HASH #0, #1, #2, #3, #4, #5, #6\n  409397    115050  PROJECT c_custkey, c_name, c_acctbal, c_phone, n_name, c_address, c_comment, l_extendedprice * (1.00 - l_discount)\n  409397    115050  INNER JOIN HASH ON l_orderkey = o_orderkey\n  304444     57474  │└INNER JOIN HASH ON c_custkey = o_custkey\n  300000     57474  │ │└TABLE SCAN orders WHERE o_orderdate >= '1994-06-01' AND o_orderdate < '1994-09-01'\n  144230     42848  │ INNER JOIN HASH ON c_nationkey = n_nationkey\n      25        25  │ │└TABLE SCAN nation\n  150000     42848  │ TABLE SCAN customer WHERE c_custkey <= 149999\n 2000405    120281  TABLE SCAN lineitem WHERE l_returnflag = 'R'\n",
+      "sql": "/* TPC-H Q10 */\nSELECT c_custkey,\n       c_name,\n       SUM(l_extendedprice * (1 - l_discount)) AS revenue,\n       c_acctbal,\n       n_name,\n       c_address,\n       c_phone,\n       c_comment\nFROM tpch_sf1.lineitem\nINNER JOIN tpch_sf1.orders\n    ON l_orderkey = o_orderkey\nINNER JOIN tpch_sf1.customer\n    ON o_custkey = c_custkey\nINNER JOIN tpch_sf1.nation\n    ON c_nationkey = n_nationkey\nWHERE o_orderdate >= '1994-06-01'\n  AND o_orderdate < '1994-09-01'\n  AND l_returnflag = 'R'\nGROUP BY c_custkey,\n         c_name,\n         c_acctbal,\n         c_phone,\n         n_name,\n         c_address,\n         c_comment\nORDER BY revenue DESC",
+      "startTime": "2026-06-22T16:08:56.123856Z",
+      "status": "OK",
+      "timeMs": 27.786
+    }
+  ],
+  "runtime": {
+    "avgMs": 27.786,
+    "bestMs": 27.786,
+    "maxMs": 27.786,
+    "minMs": 27.786,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "TPC-H Q10 Analysis",
+    "displayName": "TPCH-Q10",
+    "name": "PLAN-TPC-H-Q10",
+    "tags": [
+      "TPC-H"
+    ]
+  },
+  "version": "1.5.0"
+}

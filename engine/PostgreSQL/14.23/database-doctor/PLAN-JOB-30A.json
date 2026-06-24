@@ -1,0 +1,110 @@
+{
+  "engine": "PostgreSQL",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 11,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 2,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 1,
+          "=": 10,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 757,
+        "distribute": 0,
+        "hash": 429259,
+        "join": 562170,
+        "scan": 2,
+        "seek": 324120,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(info), MIN(info), MIN(name), MIN(title)\n       1       757  INNER JOIN LOOP ON id = person_id\n       1      1021  │└INNER JOIN LOOP ON movie_id = movie_id AND id = movie_id AND (id = movie_id)\n       1      1161  │ │└INNER JOIN LOOP ON subject_id = id AND (subject_id = id)\n       1      1161  │ │ │└INNER JOIN LOOP ON id = info_type_id\n       1      1161  │ │ │ │└INNER JOIN LOOP ON movie_id = movie_id AND id = movie_id AND (id = movie_id)\n       1      2023  │ │ │ │ │└INNER JOIN LOOP ON keyword IN('murder','violence','blood','gore','death','female-nudity','hospital') AND id = status_id AND (id = status_id)\n       1         1  │ │ │ │ │ │└TABLE SCAN comp_cast_type AS cct2 WHERE cct2.kind = 'complete+verified'\n       1      6946  │ │ │ │ │ INNER JOIN LOOP ON movie_id = id\n       3     24904  │ │ │ │ │ │└INNER JOIN LOOP ON id = movie_id AND movie_id = id AND (movie_id = id)\n       6     63701  │ │ │ │ │ │ │└INNER JOIN HASH ON info_type_id = id\n       1         1  │ │ │ │ │ │ │ │└TABLE SEEK info_type AS it2\n     700    191689  │ │ │ │ │ │ │ INNER JOIN LOOP ON movie_id = movie_id\n     236     76714  │ │ │ │ │ │ │ │└INNER JOIN LOOP ON keyword_id = id\n       7         7  │ │ │ │ │ │ │ │ │└TABLE SEEK keyword AS k\n    2107     76713  │ │ │ │ │ │ │ │ TABLE SEEK movie_keyword AS mk\n  230142    153428  │ │ │ │ │ │ │ TABLE SEEK movie_info_idx AS mi_idx\n   63701     63701  │ │ │ │ │ │ TABLE SEEK title AS t WHERE t.production_year > 2000\n   49808     24904  │ │ │ │ │ TABLE SEEK complete_cast AS cc\n    2023      2023  │ │ │ │ TABLE SEEK movie_info AS mi WHERE mi.info IN('Horror','Thriller')\n    1161      1161  │ │ │ TABLE SEEK info_type AS it1 WHERE it1.info = 'genres'\n       2         1  │ │ TABLE SCAN comp_cast_type AS cct1 WHERE cct1.kind IN('cast','crew')\n    1161      1161  │ TABLE SEEK cast_info AS ci WHERE ci.note IN('(writer)','(head writer)','(written by)','(story)','(story editor)')\n    1021      1021  TABLE SEEK name AS n WHERE n.gender = 'm'\n",
+      "sql": "SELECT MIN(mi.info) AS movie_budget,\n       MIN(mi_idx.info) AS movie_votes,\n       MIN(n.name) AS writer,\n       MIN(t.title) AS complete_violent_movie\nFROM job.complete_cast AS cc,\n     job.comp_cast_type AS cct1,\n     job.comp_cast_type AS cct2,\n     job.cast_info AS ci,\n     job.info_type AS it1,\n     job.info_type AS it2,\n     job.keyword AS k,\n     job.movie_info AS mi,\n     job.movie_info_idx AS mi_idx,\n     job.movie_keyword AS mk,\n     job.name AS n,\n     job.title AS t\nWHERE cct1.kind IN ('cast',\n                    'crew')\n  AND cct2.kind ='complete+verified'\n  AND ci.note IN ('(writer)',\n                  '(head writer)',\n                  '(written by)',\n                  '(story)',\n                  '(story editor)')\n  AND it1.info = 'genres'\n  AND it2.info = 'votes'\n  AND k.keyword IN ('murder',\n                    'violence',\n                    'blood',\n                    'gore',\n                    'death',\n                    'female-nudity',\n                    'hospital')\n  AND mi.info IN ('Horror',\n                  'Thriller')\n  AND n.gender = 'm'\n  AND t.production_year > 2000\n  AND t.id = mi.movie_id\n  AND t.id = mi_idx.movie_id\n  AND t.id = ci.movie_id\n  AND t.id = mk.movie_id\n  AND t.id = cc.movie_id\n  AND ci.movie_id = mi.movie_id\n  AND ci.movie_id = mi_idx.movie_id\n  AND ci.movie_id = mk.movie_id\n  AND ci.movie_id = cc.movie_id\n  AND mi.movie_id = mi_idx.movie_id\n  AND mi.movie_id = mk.movie_id\n  AND mi.movie_id = cc.movie_id\n  AND mi_idx.movie_id = mk.movie_id\n  AND mi_idx.movie_id = cc.movie_id\n  AND mk.movie_id = cc.movie_id\n  AND n.id = ci.person_id\n  AND it1.id = mi.info_type_id\n  AND it2.id = mi_idx.info_type_id\n  AND k.id = mk.keyword_id\n  AND cct1.id = cc.subject_id\n  AND cct2.id = cc.status_id;\n",
+      "startTime": "2026-06-23T15:46:38.106357Z",
+      "status": "OK",
+      "timeMs": 25127.093
+    }
+  ],
+  "runtime": {
+    "avgMs": 25127.093,
+    "bestMs": 25127.093,
+    "maxMs": 25127.093,
+    "minMs": 25127.093,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 30A Analysis",
+    "displayName": "JOB-30A",
+    "name": "PLAN-JOB-30A",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "14.23"
+}

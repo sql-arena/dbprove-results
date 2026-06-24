@@ -1,0 +1,110 @@
+{
+  "engine": "Trino",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 3
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 10,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 1,
+        "distribute": 6770300,
+        "hash": 8355240,
+        "join": 4555449,
+        "scan": 25227754,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  PROJECT min AS release_date, min_50 AS modern_american_internet_movie\n       1         1  AGGREGATE MIN(min_51) AS min, MIN(min_52) AS min_50\n       -         1  DISTRIBUTE GATHER\n       -         1  AGGREGATE MIN(info_26) AS min_51, MIN(title_37) AS min_52\n       -         0  INNER JOIN HASH ON movie_id_19 = id_36\n  512448   1749032  │└DISTRIBUTE HASH ON id_36\n 2528312   1749032  │ PROJECT id AS id_36, title AS title_37\n 2528312   1749032  │ FILTER production_year > 1990\n 2528312   2528312  │ TABLE SCAN title\n       -         0  INNER JOIN HASH ON keyword_id = id_13\n  134170    134170  │└DISTRIBUTE GATHER\n  134170    134170  │ PROJECT id AS id_13\n  134170    134170  │ TABLE SCAN keyword\n       -         0  INNER JOIN HASH ON movie_id_19 = movie_id_32\n 4523930   4523930  │└DISTRIBUTE HASH ON movie_id_32\n 4523930   4523930  │ PROJECT movie_id AS movie_id_32, keyword_id\n 4523930   4523930  │ TABLE SCAN movie_keyword\n       -         0  INNER JOIN HASH ON info_type_id = id_9\n       -         1  │└DISTRIBUTE GATHER\n     113         1  │ PROJECT id AS id_9\n     113         1  │ FILTER info = 'release dates'\n     113       113  │ TABLE SCAN info_type\n       -         0  INNER JOIN HASH ON movie_id_19 = movie_id_25\n13352148      1783  │└DISTRIBUTE HASH ON movie_id_25\n14835720      1783  │ PROJECT movie_id AS movie_id_25, info_type_id, info AS info_26\n14835720      1783  │ FILTER (info >= 'USA:') AND (info < 'USA;') AND (note LIKE '%internet%') AND ((info LIKE 'USA:% 199%') OR (info LIKE 'USA:% 200%'))\n14835720  14835720  │ TABLE SCAN movie_info\n       -         0  INNER JOIN HASH ON company_type_id = id_5\n       4         4  │└DISTRIBUTE GATHER\n       4         4  │ PROJECT id AS id_5\n       4         4  │ TABLE SCAN company_type\n       -         0  INNER JOIN HASH ON company_id = id_0\n       -         0  │└DISTRIBUTE GATHER\n  234997         0  │ PROJECT id AS id_0\n  234997         0  │ FILTER country_code = 'us'\n  234997    234997  │ TABLE SCAN company_name\n       -   1946320  INNER JOIN HASH ON movie_id_19 = movie_id\n  361379    361379  │└DISTRIBUTE GATHER\n  361379    361379  │ TABLE SCAN aka_title\n 2609129   2609129  PROJECT movie_id AS movie_id_19, company_id, company_type_id\n 2609129   2609129  TABLE SCAN movie_companies\n",
+      "sql": "SELECT MIN(mi.info) AS release_date,\n       MIN(t.title) AS modern_american_internet_movie\nFROM job.aka_title AS aka_t,\n     job.company_name AS cn,\n     job.company_type AS ct,\n     job.info_type AS it1,\n     job.keyword AS k,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.movie_keyword AS mk,\n     job.title AS t\nWHERE cn.country_code = '[us]'\n  AND it1.info = 'release dates'\n  AND mi.note LIKE '%internet%'\n  AND mi.info IS NOT NULL\n  AND (mi.info LIKE 'USA:% 199%'\n       OR mi.info LIKE 'USA:% 200%')\n  AND t.production_year > 1990\n  AND t.id = aka_t.movie_id\n  AND t.id = mi.movie_id\n  AND t.id = mk.movie_id\n  AND t.id = mc.movie_id\n  AND mk.movie_id = mi.movie_id\n  AND mk.movie_id = mc.movie_id\n  AND mk.movie_id = aka_t.movie_id\n  AND mi.movie_id = mc.movie_id\n  AND mi.movie_id = aka_t.movie_id\n  AND mc.movie_id = aka_t.movie_id\n  AND k.id = mk.keyword_id\n  AND it1.id = mi.info_type_id\n  AND cn.id = mc.company_id\n  AND ct.id = mc.company_type_id;\n",
+      "startTime": "2026-06-23T15:17:55.478569Z",
+      "status": "OK",
+      "timeMs": 1091.848
+    }
+  ],
+  "runtime": {
+    "avgMs": 1091.848,
+    "bestMs": 1091.848,
+    "maxMs": 1091.848,
+    "minMs": 1091.848,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "iceberg",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 15C Analysis",
+    "displayName": "JOB-15C",
+    "name": "PLAN-JOB-15C",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "481"
+}

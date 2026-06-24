@@ -1,0 +1,110 @@
+{
+  "engine": "DuckDB",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 2,
+          "+4x": 0,
+          "+8x": 1,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 2,
+          ">16x": 1
+        },
+        "hash": {
+          "+2x": 1,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 2,
+          "-4x": 4,
+          "-8x": 3,
+          "<16x": 0,
+          "=": 3,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 1,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 3,
+          "-4x": 4,
+          "-8x": 4,
+          "<16x": 1,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 2,
+          "+4x": 0,
+          "+8x": 1,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 4,
+          ">16x": 7
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 8,
+        "distribute": 0,
+        "hash": 31240,
+        "join": 114002,
+        "scan": 141840,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       -         1  AGGREGATE MIN(#0), MIN(#1), MIN(#2), MIN(#3), MIN(#4), MIN(#5)\n       0         8  PROJECT name, name, info, info, title, title\n       0         8  INNER JOIN HASH ON id = company_id\n       0         8  │└INNER JOIN HASH ON movie_id = id\n       0         2  │ │└INNER JOIN HASH ON id = company_id\n       0        14  │ │ │└INNER JOIN HASH ON movie_id = id\n       0         5  │ │ │ │└INNER JOIN HASH ON id = kind_id\n       0         5  │ │ │ │ │└INNER JOIN HASH ON id = movie_id\n       0         5  │ │ │ │ │ │└INNER JOIN HASH ON id = info_type_id\n       0        15  │ │ │ │ │ │ │└INNER JOIN HASH ON movie_id = movie_id\n       0         6  │ │ │ │ │ │ │ │└INNER JOIN HASH ON kind_id = id\n       1         1  │ │ │ │ │ │ │ │ │└TABLE SCAN kind_type WHERE kind = 'tv series'\n       2         6  │ │ │ │ │ │ │ │ INNER JOIN HASH ON id = linked_movie_id\n       9        34  │ │ │ │ │ │ │ │ │└INNER JOIN HASH ON link_type_id = id\n       3         2  │ │ │ │ │ │ │ │ │ │└FILTER id <= 17\n       3         2  │ │ │ │ │ │ │ │ │ │ FILTER (link = 'sequel') OR (link = 'follows') OR (link = 'followed by')\n      18        18  │ │ │ │ │ │ │ │ │ │ TABLE SCAN link_type WHERE link IN('sequel','follows','followed by')\n      58      1085  │ │ │ │ │ │ │ │ │ INNER JOIN HASH ON info_type_id = id\n       2         1  │ │ │ │ │ │ │ │ │ │└FILTER id >= 99\n       2         1  │ │ │ │ │ │ │ │ │ │ TABLE SCAN info_type WHERE info = 'rating'\n    3333      1085  │ │ │ │ │ │ │ │ │ INNER JOIN HASH ON movie_id = linked_movie_id\n   29997     29997  │ │ │ │ │ │ │ │ │ │└TABLE SCAN movie_link\n  276007     25576  │ │ │ │ │ │ │ │ │ FILTER movie_id BETWEEN 284 AND 2524994\n  276007     25589  │ │ │ │ │ │ │ │ │ TABLE SCAN movie_info_idx WHERE info < '3.0'\n  505662        45  │ │ │ │ │ │ │ │ FILTER id BETWEEN 284 AND 2524994\n  505662        45  │ │ │ │ │ │ │ │ TABLE SCAN title WHERE production_year >= 2005 AND production_year <= 2008\n 1380035     30360  │ │ │ │ │ │ │ TABLE SCAN movie_info_idx WHERE movie_id <= 186175\n       2         1  │ │ │ │ │ │ FILTER id >= 99\n       2         1  │ │ │ │ │ │ TABLE SCAN info_type WHERE info = 'rating'\n 2528312         5  │ │ │ │ │ TABLE SCAN title WHERE id >= 2 AND id <= 186175\n       1         1  │ │ │ │ TABLE SCAN kind_type WHERE kind = 'tv series'\n 2609129     55800  │ │ │ TABLE SCAN movie_companies WHERE movie_id <= 186175\n    1644        14  │ │ TABLE SCAN company_name WHERE country_code = 'us'\n 2609129         4  │ TABLE SCAN movie_companies WHERE movie_id >= 284 AND movie_id <= 2524994\n  234997         4  TABLE SCAN company_name\n",
+      "sql": "SELECT MIN(cn1.name) AS first_company,\n       MIN(cn2.name) AS second_company,\n       MIN(mi_idx1.info) AS first_rating,\n       MIN(mi_idx2.info) AS second_rating,\n       MIN(t1.title) AS first_movie,\n       MIN(t2.title) AS second_movie\nFROM job.company_name AS cn1,\n     job.company_name AS cn2,\n     job.info_type AS it1,\n     job.info_type AS it2,\n     job.kind_type AS kt1,\n     job.kind_type AS kt2,\n     job.link_type AS lt,\n     job.movie_companies AS mc1,\n     job.movie_companies AS mc2,\n     job.movie_info_idx AS mi_idx1,\n     job.movie_info_idx AS mi_idx2,\n     job.movie_link AS ml,\n     job.title AS t1,\n     job.title AS t2\nWHERE cn1.country_code = '[us]'\n  AND it1.info = 'rating'\n  AND it2.info = 'rating'\n  AND kt1.kind IN ('tv series')\n  AND kt2.kind IN ('tv series')\n  AND lt.link IN ('sequel',\n                  'follows',\n                  'followed by')\n  AND mi_idx2.info < '3.0'\n  AND t2.production_year BETWEEN 2005 AND 2008\n  AND lt.id = ml.link_type_id\n  AND t1.id = ml.movie_id\n  AND t2.id = ml.linked_movie_id\n  AND it1.id = mi_idx1.info_type_id\n  AND t1.id = mi_idx1.movie_id\n  AND kt1.id = t1.kind_id\n  AND cn1.id = mc1.company_id\n  AND t1.id = mc1.movie_id\n  AND ml.movie_id = mi_idx1.movie_id\n  AND ml.movie_id = mc1.movie_id\n  AND mi_idx1.movie_id = mc1.movie_id\n  AND it2.id = mi_idx2.info_type_id\n  AND t2.id = mi_idx2.movie_id\n  AND kt2.id = t2.kind_id\n  AND cn2.id = mc2.company_id\n  AND t2.id = mc2.movie_id\n  AND ml.linked_movie_id = mi_idx2.movie_id\n  AND ml.linked_movie_id = mc2.movie_id\n  AND mi_idx2.movie_id = mc2.movie_id;\n",
+      "startTime": "2026-06-23T14:01:00.325751Z",
+      "status": "OK",
+      "timeMs": 15.57
+    }
+  ],
+  "runtime": {
+    "avgMs": 15.57,
+    "bestMs": 15.57,
+    "maxMs": 15.57,
+    "minMs": 15.57,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 33A Analysis",
+    "displayName": "JOB-33A",
+    "name": "PLAN-JOB-33A",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "1.5.0"
+}

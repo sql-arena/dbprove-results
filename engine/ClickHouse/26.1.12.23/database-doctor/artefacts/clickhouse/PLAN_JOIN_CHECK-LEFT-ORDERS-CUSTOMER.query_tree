@@ -1,0 +1,26 @@
+QUERY id: 0
+  PROJECTION COLUMNS
+    COUNT(o_orderkey) UInt64
+    COUNT(c_custkey) UInt64
+  PROJECTION
+    LIST id: 1, nodes: 2
+      FUNCTION id: 2, function_name: count, function_type: aggregate, result_type: UInt64
+        ARGUMENTS
+          LIST id: 3, nodes: 1
+            COLUMN id: 4, column_name: o_orderkey, result_type: Int32, source_id: 5
+      FUNCTION id: 6, function_name: count, function_type: aggregate, result_type: UInt64
+        ARGUMENTS
+          LIST id: 7, nodes: 1
+            COLUMN id: 8, column_name: c_custkey, result_type: Nullable(Int32), source_id: 9
+  JOIN TREE
+    JOIN id: 10, strictness: ALL, kind: LEFT
+      LEFT TABLE EXPRESSION
+        TABLE id: 5, alias: __table1, table_name: tpch_sf1.orders
+      RIGHT TABLE EXPRESSION
+        TABLE id: 9, alias: __table2, table_name: tpch_sf1.customer
+      JOIN EXPRESSION
+        FUNCTION id: 11, function_name: equals, function_type: ordinary, result_type: UInt8
+          ARGUMENTS
+            LIST id: 12, nodes: 2
+              COLUMN id: 13, column_name: o_custkey, result_type: Int32, source_id: 5
+              COLUMN id: 14, column_name: c_custkey, result_type: Int32, source_id: 9

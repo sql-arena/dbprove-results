@@ -1,0 +1,110 @@
+{
+  "engine": "Trino",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 1,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 2
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 5,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 207,
+        "distribute": 5690748,
+        "hash": 5690747,
+        "join": 27668,
+        "scan": 22022132,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  PROJECT min AS movie_title\n       1         1  AGGREGATE MIN(min_14) AS min\n       -         1  DISTRIBUTE GATHER\n       -         1  AGGREGATE MIN(title) AS min_14\n       -       206  INNER JOIN HASH ON movie_id_5 = id_9\n  247388   1012920  │└DISTRIBUTE HASH ON id_9\n 2528312   1012920  │ PROJECT id AS id_9, title\n 2528312   1012920  │ FILTER production_year > 2005\n 2528312   2528312  │ TABLE SCAN title\n       -      1766  INNER JOIN HASH ON movie_id_5 = movie_id\n13352148    153897  │└DISTRIBUTE HASH ON movie_id\n14835720    153897  │ FILTER info IN('Denish','Denmark','German','Germany','Norway','Norwegian','Sweden','Swedish')\n14835720  14835720  │ TABLE SCAN movie_info\n       -     12951  INNER JOIN HASH ON id = keyword_id\n 4523930   4523930  │└DISTRIBUTE HASH ON keyword_id\n 4523930   4523930  │ PROJECT movie_id AS movie_id_5, keyword_id\n 4523930   4523930  │ TABLE SCAN movie_keyword\n  134170        30  FILTER keyword LIKE '%sequel%'\n  134170    134170  TABLE SCAN keyword\n",
+      "sql": "SELECT MIN(t.title) AS movie_title\nFROM job.keyword AS k,\n     job.movie_info AS mi,\n     job.movie_keyword AS mk,\n     job.title AS t\nWHERE k.keyword LIKE '%sequel%'\n  AND mi.info IN ('Sweden',\n                  'Norway',\n                  'Germany',\n                  'Denmark',\n                  'Swedish',\n                  'Denish',\n                  'Norwegian',\n                  'German')\n  AND t.production_year > 2005\n  AND t.id = mi.movie_id\n  AND t.id = mk.movie_id\n  AND mk.movie_id = mi.movie_id\n  AND k.id = mk.keyword_id;\n",
+      "startTime": "2026-06-23T15:32:57.693065Z",
+      "status": "OK",
+      "timeMs": 3565.726
+    }
+  ],
+  "runtime": {
+    "avgMs": 3565.726,
+    "bestMs": 3565.726,
+    "maxMs": 3565.726,
+    "minMs": 3565.726,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "iceberg",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 3A Analysis",
+    "displayName": "JOB-3A",
+    "name": "PLAN-JOB-3A",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "481"
+}

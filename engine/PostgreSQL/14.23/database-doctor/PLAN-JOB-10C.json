@@ -1,0 +1,110 @@
+{
+  "engine": "PostgreSQL",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 2,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 1,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 3,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 4,
+          ">16x": 2
+        },
+        "scan": {
+          "+2x": 1,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 8,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 7,
+        "distribute": 0,
+        "hash": 2144992,
+        "join": 5259535,
+        "scan": 4358176,
+        "seek": 681103,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(name), MIN(title)\n       5         5  AGGREGATE PARTIAL MIN(name), PARTIAL MIN(title)\n  230591         2  INNER JOIN HASH ON role_id = id\n      12        12  │└TABLE SCAN role_type AS rt\n 1152955        10  INNER JOIN LOOP ON id = person_role_id\n 1152955    782105  │└INNER JOIN LOOP ON movie_id = movie_id AND id = movie_id AND (id = movie_id)\n  161280    119250  │ │└INNER JOIN HASH ON company_type_id = id\n       4         4  │ │ │└TABLE SCAN company_type AS ct\n  161280    119250  │ │ INNER JOIN HASH ON id = movie_id\n  301929    230760  │ │ │└INNER JOIN HASH ON company_id = id\n  247945     84845  │ │ │ │└TABLE SEEK company_name AS cn\n 4208275   2609130  │ │ │ TABLE SCAN movie_companies AS mc\n 2178380   1749030  │ │ TABLE SCAN title AS t WHERE t.production_year > 1990\n  596250    596250  │ TABLE SEEK cast_info AS ci WHERE ci.note LIKE '%(producer)%'\n       8         8  TABLE SEEK char_name AS chn\n",
+      "sql": "SELECT MIN(chn.name) AS character,\n       MIN(t.title) AS movie_with_american_producer\nFROM job.char_name AS chn,\n     job.cast_info AS ci,\n     job.company_name AS cn,\n     job.company_type AS ct,\n     job.movie_companies AS mc,\n     job.role_type AS rt,\n     job.title AS t\nWHERE ci.note LIKE '%(producer)%'\n  AND cn.country_code = '[us]'\n  AND t.production_year > 1990\n  AND t.id = mc.movie_id\n  AND t.id = ci.movie_id\n  AND ci.movie_id = mc.movie_id\n  AND chn.id = ci.person_role_id\n  AND rt.id = ci.role_id\n  AND cn.id = mc.company_id\n  AND ct.id = mc.company_type_id;\n",
+      "startTime": "2026-06-23T15:41:42.292458Z",
+      "status": "OK",
+      "timeMs": 22883.157
+    }
+  ],
+  "runtime": {
+    "avgMs": 22883.157,
+    "bestMs": 22883.157,
+    "maxMs": 22883.157,
+    "minMs": 22883.157,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 10C Analysis",
+    "displayName": "JOB-10C",
+    "name": "PLAN-JOB-10C",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "14.23"
+}

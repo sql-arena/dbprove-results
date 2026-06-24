@@ -1,0 +1,110 @@
+{
+  "engine": "DataFusion",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 1
+        },
+        "filter": {
+          "+2x": 1,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 3
+        },
+        "hash": {
+          "+2x": 1,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 4
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 1,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 5
+        },
+        "scan": {
+          "+2x": 1,
+          "+4x": 1,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 5,
+          ">16x": 2
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 420,
+        "distribute": 7361245,
+        "hash": 4089102,
+        "join": 7520655,
+        "scan": 13535502,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  PROJECT movie_budget, movie_votes, movie_title\n       1         1  AGGREGATE MIN(info), MIN(info), MIN(title)\n  997614        10  DISTRIBUTE GATHER\n  997614        10  AGGREGATE MIN(info), MIN(info), MIN(title)\n  997614       410  INNER JOIN HASH ON movie_id = id AND movie_id = id AND movie_id = id\n  997614       410  │└DISTRIBUTE HASH ON movie_id, movie_id, movie_id\n  997614       410  │ INNER JOIN HASH ON id = person_id\n  833499      9062  │ │└DISTRIBUTE HASH ON id\n  833499      9062  │ │ FILTER (gender = 'm') AND name LIKE '%Tim%'\n 4167491   1846761  │ │ TABLE SCAN name WHERE (gender = 'm') AND name LIKE '%Tim%'\n 4861715    107339  │ DISTRIBUTE HASH ON person_id\n 4861715    107339  │ INNER JOIN HASH ON id = info_type_id\n      23         1  │ │└DISTRIBUTE GATHER\n      23         1  │ │ FILTER info = 'votes'\n     113       113  │ │ DISTRIBUTE ROUND ROBIN\n     113       113  │ │ TABLE SCAN info_type WHERE info = 'votes'\n 4861715    322625  │ PROJECT person_id, movie_id, movie_id, info, movie_id, info_type_id, info\n 4861715    322625  │ INNER JOIN HASH ON movie_id = movie_id AND movie_id = movie_id\n 1380035   1380035  │ │└DISTRIBUTE HASH ON movie_id, movie_id\n 1380035   1380035  │ │ TABLE SCAN movie_info_idx WHERE ((info_type_id >= 100) AND (info_type_id <= 100)) AND info_type_id IN 100\n 8900343    212985  │ DISTRIBUTE HASH ON movie_id, movie_id\n 8900343    212985  │ INNER JOIN HASH ON id = info_type_id\n      23         1  │ │└DISTRIBUTE GATHER\n      23         1  │ │ FILTER info = 'budget'\n     113       113  │ │ DISTRIBUTE ROUND ROBIN\n     113       113  │ │ TABLE SCAN info_type WHERE info = 'budget'\n42566859   2119877  │ INNER JOIN HASH ON movie_id = movie_id\n 7248869   2379271  │ │└DISTRIBUTE HASH ON movie_id\n 7248869   2379271  │ │ FILTER (note = '(producer)') OR (note = '(executive producer)')\n36244344   7036575  │ │ TABLE SCAN cast_info WHERE (((note = '(producer)') OR (note = '(executive producer)')) AND CASE MOD(HASH_REPARTITION(movie_id,movie_id),10) WHEN 1 THEN ((((movie_id >= 57) AND (movie_id <= 2525790)) AND ((movie_id >= 57) AND (movie_id <= 2525790))) AND TRUE) WHEN 3 THEN ((((movie_id >= 11) AND (movie_id <= 2525784)) AND ((movie_id >= 11) AND (movie_id <= 2525784))) AND TRUE) WHEN 5 THEN ((((movie_id >= 52) AND (movie_id <= 2525793)) AND ((movie_id >= 52) AND (movie...\n14835720    743593  │ DISTRIBUTE HASH ON movie_id\n14835720    743593  │ TABLE SCAN movie_info WHERE CASE MOD(HASH_REPARTITION movie_id,10) WHEN 0 THEN (((movie_id >= 5) AND (movie_id <= 2525968)) AND TRUE) WHEN 1 THEN (((movie_id >= 6) AND (movie_id <= 2525963)) AND TRUE) WHEN 2 THEN (((movie_id >= 10) AND (movie_id <= 2525956)) AND TRUE) WHEN 3 THEN (((movie_id >= 11) AND (movie_id <= 2525951)) AND TRUE) WHEN 4 THEN (((movie_id >= 55) AND (movie_id <= 2525966)) AND TRUE) WHEN 5 THEN (((movie_id >= 8) AND (movie_id <= 2525934)) AND TRUE) W...\n 2528312   2528312  DISTRIBUTE HASH ON id, id, id\n 2528312   2528312  TABLE SCAN title WHERE CASE MOD(HASH_REPARTITION(id,id,id),10) WHEN 0 THEN (((((id >= 822350) AND (id <= 2470262)) AND ((id >= 822350) AND (id <= 2470262))) AND ((id >= 822350) AND (id <= 2470262))) AND struct(id,id,id) IN( < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , ...\n",
+      "sql": "SELECT MIN(mi.info) AS movie_budget,\n       MIN(mi_idx.info) AS movie_votes,\n       MIN(t.title) AS movie_title\nFROM job.cast_info AS ci,\n     job.info_type AS it1,\n     job.info_type AS it2,\n     job.movie_info AS mi,\n     job.movie_info_idx AS mi_idx,\n     job.name AS n,\n     job.title AS t\nWHERE ci.note IN ('(producer)',\n                  '(executive producer)')\n  AND it1.info = 'budget'\n  AND it2.info = 'votes'\n  AND n.gender = 'm'\n  AND n.name LIKE '%Tim%'\n  AND t.id = mi.movie_id\n  AND t.id = mi_idx.movie_id\n  AND t.id = ci.movie_id\n  AND ci.movie_id = mi.movie_id\n  AND ci.movie_id = mi_idx.movie_id\n  AND mi.movie_id = mi_idx.movie_id\n  AND n.id = ci.person_id\n  AND it1.id = mi.info_type_id\n  AND it2.id = mi_idx.info_type_id;\n",
+      "startTime": "2026-06-23T16:59:26.021252Z",
+      "status": "OK",
+      "timeMs": 340.186
+    }
+  ],
+  "runtime": {
+    "avgMs": 340.186,
+    "bestMs": 340.186,
+    "maxMs": 340.186,
+    "minMs": 340.186,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "iceberg",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 18A Analysis",
+    "displayName": "JOB-18A",
+    "name": "PLAN-JOB-18A",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "Apache DataFusion 54.0.0, aarch64 on linux"
+}

@@ -1,0 +1,109 @@
+{
+  "engine": "ClickHouse",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 158960,
+        "distribute": 0,
+        "hash": 2404787,
+        "join": 1090392,
+        "scan": 1620855,
+        "seek": 0,
+        "sort": 495
+      },
+      "plan": "Estimate    Actual  Operator\n       -       495  PROJECT s_acctbal, s_name, n_name, p_partkey_right AS p_partkey, p_mfgr, s_address, s_phone, s_comment\n       -       495  SORT s_acctbal, n_name, s_name, p_partkey_right\n       -       495  PROJECT s_acctbal, n_name, s_name, p_partkey_right, p_mfgr, s_address, s_phone, s_comment\n       -       495  FILTER ps_supplycost = a6\n       -       689  PROJECT a6, ps_supplycost, p_partkey_right, p_mfgr, s_acctbal, s_name, s_address, s_phone, s_comment, n_name\n       -       689  INNER JOIN HASH ON PROJECTION_28.ps_suppkey = PROJECTION_13.s_suppkey\n       -      1987  │└PROJECT s_suppkey, s_acctbal, s_name, s_address, s_phone, s_comment, n_name\n       -      1987  │ PROJECT s_acctbal, s_name, s_address, s_phone, s_comment, s_suppkey, n_name\n       -      1987  │ INNER JOIN HASH ON PROJECTION_25.s_nationkey = PROJECTION_16.n_nationkey\n       -         5  │ │└PROJECT n_nationkey, n_name\n       -         5  │ │ PROJECT n_name, n_nationkey\n       -         5  │ │ INNER JOIN HASH ON PROJECTION_22.n_regionkey = PROJECTION_19.r_regionkey\n       -         1  │ │ │└PROJECT r_regionkey\n       -         1  │ │ │ PROJECT r_regionkey\n       -         1  │ │ │ TABLE SCAN region WHERE r_name = 'EUROPE'\n       -        25  │ │ PROJECT n_regionkey, n_name, n_nationkey\n       -        25  │ │ PROJECT n_name, n_nationkey, n_regionkey\n       -        25  │ │ TABLE SCAN nation\n       -     10000  │ PROJECT s_nationkey, s_acctbal, s_name, s_address, s_phone, s_comment, s_suppkey\n       -     10000  │ PROJECT s_acctbal, s_name, s_address, s_phone, s_comment, s_suppkey, s_nationkey\n       -     10000  │ TABLE SCAN supplier\n       -      1980  PROJECT ps_suppkey, a6, ps_supplycost, p_partkey, p_mfgr\n       -      1980  PROJECT ps_suppkey, ps_supplycost, p_partkey, p_mfgr, a6\n       -      1980  INNER JOIN HASH ON PROJECTION_34.p_partkey = PROJECTION_31.ps_partkey\n       -    800000  │└PROJECT ps_partkey, ps_suppkey, ps_supplycost\n       -    800000  │ PROJECT ps_partkey, ps_suppkey, ps_supplycost\n       -    800000  │ TABLE SCAN partsupp\n       -       495  PROJECT p_partkey, p_mfgr, a6\n       -       495  PROJECT p_partkey, p_mfgr, a6\n       -       495  INNER JOIN HASH ON PROJECTION_40.ps_partkey = PROJECTION_37.p_partkey\n       -       803  │└PROJECT p_partkey AS p_partkey_right, p_mfgr\n       -       803  │ PROJECT p_partkey, p_mfgr\n       -       803  │ TABLE SCAN part WHERE (p_size = 25) AND endsWith(p_type,'BRASS')\n       -    117422  PROJECT p_partkey, a6\n       -    117422  PROJECT a7 AS a6, ps_partkey AS p_partkey\n       -    117422  AGGREGATE MIN(ps_supplycost) AS a7 GROUP BY HASH ps_partkey\n       -    158960  PROJECT ps_supplycost, ps_partkey, r_name, ps_partkey\n       -    158960  PROJECT ps_supplycost, ps_partkey, r_name\n       -    158960  INNER JOIN HASH ON PROJECTION_55.n_nationkey = PROJECTION_46.s_nationkey\n       -    800000  │└PROJECT s_nationkey, ps_supplycost, ps_partkey\n       -    800000  │ PROJECT ps_supplycost, ps_partkey, s_nationkey\n       -    800000  │ INNER JOIN HASH ON PROJECTION_52.ps_suppkey = PROJECTION_49.s_suppkey\n       -     10000  │ │└PROJECT s_suppkey, s_nationkey\n       -     10000  │ │ PROJECT s_suppkey, s_nationkey\n       -     10000  │ │ TABLE SCAN supplier\n       -    800000  │ PROJECT ps_suppkey, ps_supplycost, ps_partkey\n       -    800000  │ PROJECT ps_suppkey, ps_partkey, ps_supplycost\n       -    800000  │ TABLE SCAN partsupp WHERE ps_partkey = ps_partkey\n       -         5  PROJECT n_nationkey, r_name\n       -         5  PROJECT n_nationkey, r_name\n       -         5  INNER JOIN HASH ON PROJECTION_61.n_regionkey = PROJECTION_58.r_regionkey\n       -         1  │└PROJECT r_regionkey, r_name\n       -         1  │ PROJECT r_regionkey, r_name\n       -         1  │ TABLE SCAN region WHERE r_name = 'EUROPE'\n       -        25  PROJECT n_regionkey, n_nationkey\n       -        25  PROJECT n_nationkey, n_regionkey\n       -        25  TABLE SCAN nation\n",
+      "sql": "/* TPC-H Q02 */\nSELECT s_acctbal,\n       s_name,\n       n_name,\n       p_partkey,\n       p_mfgr,\n       s_address,\n       s_phone,\n       s_comment\nFROM tpch_sf1.partsupp\nINNER JOIN tpch_sf1.part\n    ON ps_partkey = p_partkey\nINNER JOIN tpch_sf1.supplier\n    ON ps_suppkey = s_suppkey\nINNER JOIN tpch_sf1.nation\n    ON s_nationkey = n_nationkey\nINNER JOIN tpch_sf1.region\n    ON n_regionkey = r_regionkey\nWHERE p_size = 25\n  AND p_type LIKE '%BRASS'\n  AND r_name = 'EUROPE'\n  AND ps_supplycost = (SELECT MIN(ps_supplycost) AS min_cost\n                       FROM tpch_sf1.partsupp AS ps_min\n                       INNER JOIN tpch_sf1.supplier AS s_min\n                           ON ps_suppkey = s_suppkey\n                       INNER JOIN tpch_sf1.nation AS n_min\n                           ON s_nationkey = n_nationkey\n                       INNER JOIN tpch_sf1.region AS r_min\n                           ON n_regionkey = r_regionkey\n                       WHERE ps_partkey = p_partkey\n                         AND r_name = 'EUROPE')\nORDER BY s_acctbal DESC,\n         n_name,\n         s_name,\n         p_partkey\n\n\n",
+      "startTime": "2026-06-23T11:14:11.214412Z",
+      "status": "OK",
+      "timeMs": 329.15
+    }
+  ],
+  "runtime": {
+    "avgMs": 329.15,
+    "bestMs": 329.15,
+    "maxMs": 329.15,
+    "minMs": 329.15,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "TPC-H Q02 Analysis",
+    "displayName": "TPCH-Q02",
+    "name": "PLAN-TPC-H-Q02",
+    "tags": [
+      "TPC-H"
+    ]
+  },
+  "version": "26.1.12.23"
+}

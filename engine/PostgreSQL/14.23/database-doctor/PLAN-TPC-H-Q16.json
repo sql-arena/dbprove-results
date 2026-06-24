@@ -1,0 +1,109 @@
+{
+  "engine": "PostgreSQL",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 1,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 2,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 1,
+          "=": 1,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 1,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 119044,
+        "distribute": 0,
+        "hash": 829456,
+        "join": 1599360,
+        "scan": 829472,
+        "seek": 0,
+        "sort": 137326
+      },
+      "plan": "Estimate    Actual  Operator\n    6648     18282  SORT COUNT(DISTINCT ps_suppkey), p_brand, p_type, p_size\n    6648     18282  AGGREGATE COUNT(DISTINCT ps_suppkey) GROUP BY SORT p_brand, p_type, p_size\n   20440    119044  SORT p_brand, p_type, p_size\n    5110     29761  INNER JOIN HASH ON ps_partkey = p_partkey\n   13200     29776  │└TABLE SCAN part AS part WHERE (p_brand <> 'Brand#42') AND (p_type NOT  LIKE 'STANDARD ANODIZED%') AND (p_size IN('3','7','11','29','31','37','41','49'))\n  516128    799680  LEFT SEMI JOIN LOOP ON \n  516128    799680  │└TABLE SCAN partsupp AS partsupp WHERE  NOT (hashed SubPlan 1)\n       1        16  TABLE SCAN supplier AS supplier WHERE s_comment LIKE '%Customer%Complaints%'\n",
+      "sql": "/* TPC-H Q16 */\nSELECT p_brand,\n       p_type,\n       p_size,\n       COUNT(DISTINCT ps_suppkey) AS supplier_cnt\nFROM tpch_sf1.partsupp\nINNER JOIN tpch_sf1.part\n    ON ps_partkey = p_partkey\n\nWHERE p_brand <> 'Brand#42'\n  AND p_type NOT LIKE 'STANDARD ANODIZED%'\n  AND p_size IN (3, 7, 11, 29, 31, 37, 41, 49)\n  AND ps_suppkey NOT IN (SELECT s_suppkey\n                         FROM tpch_sf1.supplier\n                         WHERE s_comment LIKE '%Customer%Complaints%')\nGROUP BY p_brand,\n         p_type,\n         p_size\nORDER BY supplier_cnt DESC,\n         p_brand,\n         p_type,\n         p_size",
+      "startTime": "2026-06-23T12:47:48.785372Z",
+      "status": "OK",
+      "timeMs": 78.179
+    }
+  ],
+  "runtime": {
+    "avgMs": 78.179,
+    "bestMs": 78.179,
+    "maxMs": 78.179,
+    "minMs": 78.179,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "TPC-H Q16 Analysis",
+    "displayName": "TPCH-Q16",
+    "name": "PLAN-TPC-H-Q16",
+    "tags": [
+      "TPC-H"
+    ]
+  },
+  "version": "14.23"
+}

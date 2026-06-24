@@ -1,0 +1,109 @@
+{
+  "engine": "PostgreSQL",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 1,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 2,
+          "=": 3,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 1,
+          "+8x": 1,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 1,
+          "=": 4,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 2,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 3935,
+        "distribute": 0,
+        "hash": 936883,
+        "join": 1262613,
+        "scan": 729414,
+        "seek": 533196,
+        "sort": 4331
+      },
+      "plan": "Estimate    Actual  Operator\n       1       396  SORT COUNT(*), s_name\n       1       396  AGGREGATE COUNT(*) GROUP BY SORT s_name\n       1      3935  SORT s_name\n       1      3935  LEFT SEMI JOIN LOOP ON l_orderkey = l_orderkey\n       3      6582  │└LEFT ANTI JOIN LOOP ON l_orderkey = l_orderkey\n   16266     24349  │ │└INNER JOIN HASH ON o_orderkey = l_orderkey\n  240120    452382  │ │ │└INNER JOIN LOOP ON l_suppkey = s_suppkey\n    1200      1188  │ │ │ │└INNER JOIN LOOP ON s_nationkey = n_nationkey\n       1         1  │ │ │ │ │└TABLE SCAN nation AS nation WHERE n_name = 'GERMANY'\n    1200      1188  │ │ │ │ TABLE SEEK supplier AS supplier\n  237600    452378  │ │ │ TABLE SEEK lineitem AS l1 WHERE l1.l_receiptdate > l1.l_commitdate\n  914499    729413  │ │ TABLE SCAN orders AS orders WHERE o_orderstatus = 'F'\n  365240     73048  │ TABLE SEEK lineitem AS l3 WHERE (l3.l_receiptdate > l3.l_commitdate) AND (l3.l_suppkey <> l1.l_suppkey)\n   92148      6582  TABLE SEEK lineitem AS l2 WHERE l2.l_suppkey <> l1.l_suppkey\n",
+      "sql": "/* TPC-H Q21 */\nSELECT s_name, COUNT(*) AS numwait\nFROM tpch.lineitem l1\nINNER JOIN tpch.orders\n    ON l1.l_orderkey = o_orderkey\nINNER JOIN tpch.supplier\n    ON l1.l_suppkey = s_suppkey\nINNER JOIN tpch.nation\n    ON s_nationkey = n_nationkey\nWHERE o_orderstatus = 'F'\n  AND l1.l_receiptdate > l1.l_commitdate\n  AND EXISTS (SELECT 1\n              FROM tpch.lineitem l2\n              WHERE l2.l_orderkey = l1.l_orderkey\n                AND l2.l_suppkey <> l1.l_suppkey)\n  AND NOT EXISTS (SELECT 1\n                  FROM tpch.lineitem l3\n                  WHERE l3.l_orderkey = l1.l_orderkey\n                    AND l3.l_suppkey <> l1.l_suppkey\n                    AND l3.l_receiptdate\n                      > l3.l_commitdate)\n  AND n_name = 'GERMANY'\nGROUP BY s_name\nORDER BY numwait DESC,\n         s_name\n",
+      "startTime": "2026-06-17T12:34:50.393097Z",
+      "status": "OK",
+      "timeMs": 1811.252
+    }
+  ],
+  "runtime": {
+    "avgMs": 1811.252,
+    "bestMs": 1811.252,
+    "maxMs": 1811.252,
+    "minMs": 1811.252,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "TPC-H Q21 Analysis",
+    "displayName": "TPCH-Q21",
+    "name": "PLAN-TPC-H-Q21",
+    "tags": [
+      "TPC-H"
+    ]
+  },
+  "version": "18.2"
+}

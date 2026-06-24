@@ -1,0 +1,110 @@
+{
+  "engine": "DataFusion",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 1
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 2
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 1,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 3
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 1,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 2
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 6,
+          ">16x": 1
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 5238,
+        "distribute": 7250401,
+        "hash": 2265920,
+        "join": 11860425,
+        "scan": 10030538,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  PROJECT movie_title\n       1         1  AGGREGATE MIN(title)\n  186916        10  DISTRIBUTE GATHER\n  186916        10  AGGREGATE MIN(title)\n  186916      5228  INNER JOIN HASH ON movie_id = id AND movie_id = id\n  186916      5228  │└DISTRIBUTE HASH ON movie_id, movie_id\n  186916      5228  │ INNER JOIN HASH ON id = keyword_id\n   26834         1  │ │└DISTRIBUTE GATHER\n   26834         1  │ │ FILTER keyword = 'character-name-in-title'\n  134170    134170  │ │ DISTRIBUTE ROUND ROBIN\n  134170    134170  │ │ TABLE SCAN keyword WHERE keyword = 'character-name-in-title'\n  934584   2199054  │ INNER JOIN HASH ON movie_id = movie_id\n  521832     56410  │ │└DISTRIBUTE HASH ON movie_id\n  521832     56410  │ │ INNER JOIN HASH ON id = company_id\n   47000      2340  │ │ │└DISTRIBUTE GATHER\n   47000      2340  │ │ │ FILTER country_code = 'nl'\n  234997    234997  │ │ │ TABLE SCAN company_name WHERE country_code = 'nl'\n 2609129   2609129  │ │ TABLE SCAN movie_companies WHERE ((company_id >= 8) AND (company_id <= 234697)) AND TRUE\n 4523930   4523930  │ DISTRIBUTE HASH ON movie_id\n 4523930   4523930  │ TABLE SCAN movie_keyword WHERE CASE MOD(HASH_REPARTITION movie_id,10) WHEN 0 THEN (((movie_id >= 67) AND (movie_id <= 2525631)) AND TRUE) WHEN 1 THEN (((movie_id >= 63) AND (movie_id <= 2523974)) AND TRUE) WHEN 2 THEN (((movie_id >= 51) AND (movie_id <= 2525642)) AND TRUE) WHEN 3 THEN (((movie_id >= 423) AND (movie_id <= 2524560)) AND TRUE) WHEN 4 THEN (((movie_id >= 55) AND (movie_id <= 2524819)) AND TRUE) WHEN 5 THEN (((movie_id >= 54) AND (movie_id <= 2524880)) AND ...\n 2528312   2528312  DISTRIBUTE HASH ON id, id\n 2528312   2528312  TABLE SCAN title WHERE CASE MOD(HASH_REPARTITION(id,id),10) WHEN 1 THEN ((((id >= 30178) AND (id <= 2521433)) AND ((id >= 30178) AND (id <= 2521433))) AND TRUE) WHEN 3 THEN ((((id >= 34012) AND (id <= 2518206)) AND ((id >= 34012) AND (id <= 2518206))) AND TRUE) WHEN 5 THEN ((((id >= 37204) AND (id <= 2518973)) AND ((id >= 37204) AND (id <= 2518973))) AND TRUE) WHEN 7 THEN ((((id >= 42514) AND (id <= 2521356)) AND ((id >= 42514) AND (id <= 2521356))) AND TRUE) WHEN 9 THEN (...\n",
+      "sql": "SELECT MIN(t.title) AS movie_title\nFROM job.company_name AS cn,\n     job.keyword AS k,\n     job.movie_companies AS mc,\n     job.movie_keyword AS mk,\n     job.title AS t\nWHERE cn.country_code ='[nl]'\n  AND k.keyword ='character-name-in-title'\n  AND cn.id = mc.company_id\n  AND mc.movie_id = t.id\n  AND t.id = mk.movie_id\n  AND mk.keyword_id = k.id\n  AND mc.movie_id = mk.movie_id;\n",
+      "startTime": "2026-06-23T17:15:45.342652Z",
+      "status": "OK",
+      "timeMs": 67.483
+    }
+  ],
+  "runtime": {
+    "avgMs": 67.483,
+    "bestMs": 67.483,
+    "maxMs": 67.483,
+    "minMs": 67.483,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "iceberg",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 2B Analysis",
+    "displayName": "JOB-2B",
+    "name": "PLAN-JOB-2B",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "Apache DataFusion 54.0.0, aarch64 on linux"
+}

@@ -1,0 +1,110 @@
+{
+  "engine": "PostgreSQL",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 3,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 1500000,
+        "distribute": 0,
+        "hash": 1500000,
+        "join": 1500000,
+        "scan": 1500000,
+        "seek": 1,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE COUNT(o_orderkey), COUNT(c_custkey)\n 1500000   1500000  FULL JOIN HASH ON o_custkey = c_custkey\n       1         1  │└TABLE SEEK customer AS customer\n 1500000   1500000  TABLE SCAN orders AS o\n",
+      "sql": "SELECT COUNT(o.o_orderkey), COUNT(c.c_custkey)\nFROM tpch_sf1.orders AS o\nFULL JOIN (\n  SELECT *\n  FROM tpch_sf1.customer\n  WHERE c_custkey = 1\n) AS c\n  ON o.o_custkey = c.c_custkey;\n",
+      "startTime": "2026-06-23T12:47:51.386216Z",
+      "status": "OK",
+      "timeMs": 89.726
+    }
+  ],
+  "runtime": {
+    "avgMs": 89.726,
+    "bestMs": 89.726,
+    "maxMs": 89.726,
+    "minMs": 89.726,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Count rows after FULL JOIN from ORDERS to CUSTOMER with a one-sided CUSTOMER key filter",
+    "displayName": "PLAN_JOIN_CHECK-FULL-ORDERS-CUSTOMER-FILTER-CUSTOMER",
+    "name": "PLAN_JOIN_CHECK-FULL-ORDERS-CUSTOMER-FILTER-CUSTOMER",
+    "tags": [
+      "PLAN_JOIN_CHECK",
+      "join"
+    ]
+  },
+  "version": "14.23"
+}

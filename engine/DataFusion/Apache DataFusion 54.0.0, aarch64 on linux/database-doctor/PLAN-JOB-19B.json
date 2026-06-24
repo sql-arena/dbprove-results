@@ -1,0 +1,110 @@
+{
+  "engine": "DataFusion",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 1
+        },
+        "filter": {
+          "+2x": 2,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 5
+        },
+        "hash": {
+          "+2x": 4,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 3,
+          ">16x": 2
+        },
+        "join": {
+          "+2x": 2,
+          "+4x": 1,
+          "+8x": 2,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 3
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 3,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 8,
+          ">16x": 1
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 25,
+        "distribute": 5511899,
+        "hash": 1685103,
+        "join": 4108686,
+        "scan": 20528544,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  PROJECT voicing_actress, kung_fu_panda\n       1         1  AGGREGATE MIN(name), MIN(title)\n    6989        10  DISTRIBUTE GATHER\n    6989        10  AGGREGATE MIN(name), MIN(title)\n    6989        15  INNER JOIN HASH ON movie_id = id AND movie_id = id AND movie_id = id\n    6989        64  │└DISTRIBUTE GATHER\n    6989        64  │ INNER JOIN HASH ON id = role_id\n       3         1  │ │└DISTRIBUTE GATHER\n       3         1  │ │ FILTER role = 'actress'\n      12        12  │ │ DISTRIBUTE ROUND ROBIN\n      12        12  │ │ TABLE SCAN role_type WHERE role = 'actress'\n   25628        64  │ INNER JOIN HASH ON person_id = id AND person_id = id\n   25628     11092  │ │└DISTRIBUTE GATHER\n   25628     11092  │ │ INNER JOIN HASH ON id = info_type_id\n      23         1  │ │ │└DISTRIBUTE GATHER\n      23         1  │ │ │ FILTER info = 'release dates'\n     113       113  │ │ │ DISTRIBUTE ROUND ROBIN\n     113       113  │ │ │ TABLE SCAN info_type WHERE info = 'release dates'\n  122571     11092  │ │ INNER JOIN HASH ON movie_id = movie_id AND movie_id = movie_id\n  104366     57755  │ │ │└DISTRIBUTE HASH ON movie_id, movie_id\n  104366     57755  │ │ │ INNER JOIN HASH ON id = company_id\n   47000     84843  │ │ │ │└DISTRIBUTE GATHER\n   47000     84843  │ │ │ │ FILTER country_code = 'us'\n  234997    234997  │ │ │ │ TABLE SCAN company_name WHERE country_code = 'us'\n  521826     60838  │ │ │ PROJECT person_id, person_id, movie_id, role_id, movie_id, company_id\n  521826     60838  │ │ │ INNER JOIN HASH ON movie_id = movie_id\n  521826    198519  │ │ │ │└DISTRIBUTE HASH ON movie_id\n  521826    198519  │ │ │ │ FILTER note LIKE '%(200%)%' AND (note LIKE '%(USA)%' OR note LIKE '%(worldwide)%')\n 2609129   2609129  │ │ │ │ TABLE SCAN movie_companies WHERE (note LIKE '%(200%)%' AND (note LIKE '%(USA)%' OR note LIKE '%(worldwide)%')) AND (((company_id >= 1) AND (company_id <= 234997)) AND TRUE)\n 1608526    401120  │ │ │ DISTRIBUTE HASH ON movie_id\n 1608526    401120  │ │ │ INNER JOIN HASH ON person_role_id = id\n 1608526    420331  │ │ │ │└DISTRIBUTE HASH ON person_role_id\n 1608526    420331  │ │ │ │ INNER JOIN HASH ON person_id = person_id\n  901343    901343  │ │ │ │ │└DISTRIBUTE HASH ON person_id\n  901343    901343  │ │ │ │ │ TABLE SCAN aka_name\n 7248869    226878  │ │ │ │ DISTRIBUTE HASH ON person_id\n 7248869    226878  │ │ │ │ FILTER note = '(voice)'\n36244344   7656546  │ │ │ │ TABLE SCAN cast_info WHERE (((note = '(voice)') AND CASE MOD(HASH_REPARTITION person_id,10) WHEN 0 THEN (((person_id >= 5) AND (person_id <= 4167489)) AND TRUE) WHEN 1 THEN (((person_id >= 15) AND (person_id <= 4167473)) AND TRUE) WHEN 2 THEN (((person_id >= 69) AND (person_id <= 4167478)) AND TRUE) WHEN 3 THEN (((person_id >= 161) AND (person_id <= 4167352)) AND TRUE) WHEN 4 THEN (((person_id >= 94) AND (person_id <= 4167420)) AND TRUE) WHEN 5 THEN (((pers...\n 3140339   3140339  │ │ │ DISTRIBUTE HASH ON id\n 3140339   3140339  │ │ │ TABLE SCAN char_name WHERE CASE MOD(HASH_REPARTITION id,10) WHEN 0 THEN (((id >= 119) AND (id <= 3139884)) AND TRUE) WHEN 1 THEN (((id >= 63) AND (id <= 3139863)) AND TRUE) WHEN 2 THEN (((id >= 53) AND (id <= 3139889)) AND TRUE) WHEN 3 THEN (((id >= 1) AND (id <= 3139888)) AND TRUE) WHEN 4 THEN (((id >= 21) AND (id <= 3139890)) AND TRUE) WHEN 5 THEN (((id >= 57) AND (id <= 3139886)) AND TRUE) WHEN 6 THEN (((id >= 142) AND (id <= 3139883)) AND TRUE) WHEN 7 THEN ...\n 2967144     69478  │ │ DISTRIBUTE HASH ON movie_id, movie_id\n 2967144     69478  │ │ FILTER info IS NOT NULL AND (info LIKE 'Japan:%2007%' OR info LIKE 'USA:%2008%')\n14835720   3212639  │ │ TABLE SCAN movie_info WHERE ((info IS NOT NULL AND (info LIKE 'Japan:%2007%' OR info LIKE 'USA:%2008%')) AND CASE MOD(HASH_REPARTITION(movie_id,movie_id),10) WHEN 1 THEN ((((movie_id >= 908) AND (movie_id <= 2525344)) AND ((movie_id >= 908) AND (movie_id <= 2525344))) AND TRUE) WHEN 3 THEN ((((movie_id >= 20403) AND (movie_id <= 2524106)) AND ((movie_id >= 20403) AND (movie_id <= 2524106))) AND TRUE) WHEN 5 THEN ((((movie_id >= 919) AND (movie_id <= 2520937)) AND (...\n  833499      5409  │ FILTER (gender = 'f') AND name LIKE '%Angel%'\n 4167491    983636  │ TABLE SCAN name WHERE ((gender = 'f') AND name LIKE '%Angel%') AND ((((id >= 293010) AND (id <= 2700440)) AND ((id >= 293010) AND (id <= 2700440))) AND TRUE)\n  505663         4  FILTER ((production_year >= 2007) AND (production_year <= 2008)) AND title LIKE '%Kung%Fu%Panda%'\n 2528312   1789790  TABLE SCAN title WHERE (((production_year >= 2007) AND (production_year <= 2008)) AND title LIKE '%Kung%Fu%Panda%') AND (((((id >= 862896) AND (id <= 2428090)) AND ((id >= 862896) AND (id <= 2428090))) AND ((id >= 862896) AND (id <= 2428090))) AND struct(id,id,id) IN( < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > ,...\n",
+      "sql": "SELECT MIN(n.name) AS voicing_actress,\n       MIN(t.title) AS kung_fu_panda\nFROM job.aka_name AS an,\n     job.char_name AS chn,\n     job.cast_info AS ci,\n     job.company_name AS cn,\n     job.info_type AS it,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.name AS n,\n     job.role_type AS rt,\n     job.title AS t\nWHERE ci.note = '(voice)'\n  AND cn.country_code ='[us]'\n  AND it.info = 'release dates'\n  AND mc.note LIKE '%(200%)%'\n  AND (mc.note LIKE '%(USA)%'\n       OR mc.note LIKE '%(worldwide)%')\n  AND mi.info IS NOT NULL\n  AND (mi.info LIKE 'Japan:%2007%'\n       OR mi.info LIKE 'USA:%2008%')\n  AND n.gender ='f'\n  AND n.name LIKE '%Angel%'\n  AND rt.role ='actress'\n  AND t.production_year BETWEEN 2007 AND 2008\n  AND t.title LIKE '%Kung%Fu%Panda%'\n  AND t.id = mi.movie_id\n  AND t.id = mc.movie_id\n  AND t.id = ci.movie_id\n  AND mc.movie_id = ci.movie_id\n  AND mc.movie_id = mi.movie_id\n  AND mi.movie_id = ci.movie_id\n  AND cn.id = mc.company_id\n  AND it.id = mi.info_type_id\n  AND n.id = ci.person_id\n  AND rt.id = ci.role_id\n  AND n.id = an.person_id\n  AND ci.person_id = an.person_id\n  AND chn.id = ci.person_role_id;\n",
+      "startTime": "2026-06-23T16:59:29.114475Z",
+      "status": "OK",
+      "timeMs": 420.159
+    }
+  ],
+  "runtime": {
+    "avgMs": 420.159,
+    "bestMs": 420.159,
+    "maxMs": 420.159,
+    "minMs": 420.159,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "iceberg",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 19B Analysis",
+    "displayName": "JOB-19B",
+    "name": "PLAN-JOB-19B",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "Apache DataFusion 54.0.0, aarch64 on linux"
+}

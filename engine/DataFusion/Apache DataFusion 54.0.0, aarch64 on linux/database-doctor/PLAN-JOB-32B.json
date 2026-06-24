@@ -1,0 +1,110 @@
+{
+  "engine": "DataFusion",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 1
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 1
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 1,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 2,
+          ">16x": 2
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 3,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 2
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 1,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 6,
+          ">16x": 1
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 4398,
+        "distribute": 426169,
+        "hash": 122453,
+        "join": 7306778,
+        "scan": 7462187,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  PROJECT link_type, first_movie, second_movie\n       1         1  AGGREGATE MIN(link), MIN(title), MIN(title)\n   29997        10  DISTRIBUTE GATHER\n   29997        10  AGGREGATE MIN(link), MIN(title), MIN(title)\n   29997      4388  PROJECT link, title, title\n   29997      4388  INNER JOIN HASH ON linked_movie_id = id\n   29997      4388  │└DISTRIBUTE GATHER\n   29997      4388  │ PROJECT title, linked_movie_id, link\n   29997      4388  │ INNER JOIN HASH ON id = link_type_id\n      18        18  │ │└TABLE SCAN link_type\n   29997      4388  │ PROJECT title, linked_movie_id, link_type_id\n   29997      4388  │ INNER JOIN HASH ON movie_id = id\n   29997     29997  │ │└TABLE SCAN movie_link WHERE ((link_type_id >= 1) AND (link_type_id <= 18)) AND link_type_id IN(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18)\n  904786      2540  │ INNER JOIN HASH ON movie_id = id\n  904786     41840  │ │└DISTRIBUTE HASH ON movie_id\n  904786     41840  │ │ INNER JOIN HASH ON id = keyword_id\n   26834         1  │ │ │└DISTRIBUTE GATHER\n   26834         1  │ │ │ FILTER keyword = 'character-name-in-title'\n  134170    134170  │ │ │ DISTRIBUTE ROUND ROBIN\n  134170    134170  │ │ │ TABLE SCAN keyword WHERE keyword = 'character-name-in-title'\n 4523930   4523930  │ │ TABLE SCAN movie_keyword WHERE ((keyword_id >= 117) AND (keyword_id <= 117)) AND keyword_id IN 117\n 2528312    245760  │ DISTRIBUTE HASH ON id\n 2528312    245760  │ TABLE SCAN title WHERE CASE MOD(HASH_REPARTITION id,10) WHEN 0 THEN (((id >= 826) AND (id <= 2525771)) AND TRUE) WHEN 1 THEN (((id >= 11076) AND (id <= 2524986)) AND TRUE) WHEN 2 THEN (((id >= 979) AND (id <= 2524891)) AND TRUE) WHEN 3 THEN (((id >= 318) AND (id <= 2525672)) AND TRUE) WHEN 4 THEN (((id >= 980) AND (id <= 2523559)) AND TRUE) WHEN 5 THEN (((id >= 6313) AND (id <= 2524079)) AND TRUE) WHEN 6 THEN (((id >= 983) AND (id <= 2525667)) AND TRUE) WHEN 7 THEN (((...\n 2528312   2528312  TABLE SCAN title WHERE ((id >= 6606) AND (id <= 2523213)) AND TRUE\n",
+      "sql": "SELECT MIN(lt.link) AS link_type,\n       MIN(t1.title) AS first_movie,\n       MIN(t2.title) AS second_movie\nFROM job.keyword AS k,\n     job.link_type AS lt,\n     job.movie_keyword AS mk,\n     job.movie_link AS ml,\n     job.title AS t1,\n     job.title AS t2\nWHERE k.keyword ='character-name-in-title'\n  AND mk.keyword_id = k.id\n  AND t1.id = mk.movie_id\n  AND ml.movie_id = t1.id\n  AND ml.linked_movie_id = t2.id\n  AND lt.id = ml.link_type_id\n  AND mk.movie_id = t1.id;\n",
+      "startTime": "2026-06-23T17:15:50.991493Z",
+      "status": "OK",
+      "timeMs": 61.735
+    }
+  ],
+  "runtime": {
+    "avgMs": 61.735,
+    "bestMs": 61.735,
+    "maxMs": 61.735,
+    "minMs": 61.735,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "iceberg",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 32B Analysis",
+    "displayName": "JOB-32B",
+    "name": "PLAN-JOB-32B",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "Apache DataFusion 54.0.0, aarch64 on linux"
+}

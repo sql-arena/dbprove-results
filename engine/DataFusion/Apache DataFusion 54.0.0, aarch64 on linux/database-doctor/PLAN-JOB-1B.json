@@ -1,0 +1,110 @@
+{
+  "engine": "DataFusion",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 1
+        },
+        "filter": {
+          "+2x": 1,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 1,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 1
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 1,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 2,
+          ">16x": 1
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 3
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 5,
+          ">16x": 2
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 13,
+        "distribute": 883917,
+        "hash": 998072,
+        "join": 210645,
+        "scan": 3931315,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  PROJECT production_note, movie_title, movie_year\n       1         1  AGGREGATE MIN(note), MIN(title), MIN(production_year)\n  108357        10  DISTRIBUTE GATHER\n  108357        10  AGGREGATE MIN(note), MIN(title), MIN(production_year)\n  108357         3  PROJECT note, title, production_year\n  108357         3  INNER JOIN HASH ON id = movie_id AND id = movie_id\n  108357    716259  │└DISTRIBUTE GATHER\n  108357    716259  │ FILTER (production_year >= 2005) AND (production_year <= 2010)\n 2528312   2528312  │ TABLE SCAN title WHERE (production_year >= 2005) AND (production_year <= 2010)\n  260913         5  INNER JOIN HASH ON id = info_type_id\n      23         1  │└DISTRIBUTE GATHER\n      23         1  │ FILTER info = 'bottom 10 rank'\n     113       113  │ DISTRIBUTE ROUND ROBIN\n     113       113  │ TABLE SCAN info_type WHERE info = 'bottom 10 rank'\n  260913      5097  INNER JOIN HASH ON movie_id = movie_id\n  260913    140904  │└DISTRIBUTE HASH ON movie_id\n  260913    140904  │ INNER JOIN HASH ON id = company_type_id\n       1         1  │ │└DISTRIBUTE GATHER\n       1         1  │ │ FILTER kind = 'production companies'\n       4         4  │ │ DISTRIBUTE ROUND ROBIN\n       4         4  │ │ TABLE SCAN company_type WHERE kind = 'production companies'\n  521826    178918  │ FILTER note NOT  LIKE '%(as Metro-Goldwyn-Mayer Pictures)%'\n 2609129   1376261  │ TABLE SCAN movie_companies WHERE (note NOT  LIKE '%(as Metro-Goldwyn-Mayer Pictures)%' AND (((company_type_id >= 2) AND (company_type_id <= 2)) AND company_type_id IN 2)) AND ((((movie_id >= 2) AND (movie_id <= 2528297)) AND ((movie_id >= 2) AND (movie_id <= 2528297))) AND TRUE)\n 1380035     26625  DISTRIBUTE HASH ON movie_id\n 1380035     26625  TABLE SCAN movie_info_idx WHERE CASE MOD(HASH_REPARTITION movie_id,10) WHEN 0 THEN (((movie_id >= 286) AND (movie_id <= 2525688)) AND TRUE) WHEN 1 THEN (((movie_id >= 350) AND (movie_id <= 2525697)) AND TRUE) WHEN 2 THEN (((movie_id >= 921) AND (movie_id <= 2525701)) AND TRUE) WHEN 3 THEN (((movie_id >= 320) AND (movie_id <= 2525700)) AND TRUE) WHEN 4 THEN (((movie_id >= 925) AND (movie_id <= 2525716)) AND TRUE) WHEN 5 THEN (((movie_id >= 290) AND (movie_id <= 2525689)) AN...\n",
+      "sql": "SELECT MIN(mc.note) AS production_note,\n       MIN(t.title) AS movie_title,\n       MIN(t.production_year) AS movie_year\nFROM job.company_type AS ct,\n     job.info_type AS it,\n     job.movie_companies AS mc,\n     job.movie_info_idx AS mi_idx,\n     job.title AS t\nWHERE ct.kind = 'production companies'\n  AND it.info = 'bottom 10 rank'\n  AND mc.note NOT LIKE '%(as Metro-Goldwyn-Mayer Pictures)%'\n  AND t.production_year BETWEEN 2005 AND 2010\n  AND ct.id = mc.company_type_id\n  AND t.id = mc.movie_id\n  AND t.id = mi_idx.movie_id\n  AND mc.movie_id = mi_idx.movie_id\n  AND it.id = mi_idx.info_type_id;\n",
+      "startTime": "2026-06-23T16:59:32.062344Z",
+      "status": "OK",
+      "timeMs": 46.159
+    }
+  ],
+  "runtime": {
+    "avgMs": 46.159,
+    "bestMs": 46.159,
+    "maxMs": 46.159,
+    "minMs": 46.159,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "iceberg",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 1B Analysis",
+    "displayName": "JOB-1B",
+    "name": "PLAN-JOB-1B",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "Apache DataFusion 54.0.0, aarch64 on linux"
+}

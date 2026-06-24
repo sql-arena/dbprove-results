@@ -1,0 +1,110 @@
+{
+  "engine": "PostgreSQL",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 2,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 2,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 4
+        },
+        "scan": {
+          "+2x": 1,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 6,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 171,
+        "distribute": 0,
+        "hash": 1903,
+        "join": 297861,
+        "scan": 295742,
+        "seek": 1565,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(title)\n       4         4  AGGREGATE PARTIAL MIN(title)\n   12695       167  INNER JOIN HASH ON info_type_id = id\n     113       113  │└TABLE SCAN info_type AS it\n   50780       668  INNER JOIN LOOP ON movie_id = id\n   36220       768  │└INNER JOIN LOOP ON id = movie_id\n   13043       200  │ │└INNER JOIN HASH ON company_type_id = id\n       1         1  │ │ │└TABLE SCAN company_type AS ct WHERE ct.kind = 'production companies'\n  208684    295628  │ │ TABLE SCAN movie_companies AS mc WHERE (mc.note NOT  LIKE '%(TV)%') AND (mc.note LIKE '%(USA)%')\n     798       798  │ TABLE SEEK title AS t WHERE t.production_year > 1990\n    1534       767  TABLE SEEK movie_info AS mi WHERE mi.info IN('Sweden','Norway','Germany','Denmark','Swedish','Denish','Norwegian','German','USA','American')\n",
+      "sql": "SELECT MIN(t.title) AS american_movie\nFROM job.company_type AS ct,\n     job.info_type AS it,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.title AS t\nWHERE ct.kind = 'production companies'\n  AND mc.note NOT LIKE '%(TV)%'\n  AND mc.note LIKE '%(USA)%'\n  AND mi.info IN ('Sweden',\n                  'Norway',\n                  'Germany',\n                  'Denmark',\n                  'Swedish',\n                  'Denish',\n                  'Norwegian',\n                  'German',\n                  'USA',\n                  'American')\n  AND t.production_year > 1990\n  AND t.id = mi.movie_id\n  AND t.id = mc.movie_id\n  AND mc.movie_id = mi.movie_id\n  AND ct.id = mc.company_type_id\n  AND it.id = mi.info_type_id;\n",
+      "startTime": "2026-06-23T15:47:52.611934Z",
+      "status": "OK",
+      "timeMs": 331.353
+    }
+  ],
+  "runtime": {
+    "avgMs": 331.353,
+    "bestMs": 331.353,
+    "maxMs": 331.353,
+    "minMs": 331.353,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 5C Analysis",
+    "displayName": "JOB-5C",
+    "name": "PLAN-JOB-5C",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "14.23"
+}

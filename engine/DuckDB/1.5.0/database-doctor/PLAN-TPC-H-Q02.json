@@ -1,0 +1,109 @@
+{
+  "engine": "DuckDB",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 1,
+          "+8x": 1,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 1,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 2,
+          "+8x": 1,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 6,
+          ">16x": 1
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 2,
+          "+8x": 1,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 1,
+          "=": 5,
+          ">16x": 1
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 4,
+          "+8x": 1,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 6,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 689,
+        "distribute": 0,
+        "hash": 14329,
+        "join": 1619803,
+        "scan": 1614732,
+        "seek": 0,
+        "sort": 495
+      },
+      "plan": "Estimate    Actual  Operator\n       -       495  SORT s_acctbal, n_name, s_name, p_partkey\n    3589       495  PROJECT s_acctbal, s_name, n_name, p_partkey, p_mfgr, s_address, s_phone, s_comment\n    3589       495  FILTER ps_supplycost = SUBQUERY\n       0         0  LEFT SEMI JOIN HASH ON p_partkey IS NOT DISTINCT FROM p_partkey\n    3482       495  │└AGGREGATE  GROUP BY HASH #0\n       0       689  │ LEFT OUTER JOIN HASH ON p_partkey IS NOT DISTINCT FROM p_partkey\n    4537       495  │ │└PROJECT min_cost, p_partkey\n    4537       495  │ │ AGGREGATE MIN(#1) GROUP BY HASH #0\n    9074       689  │ │ PROJECT p_partkey, ps_supplycost\n    9074       689  │ │ INNER JOIN HASH ON ps_suppkey = s_suppkey\n    1923      1987  │ │ │└INNER JOIN HASH ON s_nationkey = n_nationkey\n       5         5  │ │ │ │└INNER JOIN HASH ON n_regionkey = r_regionkey\n       1         1  │ │ │ │ │└TABLE SCAN region WHERE r_name = 'EUROPE'\n      25         5  │ │ │ │ TABLE SCAN nation\n   10000      7170  │ │ │ TABLE SCAN supplier\n   47187      1979  │ │ INNER JOIN HASH ON ps_partkey = p_partkey\n    3482         0  │ │ │└SCAN MATERIALISED\n  800000    799444  │ │ TABLE SCAN partsupp\n       0       689  │ SCAN MATERIALISED\n    3589       689  INNER JOIN HASH ON ps_suppkey = s_suppkey\n    1923      1987  │└INNER JOIN HASH ON s_nationkey = n_nationkey\n       5         5  │ │└INNER JOIN HASH ON n_regionkey = r_regionkey\n       1         1  │ │ │└TABLE SCAN region WHERE r_name = 'EUROPE'\n      25         5  │ │ TABLE SCAN nation\n   10000      7170  │ TABLE SCAN supplier\n   18667      3208  INNER JOIN HASH ON ps_partkey = p_partkey\n    4445       803  │└TABLE SCAN part WHERE p_size = 25 AND suffix(p_type,'BRASS')\n  800000    799444  TABLE SCAN partsupp\n",
+      "sql": "/* TPC-H Q02 */\nSELECT s_acctbal,\n       s_name,\n       n_name,\n       p_partkey,\n       p_mfgr,\n       s_address,\n       s_phone,\n       s_comment\nFROM tpch_sf1.partsupp\nINNER JOIN tpch_sf1.part\n    ON ps_partkey = p_partkey\nINNER JOIN tpch_sf1.supplier\n    ON ps_suppkey = s_suppkey\nINNER JOIN tpch_sf1.nation\n    ON s_nationkey = n_nationkey\nINNER JOIN tpch_sf1.region\n    ON n_regionkey = r_regionkey\nWHERE p_size = 25\n  AND p_type LIKE '%BRASS'\n  AND r_name = 'EUROPE'\n  AND ps_supplycost = (SELECT MIN(ps_supplycost) AS min_cost\n                       FROM tpch_sf1.partsupp AS ps_min\n                       INNER JOIN tpch_sf1.supplier AS s_min\n                           ON ps_suppkey = s_suppkey\n                       INNER JOIN tpch_sf1.nation AS n_min\n                           ON s_nationkey = n_nationkey\n                       INNER JOIN tpch_sf1.region AS r_min\n                           ON n_regionkey = r_regionkey\n                       WHERE ps_partkey = p_partkey\n                         AND r_name = 'EUROPE')\nORDER BY s_acctbal DESC,\n         n_name,\n         s_name,\n         p_partkey\n\n\n",
+      "startTime": "2026-06-22T16:08:55.912420Z",
+      "status": "OK",
+      "timeMs": 5.554
+    }
+  ],
+  "runtime": {
+    "avgMs": 5.554,
+    "bestMs": 5.554,
+    "maxMs": 5.554,
+    "minMs": 5.554,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "TPC-H Q02 Analysis",
+    "displayName": "TPCH-Q02",
+    "name": "PLAN-TPC-H-Q02",
+    "tags": [
+      "TPC-H"
+    ]
+  },
+  "version": "1.5.0"
+}

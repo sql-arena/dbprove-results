@@ -1,0 +1,109 @@
+{
+  "engine": "PostgreSQL",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 2,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 1,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 5,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 190510,
+        "distribute": 0,
+        "hash": 537,
+        "join": 6001215,
+        "scan": 6001413,
+        "seek": 189973,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  SEQUENCE\n    6029      6029  ├─AGGREGATE 0.2 * AVG(l_quantity)\n  186899    189973  │ TABLE SEEK lineitem AS li\n       1         1  └─AGGREGATE SUM(l_extendedprice) / 7.0\n    1881       537    INNER JOIN HASH ON l_partkey = p_partkey AND (l_quantity < (SubPlan 1))\n     234       198    │└TABLE SCAN part AS part WHERE (p_brand = 'Brand#13') AND (p_container = 'MED CAN')\n 6003010   6001215    TABLE SCAN lineitem AS lineitem\n",
+      "sql": "/* TPC-H Q17 */\nSELECT SUM(l_extendedprice) / 7.0 AS avg_yearly\nFROM tpch.lineitem\nINNER JOIN tpch.part\n    ON l_partkey = p_partkey\nWHERE p_brand = 'Brand#13'\n  AND p_container = 'MED CAN'\n  AND l_quantity < (SELECT 0.2 * AVG(l_quantity) AS l_avg\n                    FROM tpch.lineitem li\n                    WHERE l_partkey = p_partkey)",
+      "startTime": "2026-06-17T12:34:48.349052Z",
+      "status": "OK",
+      "timeMs": 325.791
+    }
+  ],
+  "runtime": {
+    "avgMs": 325.791,
+    "bestMs": 325.791,
+    "maxMs": 325.791,
+    "minMs": 325.791,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "TPC-H Q17 Analysis",
+    "displayName": "TPCH-Q17",
+    "name": "PLAN-TPC-H-Q17",
+    "tags": [
+      "TPC-H"
+    ]
+  },
+  "version": "18.2"
+}

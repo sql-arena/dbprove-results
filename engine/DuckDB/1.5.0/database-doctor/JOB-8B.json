@@ -1,0 +1,110 @@
+{
+  "engine": "DuckDB",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 1,
+          "=": 1,
+          ">16x": 2
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 1,
+          "-8x": 0,
+          "<16x": 4,
+          "=": 1,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 2,
+          "-8x": 0,
+          "<16x": 4,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 1,
+          "=": 1,
+          ">16x": 5
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 6,
+        "distribute": 0,
+        "hash": 71880,
+        "join": 37036,
+        "scan": 35175,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       -         1  AGGREGATE MIN(#0), MIN(#1)\n       0         6  PROJECT name, title\n       0         6  INNER JOIN HASH ON person_id = id\n       0         4  │└INNER JOIN HASH ON id = id\n       0        25  │ │└INNER JOIN HASH ON id = movie_id\n       0      1074  │ │ │└INNER JOIN HASH ON id = company_id\n       5      1079  │ │ │ │└INNER JOIN HASH ON movie_id = movie_id\n      27     34848  │ │ │ │ │└INNER JOIN HASH ON role_id = id\n       1         1  │ │ │ │ │ │└FILTER id <= 11\n       1         1  │ │ │ │ │ │ TABLE SCAN role_type WHERE role = 'actress'\n     331     34848  │ │ │ │ │ FILTER (id >= 4) AND (movie_id BETWEEN 2 AND 2525745)\n     331     34848  │ │ │ │ │ TABLE SCAN cast_info WHERE note = '(voice: English version)'\n  521825       259  │ │ │ │ TABLE SCAN movie_companies WHERE contains(note,'(Japan)') AND ( NOT contains(note,'(USA)')) AND (contains(note,'(2006)') OR contains(note,'(2007)'))\n    1507        58  │ │ │ TABLE SCAN company_name WHERE country_code = 'jp'\n  505662         3  │ │ FILTER id BETWEEN 2 AND 2525745\n  505662         3  │ │ TABLE SCAN title WHERE production_year >= 2006 AND production_year <= 2007 AND (prefix(title,'One Piece') OR prefix(title,'Dragon Ball Z'))\n  833498         3  │ FILTER id BETWEEN 4 AND 4061926\n  833498         3  │ TABLE SCAN \"name\" WHERE contains(name,'Yo') AND ( NOT contains(name,'Yu'))\n  901343         3  TABLE SCAN aka_name WHERE person_id <= 4061926\n",
+      "sql": "SELECT MIN(an.name) AS acress_pseudonym,\n       MIN(t.title) AS japanese_anime_movie\nFROM job.aka_name AS an,\n     job.cast_info AS ci,\n     job.company_name AS cn,\n     job.movie_companies AS mc,\n     job.name AS n,\n     job.role_type AS rt,\n     job.title AS t\nWHERE ci.note ='(voice: English version)'\n  AND cn.country_code ='[jp]'\n  AND mc.note LIKE '%(Japan)%'\n  AND mc.note NOT LIKE '%(USA)%'\n  AND (mc.note LIKE '%(2006)%'\n       OR mc.note LIKE '%(2007)%')\n  AND n.name LIKE '%Yo%'\n  AND n.name NOT LIKE '%Yu%'\n  AND rt.role ='actress'\n  AND t.production_year BETWEEN 2006 AND 2007\n  AND (t.title LIKE 'One Piece%'\n       OR t.title LIKE 'Dragon Ball Z%')\n  AND an.person_id = n.id\n  AND n.id = ci.person_id\n  AND ci.movie_id = t.id\n  AND t.id = mc.movie_id\n  AND mc.company_id = cn.id\n  AND ci.role_id = rt.id\n  AND an.person_id = ci.person_id\n  AND ci.movie_id = mc.movie_id;\n",
+      "startTime": "2026-06-17T11:56:38.190360Z",
+      "status": "OK",
+      "timeMs": 21.185
+    }
+  ],
+  "runtime": {
+    "avgMs": 21.185,
+    "bestMs": 21.185,
+    "maxMs": 21.185,
+    "minMs": 21.185,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 8B Analysis",
+    "displayName": "JOB-8B",
+    "name": "JOB-8B",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "1.5.0"
+}

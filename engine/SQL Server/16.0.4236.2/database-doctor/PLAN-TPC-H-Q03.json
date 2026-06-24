@@ -1,0 +1,109 @@
+{
+  "engine": "SQL Server",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 1,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 1,
+          "=": 1,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 1,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 1
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 1,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 2,
+          "=": 1,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 29857,
+        "distribute": 0,
+        "hash": 1529949,
+        "join": 41138,
+        "scan": 29949,
+        "seek": 7501215,
+        "sort": 10
+      },
+      "plan": "Estimate    Actual  Operator\n      10        10  LIMIT 0\n      10        10  SORT Expr1009, o_orderdate\n  218631     11281  INNER JOIN HASH ON o_custkey = c_custkey\n   29822     29949  │└TABLE SCAN customer WHERE c_mktsegment = 'MACHINERY'\n   69378     11281  AGGREGATE SUM(Expr1010) AS Expr1009, o_custkey, o_orderdate, o_shippriority GROUP BY HASH l_orderkey\n  155757     29857  INNER JOIN HASH ON l_orderkey = o_orderkey\n   72782   1500000  │└TABLE SEEK orders WHERE o_orderdate < '1995-03-15' AND BLOOM(o_custkey)\n  321006     29857  PROJECT l_extendedprice * (1. - l_discount) AS Expr1010\n  321006   6001215  TABLE SEEK lineitem WHERE l_shipdate > '1995-03-15' AND BLOOM(l_orderkey)\n",
+      "sql": "/* TPC-H Q03 */\nSELECT l_orderkey,\n       SUM(l_extendedprice * (1 - l_discount)) AS revenue,\n       o_orderdate,\n       o_shippriority\nFROM tpch_sf1.lineitem\nINNER JOIN tpch_sf1.orders\n    ON l_orderkey = o_orderkey\nINNER JOIN tpch_sf1.customer\n    ON o_custkey = c_custkey\nWHERE c_mktsegment = 'MACHINERY'\n  AND o_orderdate < '1995-03-15'\n  AND l_shipdate > '1995-03-15'\nGROUP BY l_orderkey,\n         o_orderdate,\n         o_shippriority\nORDER BY revenue DESC,\n         o_orderdate\nLIMIT 10\n",
+      "startTime": "2026-06-22T16:16:11.355631Z",
+      "status": "OK",
+      "timeMs": 369.004
+    }
+  ],
+  "runtime": {
+    "avgMs": 369.004,
+    "bestMs": 369.004,
+    "maxMs": 369.004,
+    "minMs": 369.004,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "TPC-H Q03 Analysis",
+    "displayName": "TPCH-Q03",
+    "name": "PLAN-TPC-H-Q03",
+    "tags": [
+      "TPC-H"
+    ]
+  },
+  "version": "16.0.4236.2"
+}

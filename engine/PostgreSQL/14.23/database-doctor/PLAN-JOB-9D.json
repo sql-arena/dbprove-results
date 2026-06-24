@@ -1,0 +1,110 @@
+{
+  "engine": "PostgreSQL",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 2,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 1,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 2,
+          "-8x": 2,
+          "<16x": 0,
+          "=": 2,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 1,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 8,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 483084,
+        "distribute": 0,
+        "hash": 3533354,
+        "join": 5075529,
+        "scan": 2609129,
+        "seek": 2262794,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(name), MIN(name), MIN(name), MIN(title)\n       4         4  AGGREGATE PARTIAL MIN(name), PARTIAL MIN(name), PARTIAL MIN(name), PARTIAL MIN(title)\n   51888    483080  INNER JOIN LOOP ON person_id = id\n   22664    173568  │└INNER JOIN LOOP ON id = movie_id AND movie_id = id AND (movie_id = id)\n   22664    173568  │ │└INNER JOIN LOOP ON id = person_role_id\n   22664    189464  │ │ │└INNER JOIN LOOP ON id = person_id\n   24091     47388  │ │ │ │└INNER JOIN HASH ON movie_id = movie_id\n  285824   1104664  │ │ │ │ │└INNER JOIN LOOP ON role_id = id\n       1         1  │ │ │ │ │ │└TABLE SCAN role_type AS rt WHERE rt.role = 'actress'\n  311808   1104664  │ │ │ │ │ TABLE SEEK cast_info AS ci WHERE ci.note IN('(voice)','(voice: Japanese version)','(voice) (uncredited)','(voice: English version)')\n  305521    288450  │ │ │ │ INNER JOIN HASH ON company_id = id\n  200716     84844  │ │ │ │ │└TABLE SEEK company_name AS cn\n 3366620   2609128  │ │ │ │ TABLE SCAN movie_companies AS mc\n  189554    189554  │ │ │ TABLE SEEK name AS n WHERE n.gender = 'f'\n  189464    189464  │ │ TABLE SEEK char_name AS chn\n  173567    173567  │ TABLE SEEK title AS t\n  347134    520701  TABLE SEEK aka_name AS an\n",
+      "sql": "SELECT MIN(an.name) AS alternative_name,\n       MIN(chn.name) AS voiced_char_name,\n       MIN(n.name) AS voicing_actress,\n       MIN(t.title) AS american_movie\nFROM job.aka_name AS an,\n     job.char_name AS chn,\n     job.cast_info AS ci,\n     job.company_name AS cn,\n     job.movie_companies AS mc,\n     job.name AS n,\n     job.role_type AS rt,\n     job.title AS t\nWHERE ci.note IN ('(voice)',\n                  '(voice: Japanese version)',\n                  '(voice) (uncredited)',\n                  '(voice: English version)')\n  AND cn.country_code ='[us]'\n  AND n.gender ='f'\n  AND rt.role ='actress'\n  AND ci.movie_id = t.id\n  AND t.id = mc.movie_id\n  AND ci.movie_id = mc.movie_id\n  AND mc.company_id = cn.id\n  AND ci.role_id = rt.id\n  AND n.id = ci.person_id\n  AND chn.id = ci.person_role_id\n  AND an.person_id = n.id\n  AND an.person_id = ci.person_id;\n",
+      "startTime": "2026-06-23T15:49:42.104616Z",
+      "status": "OK",
+      "timeMs": 5092.519
+    }
+  ],
+  "runtime": {
+    "avgMs": 5092.519,
+    "bestMs": 5092.519,
+    "maxMs": 5092.519,
+    "minMs": 5092.519,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 9D Analysis",
+    "displayName": "JOB-9D",
+    "name": "PLAN-JOB-9D",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "14.23"
+}

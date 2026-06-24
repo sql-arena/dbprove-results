@@ -1,0 +1,39 @@
+QUERY id: 0
+  PROJECTION COLUMNS
+    COUNT(o_orderkey) UInt64
+    COUNT(c_custkey) UInt64
+  PROJECTION
+    LIST id: 1, nodes: 2
+      FUNCTION id: 2, function_name: count, function_type: aggregate, result_type: UInt64
+        ARGUMENTS
+          LIST id: 3, nodes: 1
+            COLUMN id: 4, column_name: o_orderkey, result_type: Int32, source_id: 5
+      FUNCTION id: 6, function_name: count, function_type: aggregate, result_type: UInt64
+        ARGUMENTS
+          LIST id: 7, nodes: 1
+            COLUMN id: 8, column_name: c_custkey, result_type: Nullable(Int32), source_id: 9
+  JOIN TREE
+    JOIN id: 10, strictness: ALL, kind: LEFT
+      LEFT TABLE EXPRESSION
+        TABLE id: 5, alias: __table1, table_name: tpch_sf1.orders
+      RIGHT TABLE EXPRESSION
+        QUERY id: 9, alias: __table2, is_subquery: 1
+          PROJECTION COLUMNS
+            c_custkey Int32
+          PROJECTION
+            LIST id: 11, nodes: 1
+              COLUMN id: 12, column_name: c_custkey, result_type: Int32, source_id: 13
+          JOIN TREE
+            TABLE id: 13, alias: __table3, table_name: tpch_sf1.customer
+          WHERE
+            FUNCTION id: 14, function_name: equals, function_type: ordinary, result_type: UInt8
+              ARGUMENTS
+                LIST id: 15, nodes: 2
+                  COLUMN id: 16, column_name: c_custkey, result_type: Int32, source_id: 13
+                  CONSTANT id: 17, constant_value: UInt64_1, constant_value_type: UInt8
+      JOIN EXPRESSION
+        FUNCTION id: 18, function_name: equals, function_type: ordinary, result_type: UInt8
+          ARGUMENTS
+            LIST id: 19, nodes: 2
+              COLUMN id: 20, column_name: o_custkey, result_type: Int32, source_id: 5
+              COLUMN id: 21, column_name: c_custkey, result_type: Int32, source_id: 9

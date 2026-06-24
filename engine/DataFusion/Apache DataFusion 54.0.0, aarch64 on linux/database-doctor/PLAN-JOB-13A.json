@@ -1,0 +1,110 @@
+{
+  "engine": "DataFusion",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 1
+        },
+        "filter": {
+          "+2x": 1,
+          "+4x": 1,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 2
+        },
+        "hash": {
+          "+2x": 3,
+          "+4x": 1,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 2,
+          ">16x": 2
+        },
+        "join": {
+          "+2x": 3,
+          "+4x": 1,
+          "+8x": 1,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 3,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 1,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 9,
+          ">16x": 1
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 111111,
+        "distribute": 3068614,
+        "hash": 1292116,
+        "join": 8057627,
+        "scan": 7501618,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  PROJECT release_date, rating, german_movie\n       1         1  AGGREGATE MIN(info), MIN(info), MIN(title)\n   91531        10  DISTRIBUTE GATHER\n   91531        10  AGGREGATE MIN(info), MIN(info), MIN(title)\n   91531    111101  INNER JOIN HASH ON id = kind_id\n       2         1  │└DISTRIBUTE GATHER\n       2         1  │ FILTER kind = 'movie'\n       7         7  │ DISTRIBUTE ROUND ROBIN\n       7         7  │ TABLE SCAN kind_type WHERE kind = 'movie'\n  320359    125521  INNER JOIN HASH ON movie_id = id AND movie_id = id AND movie_id = id\n  320359    134189  │└DISTRIBUTE HASH ON movie_id, movie_id, movie_id\n  320359    134189  │ INNER JOIN HASH ON id = info_type_id\n      23         1  │ │└DISTRIBUTE GATHER\n      23         1  │ │ FILTER info = 'rating'\n     113       113  │ │ DISTRIBUTE ROUND ROBIN\n     113       113  │ │ TABLE SCAN info_type WHERE info = 'rating'\n  320359    404319  │ INNER JOIN HASH ON movie_id = movie_id AND movie_id = movie_id\n  320359    175621  │ │└DISTRIBUTE HASH ON movie_id, movie_id\n  320359    175621  │ │ INNER JOIN HASH ON id = info_type_id\n      23         1  │ │ │└DISTRIBUTE GATHER\n      23         1  │ │ │ FILTER info = 'release dates'\n     113       113  │ │ │ DISTRIBUTE ROUND ROBIN\n     113       113  │ │ │ TABLE SCAN info_type WHERE info = 'release dates'\n 1532152    187177  │ │ INNER JOIN HASH ON movie_id = movie_id\n  260916     71294  │ │ │└DISTRIBUTE GATHER\n  260916     71294  │ │ │ INNER JOIN HASH ON id = company_type_id\n       1         1  │ │ │ │└DISTRIBUTE GATHER\n       1         1  │ │ │ │ FILTER kind = 'production companies'\n       4         4  │ │ │ │ DISTRIBUTE ROUND ROBIN\n       4         4  │ │ │ │ TABLE SCAN company_type WHERE kind = 'production companies'\n  521832     74226  │ │ │ INNER JOIN HASH ON id = company_id\n   47000      9775  │ │ │ │└DISTRIBUTE GATHER\n   47000      9775  │ │ │ │ FILTER country_code = 'de'\n  234997    234997  │ │ │ │ TABLE SCAN company_name WHERE country_code = 'de'\n 2609129   1376261  │ │ │ TABLE SCAN movie_companies WHERE (((company_id >= 30) AND (company_id <= 234990)) AND TRUE) AND (((company_type_id >= 2) AND (company_type_id <= 2)) AND company_type_id IN 2)\n14835720   3212639  │ │ TABLE SCAN movie_info WHERE (((movie_id >= 820) AND (movie_id <= 2525727)) AND TRUE) AND (((info_type_id >= 16) AND (info_type_id <= 16)) AND info_type_id IN 16)\n 1380035   1380035  │ DISTRIBUTE HASH ON movie_id, movie_id\n 1380035   1380035  │ TABLE SCAN movie_info_idx WHERE CASE MOD(HASH_REPARTITION(movie_id,movie_id),10) WHEN 1 THEN ((((movie_id >= 1538) AND (movie_id <= 2525502)) AND ((movie_id >= 1538) AND (movie_id <= 2525502))) AND TRUE) WHEN 3 THEN ((((movie_id >= 821) AND (movie_id <= 2525500)) AND ((movie_id >= 821) AND (movie_id <= 2525500))) AND TRUE) WHEN 5 THEN ((((movie_id >= 820) AND (movie_id <= 2525720)) AND ((movie_id >= 820) AND (movie_id <= 2525720))) AND TRUE) WHEN 7 THEN ((((movie_id >=...\n 2528312   1297449  DISTRIBUTE HASH ON id, id, id\n 2528312   1297449  TABLE SCAN title WHERE CASE MOD(HASH_REPARTITION(id,id,id),10) WHEN 0 THEN (((((id >= 1537) AND (id <= 2525464)) AND ((id >= 1537) AND (id <= 2525464))) AND ((id >= 1537) AND (id <= 2525464))) AND TRUE) WHEN 1 THEN (((((id >= 34267) AND (id <= 2525435)) AND ((id >= 34267) AND (id <= 2525435))) AND ((id >= 34267) AND (id <= 2525435))) AND TRUE) WHEN 2 THEN (((((id >= 5187) AND (id <= 2525496)) AND ((id >= 5187) AND (id <= 2525496))) AND ((id >= 5187) AND (id <= 2525496))) A...\n",
+      "sql": "SELECT MIN(mi.info) AS release_date,\n       MIN(miidx.info) AS rating,\n       MIN(t.title) AS german_movie\nFROM job.company_name AS cn,\n     job.company_type AS ct,\n     job.info_type AS it,\n     job.info_type AS it2,\n     job.kind_type AS kt,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.movie_info_idx AS miidx,\n     job.title AS t\nWHERE cn.country_code ='[de]'\n  AND ct.kind ='production companies'\n  AND it.info ='rating'\n  AND it2.info ='release dates'\n  AND kt.kind ='movie'\n  AND mi.movie_id = t.id\n  AND it2.id = mi.info_type_id\n  AND kt.id = t.kind_id\n  AND mc.movie_id = t.id\n  AND cn.id = mc.company_id\n  AND ct.id = mc.company_type_id\n  AND miidx.movie_id = t.id\n  AND it.id = miidx.info_type_id\n  AND mi.movie_id = miidx.movie_id\n  AND mi.movie_id = mc.movie_id\n  AND miidx.movie_id = mc.movie_id;\n",
+      "startTime": "2026-06-23T16:40:58.238139Z",
+      "status": "OK",
+      "timeMs": 152.483
+    }
+  ],
+  "runtime": {
+    "avgMs": 152.483,
+    "bestMs": 152.483,
+    "maxMs": 152.483,
+    "minMs": 152.483,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "iceberg",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 13A Analysis",
+    "displayName": "JOB-13A",
+    "name": "PLAN-JOB-13A",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "Apache DataFusion 54.0.0, aarch64 on linux"
+}

@@ -1,0 +1,110 @@
+{
+  "engine": "ClickHouse",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 0,
+        "distribute": 0,
+        "hash": 5218258,
+        "join": 8933951,
+        "scan": 8933955,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       -         1  PROJECT a1 AS character, a2 AS movie_with_american_producer\n       -         1  AGGREGATE MIN(name) AS a1, MIN(title) AS a2\n       -         0  PROJECT name, title\n       -         0  PROJECT name, title\n       -         0  INNER JOIN HASH ON PROJECTION_120.id = PROJECTION_87.person_role_id\n       -         0  │└PROJECT person_role_id, title\n       -         0  │ PROJECT person_role_id, title\n       -         0  │ INNER JOIN HASH ON tuple(PROJECTION_117.id,PROJECTION_117.id) = tuple(PROJECTION_90.movie_id,PROJECTION_90.movie_id)\n       -         0  │ │└PROJECT movie_id, movie_id, person_role_id\n       -         0  │ │ PROJECT person_role_id, movie_id, movie_id\n       -         0  │ │ INNER JOIN HASH ON PROJECTION_114.id = PROJECTION_93.role_id\n       -         0  │ │ │└PROJECT role_id, person_role_id, movie_id, movie_id\n       -         0  │ │ │ PROJECT person_role_id, movie_id, role_id, movie_id\n       -         0  │ │ │ INNER JOIN HASH ON PROJECTION_111.movie_id = PROJECTION_96.movie_id\n       -         0  │ │ │ │└PROJECT movie_id AS movie_id_right\n       -         0  │ │ │ │ PROJECT movie_id\n       -         0  │ │ │ │ INNER JOIN HASH ON PROJECTION_108.id = PROJECTION_99.company_id\n       -   2609129  │ │ │ │ │└PROJECT company_id, movie_id\n       -   2609129  │ │ │ │ │ PROJECT movie_id, company_id\n       -   2609129  │ │ │ │ │ INNER JOIN HASH ON PROJECTION_105.company_type_id = PROJECTION_102.id\n       -         4  │ │ │ │ │ │└PROJECT id\n       -         4  │ │ │ │ │ │ PROJECT id\n       -         4  │ │ │ │ │ │ TABLE SCAN company_type\n       -   2609129  │ │ │ │ │ PROJECT company_type_id, movie_id, company_id\n       -   2609129  │ │ │ │ │ PROJECT movie_id, company_id, company_type_id\n       -   2609129  │ │ │ │ │ TABLE SCAN movie_companies\n       -         0  │ │ │ │ PROJECT id\n       -         0  │ │ │ │ PROJECT id\n       -         0  │ │ │ │ TABLE SCAN company_name WHERE country_code = 'us'\n       -   1435439  │ │ │ PROJECT movie_id AS movie_id_left, person_role_id, role_id\n       -   1435439  │ │ │ PROJECT person_role_id, movie_id, role_id\n       -   1435439  │ │ │ TABLE SCAN cast_info WHERE note LIKE '%(producer)%'\n       -        12  │ │ PROJECT id\n       -        12  │ │ PROJECT id\n       -        12  │ │ TABLE SCAN role_type\n       -   1749032  │ PROJECT id, title\n       -   1749032  │ PROJECT id, title\n       -   1749032  │ TABLE SCAN title WHERE production_year > 1990\n       -   3140339  PROJECT id, name\n       -   3140339  PROJECT name, id\n       -   3140339  TABLE SCAN char_name\n",
+      "sql": "SELECT MIN(chn.name) AS character,\n       MIN(t.title) AS movie_with_american_producer\nFROM job.char_name AS chn,\n     job.cast_info AS ci,\n     job.company_name AS cn,\n     job.company_type AS ct,\n     job.movie_companies AS mc,\n     job.role_type AS rt,\n     job.title AS t\nWHERE ci.note LIKE '%(producer)%'\n  AND cn.country_code = '[us]'\n  AND t.production_year > 1990\n  AND t.id = mc.movie_id\n  AND t.id = ci.movie_id\n  AND ci.movie_id = mc.movie_id\n  AND chn.id = ci.person_role_id\n  AND rt.id = ci.role_id\n  AND cn.id = mc.company_id\n  AND ct.id = mc.company_type_id;\n",
+      "startTime": "2026-06-22T09:11:38.796493Z",
+      "status": "OK",
+      "timeMs": 336.36
+    }
+  ],
+  "runtime": {
+    "avgMs": 336.36,
+    "bestMs": 336.36,
+    "maxMs": 336.36,
+    "minMs": 336.36,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 10C Analysis",
+    "displayName": "JOB-10C",
+    "name": "JOB-10C",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "26.1.12.23"
+}

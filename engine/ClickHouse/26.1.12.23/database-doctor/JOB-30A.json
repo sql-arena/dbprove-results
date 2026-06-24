@@ -1,0 +1,110 @@
+{
+  "engine": "ClickHouse",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 0,
+        "distribute": 0,
+        "hash": 52608957,
+        "join": 29318182,
+        "scan": 60374324,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       -         1  PROJECT a1 AS movie_budget, a2 AS movie_votes, a3 AS writer, a4 AS complete_violent_movie\n       -         1  AGGREGATE MIN(info_left) AS a1, MIN(info_right) AS a2, MIN(name) AS a3, MIN(title) AS a4\n       -         0  PROJECT info, info, name, title\n       -         0  PROJECT info, info, name, title\n       -         0  INNER JOIN HASH ON tuple(PROJECTION_3631.movie_id,PROJECTION_3631.movie_id,PROJECTION_3631.movie_id,PROJECTION_3631.movie_id,PROJECTION_3631.movie_id,PROJECTION_3631.movie_id,PROJECTION_3631.id,PROJECTION_3631.id) = tuple(PROJECTION_3610.movie_id,PROJECTION_3610.movie_id,PROJECTION_3610.movie_id,PROJECTION_3610.movie_id,PROJECTION_3610.movie_id,PROJECTION_3610.movie_id,PROJECTION_3610.movie_id,PROJECTION_3610.movie_id)\n       -   3461792  │└PROJECT movie_id_right, movie_id AS movie_id_right_2, info AS info_right\n       -   3461792  │ PROJECT info, movie_id, movie_id\n       -   3461792  │ INNER JOIN HASH ON PROJECTION_3628.id = PROJECTION_3613.keyword_id\n       -   3461792  │ │└PROJECT keyword_id, info, movie_id, movie_id\n       -   3461792  │ │ PROJECT info, movie_id, movie_id, keyword_id\n       -   3461792  │ │ INNER JOIN HASH ON PROJECTION_3625.movie_id = PROJECTION_3616.movie_id\n       -    459925  │ │ │└PROJECT movie_id AS movie_id_right, info\n       -    459925  │ │ │ PROJECT info, movie_id\n       -    459925  │ │ │ INNER JOIN HASH ON PROJECTION_3622.info_type_id = PROJECTION_3619.id\n       -         1  │ │ │ │└PROJECT id\n       -         1  │ │ │ │ PROJECT id\n       -         1  │ │ │ │ TABLE SCAN info_type WHERE info = 'votes'\n       -   1380035  │ │ │ PROJECT info_type_id, info, movie_id\n       -   1380035  │ │ │ PROJECT info, movie_id, info_type_id\n       -   1380035  │ │ │ TABLE SCAN movie_info_idx\n       -   4523930  │ │ PROJECT movie_id AS movie_id_left, keyword_id\n       -   4523930  │ │ PROJECT movie_id, keyword_id\n       -   4523930  │ │ TABLE SCAN movie_keyword\n       -    134170  │ PROJECT id\n       -    134170  │ PROJECT id\n       -    134170  │ TABLE SCAN keyword WHERE TRUE\n       -         0  PROJECT movie_id AS movie_id_left, movie_id AS movie_id_left_2, movie_id AS movie_id_left_3, id, info AS info_left, name, title\n       -         0  PROJECT movie_id, movie_id, info, movie_id, name, title, id\n       -         0  INNER JOIN HASH ON tuple(PROJECTION_3649.movie_id,PROJECTION_3649.movie_id,PROJECTION_3649.movie_id,PROJECTION_3649.movie_id) = tuple(PROJECTION_3634.movie_id,PROJECTION_3634.movie_id,PROJECTION_3634.id,PROJECTION_3634.id)\n       -    815187  │└PROJECT movie_id AS movie_id_right, id, info, title\n       -    815187  │ PROJECT info, movie_id, title, id\n       -    815187  │ INNER JOIN HASH ON PROJECTION_3640.movie_id = PROJECTION_3637.id\n       -   1381453  │ │└PROJECT id, title\n       -   1381453  │ │ PROJECT id, title\n       -   1381453  │ │ TABLE SCAN title WHERE production_year > 2000\n       -   1533909  │ PROJECT movie_id, info\n       -   1533909  │ PROJECT info, movie_id\n       -   1533909  │ INNER JOIN HASH ON PROJECTION_3646.info_type_id = PROJECTION_3643.id\n       -         1  │ │└PROJECT id\n       -         1  │ │ PROJECT id\n       -         1  │ │ TABLE SCAN info_type WHERE info = 'genres'\n       -  14835720  │ PROJECT info_type_id, info, movie_id\n       -  14835720  │ PROJECT movie_id, info, info_type_id\n       -  14835720  │ TABLE SCAN movie_info WHERE TRUE\n       -    761316  PROJECT movie_id_left, movie_id AS movie_id_left_2, name\n       -    761316  PROJECT movie_id, movie_id, name\n       -    761316  INNER JOIN HASH ON PROJECTION_3655.person_id = PROJECTION_3652.id\n       -   1739579  │└PROJECT id, name\n       -   1739579  │ PROJECT id, name\n       -   1739579  │ TABLE SCAN name WHERE gender = 'm'\n       -   1330901  PROJECT person_id, movie_id, movie_id\n       -   1330901  PROJECT movie_id, movie_id, person_id\n       -   1330901  INNER JOIN HASH ON PROJECTION_3661.movie_id = PROJECTION_3658.movie_id\n       -  36244344  │└PROJECT movie_id AS movie_id_right, person_id\n       -  36244344  │ PROJECT movie_id, person_id\n       -  36244344  │ TABLE SCAN cast_info WHERE TRUE\n       -     24592  PROJECT movie_id AS movie_id_left\n       -     24592  PROJECT movie_id\n       -     24592  INNER JOIN HASH ON PROJECTION_3673.id = PROJECTION_3664.subject_id\n       -     24592  │└PROJECT subject_id, movie_id\n       -     24592  │ PROJECT subject_id, movie_id\n       -     24592  │ INNER JOIN HASH ON PROJECTION_3670.status_id = PROJECTION_3667.id\n       -         1  │ │└PROJECT id\n       -         1  │ │ PROJECT id\n       -         1  │ │ TABLE SCAN comp_cast_type WHERE kind = 'complete+verified'\n       -    135086  │ PROJECT status_id, subject_id, movie_id\n       -    135086  │ PROJECT subject_id, status_id, movie_id\n       -    135086  │ TABLE SCAN complete_cast\n       -         4  PROJECT id\n       -         4  PROJECT id\n       -         4  TABLE SCAN comp_cast_type WHERE TRUE\n",
+      "sql": "SELECT MIN(mi.info) AS movie_budget,\n       MIN(mi_idx.info) AS movie_votes,\n       MIN(n.name) AS writer,\n       MIN(t.title) AS complete_violent_movie\nFROM job.complete_cast AS cc,\n     job.comp_cast_type AS cct1,\n     job.comp_cast_type AS cct2,\n     job.cast_info AS ci,\n     job.info_type AS it1,\n     job.info_type AS it2,\n     job.keyword AS k,\n     job.movie_info AS mi,\n     job.movie_info_idx AS mi_idx,\n     job.movie_keyword AS mk,\n     job.name AS n,\n     job.title AS t\nWHERE cct1.kind IN ('cast',\n                    'crew')\n  AND cct2.kind ='complete+verified'\n  AND ci.note IN ('(writer)',\n                  '(head writer)',\n                  '(written by)',\n                  '(story)',\n                  '(story editor)')\n  AND it1.info = 'genres'\n  AND it2.info = 'votes'\n  AND k.keyword IN ('murder',\n                    'violence',\n                    'blood',\n                    'gore',\n                    'death',\n                    'female-nudity',\n                    'hospital')\n  AND mi.info IN ('Horror',\n                  'Thriller')\n  AND n.gender = 'm'\n  AND t.production_year > 2000\n  AND t.id = mi.movie_id\n  AND t.id = mi_idx.movie_id\n  AND t.id = ci.movie_id\n  AND t.id = mk.movie_id\n  AND t.id = cc.movie_id\n  AND ci.movie_id = mi.movie_id\n  AND ci.movie_id = mi_idx.movie_id\n  AND ci.movie_id = mk.movie_id\n  AND ci.movie_id = cc.movie_id\n  AND mi.movie_id = mi_idx.movie_id\n  AND mi.movie_id = mk.movie_id\n  AND mi.movie_id = cc.movie_id\n  AND mi_idx.movie_id = mk.movie_id\n  AND mi_idx.movie_id = cc.movie_id\n  AND mk.movie_id = cc.movie_id\n  AND n.id = ci.person_id\n  AND it1.id = mi.info_type_id\n  AND it2.id = mi_idx.info_type_id\n  AND k.id = mk.keyword_id\n  AND cct1.id = cc.subject_id\n  AND cct2.id = cc.status_id;\n",
+      "startTime": "2026-06-17T13:39:37.135080Z",
+      "status": "OK",
+      "timeMs": 2867.516
+    }
+  ],
+  "runtime": {
+    "avgMs": 2867.516,
+    "bestMs": 2867.516,
+    "maxMs": 2867.516,
+    "minMs": 2867.516,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 30A Analysis",
+    "displayName": "JOB-30A",
+    "name": "JOB-30A",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "26.1.12.23"
+}

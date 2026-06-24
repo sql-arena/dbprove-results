@@ -1,0 +1,110 @@
+{
+  "engine": "DuckDB",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 1
+        },
+        "hash": {
+          "+2x": 1,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 4,
+          "=": 1,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 5,
+          "=": 0,
+          ">16x": 1
+        },
+        "scan": {
+          "+2x": 1,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 1,
+          "=": 2,
+          ">16x": 2
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 10,
+        "distribute": 0,
+        "hash": 5250158,
+        "join": 6518037,
+        "scan": 4786956,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       -         1  AGGREGATE MIN(#0), MIN(#1)\n   10844        10  PROJECT name, title\n   10844        10  INNER JOIN HASH ON id = person_role_id\n   10844    782104  │└INNER JOIN HASH ON role_id = id\n      12        11  │ │└TABLE SCAN role_type WHERE id <= 11\n   10844    782104  │ INNER JOIN HASH ON movie_id = id\n    3716    596250  │ │└INNER JOIN HASH ON company_type_id = id\n       4         2  │ │ │└TABLE SCAN company_type WHERE id <= 2\n    3716    596250  │ │ INNER JOIN HASH ON id = movie_id\n   18253   1153798  │ │ │└INNER JOIN HASH ON company_id = id\n    1644     84843  │ │ │ │└TABLE SCAN company_name WHERE country_code = 'us'\n 2609129   2609129  │ │ │ TABLE SCAN movie_companies\n  505662   1748440  │ │ FILTER id BETWEEN 2 AND 2525745\n  505662   1749032  │ │ TABLE SCAN title WHERE production_year > 1990\n 7248868    343938  │ FILTER movie_id BETWEEN 2 AND 2525745\n 7248868    343938  │ TABLE SCAN cast_info WHERE contains(note,'(producer)')\n 3140339         1  TABLE SCAN char_name\n",
+      "sql": "SELECT MIN(chn.name) AS character,\n       MIN(t.title) AS movie_with_american_producer\nFROM job.char_name AS chn,\n     job.cast_info AS ci,\n     job.company_name AS cn,\n     job.company_type AS ct,\n     job.movie_companies AS mc,\n     job.role_type AS rt,\n     job.title AS t\nWHERE ci.note LIKE '%(producer)%'\n  AND cn.country_code = '[us]'\n  AND t.production_year > 1990\n  AND t.id = mc.movie_id\n  AND t.id = ci.movie_id\n  AND ci.movie_id = mc.movie_id\n  AND chn.id = ci.person_role_id\n  AND rt.id = ci.role_id\n  AND cn.id = mc.company_id\n  AND ct.id = mc.company_type_id;\n",
+      "startTime": "2026-06-23T14:00:46.661036Z",
+      "status": "OK",
+      "timeMs": 119.019
+    }
+  ],
+  "runtime": {
+    "avgMs": 119.019,
+    "bestMs": 119.019,
+    "maxMs": 119.019,
+    "minMs": 119.019,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 10C Analysis",
+    "displayName": "JOB-10C",
+    "name": "PLAN-JOB-10C",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "1.5.0"
+}

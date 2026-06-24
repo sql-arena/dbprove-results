@@ -1,0 +1,109 @@
+{
+  "engine": "PostgreSQL",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 1,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 3,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 2,
+          "=": 3,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 2,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 115050,
+        "distribute": 0,
+        "hash": 1616930,
+        "join": 1708970,
+        "scan": 1478895,
+        "seek": 1593920,
+        "sort": 153232
+      },
+      "plan": "Estimate    Actual  Operator\n     150     38182  SORT SUM(l_extendedprice * ('1' - l_discount))\n     150     38182  AGGREGATE c_name, SUM(l_extendedprice * ('1' - l_discount)), c_acctbal, c_address, c_phone, c_comment GROUP BY SORT c_custkey, n_name\n     190    115050  SORT c_custkey, n_name\n      38     23010  INNER JOIN HASH ON c_nationkey = n_nationkey\n      25        25  │└TABLE SCAN nation AS nation\n     190    115050  INNER JOIN LOOP ON c_custkey = o_custkey\n     190    115050  │└INNER JOIN LOOP ON o_orderkey = l_orderkey\n   37510   1478870  │ │└TABLE SCAN lineitem AS lineitem WHERE l_returnflag = 'R'\n 1478870   1478870  │ TABLE SEEK orders AS orders WHERE (o_orderdate >= '1994-06-01') AND (o_orderdate < '1994-09-01')\n  115050    115050  TABLE SEEK customer AS customer\n",
+      "sql": "/* TPC-H Q10 */\nSELECT c_custkey,\n       c_name,\n       SUM(l_extendedprice * (1 - l_discount)) AS revenue,\n       c_acctbal,\n       n_name,\n       c_address,\n       c_phone,\n       c_comment\nFROM tpch_sf1.lineitem\nINNER JOIN tpch_sf1.orders\n    ON l_orderkey = o_orderkey\nINNER JOIN tpch_sf1.customer\n    ON o_custkey = c_custkey\nINNER JOIN tpch_sf1.nation\n    ON c_nationkey = n_nationkey\nWHERE o_orderdate >= '1994-06-01'\n  AND o_orderdate < '1994-09-01'\n  AND l_returnflag = 'R'\nGROUP BY c_custkey,\n         c_name,\n         c_acctbal,\n         c_phone,\n         n_name,\n         c_address,\n         c_comment\nORDER BY revenue DESC",
+      "startTime": "2026-06-23T12:47:47.550143Z",
+      "status": "OK",
+      "timeMs": 145.384
+    }
+  ],
+  "runtime": {
+    "avgMs": 145.384,
+    "bestMs": 145.384,
+    "maxMs": 145.384,
+    "minMs": 145.384,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "TPC-H Q10 Analysis",
+    "displayName": "TPCH-Q10",
+    "name": "PLAN-TPC-H-Q10",
+    "tags": [
+      "TPC-H"
+    ]
+  },
+  "version": "14.23"
+}

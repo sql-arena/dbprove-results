@@ -1,0 +1,109 @@
+{
+  "engine": "SQL Server",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 1,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 2,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 3,
+          "<16x": 0,
+          "=": 2,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 7,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 1,
+          "-8x": 3,
+          "<16x": 3,
+          "=": 2,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 5964,
+        "distribute": 0,
+        "hash": 1679420,
+        "join": 58665,
+        "scan": 0,
+        "seek": 7661315,
+        "sort": 5924
+      },
+      "plan": "Estimate    Actual  Operator\n       2         4  AGGREGATE SUM(partialagg1031) AS Expr1018 GROUP BY SORT n_name, n_name, Expr1016\n      10        40  AGGREGATE SUM(Expr1019) AS partialagg1031 GROUP BY SORT n_name, n_name, Expr1016\n    4667      5924  SORT n_name, n_name, Expr1016\n    4667      5924  INNER JOIN HASH ON n_nationkey as n_nationkey = c_nationkey AND (n_name as n_name = 'GERMANY' AND n_name as n_name = 'FRANCE' OR n_name as n_name = 'FRANCE' AND n_name as n_name = 'GERMANY')\n       2         2  │└FILTER n_name as n_name = 'FRANCE' OR n_name as n_name = 'GERMANY'\n      25        25  │ INNER JOIN LOOP ON Bmk1014 = Bmk1014\n       1        25  │ │└TABLE SEEK nation AS n2\n      25        25  │ TABLE SEEK nation AS n2\n   14722     11723  INNER JOIN HASH ON o_custkey = c_custkey\n   15000    150000  │└TABLE SEEK customer WHERE BLOOM(c_nationkey)\n   14722     11723  INNER JOIN HASH ON s_nationkey = n1.n_nationkey\n       2         2  │└FILTER n_name as n_name = 'FRANCE' OR n_name as n_name = 'GERMANY'\n      25        25  │ INNER JOIN LOOP ON Bmk1012 = Bmk1012\n       1        25  │ │└TABLE SEEK nation AS n1\n      25        25  │ TABLE SEEK nation AS n1\n   18387     11723  INNER JOIN HASH ON l_orderkey = o_orderkey\n  150000   1500000  │└TABLE SEEK orders WHERE BLOOM(o_custkey)\n   18387     11723  INNER JOIN HASH ON l_suppkey = s_suppkey\n    1000     10000  │└TABLE SEEK supplier WHERE BLOOM(s_nationkey)\n   18387     11723  PROJECT datepart(year,l_shipdate) AS Expr1016, l_extendedprice * (1. - l_discount) AS Expr1019\n   18387   6001215  TABLE SEEK lineitem WHERE l_shipdate >= '1995-01-01' AND l_shipdate <= '1996-12-31' AND BLOOM(l_orderkey) AND BLOOM(l_suppkey)\n",
+      "sql": "/* TPC-H Q07 */\nSELECT supp_nation,\n       cust_nation,\n       l_year,\n       SUM(volume) AS revenue\nFROM (SELECT n1.n_name                          AS supp_nation,\n             n2.n_name                          AS cust_nation,\n             EXTRACT(YEAR FROM l_shipdate)      AS l_year,\n             l_extendedprice * (1 - l_discount) AS volume\n      FROM tpch_sf1.lineitem\n      INNER JOIN tpch_sf1.orders\n          ON l_orderkey = o_orderkey\n      INNER JOIN tpch_sf1.supplier\n          ON l_suppkey = s_suppkey\n      INNER JOIN tpch_sf1.customer\n          ON o_custkey = c_custkey\n      INNER JOIN tpch_sf1.nation n1\n          ON s_nationkey = n1.n_nationkey\n      INNER JOIN tpch_sf1.nation n2\n          ON c_nationkey = n2.n_nationkey\n      WHERE ((n1.n_name = 'GERMANY' AND n2.n_name = 'FRANCE')\n          OR (n1.n_name = 'FRANCE' AND n2.n_name = 'GERMANY'))\n        AND l_shipdate BETWEEN '1995-01-01' AND '1996-12-31') AS shipping\nGROUP BY supp_nation,\n         cust_nation,\n         l_year\nORDER BY supp_nation,\n         cust_nation,\n         l_year\n\n\n",
+      "startTime": "2026-06-22T16:16:14.109204Z",
+      "status": "OK",
+      "timeMs": 225.003
+    }
+  ],
+  "runtime": {
+    "avgMs": 225.003,
+    "bestMs": 225.003,
+    "maxMs": 225.003,
+    "minMs": 225.003,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "TPC-H Q07 Analysis",
+    "displayName": "TPCH-Q07",
+    "name": "PLAN-TPC-H-Q07",
+    "tags": [
+      "TPC-H"
+    ]
+  },
+  "version": "16.0.4236.2"
+}

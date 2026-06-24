@@ -1,0 +1,110 @@
+{
+  "engine": "PostgreSQL",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 9,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 2,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 9,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 17,
+        "distribute": 0,
+        "hash": 82966733,
+        "join": 82917590,
+        "scan": 135088,
+        "seek": 82696077,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(title)\n       1        17  INNER JOIN LOOP ON id = person_id\n       1        33  │└INNER JOIN LOOP ON id = keyword_id\n       1      1280  │ │└INNER JOIN LOOP ON id = person_role_id\n       1  41145539  │ │ │└INNER JOIN LOOP ON movie_id = movie_id AND movie_id = id AND (movie_id = id)\n       1    294672  │ │ │ │└INNER JOIN LOOP ON movie_id = id\n       1      4696  │ │ │ │ │└INNER JOIN LOOP ON id = kind_id\n       1     23557  │ │ │ │ │ │└INNER JOIN LOOP ON id = movie_id\n       1     85941  │ │ │ │ │ │ │└INNER JOIN LOOP ON id = subject_id\n     190    135086  │ │ │ │ │ │ │ │└INNER JOIN HASH ON status_id = id\n       1         2  │ │ │ │ │ │ │ │ │└TABLE SCAN comp_cast_type AS cct2 WHERE cct2.kind LIKE '%complete%'\n  135086    135086  │ │ │ │ │ │ │ │ TABLE SCAN complete_cast AS cc\n       2         2  │ │ │ │ │ │ │ TABLE SEEK comp_cast_type AS cct1 WHERE cct1.kind = 'cast'\n   85941     85941  │ │ │ │ │ │ TABLE SEEK title AS t WHERE t.production_year > 2000\n   23557     23557  │ │ │ │ │ TABLE SEEK kind_type AS kt WHERE kt.kind = 'movie'\n  216016    294674  │ │ │ │ TABLE SEEK movie_keyword AS mk\n11197536  41145051  │ │ │ TABLE SEEK cast_info AS ci\n41145539  41145539  │ │ TABLE SEEK char_name AS chn WHERE (chn.name NOT  LIKE '%Sherlock%') AND ((chn.name LIKE '%Tony%Stark%') OR (chn.name LIKE '%Iron%Man%'))\n    1280      1280  │ TABLE SEEK keyword AS k WHERE k.keyword IN('superhero','sequel','second-part','marvel-comics','based-on-comic','tv-special','fight','violence')\n      33        33  TABLE SEEK name AS n WHERE n.name LIKE '%Downey%Robert%'\n",
+      "sql": "SELECT MIN(t.title) AS complete_downey_ironman_movie\nFROM job.complete_cast AS cc,\n     job.comp_cast_type AS cct1,\n     job.comp_cast_type AS cct2,\n     job.char_name AS chn,\n     job.cast_info AS ci,\n     job.keyword AS k,\n     job.kind_type AS kt,\n     job.movie_keyword AS mk,\n     job.name AS n,\n     job.title AS t\nWHERE cct1.kind = 'cast'\n  AND cct2.kind LIKE '%complete%'\n  AND chn.name NOT LIKE '%Sherlock%'\n  AND (chn.name LIKE '%Tony%Stark%'\n       OR chn.name LIKE '%Iron%Man%')\n  AND k.keyword IN ('superhero',\n                    'sequel',\n                    'second-part',\n                    'marvel-comics',\n                    'based-on-comic',\n                    'tv-special',\n                    'fight',\n                    'violence')\n  AND kt.kind = 'movie'\n  AND n.name LIKE '%Downey%Robert%'\n  AND t.production_year > 2000\n  AND kt.id = t.kind_id\n  AND t.id = mk.movie_id\n  AND t.id = ci.movie_id\n  AND t.id = cc.movie_id\n  AND mk.movie_id = ci.movie_id\n  AND mk.movie_id = cc.movie_id\n  AND ci.movie_id = cc.movie_id\n  AND chn.id = ci.person_role_id\n  AND n.id = ci.person_id\n  AND k.id = mk.keyword_id\n  AND cct1.id = cc.subject_id\n  AND cct2.id = cc.status_id;\n",
+      "startTime": "2026-06-17T12:29:19.840723Z",
+      "status": "OK",
+      "timeMs": 7355.309
+    }
+  ],
+  "runtime": {
+    "avgMs": 7355.309,
+    "bestMs": 7355.309,
+    "maxMs": 7355.309,
+    "minMs": 7355.309,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 20B Analysis",
+    "displayName": "JOB-20B",
+    "name": "JOB-20B",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "18.2"
+}

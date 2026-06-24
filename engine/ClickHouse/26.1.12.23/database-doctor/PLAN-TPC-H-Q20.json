@@ -1,0 +1,109 @@
+{
+  "engine": "ClickHouse",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 908721,
+        "distribute": 0,
+        "hash": 800376,
+        "join": 552941,
+        "scan": 1720946,
+        "seek": 0,
+        "sort": 376
+      },
+      "plan": "Estimate    Actual  Operator\n       -      2224  SEQUENCE\n       -       376  ├─PROJECT s_name, s_address\n       -       376  │ SORT s_name\n       -       376  │ PROJECT s_name, s_address\n       -       376  │ PROJECT s_name, s_address\n       -       376  │ INNER JOIN HASH ON PROJECTION_443.s_nationkey = PROJECTION_440.n_nationkey\n       -         1  │ │└PROJECT n_nationkey\n       -         1  │ │ PROJECT n_nationkey\n       -         1  │ │ TABLE SCAN nation WHERE n_name = 'KENYA'\n       -     10000  │ PROJECT s_nationkey, s_name, s_address\n       -     10000  │ PROJECT s_nationkey, s_name, s_address\n       -     10000  │ TABLE SCAN supplier WHERE TRUE\n       -    541794  ├─PROJECT ps_suppkey\n       -    541794  │ FILTER ps_availqty > a10\n       -    542941  │ PROJECT a10, ps_suppkey, ps_availqty\n       -    542941  │ INNER JOIN HASH ON tuple(PROJECTION_453.l_partkey,PROJECTION_453.l_suppkey) = tuple(PROJECTION_450.ps_partkey,PROJECTION_450.ps_suppkey)\n       -    800000  │ │└PROJECT ps_partkey AS ps_partkey_right, ps_suppkey AS ps_suppkey_right, ps_availqty\n       -    800000  │ │ PROJECT ps_partkey, ps_suppkey, ps_availqty\n       -    800000  │ │ TABLE SCAN partsupp WHERE TRUE\n       -    542941  │ PROJECT ps_partkey, ps_suppkey, a10\n       -    542941  │ PROJECT l_partkey AS ps_partkey, l_suppkey AS ps_suppkey, 0.5 * a11 AS a10\n       -    542941  │ AGGREGATE SUM(l_quantity) AS a11 GROUP BY HASH l_partkey, l_suppkey\n       -    908721  │ PROJECT l_quantity, l_partkey, l_suppkey, l_shipdate, l_partkey, l_suppkey\n       -    908721  │ TABLE SCAN lineitem WHERE (l_shipdate >= '1993-01-01') AND (l_shipdate < '1994-01-01') AND (l_suppkey = l_suppkey) AND (l_partkey = l_partkey) AND TRUE\n       -      2224  └─PROJECT p_partkey\n       -      2224    PROJECT p_partkey\n       -      2224    TABLE SCAN part WHERE startsWith(p_name,'almond')\n",
+      "sql": "/* TPC-H Q20 */\nSELECT s_name,\n       s_address\nFROM tpch_sf1.supplier\nINNER JOIN tpch_sf1.nation\n    ON s_nationkey = n_nationkey\nWHERE s_suppkey IN (SELECT ps_suppkey\n                    FROM tpch_sf1.partsupp\n                    WHERE ps_partkey IN (SELECT p_partkey\n                                         FROM tpch_sf1.part AS p_inner\n                                         WHERE p_name LIKE 'almond%')\n                      AND ps_availqty > (SELECT 0.5 * SUM(l_quantity) AS qty\n                                         FROM tpch_sf1.lineitem as li_inner\n                                         WHERE l_partkey = ps_partkey\n                                           AND l_suppkey = ps_suppkey\n                                           AND l_shipdate >= '1993-01-01'\n                                           AND l_shipdate < '1994-01-01'))\n  AND n_name = 'KENYA'\nORDER BY s_name\n\n",
+      "startTime": "2026-06-23T11:15:13.411932Z",
+      "status": "OK",
+      "timeMs": 55.238
+    }
+  ],
+  "runtime": {
+    "avgMs": 55.238,
+    "bestMs": 55.238,
+    "maxMs": 55.238,
+    "minMs": 55.238,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "TPC-H Q20 Analysis",
+    "displayName": "TPCH-Q20",
+    "name": "PLAN-TPC-H-Q20",
+    "tags": [
+      "TPC-H"
+    ]
+  },
+  "version": "26.1.12.23"
+}

@@ -1,0 +1,89 @@
+QUERY id: 0
+  PROJECTION COLUMNS
+    l_returnflag String
+    l_linestatus String
+    sum_qty Decimal(38, 2)
+    sum_base_price Decimal(38, 2)
+    sum_disc_price Decimal(38, 4)
+    sum_charge Decimal(38, 6)
+    avg_qty Float64
+    avg_price Float64
+    avg_disc Float64
+    count_order UInt64
+  PROJECTION
+    LIST id: 1, nodes: 10
+      COLUMN id: 2, column_name: l_returnflag, result_type: String, source_id: 3
+      COLUMN id: 4, column_name: l_linestatus, result_type: String, source_id: 3
+      FUNCTION id: 5, function_name: sum, function_type: aggregate, result_type: Decimal(38, 2)
+        ARGUMENTS
+          LIST id: 6, nodes: 1
+            COLUMN id: 7, column_name: l_quantity, result_type: Decimal(15, 2), source_id: 3
+      FUNCTION id: 8, function_name: sum, function_type: aggregate, result_type: Decimal(38, 2)
+        ARGUMENTS
+          LIST id: 9, nodes: 1
+            COLUMN id: 10, column_name: l_extendedprice, result_type: Decimal(15, 2), source_id: 3
+      FUNCTION id: 11, function_name: sum, function_type: aggregate, result_type: Decimal(38, 4)
+        ARGUMENTS
+          LIST id: 12, nodes: 1
+            FUNCTION id: 13, function_name: multiply, function_type: ordinary, result_type: Decimal(18, 4)
+              ARGUMENTS
+                LIST id: 14, nodes: 2
+                  COLUMN id: 15, column_name: l_extendedprice, result_type: Decimal(15, 2), source_id: 3
+                  FUNCTION id: 16, function_name: minus, function_type: ordinary, result_type: Decimal(15, 2)
+                    ARGUMENTS
+                      LIST id: 17, nodes: 2
+                        CONSTANT id: 18, constant_value: UInt64_1, constant_value_type: UInt8
+                        COLUMN id: 19, column_name: l_discount, result_type: Decimal(15, 2), source_id: 3
+      FUNCTION id: 20, function_name: sum, function_type: aggregate, result_type: Decimal(38, 6)
+        ARGUMENTS
+          LIST id: 21, nodes: 1
+            FUNCTION id: 22, function_name: multiply, function_type: ordinary, result_type: Decimal(18, 6)
+              ARGUMENTS
+                LIST id: 23, nodes: 2
+                  FUNCTION id: 24, function_name: multiply, function_type: ordinary, result_type: Decimal(18, 4)
+                    ARGUMENTS
+                      LIST id: 25, nodes: 2
+                        COLUMN id: 26, column_name: l_extendedprice, result_type: Decimal(15, 2), source_id: 3
+                        FUNCTION id: 27, function_name: minus, function_type: ordinary, result_type: Decimal(15, 2)
+                          ARGUMENTS
+                            LIST id: 28, nodes: 2
+                              CONSTANT id: 29, constant_value: UInt64_1, constant_value_type: UInt8
+                              COLUMN id: 30, column_name: l_discount, result_type: Decimal(15, 2), source_id: 3
+                  FUNCTION id: 31, function_name: plus, function_type: ordinary, result_type: Decimal(15, 2)
+                    ARGUMENTS
+                      LIST id: 32, nodes: 2
+                        CONSTANT id: 33, constant_value: UInt64_1, constant_value_type: UInt8
+                        COLUMN id: 34, column_name: l_tax, result_type: Decimal(15, 2), source_id: 3
+      FUNCTION id: 35, function_name: avg, function_type: aggregate, result_type: Float64
+        ARGUMENTS
+          LIST id: 36, nodes: 1
+            COLUMN id: 37, column_name: l_quantity, result_type: Decimal(15, 2), source_id: 3
+      FUNCTION id: 38, function_name: avg, function_type: aggregate, result_type: Float64
+        ARGUMENTS
+          LIST id: 39, nodes: 1
+            COLUMN id: 40, column_name: l_extendedprice, result_type: Decimal(15, 2), source_id: 3
+      FUNCTION id: 41, function_name: avg, function_type: aggregate, result_type: Float64
+        ARGUMENTS
+          LIST id: 42, nodes: 1
+            COLUMN id: 43, column_name: l_discount, result_type: Decimal(15, 2), source_id: 3
+      FUNCTION id: 44, function_name: count, function_type: aggregate, result_type: UInt64
+  JOIN TREE
+    TABLE id: 3, alias: __table1, table_name: tpch_sf1.lineitem
+  WHERE
+    FUNCTION id: 45, function_name: lessOrEquals, function_type: ordinary, result_type: UInt8
+      ARGUMENTS
+        LIST id: 46, nodes: 2
+          COLUMN id: 47, column_name: l_shipdate, result_type: Date, source_id: 3
+          CONSTANT id: 48, constant_value: '1998-10-01', constant_value_type: String
+  GROUP BY
+    LIST id: 49, nodes: 2
+      COLUMN id: 50, column_name: l_returnflag, result_type: String, source_id: 3
+      COLUMN id: 51, column_name: l_linestatus, result_type: String, source_id: 3
+  ORDER BY
+    LIST id: 52, nodes: 2
+      SORT id: 53, sort_direction: ASCENDING, with_fill: 0
+        EXPRESSION l_returnflag
+          COLUMN id: 54, column_name: l_returnflag, result_type: String, source_id: 3
+      SORT id: 55, sort_direction: ASCENDING, with_fill: 0
+        EXPRESSION l_linestatus
+          COLUMN id: 56, column_name: l_linestatus, result_type: String, source_id: 3

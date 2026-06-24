@@ -1,0 +1,109 @@
+{
+  "engine": "SQL Server",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 1,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 1,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 2,
+          "+4x": 4,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 1,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 5,
+          "<16x": 1,
+          "=": 2,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 1,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 6001278,
+        "distribute": 0,
+        "hash": 162,
+        "join": 162,
+        "scan": 0,
+        "seek": 6001377,
+        "sort": 9
+      },
+      "plan": "Estimate    Actual  Operator\n      43         9  SORT o_totalprice, o_orderdate\n      43         9  INNER JOIN LOOP ON Bmk1006 = Bmk1006\n       1         9  │└TABLE SEEK customer\n      43         9  INNER JOIN LOOP ON o_custkey = c_custkey\n       1         9  │└TABLE SEEK customer\n      43         9  AGGREGATE SUM(l_quantity) AS Expr1013, o_custkey, o_orderkey, o_orderdate, o_totalprice GROUP BY HASH l_orderkey\n     172        63  INNER JOIN LOOP ON Bmk1000 = Bmk1000\n       1        63  │└TABLE SEEK lineitem\n     172        63  PROJECT BmkToPage Bmk1000 AS Expr1120\n     172        63  INNER JOIN LOOP ON l_orderkey = l_orderkey\n       4        63  │└TABLE SEEK lineitem\n      43         9  INNER JOIN LOOP ON Bmk1003 = Bmk1003\n       1         9  │└TABLE SEEK orders\n      43         9  PROJECT BmkToPage Bmk1003 AS Expr1117\n      43         9  INNER JOIN LOOP ON l_orderkey = o_orderkey\n       1         9  │└TABLE SEEK orders\n      43         9  FILTER Expr1012 > 314.00\n 1500000   1500000  AGGREGATE SUM(l_quantity) AS Expr1012 GROUP BY HASH l_orderkey\n 6001220   6001215  TABLE SEEK lineitem\n",
+      "sql": "/* TPC-H Q18 */\nSELECT c_name,\n       c_custkey,\n       o_orderkey,\n       o_orderdate,\n       o_totalprice,\n       SUM(l_quantity)\nFROM tpch_sf1.lineitem\nINNER JOIN tpch_sf1.orders\n    ON l_orderkey = o_orderkey\nINNER JOIN tpch_sf1.customer\n    ON o_custkey = c_custkey\nWHERE o_orderkey IN (SELECT l_orderkey\n                     FROM tpch_sf1.lineitem\n                     GROUP BY l_orderkey\n                     HAVING SUM(l_quantity) > 314)\nGROUP BY c_name,\n         c_custkey,\n         o_orderkey,\n         o_orderdate,\n         o_totalprice\nORDER BY o_totalprice DESC,\n         o_orderdate",
+      "startTime": "2026-06-22T16:16:21.683924Z",
+      "status": "OK",
+      "timeMs": 284.598
+    }
+  ],
+  "runtime": {
+    "avgMs": 284.598,
+    "bestMs": 284.598,
+    "maxMs": 284.598,
+    "minMs": 284.598,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "TPC-H Q18 Analysis",
+    "displayName": "TPCH-Q18",
+    "name": "PLAN-TPC-H-Q18",
+    "tags": [
+      "TPC-H"
+    ]
+  },
+  "version": "16.0.4236.2"
+}

@@ -1,0 +1,110 @@
+{
+  "engine": "DataFusion",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 1
+        },
+        "filter": {
+          "+2x": 1,
+          "+4x": 1,
+          "+8x": 1,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 2
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 1,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 1,
+          "=": 2,
+          ">16x": 2
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 3,
+          "=": 1,
+          ">16x": 3
+        },
+        "scan": {
+          "+2x": 2,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 7,
+          ">16x": 1
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 26,
+        "distribute": 1035108,
+        "hash": 29496353,
+        "join": 65162769,
+        "scan": 42399933,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  PROJECT of_person, biography_movie\n       1         1  AGGREGATE MIN(name), MIN(title)\n    6493        10  DISTRIBUTE GATHER\n    6493        10  AGGREGATE MIN(name), MIN(title)\n    6493        16  INNER JOIN HASH ON movie_id = id AND linked_movie_id = id\n    6493        46  │└DISTRIBUTE GATHER\n    6493        46  │ INNER JOIN HASH ON id = info_type_id\n      23         1  │ │└DISTRIBUTE GATHER\n      23         1  │ │ FILTER info = 'mini biography'\n     113       113  │ │ DISTRIBUTE ROUND ROBIN\n     113       113  │ │ TABLE SCAN info_type WHERE info = 'mini biography'\n    7058        46  │ INNER JOIN HASH ON id = person_id AND person_id = person_id AND person_id = person_id\n    7058     11752  │ │└DISTRIBUTE GATHER\n    7058     11752  │ │ INNER JOIN HASH ON person_id = id AND person_id = id\n    7058    348475  │ │ │└DISTRIBUTE GATHER\n    7058    348475  │ │ │ INNER JOIN HASH ON id = link_type_id\n       4         1  │ │ │ │└DISTRIBUTE GATHER\n       4         1  │ │ │ │ FILTER link = 'features'\n      18        18  │ │ │ │ DISTRIBUTE ROUND ROBIN\n      18        18  │ │ │ │ TABLE SCAN link_type WHERE link = 'features'\n   29997   1642879  │ │ │ PROJECT person_id, person_id, movie_id, linked_movie_id, link_type_id\n   29997   1642879  │ │ │ INNER JOIN HASH ON linked_movie_id = movie_id\n   29997     29997  │ │ │ │└TABLE SCAN movie_link WHERE ((link_type_id >= 9) AND (link_type_id <= 9)) AND link_type_id IN 9\n 1608530  27144680  │ │ │ INNER JOIN HASH ON person_id = person_id\n  180269    674692  │ │ │ │└DISTRIBUTE GATHER\n  180269    674692  │ │ │ │ FILTER name LIKE '%a%'\n  901343    901343  │ │ │ │ TABLE SCAN aka_name WHERE name LIKE '%a%'\n36244344  36244344  │ │ │ TABLE SCAN cast_info WHERE (((person_id >= 5) AND (person_id <= 4167489)) AND TRUE) AND (((movie_id >= 284) AND (movie_id <= 2524994)) AND TRUE)\n  833499     91976  │ │ FILTER name_pcode_cf LIKE 'D%' AND (gender = 'm')\n 4167491   3306735  │ │ TABLE SCAN name WHERE (name_pcode_cf LIKE 'D%' AND (gender = 'm')) AND ((((id >= 56) AND (id <= 4061723)) AND ((id >= 56) AND (id <= 4061723))) AND TRUE)\n  592733        25  │ FILTER note = 'Volker Boehm'\n 2963664    742814  │ TABLE SCAN person_info WHERE ((note = 'Volker Boehm') AND (((((person_id >= 341321) AND (person_id <= 432801)) AND ((person_id >= 341321) AND (person_id <= 432801))) AND ((person_id >= 341321) AND (person_id <= 432801))) AND TRUE)) AND (((info_type_id >= 19) AND (info_type_id <= 19)) AND info_type_id IN 19)\n   90297     38798  FILTER (production_year >= 1980) AND (production_year <= 1984)\n 2528312   1174569  TABLE SCAN title WHERE ((production_year >= 1980) AND (production_year <= 1984)) AND ((((id >= 1664924) AND (id <= 2423307)) AND ((id >= 1664924) AND (id <= 2423307))) AND struct(id,id) IN( < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , <...\n",
+      "sql": "SELECT MIN(n.name) AS of_person,\n       MIN(t.title) AS biography_movie\nFROM job.aka_name AS an,\n     job.cast_info AS ci,\n     job.info_type AS it,\n     job.link_type AS lt,\n     job.movie_link AS ml,\n     job.name AS n,\n     job.person_info AS pi,\n     job.title AS t\nWHERE an.name LIKE '%a%'\n  AND it.info ='mini biography'\n  AND lt.link ='features'\n  AND n.name_pcode_cf LIKE 'D%'\n  AND n.gender='m'\n  AND pi.note ='Volker Boehm'\n  AND t.production_year BETWEEN 1980 AND 1984\n  AND n.id = an.person_id\n  AND n.id = pi.person_id\n  AND ci.person_id = n.id\n  AND t.id = ci.movie_id\n  AND ml.linked_movie_id = t.id\n  AND lt.id = ml.link_type_id\n  AND it.id = pi.info_type_id\n  AND pi.person_id = an.person_id\n  AND pi.person_id = ci.person_id\n  AND an.person_id = ci.person_id\n  AND ci.movie_id = ml.linked_movie_id;\n",
+      "startTime": "2026-06-23T17:16:06.077892Z",
+      "status": "OK",
+      "timeMs": 195.149
+    }
+  ],
+  "runtime": {
+    "avgMs": 195.149,
+    "bestMs": 195.149,
+    "maxMs": 195.149,
+    "minMs": 195.149,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "iceberg",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 7B Analysis",
+    "displayName": "JOB-7B",
+    "name": "PLAN-JOB-7B",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "Apache DataFusion 54.0.0, aarch64 on linux"
+}

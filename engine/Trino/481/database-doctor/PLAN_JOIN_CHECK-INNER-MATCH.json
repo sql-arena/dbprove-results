@@ -1,0 +1,110 @@
+{
+  "engine": "Trino",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 3,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 6001216,
+        "distribute": 200001,
+        "hash": 6001215,
+        "join": 6001215,
+        "scan": 6201215,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  PROJECT count AS _col0, count_3 AS _col1\n       1         1  AGGREGATE COUNT(count_4) AS count, COUNT(count_5) AS count_3\n       -         1  DISTRIBUTE GATHER\n       -         1  AGGREGATE COUNT(l_partkey) AS count_4, COUNT(l_partkey) AS count_5\n       -   6001215  INNER JOIN HASH ON l_partkey = p_partkey\n  200000    200000  │└DISTRIBUTE GATHER\n  200000    200000  │ TABLE SCAN part\n 6001215   6001215  TABLE SCAN lineitem\n",
+      "sql": "SELECT COUNT(l.l_partkey), COUNT(p.p_partkey)\nFROM tpch_sf1.lineitem AS l\nJOIN tpch_sf1.part AS p\n  ON l.l_partkey = p.p_partkey;\n",
+      "startTime": "2026-06-23T11:49:42.087824Z",
+      "status": "OK",
+      "timeMs": 728.187
+    }
+  ],
+  "runtime": {
+    "avgMs": 728.187,
+    "bestMs": 728.187,
+    "maxMs": 728.187,
+    "minMs": 728.187,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "iceberg",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Count rows in the LINEITEM to PART inner join",
+    "displayName": "PLAN_JOIN_CHECK-INNER-MATCH",
+    "name": "PLAN_JOIN_CHECK-INNER-MATCH",
+    "tags": [
+      "PLAN_JOIN_CHECK",
+      "join"
+    ]
+  },
+  "version": "481"
+}

@@ -1,0 +1,110 @@
+{
+  "engine": "PostgreSQL",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 6,
+          "-8x": 0,
+          "<16x": 4,
+          "=": 3,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 2,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 13,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 4,
+        "distribute": 0,
+        "hash": 30899,
+        "join": 36431,
+        "scan": 2,
+        "seek": 29764,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(name), MIN(name), MIN(info), MIN(info), MIN(title), MIN(title)\n       1         4  INNER JOIN LOOP ON movie_id = movie_id AND (id = movie_id) AND (id = info_type_id) AND ((id = movie_id) AND (id = info_type_id))\n       1         4  │└INNER JOIN LOOP ON id = kind_id\n       1         4  │ │└INNER JOIN LOOP ON id = movie_id AND movie_id = id AND (movie_id = id)\n       1         4  │ │ │└INNER JOIN LOOP ON id = company_id\n       1         4  │ │ │ │└INNER JOIN LOOP ON movie_id = id\n       1         1  │ │ │ │ │└INNER JOIN LOOP ON id = kind_id\n       1         6  │ │ │ │ │ │└INNER JOIN LOOP ON id = linked_movie_id\n       2       477  │ │ │ │ │ │ │└INNER JOIN LOOP ON link_type_id = id\n       1         1  │ │ │ │ │ │ │ │└TABLE SEEK info_type AS it2 WHERE it2.info = 'rating'\n       2       477  │ │ │ │ │ │ │ INNER JOIN LOOP ON id = company_id\n     234      9674  │ │ │ │ │ │ │ │└INNER JOIN LOOP ON movie_id = movie_id AND movie_id = movie_id AND (movie_id = movie_id)\n      44      2064  │ │ │ │ │ │ │ │ │└INNER JOIN HASH ON info_type_id = id\n       1         1  │ │ │ │ │ │ │ │ │ │└TABLE SEEK info_type AS it1\n    4940      6192  │ │ │ │ │ │ │ │ │ INNER JOIN LOOP ON movie_id = movie_id\n    1666      2315  │ │ │ │ │ │ │ │ │ │└INNER JOIN LOOP ON link_type_id = id\n       1         2  │ │ │ │ │ │ │ │ │ │ │└TABLE SCAN link_type AS lt WHERE lt.link LIKE '%follow%'\n    3750      2316  │ │ │ │ │ │ │ │ │ │ TABLE SEEK movie_link AS ml\n    6945      6945  │ │ │ │ │ │ │ │ │ TABLE SEEK movie_info_idx AS mi_idx1\n   10320     10320  │ │ │ │ │ │ │ │ TABLE SEEK movie_companies AS mc1\n    9674      9674  │ │ │ │ │ │ │ TABLE SEEK company_name AS cn1 WHERE cn1.country_code = 'nl'\n     477       477  │ │ │ │ │ │ TABLE SEEK title AS t2 WHERE t2.production_year = 2007\n       6         6  │ │ │ │ │ TABLE SEEK kind_type AS kt2 WHERE kt2.kind = 'tv series'\n       5         4  │ │ │ │ TABLE SEEK movie_companies AS mc2\n       4         4  │ │ │ TABLE SEEK company_name AS cn2\n       4         4  │ │ TABLE SEEK title AS t1\n       4         4  │ TABLE SEEK kind_type AS kt1 WHERE kt1.kind = 'tv series'\n       4         8  TABLE SEEK movie_info_idx AS mi_idx2 WHERE mi_idx2.info < '3.0'\n",
+      "sql": "SELECT MIN(cn1.name) AS first_company,\n       MIN(cn2.name) AS second_company,\n       MIN(mi_idx1.info) AS first_rating,\n       MIN(mi_idx2.info) AS second_rating,\n       MIN(t1.title) AS first_movie,\n       MIN(t2.title) AS second_movie\nFROM job.company_name AS cn1,\n     job.company_name AS cn2,\n     job.info_type AS it1,\n     job.info_type AS it2,\n     job.kind_type AS kt1,\n     job.kind_type AS kt2,\n     job.link_type AS lt,\n     job.movie_companies AS mc1,\n     job.movie_companies AS mc2,\n     job.movie_info_idx AS mi_idx1,\n     job.movie_info_idx AS mi_idx2,\n     job.movie_link AS ml,\n     job.title AS t1,\n     job.title AS t2\nWHERE cn1.country_code = '[nl]'\n  AND it1.info = 'rating'\n  AND it2.info = 'rating'\n  AND kt1.kind IN ('tv series')\n  AND kt2.kind IN ('tv series')\n  AND lt.link LIKE '%follow%'\n  AND mi_idx2.info < '3.0'\n  AND t2.production_year = 2007\n  AND lt.id = ml.link_type_id\n  AND t1.id = ml.movie_id\n  AND t2.id = ml.linked_movie_id\n  AND it1.id = mi_idx1.info_type_id\n  AND t1.id = mi_idx1.movie_id\n  AND kt1.id = t1.kind_id\n  AND cn1.id = mc1.company_id\n  AND t1.id = mc1.movie_id\n  AND ml.movie_id = mi_idx1.movie_id\n  AND ml.movie_id = mc1.movie_id\n  AND mi_idx1.movie_id = mc1.movie_id\n  AND it2.id = mi_idx2.info_type_id\n  AND t2.id = mi_idx2.movie_id\n  AND kt2.id = t2.kind_id\n  AND cn2.id = mc2.company_id\n  AND t2.id = mc2.movie_id\n  AND ml.linked_movie_id = mi_idx2.movie_id\n  AND ml.linked_movie_id = mc2.movie_id\n  AND mi_idx2.movie_id = mc2.movie_id;\n",
+      "startTime": "2026-06-23T15:47:40.344842Z",
+      "status": "OK",
+      "timeMs": 95.168
+    }
+  ],
+  "runtime": {
+    "avgMs": 95.168,
+    "bestMs": 95.168,
+    "maxMs": 95.168,
+    "minMs": 95.168,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 33B Analysis",
+    "displayName": "JOB-33B",
+    "name": "PLAN-JOB-33B",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "14.23"
+}

@@ -1,0 +1,110 @@
+{
+  "engine": "DataFusion",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 1
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 3,
+          ">16x": 2
+        },
+        "hash": {
+          "+2x": 1,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 2,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 3,
+          ">16x": 4
+        },
+        "join": {
+          "+2x": 1,
+          "+4x": 0,
+          "+8x": 1,
+          "-2x": 3,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 5
+        },
+        "scan": {
+          "+2x": 1,
+          "+4x": 1,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 10,
+          ">16x": 1
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 638,
+        "distribute": 485383,
+        "hash": 570660,
+        "join": 7100214,
+        "scan": 10668397,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  PROJECT movie_kind, complete_us_internet_movie\n       1         1  AGGREGATE MIN(kind), MIN(title)\n    5905        10  DISTRIBUTE GATHER\n    5905        10  AGGREGATE MIN(kind), MIN(title)\n    5905       628  INNER JOIN HASH ON id = kind_id\n       2         4  │└DISTRIBUTE GATHER\n       2         4  │ FILTER kind IN('movie','tv movie','video movie','video game')\n       7         7  │ DISTRIBUTE ROUND ROBIN\n       7         7  │ TABLE SCAN kind_type WHERE kind IN('movie','tv movie','video movie','video game')\n   20669       628  INNER JOIN HASH ON movie_id = id AND movie_id = id AND movie_id = id AND movie_id = id\n   20669       628  │└DISTRIBUTE GATHER\n   20669       628  │ INNER JOIN HASH ON keyword_id = id\n   20669       628  │ │└DISTRIBUTE GATHER\n   20669       628  │ │ INNER JOIN HASH ON movie_id = movie_id AND movie_id = movie_id AND movie_id = movie_id\n   11541         7  │ │ │└DISTRIBUTE GATHER\n   11541         7  │ │ │ INNER JOIN HASH ON id = info_type_id\n      23         1  │ │ │ │└DISTRIBUTE GATHER\n      23         1  │ │ │ │ FILTER info = 'release dates'\n     113       113  │ │ │ │ DISTRIBUTE ROUND ROBIN\n     113       113  │ │ │ │ TABLE SCAN info_type WHERE info = 'release dates'\n   55198         7  │ │ │ INNER JOIN HASH ON movie_id = movie_id AND movie_id = movie_id\n   47000    105289  │ │ │ │└DISTRIBUTE GATHER\n   47000    105289  │ │ │ │ INNER JOIN HASH ON id = company_type_id\n       4         4  │ │ │ │ │└TABLE SCAN company_type\n   47000    105289  │ │ │ │ INNER JOIN HASH ON id = company_id\n   47000     84843  │ │ │ │ │└DISTRIBUTE GATHER\n   47000     84843  │ │ │ │ │ FILTER country_code = 'us'\n  234997    234997  │ │ │ │ │ TABLE SCAN company_name WHERE country_code = 'us'\n   69772    227682  │ │ │ │ INNER JOIN HASH ON movie_id = movie_id\n   67543     24592  │ │ │ │ │└DISTRIBUTE GATHER\n   67543     24592  │ │ │ │ │ INNER JOIN HASH ON id = status_id\n       1         1  │ │ │ │ │ │└DISTRIBUTE GATHER\n       1         1  │ │ │ │ │ │ FILTER kind = 'complete+verified'\n       4         4  │ │ │ │ │ │ DISTRIBUTE ROUND ROBIN\n       4         4  │ │ │ │ │ │ TABLE SCAN comp_cast_type WHERE kind = 'complete+verified'\n  135086    135086  │ │ │ │ │ DISTRIBUTE ROUND ROBIN\n  135086    135086  │ │ │ │ │ TABLE SCAN complete_cast WHERE ((status_id >= 4) AND (status_id <= 4)) AND status_id IN 4\n 2609129   2609129  │ │ │ │ TABLE SCAN movie_companies WHERE ((((movie_id >= 608) AND (movie_id <= 2528176)) AND TRUE) AND (((company_id >= 1) AND (company_id <= 234997)) AND TRUE)) AND (((company_type_id >= 1) AND (company_type_id <= 4)) AND company_type_id IN(1,2,3,4))\n 2967144      1783  │ │ │ FILTER (note LIKE '%internet%' AND info IS NOT NULL) AND (info LIKE 'USA:% 199%' OR info LIKE 'USA:% 200%')\n14835720   3212639  │ │ │ TABLE SCAN movie_info WHERE (((note LIKE '%internet%' AND info IS NOT NULL) AND (info LIKE 'USA:% 199%' OR info LIKE 'USA:% 200%')) AND ((((movie_id >= 608) AND (movie_id <= 2525620)) AND ((movie_id >= 608) AND (movie_id <= 2525620))) AND TRUE)) AND (((info_type_id >= 16) AND (info_type_id <= 16)) AND info_type_id IN 16)\n 4523930   3167679  │ │ TABLE SCAN movie_keyword WHERE ((((movie_id >= 1834062) AND (movie_id <= 2349630)) AND ((movie_id >= 1834062) AND (movie_id <= 2349630))) AND ((movie_id >= 1834062) AND (movie_id <= 2349630))) AND struct(movie_id,movie_id,movie_id) IN( < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > )\n  134170    134170  │ DISTRIBUTE ROUND ROBIN\n  134170    134170  │ TABLE SCAN keyword WHERE ((id >= 72) AND (id <= 124590)) AND TRUE\n  523722    718761  FILTER production_year > 1990\n 2528312   1174569  TABLE SCAN title WHERE ((production_year > 1990) AND ((((((id >= 1834062) AND (id <= 2349630)) AND ((id >= 1834062) AND (id <= 2349630))) AND ((id >= 1834062) AND (id <= 2349630))) AND ((id >= 1834062) AND (id <= 2349630))) AND struct(id,id,id,id) IN( < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < exp...\n",
+      "sql": "SELECT MIN(kt.kind) AS movie_kind,\n       MIN(t.title) AS complete_us_internet_movie\nFROM job.complete_cast AS cc,\n     job.comp_cast_type AS cct1,\n     job.company_name AS cn,\n     job.company_type AS ct,\n     job.info_type AS it1,\n     job.keyword AS k,\n     job.kind_type AS kt,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.movie_keyword AS mk,\n     job.title AS t\nWHERE cct1.kind = 'complete+verified'\n  AND cn.country_code = '[us]'\n  AND it1.info = 'release dates'\n  AND kt.kind IN ('movie',\n                  'tv movie',\n                  'video movie',\n                  'video game')\n  AND mi.note LIKE '%internet%'\n  AND mi.info IS NOT NULL\n  AND (mi.info LIKE 'USA:% 199%'\n       OR mi.info LIKE 'USA:% 200%')\n  AND t.production_year > 1990\n  AND kt.id = t.kind_id\n  AND t.id = mi.movie_id\n  AND t.id = mk.movie_id\n  AND t.id = mc.movie_id\n  AND t.id = cc.movie_id\n  AND mk.movie_id = mi.movie_id\n  AND mk.movie_id = mc.movie_id\n  AND mk.movie_id = cc.movie_id\n  AND mi.movie_id = mc.movie_id\n  AND mi.movie_id = cc.movie_id\n  AND mc.movie_id = cc.movie_id\n  AND k.id = mk.keyword_id\n  AND it1.id = mi.info_type_id\n  AND cn.id = mc.company_id\n  AND ct.id = mc.company_type_id\n  AND cct1.id = cc.status_id;\n",
+      "startTime": "2026-06-23T16:59:42.909836Z",
+      "status": "OK",
+      "timeMs": 803.163
+    }
+  ],
+  "runtime": {
+    "avgMs": 803.163,
+    "bestMs": 803.163,
+    "maxMs": 803.163,
+    "minMs": 803.163,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "iceberg",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 23C Analysis",
+    "displayName": "JOB-23C",
+    "name": "PLAN-JOB-23C",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "Apache DataFusion 54.0.0, aarch64 on linux"
+}

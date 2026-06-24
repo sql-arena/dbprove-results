@@ -1,0 +1,123 @@
+QUERY id: 0
+  PROJECTION COLUMNS
+    s_suppkey Int32
+    s_name String
+    s_address String
+    s_phone String
+    total_revenue Decimal(38, 4)
+  PROJECTION
+    LIST id: 1, nodes: 5
+      COLUMN id: 2, column_name: s_suppkey, result_type: Int32, source_id: 3
+      COLUMN id: 4, column_name: s_name, result_type: String, source_id: 3
+      COLUMN id: 5, column_name: s_address, result_type: String, source_id: 3
+      COLUMN id: 6, column_name: s_phone, result_type: String, source_id: 3
+      COLUMN id: 7, column_name: total_revenue, result_type: Decimal(38, 4), source_id: 8
+  JOIN TREE
+    JOIN id: 9, strictness: ALL, kind: INNER
+      LEFT TABLE EXPRESSION
+        TABLE id: 3, alias: __table1, table_name: tpch_sf1.supplier
+      RIGHT TABLE EXPRESSION
+        QUERY id: 8, alias: __table2, is_subquery: 1, is_cte: 1, cte_name: revenue
+          PROJECTION COLUMNS
+            supplier_no Int32
+            total_revenue Decimal(38, 4)
+          PROJECTION
+            LIST id: 10, nodes: 2
+              COLUMN id: 11, column_name: l_suppkey, result_type: Int32, source_id: 12
+              FUNCTION id: 13, function_name: sum, function_type: aggregate, result_type: Decimal(38, 4)
+                ARGUMENTS
+                  LIST id: 14, nodes: 1
+                    FUNCTION id: 15, function_name: multiply, function_type: ordinary, result_type: Decimal(18, 4)
+                      ARGUMENTS
+                        LIST id: 16, nodes: 2
+                          COLUMN id: 17, column_name: l_extendedprice, result_type: Decimal(15, 2), source_id: 12
+                          FUNCTION id: 18, function_name: minus, function_type: ordinary, result_type: Decimal(15, 2)
+                            ARGUMENTS
+                              LIST id: 19, nodes: 2
+                                CONSTANT id: 20, constant_value: UInt64_1, constant_value_type: UInt8
+                                COLUMN id: 21, column_name: l_discount, result_type: Decimal(15, 2), source_id: 12
+          JOIN TREE
+            TABLE id: 12, alias: __table3, table_name: tpch_sf1.lineitem
+          WHERE
+            FUNCTION id: 22, function_name: and, function_type: ordinary, result_type: UInt8
+              ARGUMENTS
+                LIST id: 23, nodes: 2
+                  FUNCTION id: 24, function_name: greaterOrEquals, function_type: ordinary, result_type: UInt8
+                    ARGUMENTS
+                      LIST id: 25, nodes: 2
+                        COLUMN id: 26, column_name: l_shipdate, result_type: Date, source_id: 12
+                        CONSTANT id: 27, constant_value: '1997-09-01', constant_value_type: String
+                  FUNCTION id: 28, function_name: less, function_type: ordinary, result_type: UInt8
+                    ARGUMENTS
+                      LIST id: 29, nodes: 2
+                        COLUMN id: 30, column_name: l_shipdate, result_type: Date, source_id: 12
+                        CONSTANT id: 31, constant_value: '1997-12-01', constant_value_type: String
+          GROUP BY
+            LIST id: 32, nodes: 1
+              COLUMN id: 33, column_name: l_suppkey, result_type: Int32, source_id: 12
+      JOIN EXPRESSION
+        FUNCTION id: 34, function_name: equals, function_type: ordinary, result_type: UInt8
+          ARGUMENTS
+            LIST id: 35, nodes: 2
+              COLUMN id: 36, column_name: s_suppkey, result_type: Int32, source_id: 3
+              COLUMN id: 37, column_name: supplier_no, result_type: Int32, source_id: 8
+  WHERE
+    FUNCTION id: 38, function_name: equals, function_type: ordinary, result_type: Nullable(UInt8)
+      ARGUMENTS
+        LIST id: 39, nodes: 2
+          COLUMN id: 40, column_name: total_revenue, result_type: Decimal(38, 4), source_id: 8
+          CONSTANT id: 41, constant_value: Decimal128_'1743799.3741', constant_value_type: Nullable(Decimal(38, 4))
+            EXPRESSION
+              QUERY id: 42, is_subquery: 1
+                PROJECTION COLUMNS
+                  MAX(total_revenue) Decimal(38, 4)
+                PROJECTION
+                  LIST id: 43, nodes: 1
+                    FUNCTION id: 44, function_name: max, function_type: aggregate, result_type: Decimal(38, 4)
+                      ARGUMENTS
+                        LIST id: 45, nodes: 1
+                          COLUMN id: 46, column_name: total_revenue, result_type: Decimal(38, 4), source_id: 47
+                JOIN TREE
+                  QUERY id: 47, is_subquery: 1, is_cte: 1, cte_name: revenue
+                    PROJECTION COLUMNS
+                      supplier_no Int32
+                      total_revenue Decimal(38, 4)
+                    PROJECTION
+                      LIST id: 48, nodes: 2
+                        COLUMN id: 49, column_name: l_suppkey, result_type: Int32, source_id: 50
+                        FUNCTION id: 51, function_name: sum, function_type: aggregate, result_type: Decimal(38, 4)
+                          ARGUMENTS
+                            LIST id: 52, nodes: 1
+                              FUNCTION id: 53, function_name: multiply, function_type: ordinary, result_type: Decimal(18, 4)
+                                ARGUMENTS
+                                  LIST id: 54, nodes: 2
+                                    COLUMN id: 55, column_name: l_extendedprice, result_type: Decimal(15, 2), source_id: 50
+                                    FUNCTION id: 56, function_name: minus, function_type: ordinary, result_type: Decimal(15, 2)
+                                      ARGUMENTS
+                                        LIST id: 57, nodes: 2
+                                          CONSTANT id: 58, constant_value: UInt64_1, constant_value_type: UInt8
+                                          COLUMN id: 59, column_name: l_discount, result_type: Decimal(15, 2), source_id: 50
+                    JOIN TREE
+                      TABLE id: 50, table_name: tpch_sf1.lineitem
+                    WHERE
+                      FUNCTION id: 60, function_name: and, function_type: ordinary, result_type: UInt8
+                        ARGUMENTS
+                          LIST id: 61, nodes: 2
+                            FUNCTION id: 62, function_name: greaterOrEquals, function_type: ordinary, result_type: UInt8
+                              ARGUMENTS
+                                LIST id: 63, nodes: 2
+                                  COLUMN id: 64, column_name: l_shipdate, result_type: Date, source_id: 50
+                                  CONSTANT id: 65, constant_value: '1997-09-01', constant_value_type: String
+                            FUNCTION id: 66, function_name: less, function_type: ordinary, result_type: UInt8
+                              ARGUMENTS
+                                LIST id: 67, nodes: 2
+                                  COLUMN id: 68, column_name: l_shipdate, result_type: Date, source_id: 50
+                                  CONSTANT id: 69, constant_value: '1997-12-01', constant_value_type: String
+                    GROUP BY
+                      LIST id: 70, nodes: 1
+                        COLUMN id: 71, column_name: l_suppkey, result_type: Int32, source_id: 50
+  ORDER BY
+    LIST id: 72, nodes: 1
+      SORT id: 73, sort_direction: ASCENDING, with_fill: 0
+        EXPRESSION s_suppkey
+          COLUMN id: 74, column_name: s_suppkey, result_type: Int32, source_id: 3

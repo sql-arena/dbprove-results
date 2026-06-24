@@ -1,0 +1,110 @@
+{
+  "engine": "ClickHouse",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 0,
+        "distribute": 0,
+        "hash": 9610569,
+        "join": 3,
+        "scan": 9610570,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       -         1  PROJECT a1 AS link_type, a2 AS first_movie, a3 AS second_movie\n       -         1  AGGREGATE MIN(link) AS a1, MIN(title_left) AS a2, MIN(title_right) AS a3\n       -         0  PROJECT link, title, title\n       -         0  PROJECT title, link, title\n       -         0  INNER JOIN HASH ON PROJECTION_4021.linked_movie_id = PROJECTION_4018.id\n       -   2528312  │└PROJECT id, title AS title_right\n       -   2528312  │ PROJECT title, id\n       -   2528312  │ TABLE SCAN title\n       -         0  PROJECT linked_movie_id, title AS title_left, link\n       -         0  PROJECT title, linked_movie_id, link\n       -         0  INNER JOIN HASH ON PROJECTION_4027.link_type_id = PROJECTION_4024.id\n       -        18  │└PROJECT id, link\n       -        18  │ PROJECT link, id\n       -        18  │ TABLE SCAN link_type\n       -         0  PROJECT link_type_id, title, linked_movie_id\n       -         0  PROJECT title, link_type_id, linked_movie_id\n       -         0  INNER JOIN HASH ON PROJECTION_4033.id = PROJECTION_4030.movie_id\n       -     29997  │└PROJECT movie_id, link_type_id, linked_movie_id\n       -     29997  │ PROJECT movie_id, link_type_id, linked_movie_id\n       -     29997  │ TABLE SCAN movie_link\n       -         1  PROJECT id, title\n       -         1  PROJECT title, id\n       -         1  INNER JOIN HASH ON tuple(PROJECTION_4039.movie_id,PROJECTION_4039.movie_id) = tuple(PROJECTION_4036.id,PROJECTION_4036.id)\n       -   2528312  │└PROJECT id, title\n       -   2528312  │ PROJECT title, id\n       -   2528312  │ TABLE SCAN title\n       -         1  PROJECT movie_id\n       -         1  PROJECT movie_id\n       -         1  INNER JOIN HASH ON PROJECTION_4045.id = PROJECTION_4042.keyword_id\n       -   4523930  │└PROJECT keyword_id, movie_id\n       -   4523930  │ PROJECT keyword_id, movie_id\n       -   4523930  │ TABLE SCAN movie_keyword\n       -         1  PROJECT id\n       -         1  PROJECT id\n       -         1  TABLE SCAN keyword WHERE keyword = '10,000-mile-club'\n",
+      "sql": "SELECT MIN(lt.link) AS link_type,\n       MIN(t1.title) AS first_movie,\n       MIN(t2.title) AS second_movie\nFROM job.keyword AS k,\n     job.link_type AS lt,\n     job.movie_keyword AS mk,\n     job.movie_link AS ml,\n     job.title AS t1,\n     job.title AS t2\nWHERE k.keyword ='10,000-mile-club'\n  AND mk.keyword_id = k.id\n  AND t1.id = mk.movie_id\n  AND ml.movie_id = t1.id\n  AND ml.linked_movie_id = t2.id\n  AND lt.id = ml.link_type_id\n  AND mk.movie_id = t1.id;\n",
+      "startTime": "2026-06-17T13:57:44.800834Z",
+      "status": "OK",
+      "timeMs": 1546.02
+    }
+  ],
+  "runtime": {
+    "avgMs": 1546.02,
+    "bestMs": 1546.02,
+    "maxMs": 1546.02,
+    "minMs": 1546.02,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 32A Analysis",
+    "displayName": "JOB-32A",
+    "name": "JOB-32A",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "26.1.12.23"
+}

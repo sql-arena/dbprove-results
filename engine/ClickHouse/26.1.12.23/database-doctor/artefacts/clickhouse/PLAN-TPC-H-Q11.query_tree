@@ -1,0 +1,117 @@
+QUERY id: 0
+  PROJECTION COLUMNS
+    ps_partkey Int32
+    v Decimal(38, 2)
+  PROJECTION
+    LIST id: 1, nodes: 2
+      COLUMN id: 2, column_name: ps_partkey, result_type: Int32, source_id: 3
+      FUNCTION id: 4, function_name: sum, function_type: aggregate, result_type: Decimal(38, 2)
+        ARGUMENTS
+          LIST id: 5, nodes: 1
+            FUNCTION id: 6, function_name: multiply, function_type: ordinary, result_type: Decimal(15, 2)
+              ARGUMENTS
+                LIST id: 7, nodes: 2
+                  COLUMN id: 8, column_name: ps_supplycost, result_type: Decimal(15, 2), source_id: 3
+                  COLUMN id: 9, column_name: ps_availqty, result_type: Int32, source_id: 3
+  JOIN TREE
+    JOIN id: 10, strictness: ALL, kind: INNER
+      LEFT TABLE EXPRESSION
+        JOIN id: 11, strictness: ALL, kind: INNER
+          LEFT TABLE EXPRESSION
+            TABLE id: 3, alias: __table1, table_name: tpch_sf1.partsupp
+          RIGHT TABLE EXPRESSION
+            TABLE id: 12, alias: __table2, table_name: tpch_sf1.supplier
+          JOIN EXPRESSION
+            FUNCTION id: 13, function_name: equals, function_type: ordinary, result_type: UInt8
+              ARGUMENTS
+                LIST id: 14, nodes: 2
+                  COLUMN id: 15, column_name: ps_suppkey, result_type: Int32, source_id: 3
+                  COLUMN id: 16, column_name: s_suppkey, result_type: Int32, source_id: 12
+      RIGHT TABLE EXPRESSION
+        TABLE id: 17, alias: __table3, table_name: tpch_sf1.nation
+      JOIN EXPRESSION
+        FUNCTION id: 18, function_name: equals, function_type: ordinary, result_type: UInt8
+          ARGUMENTS
+            LIST id: 19, nodes: 2
+              COLUMN id: 20, column_name: s_nationkey, result_type: Int32, source_id: 12
+              COLUMN id: 21, column_name: n_nationkey, result_type: Int32, source_id: 17
+  WHERE
+    FUNCTION id: 22, function_name: equals, function_type: ordinary, result_type: UInt8
+      ARGUMENTS
+        LIST id: 23, nodes: 2
+          COLUMN id: 24, column_name: n_name, result_type: String, source_id: 17
+          CONSTANT id: 25, constant_value: 'JAPAN', constant_value_type: String
+  GROUP BY
+    LIST id: 26, nodes: 1
+      COLUMN id: 27, column_name: ps_partkey, result_type: Int32, source_id: 3
+  HAVING
+    FUNCTION id: 28, function_name: greater, function_type: ordinary, result_type: Nullable(UInt8)
+      ARGUMENTS
+        LIST id: 29, nodes: 2
+          FUNCTION id: 30, function_name: sum, function_type: aggregate, result_type: Decimal(38, 2)
+            ARGUMENTS
+              LIST id: 31, nodes: 1
+                FUNCTION id: 32, function_name: multiply, function_type: ordinary, result_type: Decimal(15, 2)
+                  ARGUMENTS
+                    LIST id: 33, nodes: 2
+                      COLUMN id: 34, column_name: ps_supplycost, result_type: Decimal(15, 2), source_id: 3
+                      COLUMN id: 35, column_name: ps_availqty, result_type: Int32, source_id: 3
+          CONSTANT id: 36, constant_value: Float64_7589177.37, constant_value_type: Nullable(Float64)
+            EXPRESSION
+              QUERY id: 37, is_subquery: 1
+                PROJECTION COLUMNS
+                  multiply(SUM(multiply(ps_supplycost, ps_availqty)), 0.0001) Float64
+                PROJECTION
+                  LIST id: 38, nodes: 1
+                    FUNCTION id: 39, function_name: multiply, function_type: ordinary, result_type: Float64
+                      ARGUMENTS
+                        LIST id: 40, nodes: 2
+                          FUNCTION id: 41, function_name: sum, function_type: aggregate, result_type: Decimal(38, 2)
+                            ARGUMENTS
+                              LIST id: 42, nodes: 1
+                                FUNCTION id: 43, function_name: multiply, function_type: ordinary, result_type: Decimal(15, 2)
+                                  ARGUMENTS
+                                    LIST id: 44, nodes: 2
+                                      COLUMN id: 45, column_name: ps_supplycost, result_type: Decimal(15, 2), source_id: 46
+                                      COLUMN id: 47, column_name: ps_availqty, result_type: Int32, source_id: 46
+                          CONSTANT id: 48, constant_value: Float64_0.0001, constant_value_type: Float64
+                JOIN TREE
+                  JOIN id: 49, strictness: ALL, kind: INNER
+                    LEFT TABLE EXPRESSION
+                      JOIN id: 50, strictness: ALL, kind: INNER
+                        LEFT TABLE EXPRESSION
+                          TABLE id: 46, table_name: tpch_sf1.partsupp
+                        RIGHT TABLE EXPRESSION
+                          TABLE id: 51, table_name: tpch_sf1.supplier
+                        JOIN EXPRESSION
+                          FUNCTION id: 52, function_name: equals, function_type: ordinary, result_type: UInt8
+                            ARGUMENTS
+                              LIST id: 53, nodes: 2
+                                COLUMN id: 54, column_name: ps_suppkey, result_type: Int32, source_id: 46
+                                COLUMN id: 55, column_name: s_suppkey, result_type: Int32, source_id: 51
+                    RIGHT TABLE EXPRESSION
+                      TABLE id: 56, table_name: tpch_sf1.nation
+                    JOIN EXPRESSION
+                      FUNCTION id: 57, function_name: equals, function_type: ordinary, result_type: UInt8
+                        ARGUMENTS
+                          LIST id: 58, nodes: 2
+                            COLUMN id: 59, column_name: s_nationkey, result_type: Int32, source_id: 51
+                            COLUMN id: 60, column_name: n_nationkey, result_type: Int32, source_id: 56
+                WHERE
+                  FUNCTION id: 61, function_name: equals, function_type: ordinary, result_type: UInt8
+                    ARGUMENTS
+                      LIST id: 62, nodes: 2
+                        COLUMN id: 63, column_name: n_name, result_type: String, source_id: 56
+                        CONSTANT id: 64, constant_value: 'JAPAN', constant_value_type: String
+  ORDER BY
+    LIST id: 65, nodes: 1
+      SORT id: 66, sort_direction: DESCENDING, with_fill: 0
+        EXPRESSION v
+          FUNCTION id: 67, function_name: sum, function_type: aggregate, result_type: Decimal(38, 2)
+            ARGUMENTS
+              LIST id: 68, nodes: 1
+                FUNCTION id: 69, function_name: multiply, function_type: ordinary, result_type: Decimal(15, 2)
+                  ARGUMENTS
+                    LIST id: 70, nodes: 2
+                      COLUMN id: 71, column_name: ps_supplycost, result_type: Decimal(15, 2), source_id: 3
+                      COLUMN id: 72, column_name: ps_availqty, result_type: Int32, source_id: 3

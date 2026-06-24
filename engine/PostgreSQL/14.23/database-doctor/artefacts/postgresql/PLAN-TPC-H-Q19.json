@@ -1,0 +1,233 @@
+[
+  {
+    "Execution Time": 240.501,
+    "Plan": {
+      "Actual Loops": 1,
+      "Actual Rows": 1,
+      "Actual Startup Time": 231.178,
+      "Actual Total Time": 240.474,
+      "Async Capable": false,
+      "Node Type": "Aggregate",
+      "Output": [
+        "sum((lineitem.l_extendedprice * ('1'::numeric - lineitem.l_discount)))"
+      ],
+      "Parallel Aware": false,
+      "Partial Mode": "Simple",
+      "Plan Rows": 1,
+      "Plan Width": 32,
+      "Plans": [
+        {
+          "Actual Loops": 1,
+          "Actual Rows": 127,
+          "Actual Startup Time": 24.338,
+          "Actual Total Time": 240.393,
+          "Async Capable": false,
+          "Node Type": "Gather",
+          "Output": [
+            "lineitem.l_extendedprice",
+            "lineitem.l_discount"
+          ],
+          "Parallel Aware": false,
+          "Parent Relationship": "Outer",
+          "Plan Rows": 1,
+          "Plan Width": 36,
+          "Plans": [
+            {
+              "Actual Loops": 5,
+              "Actual Rows": 25,
+              "Actual Startup Time": 9.017,
+              "Actual Total Time": 224.29,
+              "Async Capable": false,
+              "Inner Unique": true,
+              "Join Type": "Inner",
+              "Node Type": "Nested Loop",
+              "Output": [
+                "lineitem.l_extendedprice",
+                "lineitem.l_discount"
+              ],
+              "Parallel Aware": false,
+              "Parent Relationship": "Outer",
+              "Plan Rows": 1,
+              "Plan Width": 36,
+              "Plans": [
+                {
+                  "Actual Loops": 5,
+                  "Actual Rows": 26502,
+                  "Actual Startup Time": 0.013,
+                  "Actual Total Time": 163.442,
+                  "Alias": "lineitem",
+                  "Async Capable": false,
+                  "Filter": "((lineitem.l_shipmode = ANY ('{AIR,\"AIR REG\"}'::text[])) AND (lineitem.l_shipinstruct = 'DELIVER IN PERSON'::text) AND (((lineitem.l_quantity >= '5'::numeric) AND (lineitem.l_quantity <= '15'::numeric)) OR ((lineitem.l_quantity >= '15'::numeric) AND (lineitem.l_quantity <= '25'::numeric)) OR ((lineitem.l_quantity >= '25'::numeric) AND (lineitem.l_quantity <= '35'::numeric))))",
+                  "Node Type": "Seq Scan",
+                  "Output": [
+                    "lineitem.l_orderkey",
+                    "lineitem.l_partkey",
+                    "lineitem.l_suppkey",
+                    "lineitem.l_linenumber",
+                    "lineitem.l_quantity",
+                    "lineitem.l_extendedprice",
+                    "lineitem.l_discount",
+                    "lineitem.l_tax",
+                    "lineitem.l_returnflag",
+                    "lineitem.l_linestatus",
+                    "lineitem.l_shipdate",
+                    "lineitem.l_commitdate",
+                    "lineitem.l_receiptdate",
+                    "lineitem.l_shipinstruct",
+                    "lineitem.l_shipmode",
+                    "lineitem.l_comment"
+                  ],
+                  "Parallel Aware": true,
+                  "Parent Relationship": "Outer",
+                  "Plan Rows": 1,
+                  "Plan Width": 58,
+                  "Relation Name": "lineitem",
+                  "Rows Removed by Filter": 1173741,
+                  "Schema": "tpch_sf1",
+                  "Startup Cost": 0.0,
+                  "Total Cost": 143553.11,
+                  "Workers": [
+                    {
+                      "Actual Loops": 1,
+                      "Actual Rows": 27431,
+                      "Actual Startup Time": 0.014,
+                      "Actual Total Time": 159.787,
+                      "Worker Number": 0
+                    },
+                    {
+                      "Actual Loops": 1,
+                      "Actual Rows": 25428,
+                      "Actual Startup Time": 0.009,
+                      "Actual Total Time": 164.132,
+                      "Worker Number": 1
+                    },
+                    {
+                      "Actual Loops": 1,
+                      "Actual Rows": 26149,
+                      "Actual Startup Time": 0.022,
+                      "Actual Total Time": 165.126,
+                      "Worker Number": 2
+                    },
+                    {
+                      "Actual Loops": 1,
+                      "Actual Rows": 26373,
+                      "Actual Startup Time": 0.011,
+                      "Actual Total Time": 165.058,
+                      "Worker Number": 3
+                    }
+                  ]
+                },
+                {
+                  "Actual Loops": 132509,
+                  "Actual Rows": 0,
+                  "Actual Startup Time": 0.002,
+                  "Actual Total Time": 0.002,
+                  "Alias": "part",
+                  "Async Capable": false,
+                  "Filter": "((part.p_size >= 1) AND (((part.p_brand = 'Brand#11'::text) AND (part.p_container = ANY ('{\"SM CASE\",\"SM BOX\",\"SM PACK\",\"SM PKG\"}'::text[])) AND (part.p_size <= 5)) OR ((part.p_brand = 'Brand#22'::text) AND (part.p_container = ANY ('{\"MED BAG\",\"MED BOX\",\"MED PKG\",\"MED PACK\"}'::text[])) AND (part.p_size <= 10)) OR ((part.p_brand = 'Brand#33'::text) AND (part.p_container = ANY ('{\"LG CASE\",\"LG BOX\",\"LG PACK\",\"LG PKG\"}'::text[])) AND (part.p_size <= 15))) AND (((part.p_brand = 'Brand#11'::text) AND (part.p_container = ANY ('{\"SM CASE\",\"SM BOX\",\"SM PACK\",\"SM PKG\"}'::text[])) AND (lineitem.l_quantity >= '5'::numeric) AND (lineitem.l_quantity <= '15'::numeric) AND (part.p_size <= 5)) OR ((part.p_brand = 'Brand#22'::text) AND (part.p_container = ANY ('{\"MED BAG\",\"MED BOX\",\"MED PKG\",\"MED PACK\"}'::text[])) AND (lineitem.l_quantity >= '15'::numeric) AND (lineitem.l_quantity <= '25'::numeric) AND (part.p_size <= 10)) OR ((part.p_brand = 'Brand#33'::text) AND (part.p_container = ANY ('{\"LG CASE\",\"LG BOX\",\"LG PACK\",\"LG PKG\"}'::text[])) AND (lineitem.l_quantity >= '25'::numeric) AND (lineitem.l_quantity <= '35'::numeric) AND (part.p_size <= 15))))",
+                  "Index Cond": "(part.p_partkey = lineitem.l_partkey)",
+                  "Index Name": "pk_part",
+                  "Node Type": "Index Scan",
+                  "Output": [
+                    "part.p_partkey",
+                    "part.p_name",
+                    "part.p_mfgr",
+                    "part.p_brand",
+                    "part.p_type",
+                    "part.p_size",
+                    "part.p_container",
+                    "part.p_retailprice",
+                    "part.p_comment"
+                  ],
+                  "Parallel Aware": false,
+                  "Parent Relationship": "Inner",
+                  "Plan Rows": 1,
+                  "Plan Width": 25,
+                  "Relation Name": "part",
+                  "Rows Removed by Filter": 1,
+                  "Rows Removed by Index Recheck": 0,
+                  "Scan Direction": "Forward",
+                  "Schema": "tpch_sf1",
+                  "Startup Cost": 0.42,
+                  "Total Cost": 2.72,
+                  "Workers": [
+                    {
+                      "Actual Loops": 27431,
+                      "Actual Rows": 0,
+                      "Actual Startup Time": 0.002,
+                      "Actual Total Time": 0.002,
+                      "Worker Number": 0
+                    },
+                    {
+                      "Actual Loops": 25428,
+                      "Actual Rows": 0,
+                      "Actual Startup Time": 0.002,
+                      "Actual Total Time": 0.002,
+                      "Worker Number": 1
+                    },
+                    {
+                      "Actual Loops": 26149,
+                      "Actual Rows": 0,
+                      "Actual Startup Time": 0.002,
+                      "Actual Total Time": 0.002,
+                      "Worker Number": 2
+                    },
+                    {
+                      "Actual Loops": 26373,
+                      "Actual Rows": 0,
+                      "Actual Startup Time": 0.002,
+                      "Actual Total Time": 0.002,
+                      "Worker Number": 3
+                    }
+                  ]
+                }
+              ],
+              "Startup Cost": 0.42,
+              "Total Cost": 143555.84,
+              "Workers": [
+                {
+                  "Actual Loops": 1,
+                  "Actual Rows": 36,
+                  "Actual Startup Time": 0.117,
+                  "Actual Total Time": 222.764,
+                  "Worker Number": 0
+                },
+                {
+                  "Actual Loops": 1,
+                  "Actual Rows": 27,
+                  "Actual Startup Time": 9.279,
+                  "Actual Total Time": 222.043,
+                  "Worker Number": 1
+                },
+                {
+                  "Actual Loops": 1,
+                  "Actual Rows": 18,
+                  "Actual Startup Time": 6.927,
+                  "Actual Total Time": 222.844,
+                  "Worker Number": 2
+                },
+                {
+                  "Actual Loops": 1,
+                  "Actual Rows": 23,
+                  "Actual Startup Time": 4.601,
+                  "Actual Total Time": 222.998,
+                  "Worker Number": 3
+                }
+              ]
+            }
+          ],
+          "Single Copy": false,
+          "Startup Cost": 1000.42,
+          "Total Cost": 144555.94,
+          "Workers Launched": 4,
+          "Workers Planned": 4
+        }
+      ],
+      "Startup Cost": 144555.95,
+      "Strategy": "Plain",
+      "Total Cost": 144555.96
+    },
+    "Planning Time": 0.132,
+    "Triggers": []
+  }
+]

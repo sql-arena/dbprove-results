@@ -1,0 +1,109 @@
+{
+  "engine": "ClickHouse",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 3935,
+        "distribute": 0,
+        "hash": 4421148,
+        "join": 14146834,
+        "scan": 14614119,
+        "seek": 0,
+        "sort": 396
+      },
+      "plan": "Estimate    Actual  Operator\n       -       396  SEQUENCE\n       -     73048  ├─MATERIALISE AS m_SaveSubqueryResultToBuffer_82\n       -     73048  │ PROJECT l_orderkey, l_suppkey, l_receiptdate, l_commitdate, o_orderstatus, s_name, n_name\n       -     73048  │ PROJECT l_orderkey, l_suppkey, l_receiptdate, l_commitdate, o_orderstatus, s_name, n_name\n       -     73048  │ INNER JOIN HASH ON PROJECTION_492.s_suppkey = PROJECTION_483.l_suppkey\n       -   1828911  │ │└PROJECT l_suppkey, l_orderkey, l_receiptdate, l_commitdate, o_orderstatus\n       -   1828911  │ │ PROJECT l_orderkey, l_suppkey, l_receiptdate, l_commitdate, o_orderstatus\n       -   1828911  │ │ INNER JOIN HASH ON PROJECTION_489.l_orderkey = PROJECTION_486.o_orderkey\n       -    729413  │ │ │└PROJECT o_orderkey, o_orderstatus\n       -    729413  │ │ │ PROJECT o_orderkey, o_orderstatus\n       -    729413  │ │ │ TABLE SCAN orders WHERE o_orderstatus = 'F'\n       -   3793296  │ │ PROJECT l_orderkey, l_suppkey, l_receiptdate, l_commitdate\n       -   3793296  │ │ PROJECT l_orderkey, l_commitdate, l_receiptdate, l_suppkey\n       -   3793296  │ │ TABLE SCAN lineitem WHERE l_receiptdate > l_commitdate\n       -       396  │ PROJECT s_suppkey, s_name, n_name\n       -       396  │ PROJECT s_name, s_suppkey, n_name\n       -       396  │ INNER JOIN HASH ON PROJECTION_498.s_nationkey = PROJECTION_495.n_nationkey\n       -         1  │ │└PROJECT n_nationkey, n_name\n       -         1  │ │ PROJECT n_nationkey, n_name\n       -         1  │ │ TABLE SCAN nation WHERE n_name = 'GERMANY'\n       -     10000  │ PROJECT s_nationkey, s_name, s_suppkey\n       -     10000  │ PROJECT s_name, s_suppkey, s_nationkey\n       -     10000  │ TABLE SCAN supplier\n       -     70401  ├─MATERIALISE AS m_SaveSubqueryResultToBuffer_75\n       -     70401  │ PROJECT l_orderkey, l_suppkey, l_receiptdate, l_commitdate, o_orderstatus, s_name, n_name\n       -     70401  │ PROJECT l_orderkey, l_suppkey, l_receiptdate, l_commitdate, o_orderstatus, s_name, n_name\n       -     70401  │ RIGHT SEMI INNER JOIN HASH ON PROJECTION_476.l_orderkey = FILTER_501.l_orderkey\n       -     73048  │ │└PROJECT l_orderkey AS l_orderkey_right, l_suppkey AS l_suppkey_right, l_receiptdate, l_commitdate, o_orderstatus, s_name, n_name\n       -     73048  │ │ PROJECT l_orderkey, l_suppkey, n_name, l_commitdate, l_receiptdate, o_orderstatus, s_name\n       -     73048  │ │ SCAN MATERIALISED SaveSubqueryResultToBuffer_82\n       -    291808  │ FILTER l_suppkey_left <> l_suppkey_right\n       -    364891  │ PROJECT l_suppkey, l_orderkey, l_suppkey\n       -    364891  │ INNER JOIN HASH ON PROJECTION_506.l_orderkey = PROJECTION_504.l_orderkey\n       -     73048  │ │└PROJECT l_orderkey AS l_orderkey_right, l_suppkey AS l_suppkey_right\n       -     73048  │ │ SCAN MATERIALISED SaveSubqueryResultToBuffer_82\n       -   6001215  │ PROJECT l_orderkey AS l_orderkey_left, l_suppkey AS l_suppkey_left\n       -   6001215  │ PROJECT l_orderkey, l_suppkey\n       -   6001215  │ TABLE SCAN lineitem\n       -       396  └─PROJECT s_name, a1 AS numwait\n       -       396    SORT a1, s_name\n       -       396    PROJECT a1, s_name\n       -       396    AGGREGATE COUNT() AS a1 GROUP BY HASH s_name\n       -      3935    PROJECT s_name\n       -      3935    PROJECT s_name\n       -      3935    RIGHT ANTI JOIN HASH ON PROJECTION_469.l_orderkey = FILTER_509.l_orderkey\n       -     70401    │└PROJECT l_orderkey_right, l_suppkey_right, s_name\n       -     70401    │ PROJECT l_orderkey_right, l_suppkey_right, s_name\n       -     70401    │ SCAN MATERIALISED SaveSubqueryResultToBuffer_75\n       -    184171    FILTER l_suppkey_left <> l_suppkey_right\n       -    254590    PROJECT l_suppkey, l_orderkey, l_suppkey\n       -    254590    INNER JOIN HASH ON PROJECTION_514.l_orderkey = PROJECTION_512.l_orderkey\n       -     70401    │└PROJECT l_orderkey AS l_orderkey_right, l_suppkey AS l_suppkey_right\n       -     70401    │ SCAN MATERIALISED SaveSubqueryResultToBuffer_75\n       -   3793296    PROJECT l_orderkey AS l_orderkey_left, l_suppkey AS l_suppkey_left, l_commitdate, l_receiptdate\n       -   3793296    PROJECT l_commitdate, l_receiptdate, l_orderkey, l_suppkey\n       -   3793296    TABLE SCAN lineitem WHERE l_receiptdate > l_commitdate\n",
+      "sql": "/* TPC-H Q21 */\nSELECT s_name, COUNT(*) AS numwait\nFROM tpch_sf1.lineitem l1\nINNER JOIN tpch_sf1.orders\n    ON l1.l_orderkey = o_orderkey\nINNER JOIN tpch_sf1.supplier\n    ON l1.l_suppkey = s_suppkey\nINNER JOIN tpch_sf1.nation\n    ON s_nationkey = n_nationkey\nWHERE o_orderstatus = 'F'\n  AND l1.l_receiptdate > l1.l_commitdate\n  AND EXISTS (SELECT 1\n              FROM tpch_sf1.lineitem l2\n              WHERE l2.l_orderkey = l1.l_orderkey\n                AND l2.l_suppkey <> l1.l_suppkey)\n  AND NOT EXISTS (SELECT 1\n                  FROM tpch_sf1.lineitem l3\n                  WHERE l3.l_orderkey = l1.l_orderkey\n                    AND l3.l_suppkey <> l1.l_suppkey\n                    AND l3.l_receiptdate\n                      > l3.l_commitdate)\n  AND n_name = 'GERMANY'\nGROUP BY s_name\nORDER BY numwait DESC,\n         s_name\n",
+      "startTime": "2026-06-23T11:15:14.924478Z",
+      "status": "OK",
+      "timeMs": 180.013
+    }
+  ],
+  "runtime": {
+    "avgMs": 180.013,
+    "bestMs": 180.013,
+    "maxMs": 180.013,
+    "minMs": 180.013,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "TPC-H Q21 Analysis",
+    "displayName": "TPCH-Q21",
+    "name": "PLAN-TPC-H-Q21",
+    "tags": [
+      "TPC-H"
+    ]
+  },
+  "version": "26.1.12.23"
+}

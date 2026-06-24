@@ -1,0 +1,109 @@
+{
+  "engine": "ClickHouse",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 6001752,
+        "distribute": 0,
+        "hash": 6001413,
+        "join": 206029,
+        "scan": 12002628,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       -         1  PROJECT a2 / 7. AS avg_yearly\n       -         1  AGGREGATE SUM(l_extendedprice) AS a2\n       -       537  PROJECT l_extendedprice\n       -       537  FILTER l_quantity < a8\n       -      6029  PROJECT a8, l_extendedprice, l_quantity\n       -      6029  INNER JOIN HASH ON PROJECTION_386.p_partkey = PROJECTION_383.l_partkey\n       -   6001215  │└PROJECT l_partkey, l_extendedprice, l_quantity\n       -   6001215  │ PROJECT l_extendedprice, l_partkey, l_quantity\n       -   6001215  │ TABLE SCAN lineitem\n       -       198  PROJECT p_partkey, a8\n       -       198  PROJECT p_partkey, a8\n       -       198  INNER JOIN HASH ON PROJECTION_392.l_partkey = PROJECTION_389.p_partkey\n       -       198  │└PROJECT p_partkey AS p_partkey_right\n       -       198  │ PROJECT p_partkey\n       -       198  │ TABLE SCAN part WHERE (p_brand = 'Brand#13') AND (p_container = 'MED CAN')\n       -    200000  PROJECT p_partkey, a8\n       -    200000  PROJECT 0.2 * a9 AS a8, l_partkey AS p_partkey\n       -    200000  AGGREGATE AVG(l_quantity) AS a9 GROUP BY HASH l_partkey\n       -   6001215  PROJECT l_quantity, l_partkey, l_partkey\n       -   6001215  PROJECT l_quantity, l_partkey, l_partkey\n       -   6001215  TABLE SCAN lineitem WHERE l_partkey = l_partkey\n",
+      "sql": "/* TPC-H Q17 */\nSELECT SUM(l_extendedprice) / 7.0 AS avg_yearly\nFROM tpch_sf1.lineitem\nINNER JOIN tpch_sf1.part\n    ON l_partkey = p_partkey\nWHERE p_brand = 'Brand#13'\n  AND p_container = 'MED CAN'\n  AND l_quantity < (SELECT 0.2 * AVG(l_quantity) AS l_avg\n                    FROM tpch_sf1.lineitem li\n                    WHERE l_partkey = p_partkey)",
+      "startTime": "2026-06-23T11:15:04.977901Z",
+      "status": "OK",
+      "timeMs": 183.795
+    }
+  ],
+  "runtime": {
+    "avgMs": 183.795,
+    "bestMs": 183.795,
+    "maxMs": 183.795,
+    "minMs": 183.795,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "TPC-H Q17 Analysis",
+    "displayName": "TPCH-Q17",
+    "name": "PLAN-TPC-H-Q17",
+    "tags": [
+      "TPC-H"
+    ]
+  },
+  "version": "26.1.12.23"
+}

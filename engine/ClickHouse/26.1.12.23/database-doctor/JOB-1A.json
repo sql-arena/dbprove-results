@@ -1,0 +1,110 @@
+{
+  "engine": "ClickHouse",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 142,
+        "distribute": 0,
+        "hash": 58046,
+        "join": 3937254,
+        "scan": 3937238,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       -         1  PROJECT a1 AS production_note, a2 AS movie_title, a3 AS movie_year\n       -         1  AGGREGATE MIN(note) AS a1, MIN(title) AS a2, MIN(production_year) AS a3\n       -       142  PROJECT note, title, production_year\n       -       142  PROJECT note, title, production_year\n       -       142  INNER JOIN HASH ON tuple(PROJECTION_1689.movie_id,PROJECTION_1689.id) = tuple(PROJECTION_1680.movie_id,PROJECTION_1680.movie_id)\n       -     28657  │└PROJECT movie_id AS movie_id_right, note\n       -     28657  │ PROJECT note, movie_id\n       -     28657  │ INNER JOIN HASH ON PROJECTION_1686.id = PROJECTION_1683.company_type_id\n       -     28889  │ │└PROJECT company_type_id, note, movie_id\n       -     28889  │ │ PROJECT company_type_id, note, movie_id\n       -     28889  │ │ TABLE SCAN movie_companies WHERE notLike(note,'%(as Metro-Goldwyn-Mayer Pictures)%') AND (note LIKE '%(co-production)%' OR note LIKE '%(presents)%')\n       -         1  │ PROJECT id\n       -         1  │ PROJECT id\n       -         1  │ TABLE SCAN company_type WHERE kind = 'production companies'\n       -       250  PROJECT movie_id AS movie_id_left, id, title, production_year\n       -       250  PROJECT movie_id, title, production_year, id\n       -       250  INNER JOIN HASH ON PROJECTION_1701.id = PROJECTION_1692.movie_id\n       -       250  │└PROJECT movie_id\n       -       250  │ PROJECT movie_id\n       -       250  │ INNER JOIN HASH ON PROJECTION_1698.info_type_id = PROJECTION_1695.id\n       -         1  │ │└PROJECT id\n       -         1  │ │ PROJECT id\n       -         1  │ │ TABLE SCAN info_type WHERE info = 'top 250 rank'\n       -   1380035  │ PROJECT info_type_id, movie_id\n       -   1380035  │ PROJECT movie_id, info_type_id\n       -   1380035  │ TABLE SCAN movie_info_idx\n       -   2528312  PROJECT id, title, production_year\n       -   2528312  PROJECT title, production_year, id\n       -   2528312  TABLE SCAN title\n",
+      "sql": "SELECT MIN(mc.note) AS production_note,\n       MIN(t.title) AS movie_title,\n       MIN(t.production_year) AS movie_year\nFROM job.company_type AS ct,\n     job.info_type AS it,\n     job.movie_companies AS mc,\n     job.movie_info_idx AS mi_idx,\n     job.title AS t\nWHERE ct.kind = 'production companies'\n  AND it.info = 'top 250 rank'\n  AND mc.note NOT LIKE '%(as Metro-Goldwyn-Mayer Pictures)%'\n  AND (mc.note LIKE '%(co-production)%'\n       OR mc.note LIKE '%(presents)%')\n  AND ct.id = mc.company_type_id\n  AND t.id = mc.movie_id\n  AND t.id = mi_idx.movie_id\n  AND mc.movie_id = mi_idx.movie_id\n  AND it.id = mi_idx.info_type_id;\n",
+      "startTime": "2026-06-17T13:07:46.299233Z",
+      "status": "OK",
+      "timeMs": 675.449
+    }
+  ],
+  "runtime": {
+    "avgMs": 675.449,
+    "bestMs": 675.449,
+    "maxMs": 675.449,
+    "minMs": 675.449,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 1A Analysis",
+    "displayName": "JOB-1A",
+    "name": "JOB-1A",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "26.1.12.23"
+}

@@ -1,0 +1,109 @@
+{
+  "engine": "PostgreSQL",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 2,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 4,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 71640,
+        "distribute": 0,
+        "hash": 71635,
+        "join": 71636,
+        "scan": 71635,
+        "seek": 71636,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE (100.00 * SUM(CASE WHEN (p_type LIKE 'PROMO%') THEN (l_extendedprice * ('1' - l_discount)) ELSE '0' END)) / SUM(l_extendedprice * ('1' - l_discount))\n       5         5  AGGREGATE PARTIAL SUM(CASE WHEN (p_type LIKE 'PROMO%') THEN (l_extendedprice * ('1' - l_discount)) ELSE '0' END), PARTIAL SUM(l_extendedprice * ('1' - l_discount))\n   37510     71635  INNER JOIN LOOP ON p_partkey = l_partkey\n   37510     71635  │└TABLE SCAN lineitem AS lineitem WHERE (l_shipdate >= '1996-02-01') AND (l_shipdate < '1996-03-01')\n   71636     71636  TABLE SEEK part AS part\n",
+      "sql": "/* TPC-H Q14 */\nSELECT 100.00 * SUM(CASE\n                        WHEN p_type LIKE 'PROMO%'\n                            THEN l_extendedprice * (1 - l_discount)\n                        ELSE 0\n    END) / SUM(l_extendedprice * (1 - l_discount)) AS promo_revenue\nFROM tpch_sf1.lineitem\nINNER JOIN tpch_sf1.part\n    ON l_partkey = p_partkey\nWHERE l_shipdate >= '1996-02-01'\n  AND l_shipdate < '1996-03-01'",
+      "startTime": "2026-06-23T12:47:48.434998Z",
+      "status": "OK",
+      "timeMs": 140.503
+    }
+  ],
+  "runtime": {
+    "avgMs": 140.503,
+    "bestMs": 140.503,
+    "maxMs": 140.503,
+    "minMs": 140.503,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "TPC-H Q14 Analysis",
+    "displayName": "TPCH-Q14",
+    "name": "PLAN-TPC-H-Q14",
+    "tags": [
+      "TPC-H"
+    ]
+  },
+  "version": "14.23"
+}

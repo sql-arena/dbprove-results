@@ -1,0 +1,110 @@
+{
+  "engine": "PostgreSQL",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 2,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 4,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 8,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 11,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 37037,
+        "distribute": 0,
+        "hash": 2211378,
+        "join": 5247754,
+        "scan": 1380038,
+        "seek": 2112631,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(info), MIN(info), MIN(title)\n       3         3  AGGREGATE PARTIAL MIN(info), PARTIAL MIN(info), PARTIAL MIN(title)\n      12     37034  INNER JOIN HASH ON info_type_id = id\n       3         3  │└TABLE SEEK info_type AS it2\n    3984    516327  INNER JOIN LOOP ON movie_id = id\n     126     16470  │└INNER JOIN LOOP ON id = company_id\n     966    100870  │ │└INNER JOIN HASH ON company_type_id = id\n       1         1  │ │ │└TABLE SCAN company_type AS ct WHERE ct.kind = 'production companies'\n   11595    773085  │ │ INNER JOIN LOOP ON movie_id = id\n     727     69960  │ │ │└INNER JOIN HASH ON kind_id = id\n       1         1  │ │ │ │└TABLE SCAN kind_type AS kt WHERE kt.kind = 'movie'\n   15267    459924  │ │ │ INNER JOIN LOOP ON id = movie_id\n    5089    153308  │ │ │ │└INNER JOIN HASH ON info_type_id = id\n       3         3  │ │ │ │ │└TABLE SEEK info_type AS it\n 1725045   1380036  │ │ │ │ TABLE SCAN movie_info_idx AS miidx\n  459925    459925  │ │ │ TABLE SEEK title AS t\n 1049400    839520  │ │ TABLE SEEK movie_companies AS mc\n  302610    302610  │ TABLE SEEK company_name AS cn WHERE cn.country_code = 'de'\n  625860    510570  TABLE SEEK movie_info AS mi\n",
+      "sql": "SELECT MIN(mi.info) AS release_date,\n       MIN(miidx.info) AS rating,\n       MIN(t.title) AS german_movie\nFROM job.company_name AS cn,\n     job.company_type AS ct,\n     job.info_type AS it,\n     job.info_type AS it2,\n     job.kind_type AS kt,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.movie_info_idx AS miidx,\n     job.title AS t\nWHERE cn.country_code ='[de]'\n  AND ct.kind ='production companies'\n  AND it.info ='rating'\n  AND it2.info ='release dates'\n  AND kt.kind ='movie'\n  AND mi.movie_id = t.id\n  AND it2.id = mi.info_type_id\n  AND kt.id = t.kind_id\n  AND mc.movie_id = t.id\n  AND cn.id = mc.company_id\n  AND ct.id = mc.company_type_id\n  AND miidx.movie_id = t.id\n  AND it.id = miidx.info_type_id\n  AND mi.movie_id = miidx.movie_id\n  AND mi.movie_id = mc.movie_id\n  AND miidx.movie_id = mc.movie_id;\n",
+      "startTime": "2026-06-23T15:42:17.162206Z",
+      "status": "OK",
+      "timeMs": 1446.94
+    }
+  ],
+  "runtime": {
+    "avgMs": 1446.94,
+    "bestMs": 1446.94,
+    "maxMs": 1446.94,
+    "minMs": 1446.94,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 13A Analysis",
+    "displayName": "JOB-13A",
+    "name": "PLAN-JOB-13A",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "14.23"
+}

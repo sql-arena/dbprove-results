@@ -1,0 +1,109 @@
+{
+  "engine": "SQL Server",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 1,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 1,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 1,
+          "+8x": 1,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 30857,
+        "distribute": 0,
+        "hash": 30837,
+        "join": 30837,
+        "scan": 59799,
+        "seek": 0,
+        "sort": 20
+      },
+      "plan": "Estimate    Actual  Operator\n       2         2  AGGREGATE SUM(partialagg1010) AS Expr1006, SUM(partialagg1011) AS Expr1007 GROUP BY SORT l_shipmode\n      10        20  SORT l_shipmode\n      10        20  AGGREGATE SUM(Expr1008) AS partialagg1010, SUM(Expr1009) AS partialagg1011 GROUP BY HASH l_shipmode\n  316752     30837  INNER JOIN HASH ON o_orderkey = l_orderkey\n  316752     30837  │└TABLE SCAN lineitem WHERE (l_receiptdate >= '1994-01-01' AND l_receiptdate < '1995-01-01' AND l_commitdate < l_receiptdate AND l_shipdate < l_commitdate) AND (l_shipmode = 'AIR' OR l_shipmode = 'TRUCK')\n  150000     28962  PROJECT CASE WHEN o_orderpriority = '1-URGENT' OR o_orderpriority = '2-HIGH' THEN 1 ELSE 0 END AS Expr1008, CASE WHEN o_orderpriority <> '1-URGENT' AND o_orderpriority <> '2-HIGH' THEN 1 ELSE 0 END AS Expr1009\n  150000     28962  TABLE SCAN orders WHERE BLOOM(o_orderkey)\n",
+      "sql": "/* TPC-H Q12 */\nSELECT l_shipmode,\n       SUM(CASE\n               WHEN o_orderpriority = '1-URGENT'\n                   OR o_orderpriority = '2-HIGH'\n                   THEN 1\n               ELSE 0\n           END) AS high_line_count,\n       SUM(CASE\n               WHEN o_orderpriority <> '1-URGENT'\n                   AND o_orderpriority <> '2-HIGH'\n                   THEN 1\n               ELSE 0\n           END) AS low_line_count\nFROM tpch_sf1.lineitem\nINNER JOIN tpch_sf1.orders\n    ON o_orderkey = l_orderkey\nWHERE l_shipmode IN ('AIR', 'TRUCK')\n  AND l_commitdate < l_receiptdate\n  AND l_shipdate < l_commitdate\n  AND l_receiptdate >= '1994-01-01'\n  AND l_receiptdate < '1995-01-01'\nGROUP BY l_shipmode\nORDER BY l_shipmode\n\n\n",
+      "startTime": "2026-06-22T17:08:06.072953Z",
+      "status": "OK",
+      "timeMs": 182.294
+    }
+  ],
+  "runtime": {
+    "avgMs": 182.294,
+    "bestMs": 182.294,
+    "maxMs": 182.294,
+    "minMs": 182.294,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "TPC-H Q12 Analysis",
+    "displayName": "TPCH-Q12",
+    "name": "PLAN-TPC-H-Q12",
+    "tags": [
+      "TPC-H"
+    ]
+  },
+  "version": "16.0.4236.2"
+}

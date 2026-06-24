@@ -1,0 +1,110 @@
+{
+  "engine": "DuckDB",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 2,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 4,
+          ">16x": 5
+        },
+        "hash": {
+          "+2x": 1,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 1,
+          "<16x": 11,
+          "=": 0,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 13,
+          "=": 0,
+          ">16x": 1
+        },
+        "scan": {
+          "+2x": 2,
+          "+4x": 1,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 6,
+          ">16x": 5
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 8373,
+        "distribute": 0,
+        "hash": 3580313,
+        "join": 2022014,
+        "scan": 961741,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       -         1  AGGREGATE MIN(#0), MIN(#1), MIN(#2)\n       0      8373  PROJECT name, info, title\n       0      8373  INNER JOIN HASH ON id = keyword_id\n       0   1151351  │└INNER JOIN HASH ON movie_id = id\n       0     11455  │ │└INNER JOIN HASH ON id = info_type_id\n       0     12681  │ │ │└INNER JOIN HASH ON movie_id = id\n       0     12856  │ │ │ │└INNER JOIN HASH ON id = company_type_id\n       0     12856  │ │ │ │ │└INNER JOIN HASH ON id = status_id\n       0     18121  │ │ │ │ │ │└INNER JOIN HASH ON id = subject_id\n       0     22710  │ │ │ │ │ │ │└INNER JOIN HASH ON id = company_id\n       1     23710  │ │ │ │ │ │ │ │└INNER JOIN HASH ON movie_id = id\n       7     10771  │ │ │ │ │ │ │ │ │└INNER JOIN HASH ON kind_id = id\n       1         2  │ │ │ │ │ │ │ │ │ │└FILTER (kind = 'movie') OR (kind = 'episode')\n       7         7  │ │ │ │ │ │ │ │ │ │ TABLE SCAN kind_type WHERE kind IN('movie','episode')\n      54     11792  │ │ │ │ │ │ │ │ │ INNER JOIN HASH ON id = movie_id\n     265     94130  │ │ │ │ │ │ │ │ │ │└INNER JOIN HASH ON movie_id = movie_id\n    4885    454188  │ │ │ │ │ │ │ │ │ │ │└INNER JOIN HASH ON info_type_id = id\n       2         1  │ │ │ │ │ │ │ │ │ │ │ │└FILTER id >= 99\n       2         1  │ │ │ │ │ │ │ │ │ │ │ │ TABLE SCAN info_type WHERE info = 'rating'\n  276007    454188  │ │ │ │ │ │ │ │ │ │ │ FILTER movie_id BETWEEN 285 AND 2525745\n  276007    454230  │ │ │ │ │ │ │ │ │ │ │ TABLE SCAN movie_info_idx WHERE info < '8.5'\n  135086    132439  │ │ │ │ │ │ │ │ │ │ FILTER movie_id <= 2525745\n  135086    132439  │ │ │ │ │ │ │ │ │ │ TABLE SCAN complete_cast WHERE movie_id <= 2525793\n  505662      8894  │ │ │ │ │ │ │ │ │ FILTER id BETWEEN 285 AND 2525745\n  505662      8895  │ │ │ │ │ │ │ │ │ TABLE SCAN title WHERE production_year > 2005\n  521825     20255  │ │ │ │ │ │ │ │ FILTER movie_id >= 285\n  521825     20255  │ │ │ │ │ │ │ │ TABLE SCAN movie_companies WHERE ( NOT contains(note,'(USA)')) AND (note LIKE '%(200%)%')\n   46999      1723  │ │ │ │ │ │ │ TABLE SCAN company_name WHERE country_code != 'us'\n       1         1  │ │ │ │ │ │ FILTER id <= 2\n       1         1  │ │ │ │ │ │ TABLE SCAN comp_cast_type WHERE kind = 'cast'\n       1         1  │ │ │ │ │ FILTER id >= 3\n       1         1  │ │ │ │ │ TABLE SCAN comp_cast_type WHERE kind = 'complete'\n       4         1  │ │ │ │ TABLE SCAN company_type WHERE id <= 2\n 2967144      2019  │ │ │ FILTER movie_id BETWEEN 285 AND 2525745\n 2967144      2019  │ │ │ FILTER IN ...\n14835720    137690  │ │ │ INNER JOIN HASH ON info = #0\n       0        10  │ │ │ │└SCAN MATERIALISED\n14835720    137690  │ │ │ TABLE SCAN movie_info WHERE info IN('Sweden','Norway','Germany','Denmark','Swedish','Danish','Norwegian','German','USA','American')\n       2         1  │ │ FILTER id <= 110\n       2         1  │ │ TABLE SCAN info_type WHERE info = 'countries'\n 4523930     72756  │ TABLE SCAN movie_keyword WHERE movie_id >= 285 AND movie_id <= 2525745\n   26834         3  FILTER (keyword = 'murder') OR (keyword = 'murder-in-title') OR (keyword = 'blood') OR (keyword = 'violence')\n  134170    133731  TABLE SCAN keyword WHERE keyword IN('murder','murder-in-title','blood','violence')\n",
+      "sql": "SELECT MIN(cn.name) AS movie_company,\n       MIN(mi_idx.info) AS rating,\n       MIN(t.title) AS complete_euro_dark_movie\nFROM job.complete_cast AS cc,\n     job.comp_cast_type AS cct1,\n     job.comp_cast_type AS cct2,\n     job.company_name AS cn,\n     job.company_type AS ct,\n     job.info_type AS it1,\n     job.info_type AS it2,\n     job.keyword AS k,\n     job.kind_type AS kt,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.movie_info_idx AS mi_idx,\n     job.movie_keyword AS mk,\n     job.title AS t\nWHERE cct1.kind = 'cast'\n  AND cct2.kind = 'complete'\n  AND cn.country_code != '[us]'\n  AND it1.info = 'countries'\n  AND it2.info = 'rating'\n  AND k.keyword IN ('murder',\n                    'murder-in-title',\n                    'blood',\n                    'violence')\n  AND kt.kind IN ('movie',\n                  'episode')\n  AND mc.note NOT LIKE '%(USA)%'\n  AND mc.note LIKE '%(200%)%'\n  AND mi.info IN ('Sweden',\n                  'Norway',\n                  'Germany',\n                  'Denmark',\n                  'Swedish',\n                  'Danish',\n                  'Norwegian',\n                  'German',\n                  'USA',\n                  'American')\n  AND mi_idx.info < '8.5'\n  AND t.production_year > 2005\n  AND kt.id = t.kind_id\n  AND t.id = mi.movie_id\n  AND t.id = mk.movie_id\n  AND t.id = mi_idx.movie_id\n  AND t.id = mc.movie_id\n  AND t.id = cc.movie_id\n  AND mk.movie_id = mi.movie_id\n  AND mk.movie_id = mi_idx.movie_id\n  AND mk.movie_id = mc.movie_id\n  AND mk.movie_id = cc.movie_id\n  AND mi.movie_id = mi_idx.movie_id\n  AND mi.movie_id = mc.movie_id\n  AND mi.movie_id = cc.movie_id\n  AND mc.movie_id = mi_idx.movie_id\n  AND mc.movie_id = cc.movie_id\n  AND mi_idx.movie_id = cc.movie_id\n  AND k.id = mk.keyword_id\n  AND it1.id = mi.info_type_id\n  AND it2.id = mi_idx.info_type_id\n  AND ct.id = mc.company_type_id\n  AND cn.id = mc.company_id\n  AND cct1.id = cc.subject_id\n  AND cct2.id = cc.status_id;\n",
+      "startTime": "2026-06-23T14:00:57.931931Z",
+      "status": "OK",
+      "timeMs": 89.189
+    }
+  ],
+  "runtime": {
+    "avgMs": 89.189,
+    "bestMs": 89.189,
+    "maxMs": 89.189,
+    "minMs": 89.189,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 28C Analysis",
+    "displayName": "JOB-28C",
+    "name": "PLAN-JOB-28C",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "1.5.0"
+}

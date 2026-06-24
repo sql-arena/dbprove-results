@@ -1,0 +1,110 @@
+{
+  "engine": "Trino",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 1,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 3
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 8,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 411,
+        "distribute": 18753132,
+        "hash": 27736863,
+        "join": 47751259,
+        "scan": 59156128,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  PROJECT min AS movie_budget, min_35 AS movie_votes, min_36 AS movie_title\n       1         1  AGGREGATE MIN(min_37) AS min, MIN(min_38) AS min_35, MIN(min_39) AS min_36\n       -         1  DISTRIBUTE GATHER\n       -         1  AGGREGATE MIN(info_11) AS min_37, MIN(info_19) AS min_38, MIN(title) AS min_39\n       -       410  INNER JOIN HASH ON movie_id = id_28\n 2528312   2528312  │└DISTRIBUTE HASH ON id_28\n 2528312   2528312  │ PROJECT id AS id_28, title\n 2528312   2528312  │ TABLE SCAN title\n       -       410  INNER JOIN HASH ON person_id = id_24\n       -      9062  │└DISTRIBUTE HASH ON id_24\n 4167491      9062  │ PROJECT id AS id_24\n 4167491      9062  │ FILTER (gender = 'm') AND (name LIKE '%Tim%')\n 4167491   4167491  │ TABLE SCAN name\n       -    107339  INNER JOIN HASH ON info_type_id_18 = id_4\n       -         1  │└DISTRIBUTE GATHER\n     113         1  │ PROJECT id AS id_4\n     113         1  │ FILTER info = 'votes'\n     113       113  │ TABLE SCAN info_type\n       -    322625  INNER JOIN HASH ON movie_id = movie_id_17\n 1380035   1380035  │└DISTRIBUTE HASH ON movie_id_17\n 1380035   1380035  │ PROJECT movie_id AS movie_id_17, info_type_id AS info_type_id_18, info AS info_19\n 1380035   1380035  │ TABLE SCAN movie_info_idx\n       -    212985  INNER JOIN HASH ON info_type_id = id_0\n       -         1  │└DISTRIBUTE GATHER\n     113         1  │ PROJECT id AS id_0\n     113         1  │ FILTER info = 'budget'\n     113       113  │ TABLE SCAN info_type\n       -  23499130  INNER JOIN HASH ON movie_id = movie_id_10\n14835720  14835720  │└DISTRIBUTE HASH ON movie_id_10\n14835720  14835720  │ PROJECT movie_id AS movie_id_10, info_type_id, info AS info_11\n14835720  14835720  │ TABLE SCAN movie_info\n36244344   2379271  FILTER note IN('(executive producer)','(producer)')\n36244344  36244344  TABLE SCAN cast_info\n",
+      "sql": "SELECT MIN(mi.info) AS movie_budget,\n       MIN(mi_idx.info) AS movie_votes,\n       MIN(t.title) AS movie_title\nFROM job.cast_info AS ci,\n     job.info_type AS it1,\n     job.info_type AS it2,\n     job.movie_info AS mi,\n     job.movie_info_idx AS mi_idx,\n     job.name AS n,\n     job.title AS t\nWHERE ci.note IN ('(producer)',\n                  '(executive producer)')\n  AND it1.info = 'budget'\n  AND it2.info = 'votes'\n  AND n.gender = 'm'\n  AND n.name LIKE '%Tim%'\n  AND t.id = mi.movie_id\n  AND t.id = mi_idx.movie_id\n  AND t.id = ci.movie_id\n  AND ci.movie_id = mi.movie_id\n  AND ci.movie_id = mi_idx.movie_id\n  AND mi.movie_id = mi_idx.movie_id\n  AND n.id = ci.person_id\n  AND it1.id = mi.info_type_id\n  AND it2.id = mi_idx.info_type_id;\n",
+      "startTime": "2026-06-23T15:22:05.003126Z",
+      "status": "OK",
+      "timeMs": 989.792
+    }
+  ],
+  "runtime": {
+    "avgMs": 989.792,
+    "bestMs": 989.792,
+    "maxMs": 989.792,
+    "minMs": 989.792,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "iceberg",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 18A Analysis",
+    "displayName": "JOB-18A",
+    "name": "PLAN-JOB-18A",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "481"
+}

@@ -1,0 +1,109 @@
+{
+  "engine": "PostgreSQL",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 2,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 1,
+          "=": 6,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 10,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 1,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 1375,
+        "distribute": 0,
+        "hash": 331671,
+        "join": 177351,
+        "scan": 830,
+        "seek": 176523,
+        "sort": 495
+      },
+      "plan": "Estimate    Actual  Operator\n       1       495  SEQUENCE\n    1298      1298  ├─AGGREGATE MIN(ps_supplycost)\n    1298      1375  │ INNER JOIN LOOP ON ps_partkey = p_partkey AND n_regionkey = r_regionkey AND (n_regionkey = r_regionkey)\n       1         1  │ │└TABLE SCAN region AS r_min WHERE r_min.r_name = 'EUROPE'\n    5192      5192  │ INNER JOIN LOOP ON n_nationkey = s_nationkey\n    5192      5192  │ │└INNER JOIN LOOP ON s_suppkey = ps_suppkey\n    5192      5192  │ │ │└TABLE SEEK partsupp AS ps_min\n    5192      5192  │ │ TABLE SEEK supplier AS s_min\n    5192      5192  │ TABLE SEEK nation AS n_min\n       1       495  └─SORT s_acctbal, n_name, s_name, p_partkey\n       1       495    INNER JOIN HASH ON (p_partkey = ps_partkey) AND ((SubPlan 1) = ps_supplycost)\n  160000    158960    │└INNER JOIN LOOP ON ps_suppkey = s_suppkey\n    2000      1987    │ │└INNER JOIN LOOP ON s_nationkey = n_nationkey\n       5         5    │ │ │└INNER JOIN HASH ON n_regionkey = r_regionkey\n       1         1    │ │ │ │└TABLE SCAN region AS region WHERE r_name = 'EUROPE'\n      25        25    │ │ │ TABLE SCAN nation AS nation\n    2000      1987    │ │ TABLE SEEK supplier AS supplier\n  158960    158960    │ TABLE SEEK partsupp AS partsupp\n     945       803    TABLE SCAN part AS part WHERE (p_type LIKE '%BRASS') AND (p_size = 25)\n",
+      "sql": "/* TPC-H Q02 */\nSELECT s_acctbal,\n       s_name,\n       n_name,\n       p_partkey,\n       p_mfgr,\n       s_address,\n       s_phone,\n       s_comment\nFROM tpch.partsupp\nINNER JOIN tpch.part\n    ON ps_partkey = p_partkey\nINNER JOIN tpch.supplier\n    ON ps_suppkey = s_suppkey\nINNER JOIN tpch.nation\n    ON s_nationkey = n_nationkey\nINNER JOIN tpch.region\n    ON n_regionkey = r_regionkey\nWHERE p_size = 25\n  AND p_type LIKE '%BRASS'\n  AND r_name = 'EUROPE'\n  AND ps_supplycost = (SELECT MIN(ps_supplycost) AS min_cost\n                       FROM tpch.partsupp AS ps_min\n                       INNER JOIN tpch.supplier AS s_min\n                           ON ps_suppkey = s_suppkey\n                       INNER JOIN tpch.nation AS n_min\n                           ON s_nationkey = n_nationkey\n                       INNER JOIN tpch.region AS r_min\n                           ON n_regionkey = r_regionkey\n                       WHERE ps_partkey = p_partkey\n                         AND r_name = 'EUROPE')\nORDER BY s_acctbal DESC,\n         n_name,\n         s_name,\n         p_partkey\n\n\n",
+      "startTime": "2026-06-17T12:34:35.312631Z",
+      "status": "OK",
+      "timeMs": 1621.242
+    }
+  ],
+  "runtime": {
+    "avgMs": 1621.242,
+    "bestMs": 1621.242,
+    "maxMs": 1621.242,
+    "minMs": 1621.242,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "TPC-H Q02 Analysis",
+    "displayName": "TPCH-Q02",
+    "name": "PLAN-TPC-H-Q02",
+    "tags": [
+      "TPC-H"
+    ]
+  },
+  "version": "18.2"
+}

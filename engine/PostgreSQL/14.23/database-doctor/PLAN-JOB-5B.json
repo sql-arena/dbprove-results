@@ -1,0 +1,110 @@
+{
+  "engine": "PostgreSQL",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 1,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 3,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 1,
+          "=": 5,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 4,
+        "distribute": 0,
+        "hash": 1428,
+        "join": 16,
+        "scan": 1416,
+        "seek": 4,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(title)\n       4         4  INNER JOIN LOOP ON id = info_type_id\n       4         4  │└INNER JOIN LOOP ON movie_id = id\n       4         4  │ │└INNER JOIN LOOP ON id = movie_id\n      12         4  │ │ │└INNER JOIN LOOP ON id = company_type_id\n      48      1416  │ │ │ │└TABLE SCAN movie_companies AS mc WHERE (mc.note LIKE '%(VHS)%') AND (mc.note LIKE '%(USA)%') AND (mc.note LIKE '%(1994)%')\n       4         4  │ │ │ TABLE SEEK company_type AS ct WHERE ct.kind = 'production companies'\n       0         0  │ │ TABLE SEEK title AS t WHERE t.production_year > 2010\n       0         0  │ TABLE SEEK movie_info AS mi WHERE mi.info IN('USA','America')\n       0         0  TABLE SEEK info_type AS it\n",
+      "sql": "SELECT MIN(t.title) AS american_vhs_movie\nFROM job.company_type AS ct,\n     job.info_type AS it,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.title AS t\nWHERE ct.kind = 'production companies'\n  AND mc.note LIKE '%(VHS)%'\n  AND mc.note LIKE '%(USA)%'\n  AND mc.note LIKE '%(1994)%'\n  AND mi.info IN ('USA',\n                  'America')\n  AND t.production_year > 2010\n  AND t.id = mi.movie_id\n  AND t.id = mc.movie_id\n  AND mc.movie_id = mi.movie_id\n  AND ct.id = mc.company_type_id\n  AND it.id = mi.info_type_id;\n",
+      "startTime": "2026-06-23T15:47:52.458148Z",
+      "status": "OK",
+      "timeMs": 137.623
+    }
+  ],
+  "runtime": {
+    "avgMs": 137.623,
+    "bestMs": 137.623,
+    "maxMs": 137.623,
+    "minMs": 137.623,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 5B Analysis",
+    "displayName": "JOB-5B",
+    "name": "PLAN-JOB-5B",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "14.23"
+}

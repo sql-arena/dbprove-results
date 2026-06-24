@@ -1,0 +1,110 @@
+{
+  "engine": "ClickHouse",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 0,
+        "distribute": 0,
+        "hash": 380784,
+        "join": 50073206,
+        "scan": 50073207,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       -         1  PROJECT a1 AS member_in_charnamed_movie\n       -         1  AGGREGATE MIN(name) AS a1\n       -         0  PROJECT name\n       -         0  PROJECT name\n       -         0  INNER JOIN HASH ON PROJECTION_1313.id = PROJECTION_1280.person_id\n       -         0  │└PROJECT person_id\n       -         0  │ PROJECT person_id\n       -         0  │ INNER JOIN HASH ON tuple(PROJECTION_1310.movie_id,PROJECTION_1310.movie_id,PROJECTION_1310.movie_id) = tuple(PROJECTION_1283.movie_id,PROJECTION_1283.movie_id,PROJECTION_1283.id)\n       -         0  │ │└PROJECT movie_id_right, movie_id AS movie_id_right_2, id\n       -         0  │ │ PROJECT movie_id, movie_id, id\n       -         0  │ │ INNER JOIN HASH ON PROJECTION_1307.id = PROJECTION_1286.company_id\n       -    148552  │ │ │└PROJECT company_id, movie_id, movie_id, id AS id_right\n       -    148552  │ │ │ PROJECT movie_id, company_id, movie_id, id\n       -    148552  │ │ │ INNER JOIN HASH ON tuple(PROJECTION_1304.movie_id,PROJECTION_1304.movie_id) = tuple(PROJECTION_1289.movie_id,PROJECTION_1289.id)\n       -     41840  │ │ │ │└PROJECT movie_id AS movie_id_right, id\n       -     41840  │ │ │ │ PROJECT movie_id, id\n       -     41840  │ │ │ │ INNER JOIN HASH ON PROJECTION_1301.id = PROJECTION_1292.movie_id\n       -     41840  │ │ │ │ │└PROJECT movie_id\n       -     41840  │ │ │ │ │ PROJECT movie_id\n       -     41840  │ │ │ │ │ INNER JOIN HASH ON PROJECTION_1298.keyword_id = PROJECTION_1295.id\n       -         1  │ │ │ │ │ │└PROJECT id\n       -         1  │ │ │ │ │ │ PROJECT id\n       -         1  │ │ │ │ │ │ TABLE SCAN keyword WHERE keyword = 'character-name-in-title'\n       -   4523930  │ │ │ │ │ PROJECT keyword_id, movie_id\n       -   4523930  │ │ │ │ │ PROJECT movie_id, keyword_id\n       -   4523930  │ │ │ │ │ TABLE SCAN movie_keyword\n       -   2528312  │ │ │ │ PROJECT id\n       -   2528312  │ │ │ │ PROJECT id\n       -   2528312  │ │ │ │ TABLE SCAN title\n       -   2609129  │ │ │ PROJECT movie_id AS movie_id_left, company_id\n       -   2609129  │ │ │ PROJECT movie_id, company_id\n       -   2609129  │ │ │ TABLE SCAN movie_companies\n       -         0  │ │ PROJECT id AS id_left\n       -         0  │ │ PROJECT id\n       -         0  │ │ TABLE SCAN company_name WHERE country_code = 'us'\n       -  36244344  │ PROJECT movie_id AS movie_id_left, person_id\n       -  36244344  │ PROJECT movie_id, person_id\n       -  36244344  │ TABLE SCAN cast_info\n       -   4167491  PROJECT id, name\n       -   4167491  PROJECT name, id\n       -   4167491  TABLE SCAN name\n",
+      "sql": "SELECT MIN(n.name) AS member_in_charnamed_movie\nFROM job.cast_info AS ci,\n     job.company_name AS cn,\n     job.keyword AS k,\n     job.movie_companies AS mc,\n     job.movie_keyword AS mk,\n     job.name AS n,\n     job.title AS t\nWHERE cn.country_code ='[us]'\n  AND k.keyword ='character-name-in-title'\n  AND n.id = ci.person_id\n  AND ci.movie_id = t.id\n  AND t.id = mk.movie_id\n  AND mk.keyword_id = k.id\n  AND t.id = mc.movie_id\n  AND mc.company_id = cn.id\n  AND ci.movie_id = mc.movie_id\n  AND ci.movie_id = mk.movie_id\n  AND mc.movie_id = mk.movie_id;\n",
+      "startTime": "2026-06-22T09:06:18.415387Z",
+      "status": "OK",
+      "timeMs": 196.237
+    }
+  ],
+  "runtime": {
+    "avgMs": 196.237,
+    "bestMs": 196.237,
+    "maxMs": 196.237,
+    "minMs": 196.237,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 17E Analysis",
+    "displayName": "JOB-17E",
+    "name": "JOB-17E",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "26.1.12.23"
+}

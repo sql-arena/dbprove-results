@@ -1,0 +1,110 @@
+{
+  "engine": "DataFusion",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 1
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 2
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 2
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 3
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 5,
+          ">16x": 1
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 15,
+        "distribute": 541135,
+        "hash": 417568,
+        "join": 4526238,
+        "scan": 14721944,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  PROJECT movie_title\n       1         1  AGGREGATE MIN(title)\n  162535        10  DISTRIBUTE GATHER\n  162535        10  AGGREGATE MIN(title)\n  162535         5  INNER JOIN HASH ON id = movie_id AND id = movie_id\n  162535    391666  │└DISTRIBUTE HASH ON id, id\n  162535    391666  │ FILTER production_year > 2010\n 2528312   2528312  │ TABLE SCAN title WHERE (production_year > 2010) AND (title < '300: Rise of an Empire')\n 1062618        21  DISTRIBUTE HASH ON movie_id, movie_id\n 1062618        21  INNER JOIN HASH ON movie_id = movie_id\n  904786     12951  │└DISTRIBUTE HASH ON movie_id\n  904786     12951  │ INNER JOIN HASH ON id = keyword_id\n   26834        30  │ │└DISTRIBUTE GATHER\n   26834        30  │ │ FILTER keyword LIKE '%sequel%'\n  134170    134170  │ │ DISTRIBUTE ROUND ROBIN\n  134170    134170  │ │ TABLE SCAN keyword WHERE keyword LIKE '%sequel%'\n 4523930   4523930  │ TABLE SCAN movie_keyword WHERE (((keyword_id >= 398) AND (keyword_id <= 128826)) AND keyword_id IN(40815,40221,126175,122943,122578,59320,69167,61591,64972,72203,73181,398,89546,83664,87951,83665,21183,100855,102660,90485,78133,75006,76744,72594,77599,39892,45883,118026,128826,92506)) AND CASE MOD(HASH_REPARTITION(movie_id,movie_id),10) WHEN 1 THEN ((((movie_id >= 13) AND (movie_id <= 2528194)) AND ((movie_id >= 13) AND (movie_id <= 2528194))) AND TRUE) WHEN 3 THEN (((...\n 2967144      2287  DISTRIBUTE HASH ON movie_id\n 2967144      2287  FILTER info = 'Bulgaria'\n14835720   7535532  TABLE SCAN movie_info WHERE (info = 'Bulgaria') AND CASE MOD(HASH_REPARTITION movie_id,10) WHEN 0 THEN (((movie_id >= 963) AND (movie_id <= 2524070)) AND TRUE) WHEN 1 THEN (((movie_id >= 15613) AND (movie_id <= 2525732)) AND TRUE) WHEN 2 THEN (((movie_id >= 34044) AND (movie_id <= 2524779)) AND TRUE) WHEN 3 THEN (((movie_id >= 19450) AND (movie_id <= 2524082)) AND TRUE) WHEN 4 THEN (((movie_id >= 31741) AND (movie_id <= 2524066)) AND TRUE) WHEN 5 THEN (((movie_id >= 77673)...\n",
+      "sql": "SELECT MIN(t.title) AS movie_title\nFROM job.keyword AS k,\n     job.movie_info AS mi,\n     job.movie_keyword AS mk,\n     job.title AS t\nWHERE k.keyword LIKE '%sequel%'\n  AND mi.info IN ('Bulgaria')\n  AND t.production_year > 2010\n  AND t.id = mi.movie_id\n  AND t.id = mk.movie_id\n  AND mk.movie_id = mi.movie_id\n  AND k.id = mk.keyword_id;\n",
+      "startTime": "2026-06-23T17:15:53.350822Z",
+      "status": "OK",
+      "timeMs": 227.95
+    }
+  ],
+  "runtime": {
+    "avgMs": 227.95,
+    "bestMs": 227.95,
+    "maxMs": 227.95,
+    "minMs": 227.95,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "iceberg",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 3B Analysis",
+    "displayName": "JOB-3B",
+    "name": "PLAN-JOB-3B",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "Apache DataFusion 54.0.0, aarch64 on linux"
+}

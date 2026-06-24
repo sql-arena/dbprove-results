@@ -1,0 +1,110 @@
+{
+  "engine": "DuckDB",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 2,
+          ">16x": 4
+        },
+        "hash": {
+          "+2x": 1,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 1,
+          "<16x": 6,
+          "=": 1,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 7,
+          "=": 1,
+          ">16x": 1
+        },
+        "scan": {
+          "+2x": 1,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 2,
+          ">16x": 6
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 1410,
+        "distribute": 0,
+        "hash": 4114,
+        "join": 3655,
+        "scan": 679,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       -         1  AGGREGATE MIN(#0), MIN(#1), MIN(#2)\n       0      1410  PROJECT name, link, title\n       0      1410  INNER JOIN HASH ON movie_id = movie_id\n       0       310  │└INNER JOIN HASH ON id = company_type_id\n       0       330  │ │└INNER JOIN HASH ON id = company_id\n       0       705  │ │ │└INNER JOIN HASH ON movie_id = movie_id\n       0       152  │ │ │ │└INNER JOIN HASH ON id = movie_id\n       0       199  │ │ │ │ │└INNER JOIN HASH ON id = link_type_id\n       0       251  │ │ │ │ │ │└INNER JOIN HASH ON movie_id = movie_id\n      69        46  │ │ │ │ │ │ │└INNER JOIN HASH ON keyword_id = id\n       2         1  │ │ │ │ │ │ │ │└TABLE SCAN keyword WHERE keyword = 'sequel'\n 4523930        46  │ │ │ │ │ │ │ TABLE SCAN movie_keyword WHERE movie_id <= 186175\n   29997       286  │ │ │ │ │ │ TABLE SCAN movie_link\n       3         2  │ │ │ │ │ FILTER id <= 17\n       3         2  │ │ │ │ │ TABLE SCAN link_type WHERE contains(link,'follow')\n  505662        30  │ │ │ │ FILTER id BETWEEN 2 AND 186175\n  505662        31  │ │ │ │ TABLE SCAN title WHERE production_year >= 1950 AND production_year <= 2000\n  521825        76  │ │ │ FILTER movie_id <= 186175\n  521825        76  │ │ │ TABLE SCAN movie_companies WHERE note IS NULL\n   46999        11  │ │ TABLE SCAN company_name WHERE country_code != 'pl' AND (contains(name,'Film') OR contains(name,'Warner'))\n       1         1  │ FILTER id <= 2\n       1         1  │ TABLE SCAN company_type WHERE kind = 'production companies'\n 2967144        31  FILTER movie_id BETWEEN 2 AND 186175\n 2967144        31  FILTER IN ...\n14835720       217  INNER JOIN HASH ON info = #0\n       0         8  │└SCAN MATERIALISED\n14835720       217  TABLE SCAN movie_info WHERE info IN('Sweden','Norway','Germany','Denmark','Swedish','Denish','Norwegian','German')\n",
+      "sql": "SELECT MIN(cn.name) AS company_name,\n       MIN(lt.link) AS link_type,\n       MIN(t.title) AS western_follow_up\nFROM job.company_name AS cn,\n     job.company_type AS ct,\n     job.keyword AS k,\n     job.link_type AS lt,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.movie_keyword AS mk,\n     job.movie_link AS ml,\n     job.title AS t\nWHERE cn.country_code !='[pl]'\n  AND (cn.name LIKE '%Film%'\n       OR cn.name LIKE '%Warner%')\n  AND ct.kind ='production companies'\n  AND k.keyword ='sequel'\n  AND lt.link LIKE '%follow%'\n  AND mc.note IS NULL\n  AND mi.info IN ('Sweden',\n                  'Norway',\n                  'Germany',\n                  'Denmark',\n                  'Swedish',\n                  'Denish',\n                  'Norwegian',\n                  'German')\n  AND t.production_year BETWEEN 1950 AND 2000\n  AND lt.id = ml.link_type_id\n  AND ml.movie_id = t.id\n  AND t.id = mk.movie_id\n  AND mk.keyword_id = k.id\n  AND t.id = mc.movie_id\n  AND mc.company_type_id = ct.id\n  AND mc.company_id = cn.id\n  AND mi.movie_id = t.id\n  AND ml.movie_id = mk.movie_id\n  AND ml.movie_id = mc.movie_id\n  AND mk.movie_id = mc.movie_id\n  AND ml.movie_id = mi.movie_id\n  AND mk.movie_id = mi.movie_id\n  AND mc.movie_id = mi.movie_id;\n",
+      "startTime": "2026-06-23T14:00:54.261091Z",
+      "status": "OK",
+      "timeMs": 21.706
+    }
+  ],
+  "runtime": {
+    "avgMs": 21.706,
+    "bestMs": 21.706,
+    "maxMs": 21.706,
+    "minMs": 21.706,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 21A Analysis",
+    "displayName": "JOB-21A",
+    "name": "PLAN-JOB-21A",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "1.5.0"
+}

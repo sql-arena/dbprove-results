@@ -1,0 +1,157 @@
+QUERY id: 0
+  PROJECTION COLUMNS
+    s_acctbal Decimal(15, 2)
+    s_name String
+    n_name String
+    p_partkey Int32
+    p_mfgr String
+    s_address String
+    s_phone String
+    s_comment String
+  PROJECTION
+    LIST id: 1, nodes: 8
+      COLUMN id: 2, column_name: s_acctbal, result_type: Decimal(15, 2), source_id: 3
+      COLUMN id: 4, column_name: s_name, result_type: String, source_id: 3
+      COLUMN id: 5, column_name: n_name, result_type: String, source_id: 6
+      COLUMN id: 7, column_name: p_partkey, result_type: Int32, source_id: 8
+      COLUMN id: 9, column_name: p_mfgr, result_type: String, source_id: 8
+      COLUMN id: 10, column_name: s_address, result_type: String, source_id: 3
+      COLUMN id: 11, column_name: s_phone, result_type: String, source_id: 3
+      COLUMN id: 12, column_name: s_comment, result_type: String, source_id: 3
+  JOIN TREE
+    JOIN id: 13, strictness: ALL, kind: INNER
+      LEFT TABLE EXPRESSION
+        JOIN id: 14, strictness: ALL, kind: INNER
+          LEFT TABLE EXPRESSION
+            JOIN id: 15, strictness: ALL, kind: INNER
+              LEFT TABLE EXPRESSION
+                JOIN id: 16, strictness: ALL, kind: INNER
+                  LEFT TABLE EXPRESSION
+                    TABLE id: 17, alias: __table1, table_name: tpch_sf1.partsupp
+                  RIGHT TABLE EXPRESSION
+                    TABLE id: 8, alias: __table2, table_name: tpch_sf1.part
+                  JOIN EXPRESSION
+                    FUNCTION id: 18, function_name: equals, function_type: ordinary, result_type: UInt8
+                      ARGUMENTS
+                        LIST id: 19, nodes: 2
+                          COLUMN id: 20, column_name: ps_partkey, result_type: Int32, source_id: 17
+                          COLUMN id: 21, column_name: p_partkey, result_type: Int32, source_id: 8
+              RIGHT TABLE EXPRESSION
+                TABLE id: 3, alias: __table3, table_name: tpch_sf1.supplier
+              JOIN EXPRESSION
+                FUNCTION id: 22, function_name: equals, function_type: ordinary, result_type: UInt8
+                  ARGUMENTS
+                    LIST id: 23, nodes: 2
+                      COLUMN id: 24, column_name: ps_suppkey, result_type: Int32, source_id: 17
+                      COLUMN id: 25, column_name: s_suppkey, result_type: Int32, source_id: 3
+          RIGHT TABLE EXPRESSION
+            TABLE id: 6, alias: __table4, table_name: tpch_sf1.nation
+          JOIN EXPRESSION
+            FUNCTION id: 26, function_name: equals, function_type: ordinary, result_type: UInt8
+              ARGUMENTS
+                LIST id: 27, nodes: 2
+                  COLUMN id: 28, column_name: s_nationkey, result_type: Int32, source_id: 3
+                  COLUMN id: 29, column_name: n_nationkey, result_type: Int32, source_id: 6
+      RIGHT TABLE EXPRESSION
+        TABLE id: 30, alias: __table5, table_name: tpch_sf1.region
+      JOIN EXPRESSION
+        FUNCTION id: 31, function_name: equals, function_type: ordinary, result_type: UInt8
+          ARGUMENTS
+            LIST id: 32, nodes: 2
+              COLUMN id: 33, column_name: n_regionkey, result_type: Int32, source_id: 6
+              COLUMN id: 34, column_name: r_regionkey, result_type: Int32, source_id: 30
+  WHERE
+    FUNCTION id: 35, function_name: and, function_type: ordinary, result_type: Nullable(UInt8)
+      ARGUMENTS
+        LIST id: 36, nodes: 4
+          FUNCTION id: 37, function_name: equals, function_type: ordinary, result_type: UInt8
+            ARGUMENTS
+              LIST id: 38, nodes: 2
+                COLUMN id: 39, column_name: p_size, result_type: Int32, source_id: 8
+                CONSTANT id: 40, constant_value: UInt64_25, constant_value_type: UInt8
+          FUNCTION id: 41, function_name: endsWith, function_type: ordinary, result_type: UInt8
+            ARGUMENTS
+              LIST id: 42, nodes: 2
+                COLUMN id: 43, column_name: p_type, result_type: String, source_id: 8
+                CONSTANT id: 44, constant_value: 'BRASS', constant_value_type: String
+          FUNCTION id: 45, function_name: equals, function_type: ordinary, result_type: UInt8
+            ARGUMENTS
+              LIST id: 46, nodes: 2
+                COLUMN id: 47, column_name: r_name, result_type: String, source_id: 30
+                CONSTANT id: 48, constant_value: 'EUROPE', constant_value_type: String
+          FUNCTION id: 49, function_name: equals, function_type: ordinary, result_type: Nullable(UInt8)
+            ARGUMENTS
+              LIST id: 50, nodes: 2
+                COLUMN id: 51, column_name: ps_supplycost, result_type: Decimal(15, 2), source_id: 17
+                QUERY id: 52, alias: __table6, is_subquery: 1, is_correlated: 1
+                  CORRELATED COLUMNS
+                    LIST id: 53, nodes: 1
+                      COLUMN id: 54, column_name: p_partkey, result_type: Int32, source_id: 8
+                  PROJECTION COLUMNS
+                    min_cost Decimal(15, 2)
+                  PROJECTION
+                    LIST id: 55, nodes: 1
+                      FUNCTION id: 56, function_name: min, function_type: aggregate, result_type: Decimal(15, 2)
+                        ARGUMENTS
+                          LIST id: 57, nodes: 1
+                            COLUMN id: 58, column_name: ps_supplycost, result_type: Decimal(15, 2), source_id: 59
+                  JOIN TREE
+                    JOIN id: 60, strictness: ALL, kind: INNER
+                      LEFT TABLE EXPRESSION
+                        JOIN id: 61, strictness: ALL, kind: INNER
+                          LEFT TABLE EXPRESSION
+                            JOIN id: 62, strictness: ALL, kind: INNER
+                              LEFT TABLE EXPRESSION
+                                TABLE id: 59, alias: __table7, table_name: tpch_sf1.partsupp
+                              RIGHT TABLE EXPRESSION
+                                TABLE id: 63, alias: __table8, table_name: tpch_sf1.supplier
+                              JOIN EXPRESSION
+                                FUNCTION id: 64, function_name: equals, function_type: ordinary, result_type: UInt8
+                                  ARGUMENTS
+                                    LIST id: 65, nodes: 2
+                                      COLUMN id: 66, column_name: ps_suppkey, result_type: Int32, source_id: 59
+                                      COLUMN id: 67, column_name: s_suppkey, result_type: Int32, source_id: 63
+                          RIGHT TABLE EXPRESSION
+                            TABLE id: 68, alias: __table9, table_name: tpch_sf1.nation
+                          JOIN EXPRESSION
+                            FUNCTION id: 69, function_name: equals, function_type: ordinary, result_type: UInt8
+                              ARGUMENTS
+                                LIST id: 70, nodes: 2
+                                  COLUMN id: 71, column_name: s_nationkey, result_type: Int32, source_id: 63
+                                  COLUMN id: 72, column_name: n_nationkey, result_type: Int32, source_id: 68
+                      RIGHT TABLE EXPRESSION
+                        TABLE id: 73, alias: __table10, table_name: tpch_sf1.region
+                      JOIN EXPRESSION
+                        FUNCTION id: 74, function_name: equals, function_type: ordinary, result_type: UInt8
+                          ARGUMENTS
+                            LIST id: 75, nodes: 2
+                              COLUMN id: 76, column_name: n_regionkey, result_type: Int32, source_id: 68
+                              COLUMN id: 77, column_name: r_regionkey, result_type: Int32, source_id: 73
+                  WHERE
+                    FUNCTION id: 78, function_name: and, function_type: ordinary, result_type: UInt8
+                      ARGUMENTS
+                        LIST id: 79, nodes: 2
+                          FUNCTION id: 80, function_name: equals, function_type: ordinary, result_type: UInt8
+                            ARGUMENTS
+                              LIST id: 81, nodes: 2
+                                COLUMN id: 82, column_name: ps_partkey, result_type: Int32, source_id: 59
+                                COLUMN id: 54, column_name: p_partkey, result_type: Int32, source_id: 8
+                          FUNCTION id: 83, function_name: equals, function_type: ordinary, result_type: UInt8
+                            ARGUMENTS
+                              LIST id: 84, nodes: 2
+                                COLUMN id: 85, column_name: r_name, result_type: String, source_id: 73
+                                CONSTANT id: 86, constant_value: 'EUROPE', constant_value_type: String
+  ORDER BY
+    LIST id: 87, nodes: 4
+      SORT id: 88, sort_direction: DESCENDING, with_fill: 0
+        EXPRESSION s_acctbal
+          COLUMN id: 89, column_name: s_acctbal, result_type: Decimal(15, 2), source_id: 3
+      SORT id: 90, sort_direction: ASCENDING, with_fill: 0
+        EXPRESSION n_name
+          COLUMN id: 91, column_name: n_name, result_type: String, source_id: 6
+      SORT id: 92, sort_direction: ASCENDING, with_fill: 0
+        EXPRESSION s_name
+          COLUMN id: 93, column_name: s_name, result_type: String, source_id: 3
+      SORT id: 94, sort_direction: ASCENDING, with_fill: 0
+        EXPRESSION p_partkey
+          COLUMN id: 95, column_name: p_partkey, result_type: Int32, source_id: 8

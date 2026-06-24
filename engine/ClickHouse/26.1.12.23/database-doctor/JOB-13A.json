@@ -1,0 +1,110 @@
+{
+  "engine": "ClickHouse",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 0,
+        "distribute": 0,
+        "hash": 11348840,
+        "join": 19827664,
+        "scan": 21353200,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       -         1  PROJECT a1 AS release_date, a2 AS rating, a3 AS german_movie\n       -         1  AGGREGATE MIN(info_right) AS a1, MIN(info_left) AS a2, MIN(title) AS a3\n       -         0  PROJECT info, info, title\n       -         0  PROJECT info, info, title\n       -         0  INNER JOIN HASH ON tuple(PROJECTION_384.movie_id,PROJECTION_384.movie_id,PROJECTION_384.movie_id,PROJECTION_384.movie_id) = tuple(PROJECTION_363.movie_id,PROJECTION_363.movie_id,PROJECTION_363.id,PROJECTION_363.id)\n       -   1083597  │└PROJECT movie_id AS movie_id_right, id, info AS info_right, title\n       -   1083597  │ PROJECT info, movie_id, title, id\n       -   1083597  │ INNER JOIN HASH ON PROJECTION_375.id = PROJECTION_366.movie_id\n       -   3036719  │ │└PROJECT movie_id, info\n       -   3036719  │ │ PROJECT info, movie_id\n       -   3036719  │ │ INNER JOIN HASH ON PROJECTION_372.info_type_id = PROJECTION_369.id\n       -         1  │ │ │└PROJECT id\n       -         1  │ │ │ PROJECT id\n       -         1  │ │ │ TABLE SCAN info_type WHERE info = 'release dates'\n       -  14835720  │ │ PROJECT info_type_id, info, movie_id\n       -  14835720  │ │ PROJECT info, movie_id, info_type_id\n       -  14835720  │ │ TABLE SCAN movie_info\n       -    662825  │ PROJECT id, title\n       -    662825  │ PROJECT title, id\n       -    662825  │ INNER JOIN HASH ON PROJECTION_381.kind_id = PROJECTION_378.id\n       -         1  │ │└PROJECT id AS id_right\n       -         1  │ │ PROJECT id\n       -         1  │ │ TABLE SCAN kind_type WHERE kind = 'movie'\n       -   2528312  │ PROJECT kind_id, title, id AS id_left\n       -   2528312  │ PROJECT title, id, kind_id\n       -   2528312  │ TABLE SCAN title\n       -         0  PROJECT movie_id AS movie_id_left, movie_id AS movie_id_left_2, info AS info_left\n       -         0  PROJECT movie_id, info, movie_id\n       -         0  INNER JOIN HASH ON PROJECTION_396.movie_id = PROJECTION_387.movie_id\n       -    459925  │└PROJECT movie_id AS movie_id_right, info\n       -    459925  │ PROJECT info, movie_id\n       -    459925  │ INNER JOIN HASH ON PROJECTION_393.info_type_id = PROJECTION_390.id\n       -         1  │ │└PROJECT id\n       -         1  │ │ PROJECT id\n       -         1  │ │ TABLE SCAN info_type WHERE info = 'rating'\n       -   1380035  │ PROJECT info_type_id, info, movie_id\n       -   1380035  │ PROJECT info, movie_id, info_type_id\n       -   1380035  │ TABLE SCAN movie_info_idx\n       -         0  PROJECT movie_id AS movie_id_left\n       -         0  PROJECT movie_id\n       -         0  INNER JOIN HASH ON PROJECTION_402.company_type_id = PROJECTION_399.id\n       -         1  │└PROJECT id\n       -         1  │ PROJECT id\n       -         1  │ TABLE SCAN company_type WHERE kind = 'production companies'\n       -         0  PROJECT company_type_id, movie_id\n       -         0  PROJECT company_type_id, movie_id\n       -         0  INNER JOIN HASH ON PROJECTION_408.id = PROJECTION_405.company_id\n       -   2609129  │└PROJECT company_id, company_type_id, movie_id\n       -   2609129  │ PROJECT company_id, company_type_id, movie_id\n       -   2609129  │ TABLE SCAN movie_companies\n       -         0  PROJECT id\n       -         0  PROJECT id\n       -         0  TABLE SCAN company_name WHERE country_code = 'de'\n",
+      "sql": "SELECT MIN(mi.info) AS release_date,\n       MIN(miidx.info) AS rating,\n       MIN(t.title) AS german_movie\nFROM job.company_name AS cn,\n     job.company_type AS ct,\n     job.info_type AS it,\n     job.info_type AS it2,\n     job.kind_type AS kt,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.movie_info_idx AS miidx,\n     job.title AS t\nWHERE cn.country_code ='[de]'\n  AND ct.kind ='production companies'\n  AND it.info ='rating'\n  AND it2.info ='release dates'\n  AND kt.kind ='movie'\n  AND mi.movie_id = t.id\n  AND it2.id = mi.info_type_id\n  AND kt.id = t.kind_id\n  AND mc.movie_id = t.id\n  AND cn.id = mc.company_id\n  AND ct.id = mc.company_type_id\n  AND miidx.movie_id = t.id\n  AND it.id = miidx.info_type_id\n  AND mi.movie_id = miidx.movie_id\n  AND mi.movie_id = mc.movie_id\n  AND miidx.movie_id = mc.movie_id;\n",
+      "startTime": "2026-06-22T09:11:54.722450Z",
+      "status": "OK",
+      "timeMs": 289.522
+    }
+  ],
+  "runtime": {
+    "avgMs": 289.522,
+    "bestMs": 289.522,
+    "maxMs": 289.522,
+    "minMs": 289.522,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 13A Analysis",
+    "displayName": "JOB-13A",
+    "name": "JOB-13A",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "26.1.12.23"
+}

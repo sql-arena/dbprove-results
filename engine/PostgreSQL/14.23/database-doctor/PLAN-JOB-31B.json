@@ -1,0 +1,110 @@
+{
+  "engine": "PostgreSQL",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 10,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 3,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 1,
+          "=": 8,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 84,
+        "distribute": 0,
+        "hash": 154499,
+        "join": 154577,
+        "scan": 0,
+        "seek": 154583,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(info), MIN(info), MIN(name), MIN(title)\n       1        84  INNER JOIN LOOP ON id = person_id\n       1        84  │└INNER JOIN LOOP ON id = info_type_id\n       1       252  │ │└INNER JOIN LOOP ON movie_id = movie_id AND id = movie_id AND (id = movie_id)\n       1        84  │ │ │└INNER JOIN LOOP ON id = info_type_id\n       1        84  │ │ │ │└INNER JOIN LOOP ON movie_id = movie_id AND id = movie_id AND (id = movie_id)\n       1        53  │ │ │ │ │└INNER JOIN LOOP ON id = company_id\n       1       119  │ │ │ │ │ │└INNER JOIN LOOP ON movie_id = movie_id AND id = movie_id AND (id = movie_id)\n       1        77  │ │ │ │ │ │ │└INNER JOIN LOOP ON movie_id = movie_id AND id = movie_id AND (id = movie_id)\n       1        49  │ │ │ │ │ │ │ │└INNER JOIN LOOP ON id = movie_id\n     236     76714  │ │ │ │ │ │ │ │ │└INNER JOIN LOOP ON keyword_id = id\n       7         7  │ │ │ │ │ │ │ │ │ │└TABLE SEEK keyword AS k\n    2107     76713  │ │ │ │ │ │ │ │ │ TABLE SEEK movie_keyword AS mk\n   76714     76714  │ │ │ │ │ │ │ │ TABLE SEEK title AS t WHERE (t.production_year > 2000) AND ((t.title LIKE '%Freddy%') OR (t.title LIKE '%Jason%') OR (t.title LIKE 'Saw%'))\n      49        98  │ │ │ │ │ │ │ TABLE SEEK cast_info AS ci WHERE ci.note IN('(writer)','(head writer)','(written by)','(story)','(story editor)')\n      77       154  │ │ │ │ │ │ TABLE SEEK movie_companies AS mc WHERE mc.note LIKE '%(Blu-ray)%'\n     119       119  │ │ │ │ │ TABLE SEEK company_name AS cn WHERE cn.name LIKE 'Lionsgate%'\n      53       106  │ │ │ │ TABLE SEEK movie_info AS mi WHERE mi.info IN('Horror','Thriller')\n      84        84  │ │ │ TABLE SEEK info_type AS it1 WHERE it1.info = 'genres'\n     252       252  │ │ TABLE SEEK movie_info_idx AS mi_idx\n     252       252  │ TABLE SEEK info_type AS it2 WHERE it2.info = 'votes'\n      84        84  TABLE SEEK name AS n WHERE n.gender = 'm'\n",
+      "sql": "SELECT MIN(mi.info) AS movie_budget,\n       MIN(mi_idx.info) AS movie_votes,\n       MIN(n.name) AS writer,\n       MIN(t.title) AS violent_liongate_movie\nFROM job.cast_info AS ci,\n     job.company_name AS cn,\n     job.info_type AS it1,\n     job.info_type AS it2,\n     job.keyword AS k,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.movie_info_idx AS mi_idx,\n     job.movie_keyword AS mk,\n     job.name AS n,\n     job.title AS t\nWHERE ci.note IN ('(writer)',\n                  '(head writer)',\n                  '(written by)',\n                  '(story)',\n                  '(story editor)')\n  AND cn.name LIKE 'Lionsgate%'\n  AND it1.info = 'genres'\n  AND it2.info = 'votes'\n  AND k.keyword IN ('murder',\n                    'violence',\n                    'blood',\n                    'gore',\n                    'death',\n                    'female-nudity',\n                    'hospital')\n  AND mc.note LIKE '%(Blu-ray)%'\n  AND mi.info IN ('Horror',\n                  'Thriller')\n  AND n.gender = 'm'\n  AND t.production_year > 2000\n  AND (t.title LIKE '%Freddy%'\n       OR t.title LIKE '%Jason%'\n       OR t.title LIKE 'Saw%')\n  AND t.id = mi.movie_id\n  AND t.id = mi_idx.movie_id\n  AND t.id = ci.movie_id\n  AND t.id = mk.movie_id\n  AND t.id = mc.movie_id\n  AND ci.movie_id = mi.movie_id\n  AND ci.movie_id = mi_idx.movie_id\n  AND ci.movie_id = mk.movie_id\n  AND ci.movie_id = mc.movie_id\n  AND mi.movie_id = mi_idx.movie_id\n  AND mi.movie_id = mk.movie_id\n  AND mi.movie_id = mc.movie_id\n  AND mi_idx.movie_id = mk.movie_id\n  AND mi_idx.movie_id = mc.movie_id\n  AND mk.movie_id = mc.movie_id\n  AND n.id = ci.person_id\n  AND it1.id = mi.info_type_id\n  AND it2.id = mi_idx.info_type_id\n  AND k.id = mk.keyword_id\n  AND cn.id = mc.company_id;\n",
+      "startTime": "2026-06-23T15:47:32.937589Z",
+      "status": "OK",
+      "timeMs": 3003.397
+    }
+  ],
+  "runtime": {
+    "avgMs": 3003.397,
+    "bestMs": 3003.397,
+    "maxMs": 3003.397,
+    "minMs": 3003.397,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 31B Analysis",
+    "displayName": "JOB-31B",
+    "name": "PLAN-JOB-31B",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "14.23"
+}

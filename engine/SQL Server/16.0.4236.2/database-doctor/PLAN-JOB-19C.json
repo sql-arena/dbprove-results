@@ -1,0 +1,110 @@
+{
+  "engine": "SQL Server",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 2,
+          "=": 2,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 3,
+          "=": 2,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 12,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 7,
+          "=": 7,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 3,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 70037,
+        "distribute": 0,
+        "hash": 2153943,
+        "join": 5695700,
+        "scan": 4423977,
+        "seek": 857919,
+        "sort": 510195
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(partialagg1053) AS Expr1020, MIN(partialagg1054) AS Expr1021\n       5        10  AGGREGATE MIN(name as name) AS partialagg1053, MIN(title as title) AS partialagg1054\n     334     70027  INNER JOIN LOOP ON ci.person_role_id = chn.id\n       1     70027  │└TABLE SEEK char_name AS chn\n     668     74233  FILTER country_code as country_code = 'us'\n    1856    181481  INNER JOIN LOOP ON Bmk1006 = Bmk1006\n       1    181481  │└TABLE SEEK company_name AS cn\n    1856    181481  SORT Expr1059\n    1856    181481  PROJECT BmkToPage Bmk1006 AS Expr1059\n    1856    181481  INNER JOIN LOOP ON mc.company_id = cn.id\n       1    181481  │└TABLE SEEK company_name AS cn\n    1856    181481  SORT company_id\n    1856    181481  INNER JOIN HASH ON mc.movie_id = t.id\n     179     60017  │└INNER JOIN LOOP ON Bmk1018 = Bmk1018\n       0     65232  │ │└TABLE SEEK title AS t WHERE production_year as production_year > 2000\n     329     65232  │ PROJECT BmkToPage Bmk1018 AS Expr1071\n     329     65232  │ INNER JOIN LOOP ON mi.movie_id = t.id\n       1     65232  │ │└TABLE SEEK title AS t\n     329     65232  │ INNER JOIN HASH ON an.person_id = n.id\n      60     34975  │ │└FILTER name as name LIKE '%An%' AND gender as gender = 'f'\n     530    147233  │ │ INNER JOIN LOOP ON Bmk1014 = Bmk1014\n       1    147233  │ │ │└TABLE SEEK name AS n\n     530    147233  │ │ PROJECT BmkToPage Bmk1014 AS Expr1067\n     530    147233  │ │ INNER JOIN LOOP ON ci.person_id = n.id\n       1    147233  │ │ │└TABLE SEEK name AS n\n     530    147233  │ │ SORT person_id\n     530    147233  │ │ INNER JOIN HASH ON ci.role_id = rt.id\n       1         1  │ │ │└FILTER role as role = 'actress'\n      12        12  │ │ │ TABLE SCAN role_type AS rt\n    5831    409723  │ │ INNER JOIN HASH ON ci.movie_id = mi.movie_id\n    6800    451039  │ │ │└INNER JOIN HASH ON mi.info_type_id = it.id\n       1         1  │ │ │ │└FILTER info as info = 'release dates'\n     113       113  │ │ │ │ TABLE SCAN info_type AS it\n  476040    451039  │ │ │ TABLE SCAN movie_info AS mi WHERE (PROBE(Bitmap1063,info_type_id as info_type_id,N'IN ROW')) AND (info as info LIKE 'Japan:%200%' OR info as info LIKE 'USA:%200%')\n  867572    462341  │ │ TABLE SCAN cast_info AS ci WHERE (PROBE(Bitmap1064,movie_id as movie_id,N'IN ROW')) AND (note as note = '(voice)' OR note as note = '(voice) (uncredited)' OR note as note = '(voice: English version)' OR note as note = '(voice: Japanese version)')\n  901343    901343  │ TABLE SCAN aka_name AS an WHERE PROBE(Bitmap1069,person_id as person_id,N'IN ROW')\n 2609130   2609129  TABLE SCAN movie_companies AS mc WHERE PROBE(Bitmap1073,movie_id as movie_id,N'IN ROW')\n",
+      "sql": "SELECT MIN(n.name) AS voicing_actress,\n       MIN(t.title) AS jap_engl_voiced_movie\nFROM job.aka_name AS an,\n     job.char_name AS chn,\n     job.cast_info AS ci,\n     job.company_name AS cn,\n     job.info_type AS it,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.name AS n,\n     job.role_type AS rt,\n     job.title AS t\nWHERE ci.note IN ('(voice)',\n                  '(voice: Japanese version)',\n                  '(voice) (uncredited)',\n                  '(voice: English version)')\n  AND cn.country_code ='[us]'\n  AND it.info = 'release dates'\n  AND mi.info IS NOT NULL\n  AND (mi.info LIKE 'Japan:%200%'\n       OR mi.info LIKE 'USA:%200%')\n  AND n.gender ='f'\n  AND n.name LIKE '%An%'\n  AND rt.role ='actress'\n  AND t.production_year > 2000\n  AND t.id = mi.movie_id\n  AND t.id = mc.movie_id\n  AND t.id = ci.movie_id\n  AND mc.movie_id = ci.movie_id\n  AND mc.movie_id = mi.movie_id\n  AND mi.movie_id = ci.movie_id\n  AND cn.id = mc.company_id\n  AND it.id = mi.info_type_id\n  AND n.id = ci.person_id\n  AND rt.id = ci.role_id\n  AND n.id = an.person_id\n  AND ci.person_id = an.person_id\n  AND chn.id = ci.person_role_id;\n",
+      "startTime": "2026-06-23T08:18:56.592098Z",
+      "status": "OK",
+      "timeMs": 2755.415
+    }
+  ],
+  "runtime": {
+    "avgMs": 2755.415,
+    "bestMs": 2755.415,
+    "maxMs": 2755.415,
+    "minMs": 2755.415,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 19C Analysis",
+    "displayName": "JOB-19C",
+    "name": "PLAN-JOB-19C",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "16.0.4236.2"
+}

@@ -1,0 +1,114 @@
+QUERY id: 0
+  PROJECTION COLUMNS
+    n_name String
+    revenue Decimal(38, 4)
+  PROJECTION
+    LIST id: 1, nodes: 2
+      COLUMN id: 2, column_name: n_name, result_type: String, source_id: 3
+      FUNCTION id: 4, function_name: sum, function_type: aggregate, result_type: Decimal(38, 4)
+        ARGUMENTS
+          LIST id: 5, nodes: 1
+            FUNCTION id: 6, function_name: multiply, function_type: ordinary, result_type: Decimal(18, 4)
+              ARGUMENTS
+                LIST id: 7, nodes: 2
+                  COLUMN id: 8, column_name: l_extendedprice, result_type: Decimal(15, 2), source_id: 9
+                  FUNCTION id: 10, function_name: minus, function_type: ordinary, result_type: Decimal(15, 2)
+                    ARGUMENTS
+                      LIST id: 11, nodes: 2
+                        CONSTANT id: 12, constant_value: UInt64_1, constant_value_type: UInt8
+                        COLUMN id: 13, column_name: l_discount, result_type: Decimal(15, 2), source_id: 9
+  JOIN TREE
+    JOIN id: 14, strictness: ALL, kind: INNER
+      LEFT TABLE EXPRESSION
+        JOIN id: 15, strictness: ALL, kind: INNER
+          LEFT TABLE EXPRESSION
+            JOIN id: 16, strictness: ALL, kind: INNER
+              LEFT TABLE EXPRESSION
+                JOIN id: 17, strictness: ALL, kind: INNER
+                  LEFT TABLE EXPRESSION
+                    JOIN id: 18, strictness: ALL, kind: INNER
+                      LEFT TABLE EXPRESSION
+                        TABLE id: 9, alias: __table1, table_name: tpch_sf1.lineitem
+                      RIGHT TABLE EXPRESSION
+                        TABLE id: 19, alias: __table2, table_name: tpch_sf1.orders
+                      JOIN EXPRESSION
+                        FUNCTION id: 20, function_name: equals, function_type: ordinary, result_type: UInt8
+                          ARGUMENTS
+                            LIST id: 21, nodes: 2
+                              COLUMN id: 22, column_name: l_orderkey, result_type: Int32, source_id: 9
+                              COLUMN id: 23, column_name: o_orderkey, result_type: Int32, source_id: 19
+                  RIGHT TABLE EXPRESSION
+                    TABLE id: 24, alias: __table3, table_name: tpch_sf1.customer
+                  JOIN EXPRESSION
+                    FUNCTION id: 25, function_name: equals, function_type: ordinary, result_type: UInt8
+                      ARGUMENTS
+                        LIST id: 26, nodes: 2
+                          COLUMN id: 27, column_name: o_custkey, result_type: Int32, source_id: 19
+                          COLUMN id: 28, column_name: c_custkey, result_type: Int32, source_id: 24
+              RIGHT TABLE EXPRESSION
+                TABLE id: 29, alias: __table4, table_name: tpch_sf1.supplier
+              JOIN EXPRESSION
+                FUNCTION id: 30, function_name: equals, function_type: ordinary, result_type: UInt8
+                  ARGUMENTS
+                    LIST id: 31, nodes: 2
+                      COLUMN id: 32, column_name: l_suppkey, result_type: Int32, source_id: 9
+                      COLUMN id: 33, column_name: s_suppkey, result_type: Int32, source_id: 29
+          RIGHT TABLE EXPRESSION
+            TABLE id: 3, alias: __table5, table_name: tpch_sf1.nation
+          JOIN EXPRESSION
+            FUNCTION id: 34, function_name: equals, function_type: ordinary, result_type: UInt8
+              ARGUMENTS
+                LIST id: 35, nodes: 2
+                  COLUMN id: 36, column_name: s_nationkey, result_type: Int32, source_id: 29
+                  COLUMN id: 37, column_name: n_nationkey, result_type: Int32, source_id: 3
+      RIGHT TABLE EXPRESSION
+        TABLE id: 38, alias: __table6, table_name: tpch_sf1.region
+      JOIN EXPRESSION
+        FUNCTION id: 39, function_name: equals, function_type: ordinary, result_type: UInt8
+          ARGUMENTS
+            LIST id: 40, nodes: 2
+              COLUMN id: 41, column_name: n_regionkey, result_type: Int32, source_id: 3
+              COLUMN id: 42, column_name: r_regionkey, result_type: Int32, source_id: 38
+  WHERE
+    FUNCTION id: 43, function_name: and, function_type: ordinary, result_type: UInt8
+      ARGUMENTS
+        LIST id: 44, nodes: 4
+          FUNCTION id: 45, function_name: equals, function_type: ordinary, result_type: UInt8
+            ARGUMENTS
+              LIST id: 46, nodes: 2
+                COLUMN id: 47, column_name: r_name, result_type: String, source_id: 38
+                CONSTANT id: 48, constant_value: 'EUROPE', constant_value_type: String
+          FUNCTION id: 49, function_name: greaterOrEquals, function_type: ordinary, result_type: UInt8
+            ARGUMENTS
+              LIST id: 50, nodes: 2
+                COLUMN id: 51, column_name: o_orderdate, result_type: Date, source_id: 19
+                CONSTANT id: 52, constant_value: '1995-01-01', constant_value_type: String
+          FUNCTION id: 53, function_name: less, function_type: ordinary, result_type: UInt8
+            ARGUMENTS
+              LIST id: 54, nodes: 2
+                COLUMN id: 55, column_name: o_orderdate, result_type: Date, source_id: 19
+                CONSTANT id: 56, constant_value: '1996-01-01', constant_value_type: String
+          FUNCTION id: 57, function_name: equals, function_type: ordinary, result_type: UInt8
+            ARGUMENTS
+              LIST id: 58, nodes: 2
+                COLUMN id: 59, column_name: s_nationkey, result_type: Int32, source_id: 29
+                COLUMN id: 60, column_name: c_nationkey, result_type: Int32, source_id: 24
+  GROUP BY
+    LIST id: 61, nodes: 1
+      COLUMN id: 62, column_name: n_name, result_type: String, source_id: 3
+  ORDER BY
+    LIST id: 63, nodes: 1
+      SORT id: 64, sort_direction: DESCENDING, with_fill: 0
+        EXPRESSION revenue
+          FUNCTION id: 65, function_name: sum, function_type: aggregate, result_type: Decimal(38, 4)
+            ARGUMENTS
+              LIST id: 66, nodes: 1
+                FUNCTION id: 67, function_name: multiply, function_type: ordinary, result_type: Decimal(18, 4)
+                  ARGUMENTS
+                    LIST id: 68, nodes: 2
+                      COLUMN id: 69, column_name: l_extendedprice, result_type: Decimal(15, 2), source_id: 9
+                      FUNCTION id: 70, function_name: minus, function_type: ordinary, result_type: Decimal(15, 2)
+                        ARGUMENTS
+                          LIST id: 71, nodes: 2
+                            CONSTANT id: 72, constant_value: UInt64_1, constant_value_type: UInt8
+                            COLUMN id: 73, column_name: l_discount, result_type: Decimal(15, 2), source_id: 9

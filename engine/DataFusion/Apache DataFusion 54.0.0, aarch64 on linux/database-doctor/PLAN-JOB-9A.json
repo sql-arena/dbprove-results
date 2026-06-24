@@ -1,0 +1,110 @@
+{
+  "engine": "DataFusion",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 1
+        },
+        "filter": {
+          "+2x": 1,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 1,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 2,
+          ">16x": 2
+        },
+        "hash": {
+          "+2x": 2,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 4,
+          ">16x": 1
+        },
+        "join": {
+          "+2x": 3,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 3
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 2,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 7,
+          ">16x": 1
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 131,
+        "distribute": 6182007,
+        "hash": 2346836,
+        "join": 5445772,
+        "scan": 18054314,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  PROJECT alternative_name, character_name, movie\n       1         1  AGGREGATE MIN(name), MIN(name), MIN(title)\n   28463        10  DISTRIBUTE GATHER\n   28463        10  AGGREGATE MIN(name), MIN(name), MIN(title)\n   28463       121  INNER JOIN HASH ON movie_id = id AND movie_id = id\n   28463       341  │└DISTRIBUTE GATHER\n   28463       341  │ INNER JOIN HASH ON id = role_id\n       3         1  │ │└DISTRIBUTE GATHER\n       3         1  │ │ FILTER role = 'actress'\n      12        12  │ │ DISTRIBUTE ROUND ROBIN\n      12        12  │ │ TABLE SCAN role_type WHERE role = 'actress'\n  104366       341  │ INNER JOIN HASH ON person_id = id AND person_id = id\n  104366    168007  │ │└DISTRIBUTE GATHER\n  104366    168007  │ │ INNER JOIN HASH ON id = company_id\n   47000     84843  │ │ │└DISTRIBUTE GATHER\n   47000     84843  │ │ │ FILTER country_code = 'us'\n  234997    234997  │ │ │ TABLE SCAN company_name WHERE country_code = 'us'\n  521826    175314  │ │ PROJECT person_id, name, person_id, movie_id, role_id, name, movie_id, company_id\n  521826    175314  │ │ INNER JOIN HASH ON movie_id = movie_id\n  521826    590994  │ │ │└DISTRIBUTE HASH ON movie_id\n  521826    590994  │ │ │ FILTER note IS NOT NULL AND (note LIKE '%(USA)%' OR note LIKE '%(worldwide)%')\n 2609129   2609129  │ │ │ TABLE SCAN movie_companies WHERE (note IS NOT NULL AND (note LIKE '%(USA)%' OR note LIKE '%(worldwide)%')) AND (((company_id >= 1) AND (company_id <= 234997)) AND TRUE)\n 1608526    497319  │ │ DISTRIBUTE HASH ON movie_id\n 1608526    497319  │ │ INNER JOIN HASH ON person_role_id = id\n 1608526    517803  │ │ │└DISTRIBUTE HASH ON person_role_id\n 1608526    517803  │ │ │ INNER JOIN HASH ON person_id = person_id\n  901343    901343  │ │ │ │└DISTRIBUTE HASH ON person_id\n  901343    901343  │ │ │ │ TABLE SCAN aka_name\n 7248869    280995  │ │ │ DISTRIBUTE HASH ON person_id\n 7248869    280995  │ │ │ FILTER note IN('(voice)','(voice: Japanese version)','(voice) (uncredited)','(voice: English version)')\n36244344   7656546  │ │ │ TABLE SCAN cast_info WHERE ((note IN('(voice)','(voice: Japanese version)','(voice) (uncredited)','(voice: English version)') AND CASE MOD(HASH_REPARTITION person_id,10) WHEN 0 THEN (((person_id >= 5) AND (person_id <= 4167489)) AND TRUE) WHEN 1 THEN (((person_id >= 15) AND (person_id <= 4167473)) AND TRUE) WHEN 2 THEN (((person_id >= 69) AND (person_id <= 4167478)) AND TRUE) WHEN 3 THEN (((person_id >= 161) AND (person_id <= 4167352)) AND TRUE) WHEN 4 THEN (((...\n 3140339   3140339  │ │ DISTRIBUTE HASH ON id\n 3140339   3140339  │ │ TABLE SCAN char_name WHERE CASE MOD(HASH_REPARTITION id,10) WHEN 0 THEN (((id >= 119) AND (id <= 3139884)) AND TRUE) WHEN 1 THEN (((id >= 63) AND (id <= 3139863)) AND TRUE) WHEN 2 THEN (((id >= 53) AND (id <= 3139889)) AND TRUE) WHEN 3 THEN (((id >= 1) AND (id <= 3139888)) AND TRUE) WHEN 4 THEN (((id >= 21) AND (id <= 3139890)) AND TRUE) WHEN 5 THEN (((id >= 57) AND (id <= 3139914)) AND TRUE) WHEN 6 THEN (((id >= 142) AND (id <= 3139883)) AND TRUE) WHEN 7 THEN (((i...\n  833499      6768  │ FILTER (gender = 'f') AND name LIKE '%Ang%'\n 4167491    983636  │ TABLE SCAN name WHERE ((gender = 'f') AND name LIKE '%Ang%') AND ((((id >= 293010) AND (id <= 2700464)) AND ((id >= 293010) AND (id <= 2700464))) AND TRUE)\n  198654   1107888  FILTER (production_year >= 2005) AND (production_year <= 2015)\n 2528312   2528312  TABLE SCAN title WHERE ((production_year >= 2005) AND (production_year <= 2015)) AND ((((id >= 72717) AND (id <= 2499211)) AND ((id >= 72717) AND (id <= 2499211))) AND struct(id,id) IN( < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < exp...\n",
+      "sql": "SELECT MIN(an.name) AS alternative_name,\n       MIN(chn.name) AS character_name,\n       MIN(t.title) AS movie\nFROM job.aka_name AS an,\n     job.char_name AS chn,\n     job.cast_info AS ci,\n     job.company_name AS cn,\n     job.movie_companies AS mc,\n     job.name AS n,\n     job.role_type AS rt,\n     job.title AS t\nWHERE ci.note IN ('(voice)',\n                  '(voice: Japanese version)',\n                  '(voice) (uncredited)',\n                  '(voice: English version)')\n  AND cn.country_code ='[us]'\n  AND mc.note IS NOT NULL\n  AND (mc.note LIKE '%(USA)%'\n       OR mc.note LIKE '%(worldwide)%')\n  AND n.gender ='f'\n  AND n.name LIKE '%Ang%'\n  AND rt.role ='actress'\n  AND t.production_year BETWEEN 2005 AND 2015\n  AND ci.movie_id = t.id\n  AND t.id = mc.movie_id\n  AND ci.movie_id = mc.movie_id\n  AND mc.company_id = cn.id\n  AND ci.role_id = rt.id\n  AND n.id = ci.person_id\n  AND chn.id = ci.person_role_id\n  AND an.person_id = n.id\n  AND an.person_id = ci.person_id;\n",
+      "startTime": "2026-06-23T17:16:09.562955Z",
+      "status": "OK",
+      "timeMs": 232.595
+    }
+  ],
+  "runtime": {
+    "avgMs": 232.595,
+    "bestMs": 232.595,
+    "maxMs": 232.595,
+    "minMs": 232.595,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "iceberg",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 9A Analysis",
+    "displayName": "JOB-9A",
+    "name": "PLAN-JOB-9A",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "Apache DataFusion 54.0.0, aarch64 on linux"
+}

@@ -1,0 +1,110 @@
+{
+  "engine": "PostgreSQL",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 4,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 1,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 4,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 4700,
+        "distribute": 0,
+        "hash": 43734,
+        "join": 50250,
+        "scan": 30,
+        "seek": 34004,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(info), MIN(title)\n       5      4700  INNER JOIN LOOP ON id = movie_id AND movie_id = id AND (movie_id = id)\n       7      8092  │└INNER JOIN LOOP ON keyword_id = id AND info_type_id = id AND (info_type_id = id)\n       1         1  │ │└TABLE SEEK info_type AS it\n     760     14599  │ INNER JOIN LOOP ON movie_id = movie_id\n     438     12951  │ │└INNER JOIN LOOP ON keyword_id = id\n      13        30  │ │ │└TABLE SCAN keyword AS k WHERE k.keyword LIKE '%sequel%'\n    9030     12960  │ │ TABLE SEEK movie_keyword AS mk\n   25902     12951  │ TABLE SEEK movie_info_idx AS mi_idx WHERE mi_idx.info > '2.0'\n    8092      8092  TABLE SEEK title AS t WHERE t.production_year > 1990\n",
+      "sql": "SELECT MIN(mi_idx.info) AS rating,\n       MIN(t.title) AS movie_title\nFROM job.info_type AS it,\n     job.keyword AS k,\n     job.movie_info_idx AS mi_idx,\n     job.movie_keyword AS mk,\n     job.title AS t\nWHERE it.info ='rating'\n  AND k.keyword LIKE '%sequel%'\n  AND mi_idx.info > '2.0'\n  AND t.production_year > 1990\n  AND t.id = mi_idx.movie_id\n  AND t.id = mk.movie_id\n  AND mk.movie_id = mi_idx.movie_id\n  AND k.id = mk.keyword_id\n  AND it.id = mi_idx.info_type_id;\n",
+      "startTime": "2026-06-23T15:47:49.499512Z",
+      "status": "OK",
+      "timeMs": 2545.936
+    }
+  ],
+  "runtime": {
+    "avgMs": 2545.936,
+    "bestMs": 2545.936,
+    "maxMs": 2545.936,
+    "minMs": 2545.936,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 4C Analysis",
+    "displayName": "JOB-4C",
+    "name": "PLAN-JOB-4C",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "14.23"
+}

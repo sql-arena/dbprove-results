@@ -1,0 +1,463 @@
+<?xml version="1.0"?>
+<ShowPlanXML xmlns="http://schemas.microsoft.com/sqlserver/2004/07/showplan" Version="1.564" Build="16.0.4236.2">
+  <BatchSequence>
+    <Batch>
+      <Statements>
+        <StmtSimple StatementText="SELECT p_brand,&#10;       p_type,&#10;       p_size,&#10;       COUNT(DISTINCT ps_suppkey) AS supplier_cnt&#10;FROM tpch_sf1.partsupp&#10;INNER JOIN tpch_sf1.part&#10;    ON ps_partkey = p_partkey&#10;&#10;WHERE p_brand &lt;> 'Brand#42'&#10;  AND p_type NOT LIKE 'STANDARD ANODIZED%'&#10;  AND p_size IN (3, 7, 11, 29, 31, 37, 41, 49)&#10;  AND ps_suppkey NOT IN (SELECT s_suppkey&#10;                         FROM tpch_sf1.supplier&#10;                         WHERE s_comment LIKE '%Customer%Complaints%')&#10;GROUP BY p_brand,&#10;         p_type,&#10;         p_size&#10;ORDER BY supplier_cnt DESC,&#10;         p_brand,&#10;         p_type,&#10;         p_size" StatementId="1" StatementCompId="1" StatementType="SELECT" StatementSqlHandle="0x0900F81F97B10DA83649CAEF04A9DD5BBCA20000000000000000000000000000000000000000000000000000" DatabaseContextSettingsId="1" ParentObjectId="0" StatementParameterizationType="0" RetrievedFromCache="true" StatementSubTreeCost="20.4502" StatementEstRows="19391.2" SecurityPolicyApplied="false" StatementOptmLevel="FULL" QueryHash="0x3BC9A12ABA5BC0EF" QueryPlanHash="0x7F53EBCA86C297FB" CardinalityEstimationModelVersion="160">
+          <StatementSetOptions QUOTED_IDENTIFIER="true" ARITHABORT="false" CONCAT_NULL_YIELDS_NULL="true" ANSI_NULLS="true" ANSI_PADDING="true" ANSI_WARNINGS="true" NUMERIC_ROUNDABORT="false" />
+          <QueryPlan DegreeOfParallelism="1" MemoryGrant="28744" CachedPlanSize="80" CompileTime="213" CompileCPU="212" CompileMemory="1304">
+            <MissingIndexes>
+              <MissingIndexGroup Impact="11.717">
+                <MissingIndex Database="[dbprove]" Schema="[tpch_sf1]" Table="[part]">
+                  <ColumnGroup Usage="INEQUALITY">
+                    <Column Name="[p_size]" ColumnId="6" />
+                  </ColumnGroup>
+                  <ColumnGroup Usage="INCLUDE">
+                    <Column Name="[p_partkey]" ColumnId="1" />
+                    <Column Name="[p_brand]" ColumnId="4" />
+                    <Column Name="[p_type]" ColumnId="5" />
+                  </ColumnGroup>
+                </MissingIndex>
+              </MissingIndexGroup>
+            </MissingIndexes>
+            <MemoryGrantInfo SerialRequiredMemory="1688" SerialDesiredMemory="28744" RequiredMemory="1688" DesiredMemory="28744" RequestedMemory="28744" GrantWaitTime="0" MaxQueryMemory="1500112" GrantedMemory="28744" MaxUsedMemory="19184" LastRequestedMemory="101840" IsMemoryGrantFeedbackAdjusted="Yes: Adjusting" />
+            <OptimizerHardwareDependentProperties EstimatedAvailableMemoryGrant="97873" EstimatedPagesCached="61171" EstimatedAvailableDegreeOfParallelism="5" MaxCompileMemory="5213416" />
+            <OptimizerStatsUsage>
+              <StatisticsInfo LastUpdate="2026-06-22T16:16:02.66" ModificationCount="0" SamplingPercent="100" Statistics="[pk_supplier]" Table="[supplier]" Schema="[tpch_sf1]" Database="[dbprove]" />
+              <StatisticsInfo LastUpdate="2026-06-22T16:16:04.73" ModificationCount="0" SamplingPercent="10.994" Statistics="[_WA_Sys_00000002_02FC7413]" Table="[partsupp]" Schema="[tpch_sf1]" Database="[dbprove]" />
+              <StatisticsInfo LastUpdate="2026-06-22T16:16:20.33" ModificationCount="0" SamplingPercent="35.458" Statistics="[_WA_Sys_00000004_02084FDA]" Table="[part]" Schema="[tpch_sf1]" Database="[dbprove]" />
+              <StatisticsInfo LastUpdate="2026-06-22T16:16:02.89" ModificationCount="0" SamplingPercent="100" Statistics="[pk_partsupp]" Table="[partsupp]" Schema="[tpch_sf1]" Database="[dbprove]" />
+              <StatisticsInfo LastUpdate="2026-06-22T16:16:20.16" ModificationCount="0" SamplingPercent="100" Statistics="[_WA_Sys_00000007_01142BA1]" Table="[supplier]" Schema="[tpch_sf1]" Database="[dbprove]" />
+              <StatisticsInfo LastUpdate="2026-06-22T16:16:10.91" ModificationCount="0" SamplingPercent="35.458" Statistics="[_WA_Sys_00000005_02084FDA]" Table="[part]" Schema="[tpch_sf1]" Database="[dbprove]" />
+              <StatisticsInfo LastUpdate="2026-06-22T16:16:02.65" ModificationCount="0" SamplingPercent="100" Statistics="[pk_part]" Table="[part]" Schema="[tpch_sf1]" Database="[dbprove]" />
+              <StatisticsInfo LastUpdate="2026-06-22T16:16:10.74" ModificationCount="0" SamplingPercent="35.458" Statistics="[_WA_Sys_00000006_02084FDA]" Table="[part]" Schema="[tpch_sf1]" Database="[dbprove]" />
+            </OptimizerStatsUsage>
+            <QueryTimeStats ElapsedTime="458" CpuTime="458" />
+            <RelOp NodeId="0" PhysicalOp="Sort" LogicalOp="Sort" EstimateRows="19391.2" EstimateIO="0.0112613" EstimateCPU="1.26781" AvgRowSize="157" EstimatedTotalSubtreeCost="20.4502" Parallel="0" EstimateRebinds="0" EstimateRewinds="0" EstimatedExecutionMode="Row">
+              <OutputList>
+                <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[part]" Column="p_brand" />
+                <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[part]" Column="p_type" />
+                <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[part]" Column="p_size" />
+                <ColumnReference Column="Expr1009" />
+              </OutputList>
+              <MemoryFractions Input="0.121959" Output="1" />
+              <RunTimeInformation>
+                <RunTimeCountersPerThread Thread="0" ActualRows="18282" Batches="0" ActualElapsedms="449" ActualCPUms="449" ActualScans="0" ActualLogicalReads="0" ActualPhysicalReads="0" ActualReadAheads="0" ActualLobLogicalReads="0" ActualLobPhysicalReads="0" ActualLobReadAheads="0" ActualRebinds="1" ActualRewinds="0" ActualEndOfScans="1" ActualExecutions="1" InputMemoryGrant="3808" OutputMemoryGrant="27184" UsedMemoryGrant="2480" ActualExecutionMode="Row" />
+              </RunTimeInformation>
+              <Sort Distinct="0">
+                <OrderBy>
+                  <OrderByColumn Ascending="0">
+                    <ColumnReference Column="Expr1009" />
+                  </OrderByColumn>
+                  <OrderByColumn Ascending="1">
+                    <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[part]" Column="p_brand" />
+                  </OrderByColumn>
+                  <OrderByColumn Ascending="1">
+                    <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[part]" Column="p_type" />
+                  </OrderByColumn>
+                  <OrderByColumn Ascending="1">
+                    <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[part]" Column="p_size" />
+                  </OrderByColumn>
+                </OrderBy>
+                <RelOp NodeId="1" PhysicalOp="Compute Scalar" LogicalOp="Compute Scalar" EstimateRows="19391.2" EstimateIO="0" EstimateCPU="0" AvgRowSize="157" EstimatedTotalSubtreeCost="19.1712" Parallel="0" EstimateRebinds="0" EstimateRewinds="0" EstimatedExecutionMode="Row">
+                  <OutputList>
+                    <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[part]" Column="p_brand" />
+                    <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[part]" Column="p_type" />
+                    <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[part]" Column="p_size" />
+                    <ColumnReference Column="Expr1009" />
+                  </OutputList>
+                  <ComputeScalar>
+                    <DefinedValues>
+                      <DefinedValue>
+                        <ColumnReference Column="Expr1009" />
+                        <ScalarOperator ScalarString="CONVERT_IMPLICIT(int,[Expr1016],0)">
+                          <Convert DataType="int" Style="0" Implicit="1">
+                            <ScalarOperator>
+                              <Identifier>
+                                <ColumnReference Column="Expr1016" />
+                              </Identifier>
+                            </ScalarOperator>
+                          </Convert>
+                        </ScalarOperator>
+                      </DefinedValue>
+                    </DefinedValues>
+                    <RelOp NodeId="2" PhysicalOp="Stream Aggregate" LogicalOp="Aggregate" EstimateRows="19391.2" EstimateIO="0" EstimateCPU="0.0837766" AvgRowSize="157" EstimatedTotalSubtreeCost="19.1712" Parallel="0" EstimateRebinds="0" EstimateRewinds="0" EstimatedExecutionMode="Row">
+                      <OutputList>
+                        <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[part]" Column="p_brand" />
+                        <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[part]" Column="p_type" />
+                        <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[part]" Column="p_size" />
+                        <ColumnReference Column="Expr1016" />
+                      </OutputList>
+                      <RunTimeInformation>
+                        <RunTimeCountersPerThread Thread="0" ActualRows="18282" Batches="0" ActualElapsedms="423" ActualCPUms="423" ActualEndOfScans="1" ActualExecutions="1" ActualExecutionMode="Row" />
+                      </RunTimeInformation>
+                      <StreamAggregate>
+                        <DefinedValues>
+                          <DefinedValue>
+                            <ColumnReference Column="Expr1016" />
+                            <ScalarOperator ScalarString="Count(*)">
+                              <Aggregate AggType="countstar" Distinct="0" />
+                            </ScalarOperator>
+                          </DefinedValue>
+                        </DefinedValues>
+                        <GroupBy>
+                          <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[part]" Column="p_brand" />
+                          <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[part]" Column="p_type" />
+                          <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[part]" Column="p_size" />
+                        </GroupBy>
+                        <RelOp NodeId="3" PhysicalOp="Sort" LogicalOp="Distinct Sort" EstimateRows="123468" EstimateIO="0.0112613" EstimateCPU="9.58806" AvgRowSize="157" EstimatedTotalSubtreeCost="19.0874" Parallel="0" EstimateRebinds="0" EstimateRewinds="0" EstimatedExecutionMode="Row">
+                          <OutputList>
+                            <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[partsupp]" Column="ps_suppkey" />
+                            <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[part]" Column="p_brand" />
+                            <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[part]" Column="p_type" />
+                            <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[part]" Column="p_size" />
+                          </OutputList>
+                          <MemoryFractions Input="0.853637" Output="0.878041" />
+                          <RunTimeInformation>
+                            <RunTimeCountersPerThread Thread="0" ActualRows="119013" Batches="0" ActualElapsedms="399" ActualCPUms="399" ActualScans="0" ActualLogicalReads="0" ActualPhysicalReads="0" ActualReadAheads="0" ActualLobLogicalReads="0" ActualLobPhysicalReads="0" ActualLobReadAheads="0" ActualRebinds="1" ActualRewinds="0" ActualEndOfScans="1" ActualExecutions="1" InputMemoryGrant="23608" OutputMemoryGrant="23880" UsedMemoryGrant="15736" ActualExecutionMode="Row" />
+                          </RunTimeInformation>
+                          <Sort Distinct="1">
+                            <OrderBy>
+                              <OrderByColumn Ascending="1">
+                                <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[part]" Column="p_brand" />
+                              </OrderByColumn>
+                              <OrderByColumn Ascending="1">
+                                <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[part]" Column="p_type" />
+                              </OrderByColumn>
+                              <OrderByColumn Ascending="1">
+                                <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[part]" Column="p_size" />
+                              </OrderByColumn>
+                              <OrderByColumn Ascending="1">
+                                <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[partsupp]" Column="ps_suppkey" />
+                              </OrderByColumn>
+                            </OrderBy>
+                            <RelOp NodeId="4" PhysicalOp="Hash Match" LogicalOp="Right Anti Semi Join" EstimateRows="123499" EstimateIO="0" EstimateCPU="0.338744" AvgRowSize="157" EstimatedTotalSubtreeCost="9.48757" Parallel="0" EstimateRebinds="0" EstimateRewinds="0" EstimatedExecutionMode="Batch">
+                              <OutputList>
+                                <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[partsupp]" Column="ps_suppkey" />
+                                <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[part]" Column="p_brand" />
+                                <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[part]" Column="p_type" />
+                                <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[part]" Column="p_size" />
+                              </OutputList>
+                              <MemoryFractions Input="0.0100532" Output="0.0100532" />
+                              <RunTimeInformation>
+                                <RunTimeCountersPerThread Thread="0" ActualRows="119043" Batches="231" ActualElapsedms="0" ActualCPUms="0" ActualScans="0" ActualLogicalReads="0" ActualPhysicalReads="0" ActualReadAheads="0" ActualLobLogicalReads="0" ActualLobPhysicalReads="0" ActualLobReadAheads="0" ActualEndOfScans="0" ActualExecutions="1" ActualExecutionMode="Batch" />
+                              </RunTimeInformation>
+                              <Hash>
+                                <DefinedValues />
+                                <HashKeysBuild>
+                                  <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[supplier]" Column="s_suppkey" />
+                                </HashKeysBuild>
+                                <HashKeysProbe>
+                                  <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[partsupp]" Column="ps_suppkey" />
+                                </HashKeysProbe>
+                                <RelOp NodeId="5" PhysicalOp="Filter" LogicalOp="Filter" EstimateRows="1.96078" EstimateIO="0" EstimateCPU="0.0088" AvgRowSize="11" EstimatedTotalSubtreeCost="0.167526" Parallel="0" EstimateRebinds="0" EstimateRewinds="0" EstimatedExecutionMode="Row">
+                                  <OutputList>
+                                    <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[supplier]" Column="s_suppkey" />
+                                  </OutputList>
+                                  <RunTimeInformation>
+                                    <RunTimeCountersPerThread Thread="0" ActualRows="4" Batches="1" ActualElapsedms="5" ActualCPUms="5" ActualEndOfScans="0" ActualExecutions="1" ActualExecutionMode="Row" />
+                                  </RunTimeInformation>
+                                  <Filter StartupExpression="0">
+                                    <RelOp NodeId="6" PhysicalOp="Table Scan" LogicalOp="Table Scan" EstimateRows="10000" EstimatedRowsRead="10000" EstimateIO="0.147569" EstimateCPU="0.011157" AvgRowSize="4039" EstimatedTotalSubtreeCost="0.158726" TableCardinality="10000" Parallel="0" EstimateRebinds="0" EstimateRewinds="0" EstimatedExecutionMode="Row">
+                                      <OutputList>
+                                        <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[supplier]" Column="s_suppkey" />
+                                        <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[supplier]" Column="s_comment" />
+                                      </OutputList>
+                                      <RunTimeInformation>
+                                        <RunTimeCountersPerThread Thread="0" ActualRows="10000" Batches="0" ActualElapsedms="1" ActualCPUms="1" ActualScans="1" ActualLogicalReads="196" ActualPhysicalReads="0" ActualReadAheads="0" ActualLobLogicalReads="0" ActualLobPhysicalReads="0" ActualLobReadAheads="0" ActualRowsRead="10000" ActualEndOfScans="1" ActualExecutions="1" ActualExecutionMode="Row" />
+                                      </RunTimeInformation>
+                                      <TableScan Ordered="0" ForcedIndex="0" ForceScan="0" NoExpandHint="0" Storage="RowStore">
+                                        <DefinedValues>
+                                          <DefinedValue>
+                                            <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[supplier]" Column="s_suppkey" />
+                                          </DefinedValue>
+                                          <DefinedValue>
+                                            <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[supplier]" Column="s_comment" />
+                                          </DefinedValue>
+                                        </DefinedValues>
+                                        <Object Database="[dbprove]" Schema="[tpch_sf1]" Table="[supplier]" IndexKind="Heap" Storage="RowStore" />
+                                      </TableScan>
+                                    </RelOp>
+                                    <Predicate>
+                                      <ScalarOperator ScalarString="[dbprove].[tpch_sf1].[supplier].[s_comment] like '%Customer%Complaints%'">
+                                        <Intrinsic FunctionName="like">
+                                          <ScalarOperator>
+                                            <Identifier>
+                                              <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[supplier]" Column="s_comment" />
+                                            </Identifier>
+                                          </ScalarOperator>
+                                          <ScalarOperator>
+                                            <Const ConstValue="'%Customer%Complaints%'" />
+                                          </ScalarOperator>
+                                        </Intrinsic>
+                                      </ScalarOperator>
+                                    </Predicate>
+                                  </Filter>
+                                </RelOp>
+                                <RelOp NodeId="7" PhysicalOp="Merge Join" LogicalOp="Inner Join" EstimateRows="123523" EstimateIO="0" EstimateCPU="1.7628" AvgRowSize="157" EstimatedTotalSubtreeCost="8.88223" Parallel="0" EstimateRebinds="0" EstimateRewinds="0" EstimatedExecutionMode="Row">
+                                  <OutputList>
+                                    <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[partsupp]" Column="ps_suppkey" />
+                                    <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[part]" Column="p_brand" />
+                                    <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[part]" Column="p_type" />
+                                    <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[part]" Column="p_size" />
+                                  </OutputList>
+                                  <RunTimeInformation>
+                                    <RunTimeCountersPerThread Thread="0" ActualRows="119100" Batches="231" ActualElapsedms="127" ActualCPUms="127" ActualScans="0" ActualLogicalReads="0" ActualPhysicalReads="0" ActualReadAheads="0" ActualLobLogicalReads="0" ActualLobPhysicalReads="0" ActualLobReadAheads="0" ActualEndOfScans="0" ActualExecutions="1" ActualExecutionMode="Row" />
+                                  </RunTimeInformation>
+                                  <Merge ManyToMany="0">
+                                    <InnerSideJoinColumns>
+                                      <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[partsupp]" Column="ps_partkey" />
+                                    </InnerSideJoinColumns>
+                                    <OuterSideJoinColumns>
+                                      <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[part]" Column="p_partkey" />
+                                    </OuterSideJoinColumns>
+                                    <Residual>
+                                      <ScalarOperator ScalarString="[dbprove].[tpch_sf1].[part].[p_partkey]=[dbprove].[tpch_sf1].[partsupp].[ps_partkey]">
+                                        <Compare CompareOp="EQ">
+                                          <ScalarOperator>
+                                            <Identifier>
+                                              <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[part]" Column="p_partkey" />
+                                            </Identifier>
+                                          </ScalarOperator>
+                                          <ScalarOperator>
+                                            <Identifier>
+                                              <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[partsupp]" Column="ps_partkey" />
+                                            </Identifier>
+                                          </ScalarOperator>
+                                        </Compare>
+                                      </ScalarOperator>
+                                    </Residual>
+                                    <RelOp NodeId="8" PhysicalOp="Sort" LogicalOp="Sort" EstimateRows="30880.8" EstimateIO="0.00375375" EstimateCPU="1.05711" AvgRowSize="157" EstimatedTotalSubtreeCost="4.62121" Parallel="0" EstimateRebinds="0" EstimateRewinds="0" EstimatedExecutionMode="Batch">
+                                      <OutputList>
+                                        <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[part]" Column="p_partkey" />
+                                        <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[part]" Column="p_brand" />
+                                        <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[part]" Column="p_type" />
+                                        <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[part]" Column="p_size" />
+                                      </OutputList>
+                                      <MemoryFractions Input="0.13631" Output="0.13631" />
+                                      <RunTimeInformation>
+                                        <RunTimeCountersPerThread Thread="0" ActualRows="29775" Batches="58" ActualElapsedms="0" ActualCPUms="0" ActualScans="0" ActualLogicalReads="0" ActualPhysicalReads="0" ActualReadAheads="0" ActualLobLogicalReads="0" ActualLobPhysicalReads="0" ActualLobReadAheads="0" ActualEndOfScans="0" ActualExecutions="1" ActualExecutionMode="Batch" />
+                                      </RunTimeInformation>
+                                      <Sort Distinct="0">
+                                        <OrderBy>
+                                          <OrderByColumn Ascending="1">
+                                            <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[part]" Column="p_partkey" />
+                                          </OrderByColumn>
+                                        </OrderBy>
+                                        <RelOp NodeId="9" PhysicalOp="Filter" LogicalOp="Filter" EstimateRows="30880.8" EstimateIO="0" EstimateCPU="0.776" AvgRowSize="157" EstimatedTotalSubtreeCost="3.53558" Parallel="0" EstimateRebinds="0" EstimateRewinds="0" EstimatedExecutionMode="Row">
+                                          <OutputList>
+                                            <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[part]" Column="p_partkey" />
+                                            <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[part]" Column="p_brand" />
+                                            <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[part]" Column="p_type" />
+                                            <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[part]" Column="p_size" />
+                                          </OutputList>
+                                          <RunTimeInformation>
+                                            <RunTimeCountersPerThread Thread="0" ActualRows="29775" Batches="58" ActualElapsedms="41" ActualCPUms="41" ActualEndOfScans="0" ActualExecutions="1" ActualExecutionMode="Row" />
+                                          </RunTimeInformation>
+                                          <Filter StartupExpression="0">
+                                            <RelOp NodeId="10" PhysicalOp="Table Scan" LogicalOp="Table Scan" EstimateRows="30880.8" EstimatedRowsRead="200000" EstimateIO="2.53942" EstimateCPU="0.220157" AvgRowSize="157" EstimatedTotalSubtreeCost="2.75958" TableCardinality="200000" Parallel="0" EstimateRebinds="0" EstimateRewinds="0" EstimatedExecutionMode="Row">
+                                              <OutputList>
+                                                <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[part]" Column="p_partkey" />
+                                                <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[part]" Column="p_brand" />
+                                                <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[part]" Column="p_type" />
+                                                <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[part]" Column="p_size" />
+                                              </OutputList>
+                                              <RunTimeInformation>
+                                                <RunTimeCountersPerThread Thread="0" ActualRows="32110" Batches="0" ActualElapsedms="29" ActualCPUms="29" ActualScans="1" ActualLogicalReads="3425" ActualPhysicalReads="0" ActualReadAheads="0" ActualLobLogicalReads="0" ActualLobPhysicalReads="0" ActualLobReadAheads="0" ActualRowsRead="200000" ActualEndOfScans="1" ActualExecutions="1" ActualExecutionMode="Row" />
+                                              </RunTimeInformation>
+                                              <TableScan Ordered="0" ForcedIndex="0" ForceScan="0" NoExpandHint="0" Storage="RowStore">
+                                                <DefinedValues>
+                                                  <DefinedValue>
+                                                    <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[part]" Column="p_partkey" />
+                                                  </DefinedValue>
+                                                  <DefinedValue>
+                                                    <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[part]" Column="p_brand" />
+                                                  </DefinedValue>
+                                                  <DefinedValue>
+                                                    <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[part]" Column="p_type" />
+                                                  </DefinedValue>
+                                                  <DefinedValue>
+                                                    <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[part]" Column="p_size" />
+                                                  </DefinedValue>
+                                                </DefinedValues>
+                                                <Object Database="[dbprove]" Schema="[tpch_sf1]" Table="[part]" IndexKind="Heap" Storage="RowStore" />
+                                                <Predicate>
+                                                  <ScalarOperator ScalarString="[dbprove].[tpch_sf1].[part].[p_size]=(3) OR [dbprove].[tpch_sf1].[part].[p_size]=(7) OR [dbprove].[tpch_sf1].[part].[p_size]=(11) OR [dbprove].[tpch_sf1].[part].[p_size]=(29) OR [dbprove].[tpch_sf1].[part].[p_size]=(31) OR [dbprove].[tpch_sf1].[part].[p_size]=(37) OR [dbprove].[tpch_sf1].[part].[p_size]=(41) OR [dbprove].[tpch_sf1].[part].[p_size]=(49)">
+                                                    <Logical Operation="OR">
+                                                      <ScalarOperator>
+                                                        <Compare CompareOp="EQ">
+                                                          <ScalarOperator>
+                                                            <Identifier>
+                                                              <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[part]" Column="p_size" />
+                                                            </Identifier>
+                                                          </ScalarOperator>
+                                                          <ScalarOperator>
+                                                            <Const ConstValue="(3)" />
+                                                          </ScalarOperator>
+                                                        </Compare>
+                                                      </ScalarOperator>
+                                                      <ScalarOperator>
+                                                        <Compare CompareOp="EQ">
+                                                          <ScalarOperator>
+                                                            <Identifier>
+                                                              <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[part]" Column="p_size" />
+                                                            </Identifier>
+                                                          </ScalarOperator>
+                                                          <ScalarOperator>
+                                                            <Const ConstValue="(7)" />
+                                                          </ScalarOperator>
+                                                        </Compare>
+                                                      </ScalarOperator>
+                                                      <ScalarOperator>
+                                                        <Compare CompareOp="EQ">
+                                                          <ScalarOperator>
+                                                            <Identifier>
+                                                              <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[part]" Column="p_size" />
+                                                            </Identifier>
+                                                          </ScalarOperator>
+                                                          <ScalarOperator>
+                                                            <Const ConstValue="(11)" />
+                                                          </ScalarOperator>
+                                                        </Compare>
+                                                      </ScalarOperator>
+                                                      <ScalarOperator>
+                                                        <Compare CompareOp="EQ">
+                                                          <ScalarOperator>
+                                                            <Identifier>
+                                                              <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[part]" Column="p_size" />
+                                                            </Identifier>
+                                                          </ScalarOperator>
+                                                          <ScalarOperator>
+                                                            <Const ConstValue="(29)" />
+                                                          </ScalarOperator>
+                                                        </Compare>
+                                                      </ScalarOperator>
+                                                      <ScalarOperator>
+                                                        <Compare CompareOp="EQ">
+                                                          <ScalarOperator>
+                                                            <Identifier>
+                                                              <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[part]" Column="p_size" />
+                                                            </Identifier>
+                                                          </ScalarOperator>
+                                                          <ScalarOperator>
+                                                            <Const ConstValue="(31)" />
+                                                          </ScalarOperator>
+                                                        </Compare>
+                                                      </ScalarOperator>
+                                                      <ScalarOperator>
+                                                        <Compare CompareOp="EQ">
+                                                          <ScalarOperator>
+                                                            <Identifier>
+                                                              <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[part]" Column="p_size" />
+                                                            </Identifier>
+                                                          </ScalarOperator>
+                                                          <ScalarOperator>
+                                                            <Const ConstValue="(37)" />
+                                                          </ScalarOperator>
+                                                        </Compare>
+                                                      </ScalarOperator>
+                                                      <ScalarOperator>
+                                                        <Compare CompareOp="EQ">
+                                                          <ScalarOperator>
+                                                            <Identifier>
+                                                              <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[part]" Column="p_size" />
+                                                            </Identifier>
+                                                          </ScalarOperator>
+                                                          <ScalarOperator>
+                                                            <Const ConstValue="(41)" />
+                                                          </ScalarOperator>
+                                                        </Compare>
+                                                      </ScalarOperator>
+                                                      <ScalarOperator>
+                                                        <Compare CompareOp="EQ">
+                                                          <ScalarOperator>
+                                                            <Identifier>
+                                                              <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[part]" Column="p_size" />
+                                                            </Identifier>
+                                                          </ScalarOperator>
+                                                          <ScalarOperator>
+                                                            <Const ConstValue="(49)" />
+                                                          </ScalarOperator>
+                                                        </Compare>
+                                                      </ScalarOperator>
+                                                    </Logical>
+                                                  </ScalarOperator>
+                                                </Predicate>
+                                              </TableScan>
+                                            </RelOp>
+                                            <Predicate>
+                                              <ScalarOperator ScalarString="NOT [dbprove].[tpch_sf1].[part].[p_type] like 'STANDARD ANODIZED%' AND [dbprove].[tpch_sf1].[part].[p_brand]&lt;>'Brand#42'">
+                                                <Logical Operation="AND">
+                                                  <ScalarOperator>
+                                                    <Logical Operation="NOT">
+                                                      <ScalarOperator>
+                                                        <Intrinsic FunctionName="like">
+                                                          <ScalarOperator>
+                                                            <Identifier>
+                                                              <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[part]" Column="p_type" />
+                                                            </Identifier>
+                                                          </ScalarOperator>
+                                                          <ScalarOperator>
+                                                            <Const ConstValue="'STANDARD ANODIZED%'" />
+                                                          </ScalarOperator>
+                                                        </Intrinsic>
+                                                      </ScalarOperator>
+                                                    </Logical>
+                                                  </ScalarOperator>
+                                                  <ScalarOperator>
+                                                    <Compare CompareOp="NE">
+                                                      <ScalarOperator>
+                                                        <Identifier>
+                                                          <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[part]" Column="p_brand" />
+                                                        </Identifier>
+                                                      </ScalarOperator>
+                                                      <ScalarOperator>
+                                                        <Const ConstValue="'Brand#42'" />
+                                                      </ScalarOperator>
+                                                    </Compare>
+                                                  </ScalarOperator>
+                                                </Logical>
+                                              </ScalarOperator>
+                                            </Predicate>
+                                          </Filter>
+                                        </RelOp>
+                                      </Sort>
+                                    </RelOp>
+                                    <RelOp NodeId="11" PhysicalOp="Index Scan" LogicalOp="Index Scan" EstimateRows="800000" EstimatedRowsRead="800000" EstimateIO="1.61794" EstimateCPU="0.880157" AvgRowSize="15" EstimatedTotalSubtreeCost="2.4981" TableCardinality="800000" Parallel="0" EstimateRebinds="0" EstimateRewinds="0" EstimatedExecutionMode="Row">
+                                      <OutputList>
+                                        <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[partsupp]" Column="ps_partkey" />
+                                        <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[partsupp]" Column="ps_suppkey" />
+                                      </OutputList>
+                                      <RunTimeInformation>
+                                        <RunTimeCountersPerThread Thread="0" ActualRows="799993" Batches="0" ActualElapsedms="52" ActualCPUms="52" ActualScans="1" ActualLogicalReads="2192" ActualPhysicalReads="0" ActualReadAheads="0" ActualLobLogicalReads="0" ActualLobPhysicalReads="0" ActualLobReadAheads="0" ActualRowsRead="799993" ActualEndOfScans="0" ActualExecutions="1" ActualExecutionMode="Row" />
+                                      </RunTimeInformation>
+                                      <IndexScan Ordered="1" ScanDirection="FORWARD" ForcedIndex="0" ForceSeek="0" ForceScan="0" NoExpandHint="0" Storage="RowStore">
+                                        <DefinedValues>
+                                          <DefinedValue>
+                                            <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[partsupp]" Column="ps_partkey" />
+                                          </DefinedValue>
+                                          <DefinedValue>
+                                            <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[partsupp]" Column="ps_suppkey" />
+                                          </DefinedValue>
+                                        </DefinedValues>
+                                        <Object Database="[dbprove]" Schema="[tpch_sf1]" Table="[partsupp]" Index="[pk_partsupp]" IndexKind="NonClustered" Storage="RowStore" />
+                                      </IndexScan>
+                                    </RelOp>
+                                  </Merge>
+                                </RelOp>
+                              </Hash>
+                            </RelOp>
+                          </Sort>
+                        </RelOp>
+                      </StreamAggregate>
+                    </RelOp>
+                  </ComputeScalar>
+                </RelOp>
+              </Sort>
+            </RelOp>
+          </QueryPlan>
+        </StmtSimple>
+      </Statements>
+    </Batch>
+  </BatchSequence>
+</ShowPlanXML>

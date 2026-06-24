@@ -1,0 +1,110 @@
+{
+  "engine": "ClickHouse",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 1,
+        "distribute": 0,
+        "hash": 1,
+        "join": 1500000,
+        "scan": 1650000,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       -         1  PROJECT a1\n       -         1  AGGREGATE COUNT(c_custkey) AS a1\n       -         1  PROJECT c_custkey\n       -         1  PROJECT c_custkey\n       -         1  RIGHT SEMI INNER JOIN HASH ON FILTER_718.o_custkey = PROJECTION_714.c_custkey\n       -         1  │└PROJECT c_custkey\n       -         1  │ PROJECT c_custkey\n       -         1  │ FILTER (c_custkey = 1) AS a7\n       -    150000  │ TABLE SCAN customer\n       -   1500000  FILTER (o_custkey = o_custkey) AS a4\n       -   1500000  TABLE SCAN orders\n",
+      "sql": "SELECT COUNT(c.c_custkey)\nFROM (\n  SELECT *\n  FROM tpch_sf1.customer\n  WHERE c_custkey = 1\n) AS c\nWHERE EXISTS (\n  SELECT 1\n  FROM tpch_sf1.orders AS o\n  WHERE o.o_custkey = c.c_custkey\n);\n",
+      "startTime": "2026-06-23T11:16:26.384568Z",
+      "status": "OK",
+      "timeMs": 10.826
+    }
+  ],
+  "runtime": {
+    "avgMs": 10.826,
+    "bestMs": 10.826,
+    "maxMs": 10.826,
+    "minMs": 10.826,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Count CUSTOMER rows with a matching ORDERS row via EXISTS with a one-sided CUSTOMER key filter",
+    "displayName": "PLAN_JOIN_CHECK-SEMI-CUSTOMER-ORDERS-FILTER-CUSTOMER",
+    "name": "PLAN_JOIN_CHECK-SEMI-CUSTOMER-ORDERS-FILTER-CUSTOMER",
+    "tags": [
+      "PLAN_JOIN_CHECK",
+      "join"
+    ]
+  },
+  "version": "26.1.12.23"
+}

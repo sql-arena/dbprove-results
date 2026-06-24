@@ -1,0 +1,110 @@
+{
+  "engine": "PostgreSQL",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 11,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 2,
+          "-4x": 1,
+          "-8x": 1,
+          "<16x": 0,
+          "=": 9,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 275,
+        "distribute": 0,
+        "hash": 68048,
+        "join": 68050,
+        "scan": 0,
+        "seek": 68049,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(name), MIN(name), MIN(title)\n       1       275  INNER JOIN LOOP ON person_id = person_id AND person_id = id AND (person_id = id)\n       1       141  │└INNER JOIN LOOP ON id = person_role_id\n       1       143  │ │└INNER JOIN LOOP ON id = person_id\n       1      2778  │ │ │└INNER JOIN LOOP ON id = role_id\n       1     13758  │ │ │ │└INNER JOIN LOOP ON movie_id = movie_id AND movie_id = id AND (movie_id = id)\n       1      3406  │ │ │ │ │└INNER JOIN LOOP ON id = info_type_id\n       1      3406  │ │ │ │ │ │└INNER JOIN LOOP ON movie_id = movie_id AND movie_id = id AND (movie_id = id)\n       6      1576  │ │ │ │ │ │ │└INNER JOIN LOOP ON id = company_id\n      17      5566  │ │ │ │ │ │ │ │└INNER JOIN LOOP ON movie_id = movie_id AND movie_id = id AND (movie_id = id)\n      16       495  │ │ │ │ │ │ │ │ │└INNER JOIN LOOP ON id = movie_id\n     101      9696  │ │ │ │ │ │ │ │ │ │└INNER JOIN LOOP ON keyword_id = id\n       3         3  │ │ │ │ │ │ │ │ │ │ │└TABLE SEEK keyword AS k\n     909      9696  │ │ │ │ │ │ │ │ │ │ TABLE SEEK movie_keyword AS mk\n    9696      9696  │ │ │ │ │ │ │ │ │ TABLE SEEK title AS t WHERE t.production_year > 2010\n    2475      5563  │ │ │ │ │ │ │ │ TABLE SEEK movie_companies AS mc\n    5566      5566  │ │ │ │ │ │ │ TABLE SEEK company_name AS cn WHERE cn.country_code = 'us'\n    1576      3404  │ │ │ │ │ │ TABLE SEEK movie_info AS mi WHERE (mi.info LIKE 'Japan:%201%') OR (mi.info LIKE 'USA:%201%')\n    3406      3406  │ │ │ │ │ TABLE SEEK info_type AS it WHERE it.info = 'release dates'\n    3406     13760  │ │ │ │ TABLE SEEK cast_info AS ci WHERE ci.note IN('(voice)','(voice: Japanese version)','(voice) (uncredited)','(voice: English version)')\n   13758     13758  │ │ │ TABLE SEEK role_type AS rt WHERE rt.role = 'actress'\n    2778      2778  │ │ TABLE SEEK name AS n WHERE (n.name LIKE '%An%') AND (n.gender = 'f')\n     143       143  │ TABLE SEEK char_name AS chn\n     282       274  TABLE SEEK aka_name AS an\n",
+      "sql": "SELECT MIN(chn.name) AS voiced_char_name,\n       MIN(n.name) AS voicing_actress_name,\n       MIN(t.title) AS voiced_action_movie_jap_eng\nFROM job.aka_name AS an,\n     job.char_name AS chn,\n     job.cast_info AS ci,\n     job.company_name AS cn,\n     job.info_type AS it,\n     job.keyword AS k,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.movie_keyword AS mk,\n     job.name AS n,\n     job.role_type AS rt,\n     job.title AS t\nWHERE ci.note IN ('(voice)',\n                  '(voice: Japanese version)',\n                  '(voice) (uncredited)',\n                  '(voice: English version)')\n  AND cn.country_code ='[us]'\n  AND it.info = 'release dates'\n  AND k.keyword IN ('hero',\n                    'martial-arts',\n                    'hand-to-hand-combat')\n  AND mi.info IS NOT NULL\n  AND (mi.info LIKE 'Japan:%201%'\n       OR mi.info LIKE 'USA:%201%')\n  AND n.gender ='f'\n  AND n.name LIKE '%An%'\n  AND rt.role ='actress'\n  AND t.production_year > 2010\n  AND t.id = mi.movie_id\n  AND t.id = mc.movie_id\n  AND t.id = ci.movie_id\n  AND t.id = mk.movie_id\n  AND mc.movie_id = ci.movie_id\n  AND mc.movie_id = mi.movie_id\n  AND mc.movie_id = mk.movie_id\n  AND mi.movie_id = ci.movie_id\n  AND mi.movie_id = mk.movie_id\n  AND ci.movie_id = mk.movie_id\n  AND cn.id = mc.company_id\n  AND it.id = mi.info_type_id\n  AND n.id = ci.person_id\n  AND rt.id = ci.role_id\n  AND n.id = an.person_id\n  AND ci.person_id = an.person_id\n  AND chn.id = ci.person_role_id\n  AND k.id = mk.keyword_id;\n",
+      "startTime": "2026-06-17T12:29:40.030368Z",
+      "status": "OK",
+      "timeMs": 1306.66
+    }
+  ],
+  "runtime": {
+    "avgMs": 1306.66,
+    "bestMs": 1306.66,
+    "maxMs": 1306.66,
+    "minMs": 1306.66,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 24A Analysis",
+    "displayName": "JOB-24A",
+    "name": "JOB-24A",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "18.2"
+}

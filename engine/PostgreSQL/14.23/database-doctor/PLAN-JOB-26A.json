@@ -1,0 +1,110 @@
+{
+  "engine": "PostgreSQL",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 11,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 1,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 1,
+          "-8x": 1,
+          "<16x": 0,
+          "=": 9,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 1728,
+        "distribute": 0,
+        "hash": 265089,
+        "join": 272447,
+        "scan": 4,
+        "seek": 252726,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(name), MIN(info), MIN(name), MIN(title)\n       1      1728  INNER JOIN LOOP ON subject_id = id AND (subject_id = id)\n       1      2199  │└INNER JOIN LOOP ON id = person_id\n       1      2199  │ │└INNER JOIN LOOP ON id = person_role_id\n      14     72379  │ │ │└INNER JOIN LOOP ON movie_id = movie_id AND id = movie_id AND (id = movie_id)\n       1       401  │ │ │ │└INNER JOIN LOOP ON info = 'rating' AND id = status_id AND (id = status_id)\n       1         2  │ │ │ │ │└TABLE SCAN comp_cast_type AS cct2 WHERE cct2.kind LIKE '%complete%'\n       2       802  │ │ │ │ INNER JOIN LOOP ON movie_id = id\n       2      1768  │ │ │ │ │└INNER JOIN LOOP ON info = 'rating' AND id = kind_id AND (id = kind_id)\n       1         1  │ │ │ │ │ │└TABLE SCAN kind_type AS kt WHERE kt.kind = 'movie'\n       2      3800  │ │ │ │ │ INNER JOIN LOOP ON id = movie_id\n       2      7816  │ │ │ │ │ │└INNER JOIN LOOP ON keyword IN('superhero','marvel-comics','based-on-comic','tv-special','fight','violence','magnet','web','claw','laser') AND info_type_id = id AND (info_type_id = id)\n       2         2  │ │ │ │ │ │ │└TABLE SEEK info_type AS it2\n     278     13212  │ │ │ │ │ │ INNER JOIN LOOP ON movie_id = movie_id\n     674     48182  │ │ │ │ │ │ │└INNER JOIN LOOP ON keyword_id = id\n      20        20  │ │ │ │ │ │ │ │└TABLE SEEK keyword AS k\n    6020     48180  │ │ │ │ │ │ │ TABLE SEEK movie_keyword AS mk\n   48182     48182  │ │ │ │ │ │ TABLE SEEK movie_info_idx AS mi_idx WHERE mi_idx.info > '7.0'\n    7816      7816  │ │ │ │ │ TABLE SEEK title AS t WHERE t.production_year > 2000\n    3536      1768  │ │ │ │ TABLE SEEK complete_cast AS cc\n   16040     72180  │ │ │ TABLE SEEK cast_info AS ci\n   72379     72379  │ │ TABLE SEEK char_name AS chn WHERE (chn.name IS NOT NULL) AND ((chn.name LIKE '%man%') OR (chn.name LIKE '%Man%'))\n    2199      2199  │ TABLE SEEK name AS n\n       1         1  TABLE SCAN comp_cast_type AS cct1 WHERE cct1.kind = 'cast'\n",
+      "sql": "SELECT MIN(chn.name) AS character_name,\n       MIN(mi_idx.info) AS rating,\n       MIN(n.name) AS playing_actor,\n       MIN(t.title) AS complete_hero_movie\nFROM job.complete_cast AS cc,\n     job.comp_cast_type AS cct1,\n     job.comp_cast_type AS cct2,\n     job.char_name AS chn,\n     job.cast_info AS ci,\n     job.info_type AS it2,\n     job.keyword AS k,\n     job.kind_type AS kt,\n     job.movie_info_idx AS mi_idx,\n     job.movie_keyword AS mk,\n     job.name AS n,\n     job.title AS t\nWHERE cct1.kind = 'cast'\n  AND cct2.kind LIKE '%complete%'\n  AND chn.name IS NOT NULL\n  AND (chn.name LIKE '%man%'\n       OR chn.name LIKE '%Man%')\n  AND it2.info = 'rating'\n  AND k.keyword IN ('superhero',\n                    'marvel-comics',\n                    'based-on-comic',\n                    'tv-special',\n                    'fight',\n                    'violence',\n                    'magnet',\n                    'web',\n                    'claw',\n                    'laser')\n  AND kt.kind = 'movie'\n  AND mi_idx.info > '7.0'\n  AND t.production_year > 2000\n  AND kt.id = t.kind_id\n  AND t.id = mk.movie_id\n  AND t.id = ci.movie_id\n  AND t.id = cc.movie_id\n  AND t.id = mi_idx.movie_id\n  AND mk.movie_id = ci.movie_id\n  AND mk.movie_id = cc.movie_id\n  AND mk.movie_id = mi_idx.movie_id\n  AND ci.movie_id = cc.movie_id\n  AND ci.movie_id = mi_idx.movie_id\n  AND cc.movie_id = mi_idx.movie_id\n  AND chn.id = ci.person_role_id\n  AND n.id = ci.person_id\n  AND k.id = mk.keyword_id\n  AND cct1.id = cc.subject_id\n  AND cct2.id = cc.status_id\n  AND it2.id = mi_idx.info_type_id;\n",
+      "startTime": "2026-06-23T15:46:18.057100Z",
+      "status": "OK",
+      "timeMs": 5794.852
+    }
+  ],
+  "runtime": {
+    "avgMs": 5794.852,
+    "bestMs": 5794.852,
+    "maxMs": 5794.852,
+    "minMs": 5794.852,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 26A Analysis",
+    "displayName": "JOB-26A",
+    "name": "PLAN-JOB-26A",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "14.23"
+}

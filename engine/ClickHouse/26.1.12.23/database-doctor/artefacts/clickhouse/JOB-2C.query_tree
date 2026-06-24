@@ -1,0 +1,73 @@
+QUERY id: 0
+  PROJECTION COLUMNS
+    movie_title String
+  PROJECTION
+    LIST id: 1, nodes: 1
+      FUNCTION id: 2, function_name: min, function_type: aggregate, result_type: String
+        ARGUMENTS
+          LIST id: 3, nodes: 1
+            COLUMN id: 4, column_name: title, result_type: String, source_id: 5
+  JOIN TREE
+    JOIN id: 6, strictness: ALL, kind: INNER
+      LEFT TABLE EXPRESSION
+        JOIN id: 7, strictness: ALL, kind: INNER
+          LEFT TABLE EXPRESSION
+            JOIN id: 8, strictness: ALL, kind: INNER
+              LEFT TABLE EXPRESSION
+                JOIN id: 9, strictness: ALL, kind: INNER
+                  LEFT TABLE EXPRESSION
+                    TABLE id: 10, alias: __table1, table_name: job.company_name
+                  RIGHT TABLE EXPRESSION
+                    TABLE id: 11, alias: __table3, table_name: job.movie_companies
+                  JOIN EXPRESSION
+                    FUNCTION id: 12, function_name: equals, function_type: ordinary, result_type: UInt8
+                      ARGUMENTS
+                        LIST id: 13, nodes: 2
+                          COLUMN id: 14, column_name: id, result_type: Int32, source_id: 10
+                          COLUMN id: 15, column_name: company_id, result_type: Int32, source_id: 11
+              RIGHT TABLE EXPRESSION
+                TABLE id: 16, alias: __table4, table_name: job.movie_keyword
+              JOIN EXPRESSION
+                FUNCTION id: 17, function_name: equals, function_type: ordinary, result_type: UInt8
+                  ARGUMENTS
+                    LIST id: 18, nodes: 2
+                      COLUMN id: 19, column_name: movie_id, result_type: Int32, source_id: 11
+                      COLUMN id: 20, column_name: movie_id, result_type: Int32, source_id: 16
+          RIGHT TABLE EXPRESSION
+            TABLE id: 21, alias: __table2, table_name: job.keyword
+          JOIN EXPRESSION
+            FUNCTION id: 22, function_name: equals, function_type: ordinary, result_type: UInt8
+              ARGUMENTS
+                LIST id: 23, nodes: 2
+                  COLUMN id: 24, column_name: keyword_id, result_type: Int32, source_id: 16
+                  COLUMN id: 25, column_name: id, result_type: Int32, source_id: 21
+      RIGHT TABLE EXPRESSION
+        TABLE id: 5, alias: __table5, table_name: job.title
+      JOIN EXPRESSION
+        FUNCTION id: 26, function_name: and, function_type: ordinary, result_type: UInt8
+          ARGUMENTS
+            LIST id: 27, nodes: 2
+              FUNCTION id: 28, function_name: equals, function_type: ordinary, result_type: UInt8
+                ARGUMENTS
+                  LIST id: 29, nodes: 2
+                    COLUMN id: 30, column_name: movie_id, result_type: Int32, source_id: 11
+                    COLUMN id: 31, column_name: id, result_type: Int32, source_id: 5
+              FUNCTION id: 32, function_name: equals, function_type: ordinary, result_type: UInt8
+                ARGUMENTS
+                  LIST id: 33, nodes: 2
+                    COLUMN id: 34, column_name: id, result_type: Int32, source_id: 5
+                    COLUMN id: 35, column_name: movie_id, result_type: Int32, source_id: 16
+  WHERE
+    FUNCTION id: 36, function_name: and, function_type: ordinary, result_type: UInt8
+      ARGUMENTS
+        LIST id: 37, nodes: 2
+          FUNCTION id: 38, function_name: equals, function_type: ordinary, result_type: UInt8
+            ARGUMENTS
+              LIST id: 39, nodes: 2
+                COLUMN id: 40, column_name: country_code, result_type: String, source_id: 10
+                CONSTANT id: 41, constant_value: '[sm]', constant_value_type: String
+          FUNCTION id: 42, function_name: equals, function_type: ordinary, result_type: UInt8
+            ARGUMENTS
+              LIST id: 43, nodes: 2
+                COLUMN id: 44, column_name: keyword, result_type: String, source_id: 21
+                CONSTANT id: 45, constant_value: 'character-name-in-title', constant_value_type: String

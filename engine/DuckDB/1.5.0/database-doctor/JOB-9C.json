@@ -1,0 +1,110 @@
+{
+  "engine": "DuckDB",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 3
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 6,
+          "=": 1,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 6,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 1,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 1,
+          "=": 2,
+          ">16x": 4
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 8144,
+        "distribute": 0,
+        "hash": 3524678,
+        "join": 3545248,
+        "scan": 8146042,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       -         1  AGGREGATE MIN(#0), MIN(#1), MIN(#2), MIN(#3)\n     450      8144  PROJECT name, name, name, title\n     450      8144  INNER JOIN HASH ON id = person_role_id\n     447      8514  │└INNER JOIN HASH ON id = movie_id\n     445      8514  │ │└INNER JOIN HASH ON id = person_id\n     882    505250  │ │ │└INNER JOIN HASH ON person_id = person_id\n    4050    189554  │ │ │ │└INNER JOIN HASH ON role_id = id\n       1         1  │ │ │ │ │└FILTER id <= 11\n       1         1  │ │ │ │ │ TABLE SCAN role_type WHERE role = 'actress'\n   48601    189554  │ │ │ │ INNER JOIN HASH ON movie_id = movie_id\n   16850   1153798  │ │ │ │ │└INNER JOIN HASH ON company_id = id\n    1507     84843  │ │ │ │ │ │└TABLE SCAN company_name WHERE country_code = 'us'\n 2609129   2609129  │ │ │ │ │ TABLE SCAN movie_companies\n 7248868    216143  │ │ │ │ FILTER (person_id >= 4) AND (movie_id BETWEEN 2 AND 2525745)\n 7248868    216143  │ │ │ │ FILTER (note = '(voice)') OR (note = '(voice: Japanese version)') OR (note = '(voice) (uncredited)') OR (note = '(voice: English version)')\n36244344   5439700  │ │ │ │ TABLE SCAN cast_info WHERE note IN('(voice)','(voice: Japanese version)','(voice) (uncredited)','(voice: English version)')\n  901343     10451  │ │ │ TABLE SCAN aka_name WHERE person_id <= 4061926\n 2083746       230  │ │ FILTER id BETWEEN 4 AND 4061926\n 2083746       230  │ │ TABLE SCAN \"name\" WHERE gender = 'f' AND contains(name,'An')\n 2528312      1083  │ TABLE SCAN title WHERE id >= 2 AND id <= 2525745\n 3140339       605  TABLE SCAN char_name\n",
+      "sql": "SELECT MIN(an.name) AS alternative_name,\n       MIN(chn.name) AS voiced_character_name,\n       MIN(n.name) AS voicing_actress,\n       MIN(t.title) AS american_movie\nFROM job.aka_name AS an,\n     job.char_name AS chn,\n     job.cast_info AS ci,\n     job.company_name AS cn,\n     job.movie_companies AS mc,\n     job.name AS n,\n     job.role_type AS rt,\n     job.title AS t\nWHERE ci.note IN ('(voice)',\n                  '(voice: Japanese version)',\n                  '(voice) (uncredited)',\n                  '(voice: English version)')\n  AND cn.country_code ='[us]'\n  AND n.gender ='f'\n  AND n.name LIKE '%An%'\n  AND rt.role ='actress'\n  AND ci.movie_id = t.id\n  AND t.id = mc.movie_id\n  AND ci.movie_id = mc.movie_id\n  AND mc.company_id = cn.id\n  AND ci.role_id = rt.id\n  AND n.id = ci.person_id\n  AND chn.id = ci.person_role_id\n  AND an.person_id = n.id\n  AND an.person_id = ci.person_id;\n",
+      "startTime": "2026-06-17T11:56:38.974345Z",
+      "status": "OK",
+      "timeMs": 55.569
+    }
+  ],
+  "runtime": {
+    "avgMs": 55.569,
+    "bestMs": 55.569,
+    "maxMs": 55.569,
+    "minMs": 55.569,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 9C Analysis",
+    "displayName": "JOB-9C",
+    "name": "JOB-9C",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "1.5.0"
+}

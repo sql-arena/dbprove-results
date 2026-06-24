@@ -1,0 +1,109 @@
+{
+  "engine": "DuckDB",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 2
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 1
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 3
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 1,
+          "=": 1,
+          ">16x": 2
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 2,
+          ">16x": 3
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 6566,
+        "distribute": 0,
+        "hash": 18285,
+        "join": 12007992,
+        "scan": 11996132,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  PROJECT avg_yearly\n       -         1  AGGREGATE SUM(#0)\n  170092       537  PROJECT l_extendedprice\n  170092       537  FILTER CAST(l_quantity AS DOUBLE) < SUBQUERY\n       0         0  RIGHT SEMI INNER JOIN HASH ON p_partkey IS NOT DISTINCT FROM p_partkey\n  112547       198  │└AGGREGATE  GROUP BY HASH #0\n       0      6029  │ RIGHT OUTER JOIN HASH ON p_partkey IS NOT DISTINCT FROM p_partkey\n       -         0  │ │└SCAN EMPTY\n 1770568       198  │ PROJECT l_avg, p_partkey\n 1770568       198  │ AGGREGATE AVG(#1) GROUP BY HASH #0\n 3541136      6029  │ PROJECT p_partkey, l_quantity\n 3541136      6029  │ INNER JOIN HASH ON l_partkey = p_partkey\n  112547         0  │ │└SCAN MATERIALISED\n 6001215   5997583  │ TABLE SCAN lineitem\n  170092      6029  INNER JOIN HASH ON l_partkey = p_partkey\n    5406       198  │└TABLE SCAN part WHERE p_brand = 'Brand#13' AND p_container = 'MED CAN'\n 6001215   5998351  TABLE SCAN lineitem\n",
+      "sql": "/* TPC-H Q17 */\nSELECT SUM(l_extendedprice) / 7.0 AS avg_yearly\nFROM tpch_sf1.lineitem\nINNER JOIN tpch_sf1.part\n    ON l_partkey = p_partkey\nWHERE p_brand = 'Brand#13'\n  AND p_container = 'MED CAN'\n  AND l_quantity < (SELECT 0.2 * AVG(l_quantity) AS l_avg\n                    FROM tpch_sf1.lineitem li\n                    WHERE l_partkey = p_partkey)",
+      "startTime": "2026-06-22T16:08:56.303405Z",
+      "status": "OK",
+      "timeMs": 8.306
+    }
+  ],
+  "runtime": {
+    "avgMs": 8.306,
+    "bestMs": 8.306,
+    "maxMs": 8.306,
+    "minMs": 8.306,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "TPC-H Q17 Analysis",
+    "displayName": "TPCH-Q17",
+    "name": "PLAN-TPC-H-Q17",
+    "tags": [
+      "TPC-H"
+    ]
+  },
+  "version": "1.5.0"
+}

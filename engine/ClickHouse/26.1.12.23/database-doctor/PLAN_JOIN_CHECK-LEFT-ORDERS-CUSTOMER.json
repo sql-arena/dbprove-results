@@ -1,0 +1,110 @@
+{
+  "engine": "ClickHouse",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 1500000,
+        "distribute": 0,
+        "hash": 1500000,
+        "join": 1500000,
+        "scan": 1650000,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       -         1  PROJECT a1, a2\n       -         1  AGGREGATE COUNT(o_orderkey) AS a1, COUNT(a5) AS a2\n       -   1500000  PROJECT o_orderkey, c_custkey\n       -   1500000  PROJECT o_orderkey, a5\n       -   1500000  LEFT OUTER JOIN HASH ON PROJECTION_684.o_custkey = PROJECTION_681.c_custkey\n       -    150000  │└PROJECT c_custkey, c_custkey AS a5\n       -    150000  │ PROJECT c_custkey\n       -    150000  │ TABLE SCAN customer\n       -   1500000  PROJECT o_custkey, o_orderkey\n       -   1500000  PROJECT o_orderkey, o_custkey\n       -   1500000  TABLE SCAN orders\n",
+      "sql": "SELECT COUNT(o.o_orderkey), COUNT(c.c_custkey)\nFROM tpch_sf1.orders AS o\nLEFT JOIN tpch_sf1.customer AS c\n  ON o.o_custkey = c.c_custkey;\n",
+      "startTime": "2026-06-23T11:16:25.495112Z",
+      "status": "OK",
+      "timeMs": 17.725
+    }
+  ],
+  "runtime": {
+    "avgMs": 17.725,
+    "bestMs": 17.725,
+    "maxMs": 17.725,
+    "minMs": 17.725,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Count rows after LEFT JOIN from ORDERS to CUSTOMER",
+    "displayName": "PLAN_JOIN_CHECK-LEFT-ORDERS-CUSTOMER",
+    "name": "PLAN_JOIN_CHECK-LEFT-ORDERS-CUSTOMER",
+    "tags": [
+      "PLAN_JOIN_CHECK",
+      "join"
+    ]
+  },
+  "version": "26.1.12.23"
+}

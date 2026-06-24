@@ -1,0 +1,115 @@
+QUERY id: 0
+  PROJECTION COLUMNS
+    s_name String
+    s_address String
+  PROJECTION
+    LIST id: 1, nodes: 2
+      COLUMN id: 2, column_name: s_name, result_type: String, source_id: 3
+      COLUMN id: 4, column_name: s_address, result_type: String, source_id: 3
+  JOIN TREE
+    JOIN id: 5, strictness: ALL, kind: INNER
+      LEFT TABLE EXPRESSION
+        TABLE id: 3, alias: __table1, table_name: tpch_sf1.supplier
+      RIGHT TABLE EXPRESSION
+        TABLE id: 6, alias: __table2, table_name: tpch_sf1.nation
+      JOIN EXPRESSION
+        FUNCTION id: 7, function_name: equals, function_type: ordinary, result_type: UInt8
+          ARGUMENTS
+            LIST id: 8, nodes: 2
+              COLUMN id: 9, column_name: s_nationkey, result_type: Int32, source_id: 3
+              COLUMN id: 10, column_name: n_nationkey, result_type: Int32, source_id: 6
+  WHERE
+    FUNCTION id: 11, function_name: and, function_type: ordinary, result_type: UInt8
+      ARGUMENTS
+        LIST id: 12, nodes: 2
+          FUNCTION id: 13, function_name: in, function_type: ordinary, result_type: UInt8
+            ARGUMENTS
+              LIST id: 14, nodes: 2
+                COLUMN id: 15, column_name: s_suppkey, result_type: Int32, source_id: 3
+                QUERY id: 16, is_subquery: 1
+                  PROJECTION COLUMNS
+                    ps_suppkey Int32
+                  PROJECTION
+                    LIST id: 17, nodes: 1
+                      COLUMN id: 18, column_name: ps_suppkey, result_type: Int32, source_id: 19
+                  JOIN TREE
+                    TABLE id: 19, alias: __table1, table_name: tpch_sf1.partsupp
+                  WHERE
+                    FUNCTION id: 20, function_name: and, function_type: ordinary, result_type: Nullable(UInt8)
+                      ARGUMENTS
+                        LIST id: 21, nodes: 2
+                          FUNCTION id: 22, function_name: in, function_type: ordinary, result_type: UInt8
+                            ARGUMENTS
+                              LIST id: 23, nodes: 2
+                                COLUMN id: 24, column_name: ps_partkey, result_type: Int32, source_id: 19
+                                QUERY id: 25, is_subquery: 1
+                                  PROJECTION COLUMNS
+                                    p_partkey Int32
+                                  PROJECTION
+                                    LIST id: 26, nodes: 1
+                                      COLUMN id: 27, column_name: p_partkey, result_type: Int32, source_id: 28
+                                  JOIN TREE
+                                    TABLE id: 28, alias: __table1, table_name: tpch_sf1.part
+                                  WHERE
+                                    FUNCTION id: 29, function_name: startsWith, function_type: ordinary, result_type: UInt8
+                                      ARGUMENTS
+                                        LIST id: 30, nodes: 2
+                                          COLUMN id: 31, column_name: p_name, result_type: String, source_id: 28
+                                          CONSTANT id: 32, constant_value: 'almond', constant_value_type: String
+                          FUNCTION id: 33, function_name: greater, function_type: ordinary, result_type: Nullable(UInt8)
+                            ARGUMENTS
+                              LIST id: 34, nodes: 2
+                                COLUMN id: 35, column_name: ps_availqty, result_type: Int32, source_id: 19
+                                QUERY id: 36, alias: __table4, is_subquery: 1, is_correlated: 1
+                                  CORRELATED COLUMNS
+                                    LIST id: 37, nodes: 2
+                                      COLUMN id: 38, column_name: ps_partkey, result_type: Int32, source_id: 19
+                                      COLUMN id: 39, column_name: ps_suppkey, result_type: Int32, source_id: 19
+                                  PROJECTION COLUMNS
+                                    qty Float64
+                                  PROJECTION
+                                    LIST id: 40, nodes: 1
+                                      FUNCTION id: 41, function_name: multiply, function_type: ordinary, result_type: Float64
+                                        ARGUMENTS
+                                          LIST id: 42, nodes: 2
+                                            CONSTANT id: 43, constant_value: Float64_0.5, constant_value_type: Float64
+                                            FUNCTION id: 44, function_name: sum, function_type: aggregate, result_type: Decimal(38, 2)
+                                              ARGUMENTS
+                                                LIST id: 45, nodes: 1
+                                                  COLUMN id: 46, column_name: l_quantity, result_type: Decimal(15, 2), source_id: 47
+                                  JOIN TREE
+                                    TABLE id: 47, alias: __table5, table_name: tpch_sf1.lineitem
+                                  WHERE
+                                    FUNCTION id: 48, function_name: and, function_type: ordinary, result_type: UInt8
+                                      ARGUMENTS
+                                        LIST id: 49, nodes: 4
+                                          FUNCTION id: 50, function_name: equals, function_type: ordinary, result_type: UInt8
+                                            ARGUMENTS
+                                              LIST id: 51, nodes: 2
+                                                COLUMN id: 52, column_name: l_partkey, result_type: Int32, source_id: 47
+                                                COLUMN id: 38, column_name: ps_partkey, result_type: Int32, source_id: 19
+                                          FUNCTION id: 53, function_name: equals, function_type: ordinary, result_type: UInt8
+                                            ARGUMENTS
+                                              LIST id: 54, nodes: 2
+                                                COLUMN id: 55, column_name: l_suppkey, result_type: Int32, source_id: 47
+                                                COLUMN id: 39, column_name: ps_suppkey, result_type: Int32, source_id: 19
+                                          FUNCTION id: 56, function_name: greaterOrEquals, function_type: ordinary, result_type: UInt8
+                                            ARGUMENTS
+                                              LIST id: 57, nodes: 2
+                                                COLUMN id: 58, column_name: l_shipdate, result_type: Date, source_id: 47
+                                                CONSTANT id: 59, constant_value: '1993-01-01', constant_value_type: String
+                                          FUNCTION id: 60, function_name: less, function_type: ordinary, result_type: UInt8
+                                            ARGUMENTS
+                                              LIST id: 61, nodes: 2
+                                                COLUMN id: 62, column_name: l_shipdate, result_type: Date, source_id: 47
+                                                CONSTANT id: 63, constant_value: '1994-01-01', constant_value_type: String
+          FUNCTION id: 64, function_name: equals, function_type: ordinary, result_type: UInt8
+            ARGUMENTS
+              LIST id: 65, nodes: 2
+                COLUMN id: 66, column_name: n_name, result_type: String, source_id: 6
+                CONSTANT id: 67, constant_value: 'KENYA', constant_value_type: String
+  ORDER BY
+    LIST id: 68, nodes: 1
+      SORT id: 69, sort_direction: ASCENDING, with_fill: 0
+        EXPRESSION s_name
+          COLUMN id: 70, column_name: s_name, result_type: String, source_id: 3

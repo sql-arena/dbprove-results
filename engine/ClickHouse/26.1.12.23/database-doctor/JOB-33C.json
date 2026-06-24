@@ -1,0 +1,110 @@
+{
+  "engine": "ClickHouse",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 0,
+        "distribute": 0,
+        "hash": 10373613,
+        "join": 12462695,
+        "scan": 11356697,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       -         1  PROJECT a1 AS first_company, a2 AS second_company, a3 AS first_rating, a4 AS second_rating, a5 AS first_movie, a6 AS second_movie\n       -         1  AGGREGATE MIN(name_left) AS a1, MIN(name_right) AS a2, MIN(info_left) AS a3, MIN(info_right) AS a4, MIN(title_left) AS a5, MIN(title_right) AS a6\n       -         0  PROJECT name, name, info_left, info_right, title, title\n       -         0  PROJECT name, info_left, name, info_right, title, title\n       -         0  INNER JOIN HASH ON tuple(PROJECTION_4275.linked_movie_id,PROJECTION_4275.movie_id,PROJECTION_4275.movie_id,PROJECTION_4275.linked_movie_id) = tuple(PROJECTION_4254.movie_id,PROJECTION_4254.movie_id,PROJECTION_4254.id,PROJECTION_4254.id)\n       -    922445  │└PROJECT movie_id AS movie_id_right, id, name AS name_right, title AS title_right\n       -    922445  │ PROJECT movie_id, name, title, id\n       -    922445  │ INNER JOIN HASH ON PROJECTION_4260.kind_id = PROJECTION_4257.id\n       -         7  │ │└PROJECT id AS id_right\n       -         7  │ │ PROJECT id\n       -         7  │ │ TABLE SCAN kind_type WHERE TRUE\n       -    922445  │ PROJECT kind_id, movie_id, name, title, id_left\n       -    922445  │ PROJECT movie_id, name, title, id, kind_id\n       -    922445  │ INNER JOIN HASH ON PROJECTION_4266.company_id = PROJECTION_4263.id\n       -    234997  │ │└PROJECT id AS id_right, name\n       -    234997  │ │ PROJECT name, id\n       -    234997  │ │ TABLE SCAN company_name\n       -    922445  │ PROJECT company_id, movie_id, title, id AS id_left, kind_id\n       -    922445  │ PROJECT movie_id, company_id, title, id, kind_id\n       -    922445  │ INNER JOIN HASH ON PROJECTION_4272.movie_id = PROJECTION_4269.id\n       -   1042800  │ │└PROJECT id, title, kind_id\n       -   1042800  │ │ PROJECT id, title, kind_id\n       -   1042800  │ │ TABLE SCAN title WHERE (production_year >= 2000) AND (production_year <= 2010)\n       -   2609129  │ PROJECT movie_id, company_id\n       -   2609129  │ PROJECT movie_id, company_id\n       -   2609129  │ TABLE SCAN movie_companies\n       -      5853  PROJECT linked_movie_id, movie_id AS movie_id_left, name AS name_left, info, info, title AS title_left\n       -      5853  PROJECT name, info, linked_movie_id, info, movie_id, title\n       -      5853  INNER JOIN HASH ON PROJECTION_4287.linked_movie_id = PROJECTION_4278.movie_id\n       -     36749  │└PROJECT movie_id, info AS info_right\n       -     36749  │ PROJECT info, movie_id\n       -     36749  │ INNER JOIN HASH ON PROJECTION_4284.info_type_id = PROJECTION_4281.id\n       -         1  │ │└PROJECT id\n       -         1  │ │ PROJECT id\n       -         1  │ │ TABLE SCAN info_type WHERE info = 'rating'\n       -    687267  │ PROJECT info_type_id, info, movie_id\n       -    687267  │ PROJECT movie_id, info, info_type_id\n       -    687267  │ TABLE SCAN movie_info_idx WHERE info < '3.5'\n       -    142287  PROJECT linked_movie_id, name, info AS info_left, title\n       -    142287  PROJECT name, info, linked_movie_id, title\n       -    142287  INNER JOIN HASH ON PROJECTION_4293.kind_id = PROJECTION_4290.id\n       -         7  │└PROJECT id\n       -         7  │ PROJECT id\n       -         7  │ TABLE SCAN kind_type WHERE TRUE\n       -    142287  PROJECT kind_id, name, info, linked_movie_id, title\n       -    142287  PROJECT name, info, linked_movie_id, title, kind_id\n       -    142287  INNER JOIN HASH ON tuple(PROJECTION_4299.movie_id,PROJECTION_4299.movie_id,PROJECTION_4299.movie_id) = tuple(PROJECTION_4296.id,PROJECTION_4296.id,PROJECTION_4296.id)\n       -   2528312  │└PROJECT id, title, kind_id\n       -   2528312  │ PROJECT title, id, kind_id\n       -   2528312  │ TABLE SCAN title\n       -    142287  PROJECT movie_id, movie_id, movie_id, name, info, linked_movie_id\n       -    142287  PROJECT name, movie_id, info, movie_id, movie_id, linked_movie_id\n       -    142287  INNER JOIN HASH ON PROJECTION_4305.link_type_id = PROJECTION_4302.id\n       -        18  │└PROJECT id\n       -        18  │ PROJECT id\n       -        18  │ TABLE SCAN link_type WHERE TRUE\n       -    142287  PROJECT link_type_id, name, movie_id, info, movie_id, movie_id, linked_movie_id\n       -    142287  PROJECT name, movie_id, info, movie_id, movie_id, link_type_id, linked_movie_id\n       -    142287  INNER JOIN HASH ON tuple(PROJECTION_4317.movie_id,PROJECTION_4317.movie_id) = tuple(PROJECTION_4308.movie_id,PROJECTION_4308.movie_id)\n       -    459925  │└PROJECT movie_id AS movie_id_right, info\n       -    459925  │ PROJECT info, movie_id\n       -    459925  │ INNER JOIN HASH ON PROJECTION_4314.info_type_id = PROJECTION_4311.id\n       -         1  │ │└PROJECT id\n       -         1  │ │ PROJECT id\n       -         1  │ │ TABLE SCAN info_type WHERE info = 'rating'\n       -   1380035  │ PROJECT info_type_id, info, movie_id\n       -   1380035  │ PROJECT info, movie_id, info_type_id\n       -   1380035  │ TABLE SCAN movie_info_idx\n       -    148115  PROJECT movie_id_left, movie_id AS movie_id_left_2, name, link_type_id, linked_movie_id\n       -    148115  PROJECT name, movie_id, movie_id, link_type_id, linked_movie_id\n       -    148115  INNER JOIN HASH ON PROJECTION_4323.movie_id = PROJECTION_4320.movie_id\n       -     29997  │└PROJECT movie_id AS movie_id_right, link_type_id, linked_movie_id\n       -     29997  │ PROJECT movie_id, link_type_id, linked_movie_id\n       -     29997  │ TABLE SCAN movie_link\n       -   2609129  PROJECT movie_id AS movie_id_left, name\n       -   2609129  PROJECT name, movie_id\n       -   2609129  INNER JOIN HASH ON PROJECTION_4329.id = PROJECTION_4326.company_id\n       -   2609129  │└PROJECT company_id, movie_id\n       -   2609129  │ PROJECT company_id, movie_id\n       -   2609129  │ TABLE SCAN movie_companies\n       -    234997  PROJECT id, name\n       -    234997  PROJECT id, name\n       -    234997  TABLE SCAN company_name WHERE country_code <> 'us'\n",
+      "sql": "SELECT MIN(cn1.name) AS first_company,\n       MIN(cn2.name) AS second_company,\n       MIN(mi_idx1.info) AS first_rating,\n       MIN(mi_idx2.info) AS second_rating,\n       MIN(t1.title) AS first_movie,\n       MIN(t2.title) AS second_movie\nFROM job.company_name AS cn1,\n     job.company_name AS cn2,\n     job.info_type AS it1,\n     job.info_type AS it2,\n     job.kind_type AS kt1,\n     job.kind_type AS kt2,\n     job.link_type AS lt,\n     job.movie_companies AS mc1,\n     job.movie_companies AS mc2,\n     job.movie_info_idx AS mi_idx1,\n     job.movie_info_idx AS mi_idx2,\n     job.movie_link AS ml,\n     job.title AS t1,\n     job.title AS t2\nWHERE cn1.country_code != '[us]'\n  AND it1.info = 'rating'\n  AND it2.info = 'rating'\n  AND kt1.kind IN ('tv series',\n                   'episode')\n  AND kt2.kind IN ('tv series',\n                   'episode')\n  AND lt.link IN ('sequel',\n                  'follows',\n                  'followed by')\n  AND mi_idx2.info < '3.5'\n  AND t2.production_year BETWEEN 2000 AND 2010\n  AND lt.id = ml.link_type_id\n  AND t1.id = ml.movie_id\n  AND t2.id = ml.linked_movie_id\n  AND it1.id = mi_idx1.info_type_id\n  AND t1.id = mi_idx1.movie_id\n  AND kt1.id = t1.kind_id\n  AND cn1.id = mc1.company_id\n  AND t1.id = mc1.movie_id\n  AND ml.movie_id = mi_idx1.movie_id\n  AND ml.movie_id = mc1.movie_id\n  AND mi_idx1.movie_id = mc1.movie_id\n  AND it2.id = mi_idx2.info_type_id\n  AND t2.id = mi_idx2.movie_id\n  AND kt2.id = t2.kind_id\n  AND cn2.id = mc2.company_id\n  AND t2.id = mc2.movie_id\n  AND ml.linked_movie_id = mi_idx2.movie_id\n  AND ml.linked_movie_id = mc2.movie_id\n  AND mi_idx2.movie_id = mc2.movie_id;\n",
+      "startTime": "2026-06-17T13:59:52.528214Z",
+      "status": "OK",
+      "timeMs": 1657.953
+    }
+  ],
+  "runtime": {
+    "avgMs": 1657.953,
+    "bestMs": 1657.953,
+    "maxMs": 1657.953,
+    "minMs": 1657.953,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 33C Analysis",
+    "displayName": "JOB-33C",
+    "name": "JOB-33C",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "26.1.12.23"
+}

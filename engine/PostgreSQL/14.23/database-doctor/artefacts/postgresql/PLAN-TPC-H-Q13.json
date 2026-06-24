@@ -1,0 +1,188 @@
+[
+  {
+    "Execution Time": 481.684,
+    "Plan": {
+      "Actual Loops": 1,
+      "Actual Rows": 42,
+      "Actual Startup Time": 481.562,
+      "Actual Total Time": 481.564,
+      "Async Capable": false,
+      "Node Type": "Sort",
+      "Output": [
+        "(count(orders.o_orderkey))",
+        "(count(*))"
+      ],
+      "Parallel Aware": false,
+      "Plan Rows": 200,
+      "Plan Width": 16,
+      "Plans": [
+        {
+          "Actual Loops": 1,
+          "Actual Rows": 42,
+          "Actual Startup Time": 481.552,
+          "Actual Total Time": 481.556,
+          "Async Capable": false,
+          "Disk Usage": 0,
+          "Group Key": [
+            "count(orders.o_orderkey)"
+          ],
+          "HashAgg Batches": 1,
+          "Node Type": "Aggregate",
+          "Output": [
+            "(count(orders.o_orderkey))",
+            "count(*)"
+          ],
+          "Parallel Aware": false,
+          "Parent Relationship": "Outer",
+          "Partial Mode": "Simple",
+          "Peak Memory Usage": 40,
+          "Plan Rows": 200,
+          "Plan Width": 16,
+          "Planned Partitions": 0,
+          "Plans": [
+            {
+              "Actual Loops": 1,
+              "Actual Rows": 150000,
+              "Actual Startup Time": 464.902,
+              "Actual Total Time": 474.405,
+              "Async Capable": false,
+              "Disk Usage": 0,
+              "Group Key": [
+                "customer.c_custkey"
+              ],
+              "HashAgg Batches": 1,
+              "Node Type": "Aggregate",
+              "Output": [
+                "customer.c_custkey",
+                "count(orders.o_orderkey)"
+              ],
+              "Parallel Aware": false,
+              "Parent Relationship": "Outer",
+              "Partial Mode": "Simple",
+              "Peak Memory Usage": 18449,
+              "Plan Rows": 150000,
+              "Plan Width": 12,
+              "Planned Partitions": 0,
+              "Plans": [
+                {
+                  "Actual Loops": 1,
+                  "Actual Rows": 1549963,
+                  "Actual Startup Time": 12.78,
+                  "Actual Total Time": 275.902,
+                  "Async Capable": false,
+                  "Hash Cond": "(orders.o_custkey = customer.c_custkey)",
+                  "Inner Unique": true,
+                  "Join Type": "Right",
+                  "Node Type": "Hash Join",
+                  "Output": [
+                    "customer.c_custkey",
+                    "orders.o_orderkey"
+                  ],
+                  "Parallel Aware": false,
+                  "Parent Relationship": "Outer",
+                  "Plan Rows": 1499850,
+                  "Plan Width": 8,
+                  "Plans": [
+                    {
+                      "Actual Loops": 1,
+                      "Actual Rows": 1499959,
+                      "Actual Startup Time": 0.004,
+                      "Actual Total Time": 106.29,
+                      "Alias": "orders",
+                      "Async Capable": false,
+                      "Filter": "(orders.o_comment !~~ ' % special % requests % '::text)",
+                      "Node Type": "Seq Scan",
+                      "Output": [
+                        "orders.o_orderkey",
+                        "orders.o_custkey",
+                        "orders.o_orderstatus",
+                        "orders.o_totalprice",
+                        "orders.o_orderdate",
+                        "orders.o_orderpriority",
+                        "orders.o_clerk",
+                        "orders.o_shippriority",
+                        "orders.o_comment"
+                      ],
+                      "Parallel Aware": false,
+                      "Parent Relationship": "Outer",
+                      "Plan Rows": 1499850,
+                      "Plan Width": 8,
+                      "Relation Name": "orders",
+                      "Rows Removed by Filter": 41,
+                      "Schema": "tpch_sf1",
+                      "Startup Cost": 0.0,
+                      "Total Cost": 43946.0
+                    },
+                    {
+                      "Actual Loops": 1,
+                      "Actual Rows": 150000,
+                      "Actual Startup Time": 12.516,
+                      "Actual Total Time": 12.517,
+                      "Async Capable": false,
+                      "Hash Batches": 1,
+                      "Hash Buckets": 262144,
+                      "Node Type": "Hash",
+                      "Original Hash Batches": 1,
+                      "Original Hash Buckets": 262144,
+                      "Output": [
+                        "customer.c_custkey"
+                      ],
+                      "Parallel Aware": false,
+                      "Parent Relationship": "Inner",
+                      "Peak Memory Usage": 7322,
+                      "Plan Rows": 150000,
+                      "Plan Width": 4,
+                      "Plans": [
+                        {
+                          "Actual Loops": 1,
+                          "Actual Rows": 150000,
+                          "Actual Startup Time": 0.004,
+                          "Actual Total Time": 5.776,
+                          "Alias": "customer",
+                          "Async Capable": false,
+                          "Node Type": "Seq Scan",
+                          "Output": [
+                            "customer.c_custkey"
+                          ],
+                          "Parallel Aware": false,
+                          "Parent Relationship": "Outer",
+                          "Plan Rows": 150000,
+                          "Plan Width": 4,
+                          "Relation Name": "customer",
+                          "Schema": "tpch_sf1",
+                          "Startup Cost": 0.0,
+                          "Total Cost": 5066.0
+                        }
+                      ],
+                      "Startup Cost": 5066.0,
+                      "Total Cost": 5066.0
+                    }
+                  ],
+                  "Startup Cost": 6941.0,
+                  "Total Cost": 54824.22
+                }
+              ],
+              "Startup Cost": 62323.47,
+              "Strategy": "Hashed",
+              "Total Cost": 63823.47
+            }
+          ],
+          "Startup Cost": 66073.47,
+          "Strategy": "Hashed",
+          "Total Cost": 66075.47
+        }
+      ],
+      "Sort Key": [
+        "(count(*)) DESC",
+        "(count(orders.o_orderkey)) DESC"
+      ],
+      "Sort Method": "quicksort",
+      "Sort Space Type": "Memory",
+      "Sort Space Used": 26,
+      "Startup Cost": 66083.11,
+      "Total Cost": 66083.61
+    },
+    "Planning Time": 0.08,
+    "Triggers": []
+  }
+]

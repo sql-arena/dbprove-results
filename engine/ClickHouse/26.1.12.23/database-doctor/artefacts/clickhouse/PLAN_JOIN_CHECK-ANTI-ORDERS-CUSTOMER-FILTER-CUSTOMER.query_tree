@@ -1,0 +1,60 @@
+QUERY id: 0
+  PROJECTION COLUMNS
+    COUNT(o_orderkey) UInt64
+  PROJECTION
+    LIST id: 1, nodes: 1
+      FUNCTION id: 2, function_name: count, function_type: aggregate, result_type: UInt64
+        ARGUMENTS
+          LIST id: 3, nodes: 1
+            COLUMN id: 4, column_name: o_orderkey, result_type: Int32, source_id: 5
+  JOIN TREE
+    TABLE id: 5, alias: __table1, table_name: tpch_sf1.orders
+  WHERE
+    FUNCTION id: 6, function_name: not, function_type: ordinary, result_type: UInt8
+      ARGUMENTS
+        LIST id: 7, nodes: 1
+          FUNCTION id: 8, function_name: exists, function_type: ordinary, result_type: UInt8
+            ARGUMENTS
+              LIST id: 9, nodes: 1
+                QUERY id: 10, alias: __table2, is_subquery: 1, is_correlated: 1
+                  CORRELATED COLUMNS
+                    LIST id: 11, nodes: 1
+                      COLUMN id: 12, column_name: o_custkey, result_type: Int32, source_id: 5
+                  PROJECTION COLUMNS
+                    1 UInt64
+                  PROJECTION
+                    LIST id: 13, nodes: 1
+                      CONSTANT id: 14, constant_value: UInt64_1, constant_value_type: UInt64
+                  JOIN TREE
+                    QUERY id: 15, alias: __table3, is_subquery: 1, is_correlated: 1
+                      CORRELATED COLUMNS
+                        LIST id: 16, nodes: 1
+                          COLUMN id: 12, column_name: o_custkey, result_type: Int32, source_id: 5
+                      PROJECTION COLUMNS
+                        1 UInt8
+                      PROJECTION
+                        LIST id: 17, nodes: 1
+                          CONSTANT id: 18, constant_value: UInt64_1, constant_value_type: UInt8
+                      JOIN TREE
+                        TABLE id: 19, alias: __table4, table_name: tpch_sf1.customer
+                      WHERE
+                        FUNCTION id: 20, function_name: and, function_type: ordinary, result_type: UInt8
+                          ARGUMENTS
+                            LIST id: 21, nodes: 3
+                              FUNCTION id: 22, function_name: equals, function_type: ordinary, result_type: UInt8
+                                ARGUMENTS
+                                  LIST id: 23, nodes: 2
+                                    COLUMN id: 24, column_name: c_custkey, result_type: Int32, source_id: 19
+                                    COLUMN id: 12, column_name: o_custkey, result_type: Int32, source_id: 5
+                              FUNCTION id: 25, function_name: equals, function_type: ordinary, result_type: UInt8
+                                ARGUMENTS
+                                  LIST id: 26, nodes: 2
+                                    COLUMN id: 27, column_name: c_custkey, result_type: Int32, source_id: 19
+                                    CONSTANT id: 28, constant_value: UInt64_1, constant_value_type: UInt8
+                              FUNCTION id: 29, function_name: equals, function_type: ordinary, result_type: UInt8
+                                ARGUMENTS
+                                  LIST id: 30, nodes: 2
+                                    COLUMN id: 31, column_name: o_custkey, result_type: Int32, source_id: 5
+                                    CONSTANT id: 32, constant_value: UInt64_1, constant_value_type: UInt8
+                  LIMIT
+                    CONSTANT id: 33, constant_value: UInt64_1, constant_value_type: UInt64

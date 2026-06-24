@@ -1,0 +1,110 @@
+{
+  "engine": "PostgreSQL",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 2,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 2,
+          "-4x": 0,
+          "-8x": 3,
+          "<16x": 4,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 1,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 10,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 1,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 1760650,
+        "distribute": 0,
+        "hash": 19535270,
+        "join": 24546239,
+        "scan": 1,
+        "seek": 19641077,
+        "sort": 1725985
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(name), MIN(title)\n       5         5  AGGREGATE PARTIAL MIN(name), PARTIAL MIN(title)\n    7400   1760645  INNER JOIN LOOP ON id = company_id\n   20390   6023690  │└INNER JOIN LOOP ON movie_id = movie_id AND id = movie_id AND (id = movie_id)\n    3835    702995  │ │└INNER JOIN LOOP ON id = person_role_id\n     767    148285  │ │ │└INNER JOIN HASH ON info_type_id = id\n       5         5  │ │ │ │└TABLE SEEK info_type AS it\n  433380   3670420  │ │ │ INNER JOIN LOOP ON movie_id = id\n   26370    298570  │ │ │ │└INNER JOIN LOOP ON id = movie_id\n   48095    503020  │ │ │ │ │└INNER JOIN LOOP ON id = person_id\n  204480    503510  │ │ │ │ │ │└INNER JOIN MERGE ON person_id = person_id\n 1126680    578830  │ │ │ │ │ │ │└TABLE SEEK aka_name AS an\n  357280   1725985  │ │ │ │ │ │ SORT person_id\n  357280   1380830  │ │ │ │ │ │ INNER JOIN LOOP ON role_id = id\n       1         1  │ │ │ │ │ │ │└TABLE SCAN role_type AS rt WHERE rt.role = 'actress'\n  389760   1380830  │ │ │ │ │ │ TABLE SEEK cast_info AS ci WHERE ci.note IN('(voice)','(voice: Japanese version)','(voice) (uncredited)','(voice: English version)')\n  503508    503508  │ │ │ │ │ TABLE SEEK name AS n WHERE n.gender = 'f'\n  503022    503022  │ │ │ │ TABLE SEEK title AS t WHERE t.production_year > 2000\n11345622   3582828  │ │ │ TABLE SEEK movie_info AS mi\n  741427    741427  │ │ TABLE SEEK char_name AS chn\n 3514965   6326937  │ TABLE SEEK movie_companies AS mc\n 6023690   6023690  TABLE SEEK company_name AS cn WHERE cn.country_code = 'us'\n",
+      "sql": "SELECT MIN(n.name) AS voicing_actress,\n       MIN(t.title) AS jap_engl_voiced_movie\nFROM job.aka_name AS an,\n     job.char_name AS chn,\n     job.cast_info AS ci,\n     job.company_name AS cn,\n     job.info_type AS it,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.name AS n,\n     job.role_type AS rt,\n     job.title AS t\nWHERE ci.note IN ('(voice)',\n                  '(voice: Japanese version)',\n                  '(voice) (uncredited)',\n                  '(voice: English version)')\n  AND cn.country_code ='[us]'\n  AND it.info = 'release dates'\n  AND n.gender ='f'\n  AND rt.role ='actress'\n  AND t.production_year > 2000\n  AND t.id = mi.movie_id\n  AND t.id = mc.movie_id\n  AND t.id = ci.movie_id\n  AND mc.movie_id = ci.movie_id\n  AND mc.movie_id = mi.movie_id\n  AND mi.movie_id = ci.movie_id\n  AND cn.id = mc.company_id\n  AND it.id = mi.info_type_id\n  AND n.id = ci.person_id\n  AND rt.id = ci.role_id\n  AND n.id = an.person_id\n  AND ci.person_id = an.person_id\n  AND chn.id = ci.person_role_id;\n",
+      "startTime": "2026-06-23T15:44:57.143074Z",
+      "status": "OK",
+      "timeMs": 7538.58
+    }
+  ],
+  "runtime": {
+    "avgMs": 7538.58,
+    "bestMs": 7538.58,
+    "maxMs": 7538.58,
+    "minMs": 7538.58,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 19D Analysis",
+    "displayName": "JOB-19D",
+    "name": "PLAN-JOB-19D",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "14.23"
+}

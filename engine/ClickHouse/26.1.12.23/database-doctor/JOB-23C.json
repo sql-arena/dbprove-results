@@ -1,0 +1,110 @@
+{
+  "engine": "ClickHouse",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 0,
+        "distribute": 0,
+        "hash": 7267233,
+        "join": 135086,
+        "scan": 9153143,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       -         ∞  PROJECT a1 AS movie_kind, a2 AS complete_us_internet_movie\n       -         ∞  AGGREGATE MIN(kind) AS a1, MIN(title) AS a2\n       -         ∞  PROJECT kind, title\n       -         ∞  PROJECT title, kind\n       -         ∞  INNER JOIN HASH ON tuple(PROJECTION_2402.movie_id,PROJECTION_2402.movie_id,PROJECTION_2402.movie_id,PROJECTION_2402.movie_id,PROJECTION_2402.movie_id,PROJECTION_2402.movie_id) = tuple(PROJECTION_2363.movie_id,PROJECTION_2363.movie_id,PROJECTION_2363.movie_id,PROJECTION_2363.movie_id,PROJECTION_2363.id,PROJECTION_2363.id)\n       -         ∞  │└PROJECT movie_id_right, movie_id AS movie_id_right_2, id, title, kind\n       -         ∞  │ PROJECT movie_id, movie_id, title, id, kind\n       -         ∞  │ INNER JOIN HASH ON PROJECTION_2369.kind_id = PROJECTION_2366.id\n       -         ∞  │ │└PROJECT id AS id_right, kind\n       -         ∞  │ │ FILTER (in(kind,__set_String_3875239924843678209_2671243455701509582) AND 1) AS a48\n       -         7  │ │ TABLE SCAN kind_type WHERE TRUE\n       -         ∞  │ PROJECT kind_id, movie_id, movie_id, title, id AS id_left\n       -         ∞  │ PROJECT movie_id, movie_id, title, id, kind_id\n       -         ∞  │ INNER JOIN HASH ON tuple(PROJECTION_2375.movie_id,PROJECTION_2375.movie_id) = tuple(PROJECTION_2372.id,PROJECTION_2372.id)\n       -         ∞  │ │└PROJECT id, title, kind_id\n       -         ∞  │ │ FILTER (1 AND production_year > 1990_UInt16) AS a44\n       -   1749032  │ │ TABLE SCAN title WHERE production_year > 1990\n       -         ∞  │ PROJECT movie_id, movie_id\n       -         ∞  │ PROJECT movie_id, movie_id\n       -         ∞  │ INNER JOIN HASH ON PROJECTION_2381.company_id = PROJECTION_2378.id\n       -         ∞  │ │└PROJECT id\n       -         ∞  │ │ FILTER (1 AND country_code = 'us'_String) AS a40\n       -         0  │ │ TABLE SCAN company_name WHERE country_code = 'us'\n       -         ∞  │ PROJECT company_id, movie_id, movie_id\n       -         ∞  │ PROJECT movie_id, movie_id, company_id\n       -         ∞  │ INNER JOIN HASH ON PROJECTION_2387.company_type_id = PROJECTION_2384.id\n       -         4  │ │└PROJECT id\n       -         4  │ │ PROJECT id\n       -         4  │ │ TABLE SCAN company_type\n       -         ∞  │ PROJECT company_type_id, movie_id, movie_id, company_id\n       -         ∞  │ PROJECT movie_id, movie_id, company_id, company_type_id\n       -         ∞  │ INNER JOIN HASH ON PROJECTION_2393.movie_id = PROJECTION_2390.movie_id\n       -   2609129  │ │└PROJECT movie_id AS movie_id_right, company_id, company_type_id\n       -   2609129  │ │ PROJECT movie_id, company_id, company_type_id\n       -   2609129  │ │ TABLE SCAN movie_companies\n       -         ∞  │ PROJECT movie_id AS movie_id_left\n       -         ∞  │ PROJECT movie_id\n       -         ∞  │ INNER JOIN HASH ON PROJECTION_2399.status_id = PROJECTION_2396.id\n       -         ∞  │ │└PROJECT id\n       -         ∞  │ │ FILTER (1 AND kind = 'complete+verified'_String) AS a36\n       -         1  │ │ TABLE SCAN comp_cast_type WHERE kind = 'complete+verified'\n       -    135086  │ PROJECT status_id, movie_id\n       -    135086  │ PROJECT status_id, movie_id\n       -    135086  │ TABLE SCAN complete_cast\n       -         ∞  PROJECT movie_id_left, movie_id AS movie_id_left_2\n       -         ∞  PROJECT movie_id, movie_id\n       -         ∞  INNER JOIN HASH ON PROJECTION_2408.keyword_id = PROJECTION_2405.id\n       -    134170  │└PROJECT id\n       -    134170  │ PROJECT id\n       -    134170  │ TABLE SCAN keyword\n       -         ∞  PROJECT keyword_id, movie_id, movie_id\n       -         ∞  PROJECT movie_id, movie_id, keyword_id\n       -         ∞  INNER JOIN HASH ON PROJECTION_2414.movie_id = PROJECTION_2411.movie_id\n       -   4523930  │└PROJECT movie_id AS movie_id_right, keyword_id\n       -   4523930  │ PROJECT movie_id, keyword_id\n       -   4523930  │ TABLE SCAN movie_keyword\n       -         ∞  PROJECT movie_id AS movie_id_left\n       -         ∞  PROJECT movie_id\n       -         ∞  INNER JOIN HASH ON PROJECTION_2420.info_type_id = PROJECTION_2417.id\n       -         ∞  │└PROJECT id\n       -         ∞  │ FILTER (1 AND info = 'release dates'_String) AS a24\n       -         1  │ TABLE SCAN info_type WHERE info = 'release dates'\n       -         ∞  PROJECT info_type_id, movie_id\n       -         ∞  FILTER ( LIKE (note,'%internet%'_String) AND 1 AND  OR ( LIKE (info,'USA:% 199%'_String), LIKE (info,'USA:% 200%'_String))) AS a10\n       -      1783  TABLE SCAN movie_info WHERE note LIKE '%internet%' AND (info LIKE 'USA:% 199%' OR info LIKE 'USA:% 200%')\n",
+      "sql": "SELECT MIN(kt.kind) AS movie_kind,\n       MIN(t.title) AS complete_us_internet_movie\nFROM job.complete_cast AS cc,\n     job.comp_cast_type AS cct1,\n     job.company_name AS cn,\n     job.company_type AS ct,\n     job.info_type AS it1,\n     job.keyword AS k,\n     job.kind_type AS kt,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.movie_keyword AS mk,\n     job.title AS t\nWHERE cct1.kind = 'complete+verified'\n  AND cn.country_code = '[us]'\n  AND it1.info = 'release dates'\n  AND kt.kind IN ('movie',\n                  'tv movie',\n                  'video movie',\n                  'video game')\n  AND mi.note LIKE '%internet%'\n  AND mi.info IS NOT NULL\n  AND (mi.info LIKE 'USA:% 199%'\n       OR mi.info LIKE 'USA:% 200%')\n  AND t.production_year > 1990\n  AND kt.id = t.kind_id\n  AND t.id = mi.movie_id\n  AND t.id = mk.movie_id\n  AND t.id = mc.movie_id\n  AND t.id = cc.movie_id\n  AND mk.movie_id = mi.movie_id\n  AND mk.movie_id = mc.movie_id\n  AND mk.movie_id = cc.movie_id\n  AND mi.movie_id = mc.movie_id\n  AND mi.movie_id = cc.movie_id\n  AND mc.movie_id = cc.movie_id\n  AND k.id = mk.keyword_id\n  AND it1.id = mi.info_type_id\n  AND cn.id = mc.company_id\n  AND ct.id = mc.company_type_id\n  AND cct1.id = cc.status_id;\n",
+      "startTime": "2026-06-17T13:12:59.693762Z",
+      "status": "OK",
+      "timeMs": 3773.998
+    }
+  ],
+  "runtime": {
+    "avgMs": 3773.998,
+    "bestMs": 3773.998,
+    "maxMs": 3773.998,
+    "minMs": 3773.998,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 23C Analysis",
+    "displayName": "JOB-23C",
+    "name": "JOB-23C",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "26.1.12.23"
+}

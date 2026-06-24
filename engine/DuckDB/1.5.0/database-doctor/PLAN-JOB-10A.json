@@ -1,0 +1,110 @@
+{
+  "engine": "DuckDB",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 2
+        },
+        "hash": {
+          "+2x": 2,
+          "+4x": 0,
+          "+8x": 1,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 3,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 1,
+          "+4x": 0,
+          "+8x": 3,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 1
+        },
+        "scan": {
+          "+2x": 1,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 3,
+          ">16x": 3
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 104,
+        "distribute": 0,
+        "hash": 22455,
+        "join": 2298970,
+        "scan": 2300110,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       -         1  AGGREGATE MIN(#0), MIN(#1)\n     903       104  PROJECT name, title\n     903       104  INNER JOIN HASH ON id = person_role_id\n     903       112  │└INNER JOIN HASH ON company_type_id = id\n       4         2  │ │└TABLE SCAN company_type WHERE id <= 2\n     903       112  │ INNER JOIN HASH ON role_id = id\n       1         1  │ │└FILTER id <= 11\n       1         1  │ │ TABLE SCAN role_type WHERE role = 'actor'\n   10844       112  │ INNER JOIN HASH ON movie_id = id\n    3716      4539  │ │└INNER JOIN HASH ON id = movie_id\n   18253      8790  │ │ │└INNER JOIN HASH ON company_id = id\n    1644      1361  │ │ │ │└TABLE SCAN company_name WHERE country_code = 'ru'\n 2609129   2291340  │ │ │ TABLE SCAN movie_companies\n  505662      5279  │ │ FILTER id BETWEEN 2 AND 2525745\n  505662      5279  │ │ TABLE SCAN title WHERE production_year > 2005\n 7248868       136  │ FILTER movie_id BETWEEN 2 AND 2525745\n 7248868       136  │ TABLE SCAN cast_info WHERE contains(note,'(voice)') AND contains(note,'(uncredited)')\n 3140339      1991  TABLE SCAN char_name\n",
+      "sql": "SELECT MIN(chn.name) AS uncredited_voiced_character,\n       MIN(t.title) AS russian_movie\nFROM job.char_name AS chn,\n     job.cast_info AS ci,\n     job.company_name AS cn,\n     job.company_type AS ct,\n     job.movie_companies AS mc,\n     job.role_type AS rt,\n     job.title AS t\nWHERE ci.note LIKE '%(voice)%'\n  AND ci.note LIKE '%(uncredited)%'\n  AND cn.country_code = '[ru]'\n  AND rt.role = 'actor'\n  AND t.production_year > 2005\n  AND t.id = mc.movie_id\n  AND t.id = ci.movie_id\n  AND ci.movie_id = mc.movie_id\n  AND chn.id = ci.person_role_id\n  AND rt.id = ci.role_id\n  AND cn.id = mc.company_id\n  AND ct.id = mc.company_type_id;\n",
+      "startTime": "2026-06-23T14:00:46.402587Z",
+      "status": "OK",
+      "timeMs": 56.747
+    }
+  ],
+  "runtime": {
+    "avgMs": 56.747,
+    "bestMs": 56.747,
+    "maxMs": 56.747,
+    "minMs": 56.747,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 10A Analysis",
+    "displayName": "JOB-10A",
+    "name": "PLAN-JOB-10A",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "1.5.0"
+}

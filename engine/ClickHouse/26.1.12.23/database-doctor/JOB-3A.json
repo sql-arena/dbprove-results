@@ -1,0 +1,110 @@
+{
+  "engine": "ClickHouse",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 0,
+        "distribute": 0,
+        "hash": 14368648,
+        "join": 14861622,
+        "scan": 20372600,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       -         1  PROJECT a1 AS movie_title\n       -         1  AGGREGATE MIN(title) AS a1\n       -         0  PROJECT title\n       -         0  PROJECT title\n       -         0  INNER JOIN HASH ON tuple(PROJECTION_4346.movie_id,PROJECTION_4346.movie_id) = tuple(PROJECTION_4337.movie_id,PROJECTION_4337.id)\n       -   4922359  │└PROJECT movie_id AS movie_id_right, id, title\n       -   4922359  │ PROJECT movie_id, title, id\n       -   4922359  │ INNER JOIN HASH ON PROJECTION_4343.movie_id = PROJECTION_4340.id\n       -   1012920  │ │└PROJECT id, title\n       -   1012920  │ │ PROJECT id, title\n       -   1012920  │ │ TABLE SCAN title WHERE production_year > 2005\n       -  14835720  │ PROJECT movie_id\n       -  14835720  │ PROJECT movie_id\n       -  14835720  │ TABLE SCAN movie_info WHERE TRUE\n       -     12951  PROJECT movie_id AS movie_id_left\n       -     12951  PROJECT movie_id\n       -     12951  INNER JOIN HASH ON PROJECTION_4352.id = PROJECTION_4349.keyword_id\n       -   4523930  │└PROJECT keyword_id, movie_id\n       -   4523930  │ PROJECT keyword_id, movie_id\n       -   4523930  │ TABLE SCAN movie_keyword\n       -        30  PROJECT id\n       -        30  PROJECT id\n       -        30  TABLE SCAN keyword WHERE keyword LIKE '%sequel%'\n",
+      "sql": "SELECT MIN(t.title) AS movie_title\nFROM job.keyword AS k,\n     job.movie_info AS mi,\n     job.movie_keyword AS mk,\n     job.title AS t\nWHERE k.keyword LIKE '%sequel%'\n  AND mi.info IN ('Sweden',\n                  'Norway',\n                  'Germany',\n                  'Denmark',\n                  'Swedish',\n                  'Denish',\n                  'Norwegian',\n                  'German')\n  AND t.production_year > 2005\n  AND t.id = mi.movie_id\n  AND t.id = mk.movie_id\n  AND mk.movie_id = mi.movie_id\n  AND k.id = mk.keyword_id;\n",
+      "startTime": "2026-06-17T14:01:38.073934Z",
+      "status": "OK",
+      "timeMs": 2833.509
+    }
+  ],
+  "runtime": {
+    "avgMs": 2833.509,
+    "bestMs": 2833.509,
+    "maxMs": 2833.509,
+    "minMs": 2833.509,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 3A Analysis",
+    "displayName": "JOB-3A",
+    "name": "JOB-3A",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "26.1.12.23"
+}

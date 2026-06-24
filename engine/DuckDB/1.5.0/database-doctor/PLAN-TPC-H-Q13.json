@@ -1,0 +1,109 @@
+{
+  "engine": "DuckDB",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 1
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 1,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 1,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 2,
+          ">16x": 1
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 1699963,
+        "distribute": 0,
+        "hash": 1549963,
+        "join": 1549963,
+        "scan": 1649959,
+        "seek": 0,
+        "sort": 42
+      },
+      "plan": "Estimate    Actual  Operator\n       -        42  SORT count_star(), c_orders.c_count\n   83106        42  AGGREGATE count_star() GROUP BY HASH #0\n  124908    150000  PROJECT c_count\n  124908    150000  PROJECT COUNT(o_orderkey)\n  124908    150000  AGGREGATE COUNT(#1) GROUP BY HASH #0\n  300000   1549963  PROJECT c_custkey, o_orderkey\n  300000   1549963  RIGHT OUTER JOIN HASH ON o_custkey = c_custkey\n  150000    150000  │└TABLE SCAN customer\n  300000   1499959  TABLE SCAN orders WHERE o_comment NOT LIKE ' % special % requests % '\n",
+      "sql": "/* TPC-H Q13 */\nSELECT\n  c_count,\n  COUNT(*) AS custdist\nFROM\n  (\n    SELECT\n      c_custkey,\n      COUNT(o_orderkey)\n    FROM\n      tpch_sf1.customer\n      LEFT OUTER JOIN tpch_sf1.orders ON c_custkey = o_custkey\n      AND o_comment NOT LIKE ' % special % requests % '\n    GROUP BY\n      c_custkey\n  ) AS c_orders (c_custkey, c_count)\nGROUP BY\n  c_count\nORDER BY\n  custdist DESC,\n  c_count DESC\n;",
+      "startTime": "2026-06-22T16:08:56.206031Z",
+      "status": "OK",
+      "timeMs": 26.328
+    }
+  ],
+  "runtime": {
+    "avgMs": 26.328,
+    "bestMs": 26.328,
+    "maxMs": 26.328,
+    "minMs": 26.328,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "TPC-H Q13 Analysis",
+    "displayName": "TPCH-Q13",
+    "name": "PLAN-TPC-H-Q13",
+    "tags": [
+      "TPC-H"
+    ]
+  },
+  "version": "1.5.0"
+}

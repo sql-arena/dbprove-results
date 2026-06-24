@@ -1,0 +1,109 @@
+{
+  "engine": "ClickHouse",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 7403,
+        "distribute": 0,
+        "hash": 2567411,
+        "join": 6389877,
+        "scan": 6389878,
+        "seek": 0,
+        "sort": 5
+      },
+      "plan": "Estimate    Actual  Operator\n       -         5  PROJECT n_name, a1 AS revenue\n       -         5  SORT a1\n       -         5  PROJECT a1, n_name\n       -         5  AGGREGATE SUM(a5) AS a1 GROUP BY HASH n_name\n       -      7403  PROJECT n_name, l_extendedprice * (1 - l_discount) AS a5\n       -      7403  PROJECT l_extendedprice, l_discount, n_name\n       -      7403  INNER JOIN HASH ON tuple(PROJECTION_130.c_custkey,PROJECTION_130.c_nationkey) = tuple(PROJECTION_103.o_custkey,PROJECTION_103.s_nationkey)\n       -    181905  │└PROJECT o_custkey, s_nationkey, l_extendedprice, l_discount, n_name\n       -    181905  │ PROJECT l_extendedprice, l_discount, o_custkey, s_nationkey, n_name\n       -    181905  │ INNER JOIN HASH ON PROJECTION_127.o_orderkey = PROJECTION_106.l_orderkey\n       -   1191757  │ │└PROJECT l_orderkey, l_extendedprice, l_discount, s_nationkey, n_name\n       -   1191757  │ │ PROJECT l_extendedprice, l_discount, l_orderkey, s_nationkey, n_name\n       -   1191757  │ │ INNER JOIN HASH ON PROJECTION_124.l_suppkey = PROJECTION_109.s_suppkey\n       -      1987  │ │ │└PROJECT s_suppkey, s_nationkey, n_name\n       -      1987  │ │ │ PROJECT s_suppkey, s_nationkey, n_name\n       -      1987  │ │ │ INNER JOIN HASH ON PROJECTION_121.s_nationkey = PROJECTION_112.n_nationkey\n       -         5  │ │ │ │└PROJECT n_nationkey, n_name\n       -         5  │ │ │ │ PROJECT n_name, n_nationkey\n       -         5  │ │ │ │ INNER JOIN HASH ON PROJECTION_118.n_regionkey = PROJECTION_115.r_regionkey\n       -         1  │ │ │ │ │└PROJECT r_regionkey\n       -         1  │ │ │ │ │ PROJECT r_regionkey\n       -         1  │ │ │ │ │ TABLE SCAN region WHERE r_name = 'EUROPE'\n       -        25  │ │ │ │ PROJECT n_regionkey, n_name, n_nationkey\n       -        25  │ │ │ │ PROJECT n_name, n_nationkey, n_regionkey\n       -        25  │ │ │ │ TABLE SCAN nation\n       -     10000  │ │ │ PROJECT s_nationkey, s_suppkey\n       -     10000  │ │ │ PROJECT s_suppkey, s_nationkey\n       -     10000  │ │ │ TABLE SCAN supplier\n       -   6001215  │ │ PROJECT l_suppkey, l_extendedprice, l_discount, l_orderkey\n       -   6001215  │ │ PROJECT l_extendedprice, l_discount, l_orderkey, l_suppkey\n       -   6001215  │ │ TABLE SCAN lineitem\n       -    228637  │ PROJECT o_orderkey, o_custkey\n       -    228637  │ PROJECT o_orderkey, o_custkey\n       -    228637  │ TABLE SCAN orders WHERE (o_orderdate >= '1995-01-01') AND (o_orderdate < '1996-01-01')\n       -    150000  PROJECT c_custkey, c_nationkey\n       -    150000  PROJECT c_custkey, c_nationkey\n       -    150000  TABLE SCAN customer\n",
+      "sql": "/* TPC-H Q05 */\nSELECT n_name,\n       SUM(l_extendedprice * (1 - l_discount)) AS revenue\nFROM tpch_sf1.lineitem\nINNER JOIN tpch_sf1.orders\n    ON l_orderkey = o_orderkey\nINNER JOIN tpch_sf1.customer\n    ON o_custkey = c_custkey\nINNER JOIN tpch_sf1.supplier\n    ON l_suppkey = s_suppkey\nINNER JOIN tpch_sf1.nation\n    ON s_nationkey = n_nationkey\nINNER JOIN tpch_sf1.region\n    ON n_regionkey = r_regionkey\nWHERE r_name = 'EUROPE'\n  AND o_orderdate >= '1995-01-01'\n  AND o_orderdate < '1996-01-01'\n  AND s_nationkey = c_nationkey\nGROUP BY n_name\nORDER BY revenue DESC\n",
+      "startTime": "2026-06-23T11:14:22.611354Z",
+      "status": "OK",
+      "timeMs": 127.745
+    }
+  ],
+  "runtime": {
+    "avgMs": 127.745,
+    "bestMs": 127.745,
+    "maxMs": 127.745,
+    "minMs": 127.745,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "TPC-H Q05 Analysis",
+    "displayName": "TPCH-Q05",
+    "name": "PLAN-TPC-H-Q05",
+    "tags": [
+      "TPC-H"
+    ]
+  },
+  "version": "26.1.12.23"
+}

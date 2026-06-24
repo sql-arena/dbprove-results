@@ -1,0 +1,110 @@
+{
+  "engine": "DataFusion",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 1
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 1,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 4
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 7
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 1,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 7
+        },
+        "scan": {
+          "+2x": 2,
+          "+4x": 0,
+          "+8x": 1,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 7,
+          ">16x": 1
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 4417,
+        "distribute": 11617464,
+        "hash": 1660717,
+        "join": 10311437,
+        "scan": 27463576,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  PROJECT movie_budget, movie_votes, male_writer, violent_movie_title\n       1         1  AGGREGATE MIN(info), MIN(info), MIN(name), MIN(title)\n  494319        10  DISTRIBUTE GATHER\n  494319        10  AGGREGATE MIN(info), MIN(info), MIN(name), MIN(title)\n  494319      4407  INNER JOIN HASH ON movie_id = id AND movie_id = id AND movie_id = id AND movie_id = id\n  494319      4407  │└DISTRIBUTE HASH ON movie_id, movie_id, movie_id, movie_id\n  494319      4407  │ INNER JOIN HASH ON person_id = id\n  494319      7112  │ │└DISTRIBUTE HASH ON person_id\n  494319      7112  │ │ INNER JOIN HASH ON id = keyword_id\n   26834         5  │ │ │└DISTRIBUTE GATHER\n   26834         5  │ │ │ FILTER keyword IN('murder','blood','gore','death','female-nudity')\n  134170    134170  │ │ │ DISTRIBUTE ROUND ROBIN\n  134170    134170  │ │ │ TABLE SCAN keyword WHERE keyword IN('murder','blood','gore','death','female-nudity')\n 2471597    207091  │ │ INNER JOIN HASH ON movie_id = movie_id AND movie_id = movie_id AND movie_id = movie_id\n 1380035      8650  │ │ │└DISTRIBUTE HASH ON movie_id, movie_id, movie_id\n 1380035      8650  │ │ │ INNER JOIN HASH ON id = info_type_id\n      23         1  │ │ │ │└DISTRIBUTE GATHER\n      23         1  │ │ │ │ FILTER info = 'votes'\n     113       113  │ │ │ │ DISTRIBUTE ROUND ROBIN\n     113       113  │ │ │ │ TABLE SCAN info_type WHERE info = 'votes'\n 1380035     25956  │ │ │ PROJECT person_id, movie_id, movie_id, info, movie_id, info_type_id, info\n 1380035     25956  │ │ │ INNER JOIN HASH ON movie_id = movie_id AND movie_id = movie_id\n 1380035   1380035  │ │ │ │└DISTRIBUTE HASH ON movie_id, movie_id\n 1380035   1380035  │ │ │ │ TABLE SCAN movie_info_idx WHERE ((info_type_id >= 100) AND (info_type_id <= 100)) AND info_type_id IN 100\n 1780068     15897  │ │ │ DISTRIBUTE HASH ON movie_id, movie_id\n 1780068     15897  │ │ │ INNER JOIN HASH ON id = info_type_id\n      23         1  │ │ │ │└DISTRIBUTE GATHER\n      23         1  │ │ │ │ FILTER info = 'genres'\n     113       113  │ │ │ │ DISTRIBUTE ROUND ROBIN\n     113       113  │ │ │ │ TABLE SCAN info_type WHERE info = 'genres'\n 8513371     15897  │ │ │ PROJECT person_id, movie_id, movie_id, info_type_id, info\n 8513371     15897  │ │ │ INNER JOIN HASH ON movie_id = movie_id\n 2967144     30413  │ │ │ │└DISTRIBUTE HASH ON movie_id\n 2967144     30413  │ │ │ │ FILTER info = 'Horror'\n14835720   1724005  │ │ │ │ TABLE SCAN movie_info WHERE ((info = 'Horror') AND (((info_type_id >= 3) AND (info_type_id <= 3)) AND info_type_id IN 3)) AND CASE MOD(HASH_REPARTITION(movie_id,movie_id),10) WHEN 1 THEN ((((movie_id >= 57) AND (movie_id <= 2525790)) AND ((movie_id >= 57) AND (movie_id <= 2525790))) AND TRUE) WHEN 3 THEN ((((movie_id >= 11) AND (movie_id <= 2525784)) AND ((movie_id >= 11) AND (movie_id <= 2525784))) AND TRUE) WHEN 5 THEN ((((movie_id >= 52) AND (movie_id <=...\n 7248869   1244716  │ │ │ DISTRIBUTE HASH ON movie_id\n 7248869   1244716  │ │ │ FILTER note IN('(writer)','(head writer)','(written by)','(story)','(story editor)')\n36244344  15326137  │ │ │ TABLE SCAN cast_info WHERE note IN('(writer)','(head writer)','(written by)','(story)','(story editor)') AND CASE MOD(HASH_REPARTITION movie_id,10) WHEN 0 THEN (((movie_id >= 11530) AND (movie_id <= 2525631)) AND TRUE) WHEN 1 THEN (((movie_id >= 31537) AND (movie_id <= 2525625)) AND TRUE) WHEN 2 THEN (((movie_id >= 4665) AND (movie_id <= 2524996)) AND TRUE) WHEN 3 THEN (((movie_id >= 679) AND (movie_id <= 2525793)) AND TRUE) WHEN 4 THEN (((movie_id >= 34054) AN...\n 4523930   4523930  │ │ DISTRIBUTE HASH ON movie_id, movie_id, movie_id\n 4523930   4523930  │ │ TABLE SCAN movie_keyword WHERE CASE MOD(HASH_REPARTITION(movie_id,movie_id,movie_id),10) WHEN 0 THEN (((((movie_id >= 188281) AND (movie_id <= 2521028)) AND ((movie_id >= 188281) AND (movie_id <= 2521028))) AND ((movie_id >= 188281) AND (movie_id <= 2521028))) AND TRUE) WHEN 1 THEN (((((movie_id >= 96537) AND (movie_id <= 2524953)) AND ((movie_id >= 96537) AND (movie_id <= 2524953))) AND ((movie_id >= 96537) AND (movie_id <= 2524953))) AND TRUE) WHEN 2 THEN (((((mo...\n  833499   1739579  │ DISTRIBUTE HASH ON id\n  833499   1739579  │ FILTER gender = 'm'\n 4167491   1846761  │ TABLE SCAN name WHERE (gender = 'm') AND CASE MOD(HASH_REPARTITION id,10) WHEN 0 THEN (((id >= 2281) AND (id <= 3858670)) AND TRUE) WHEN 1 THEN (((id >= 28576) AND (id <= 3225587)) AND TRUE) WHEN 2 THEN (((id >= 3656) AND (id <= 3227769)) AND TRUE) WHEN 3 THEN (((id >= 10782) AND (id <= 3221761)) AND TRUE) WHEN 4 THEN (((id >= 15326) AND (id <= 3227684)) AND TRUE) WHEN 5 THEN (((id >= 13047) AND (id <= 3222478)) AND TRUE) WHEN 6 THEN (((id >= 3168) AND (id <= 3704202))...\n 2528312   2528312  DISTRIBUTE HASH ON id, id, id, id\n 2528312   2528312  TABLE SCAN title WHERE CASE MOD(HASH_REPARTITION(id,id,id,id),10) WHEN 1 THEN ((((((id >= 506304) AND (id <= 2520945)) AND ((id >= 506304) AND (id <= 2520945))) AND ((id >= 506304) AND (id <= 2520945))) AND ((id >= 506304) AND (id <= 2520945))) AND TRUE) WHEN 3 THEN ((((((id >= 560970) AND (id <= 2521126)) AND ((id >= 560970) AND (id <= 2521126))) AND ((id >= 560970) AND (id <= 2521126))) AND ((id >= 560970) AND (id <= 2521126))) AND TRUE) WHEN 5 THEN ((((((id >= 560960) A...\n",
+      "sql": "SELECT MIN(mi.info) AS movie_budget,\n       MIN(mi_idx.info) AS movie_votes,\n       MIN(n.name) AS male_writer,\n       MIN(t.title) AS violent_movie_title\nFROM job.cast_info AS ci,\n     job.info_type AS it1,\n     job.info_type AS it2,\n     job.keyword AS k,\n     job.movie_info AS mi,\n     job.movie_info_idx AS mi_idx,\n     job.movie_keyword AS mk,\n     job.name AS n,\n     job.title AS t\nWHERE ci.note IN ('(writer)',\n                  '(head writer)',\n                  '(written by)',\n                  '(story)',\n                  '(story editor)')\n  AND it1.info = 'genres'\n  AND it2.info = 'votes'\n  AND k.keyword IN ('murder',\n                    'blood',\n                    'gore',\n                    'death',\n                    'female-nudity')\n  AND mi.info = 'Horror'\n  AND n.gender = 'm'\n  AND t.id = mi.movie_id\n  AND t.id = mi_idx.movie_id\n  AND t.id = ci.movie_id\n  AND t.id = mk.movie_id\n  AND ci.movie_id = mi.movie_id\n  AND ci.movie_id = mi_idx.movie_id\n  AND ci.movie_id = mk.movie_id\n  AND mi.movie_id = mi_idx.movie_id\n  AND mi.movie_id = mk.movie_id\n  AND mi_idx.movie_id = mk.movie_id\n  AND n.id = ci.person_id\n  AND it1.id = mi.info_type_id\n  AND it2.id = mi_idx.info_type_id\n  AND k.id = mk.keyword_id;\n",
+      "startTime": "2026-06-23T16:59:46.574125Z",
+      "status": "OK",
+      "timeMs": 322.78
+    }
+  ],
+  "runtime": {
+    "avgMs": 322.78,
+    "bestMs": 322.78,
+    "maxMs": 322.78,
+    "minMs": 322.78,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "iceberg",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 25A Analysis",
+    "displayName": "JOB-25A",
+    "name": "PLAN-JOB-25A",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "Apache DataFusion 54.0.0, aarch64 on linux"
+}

@@ -1,0 +1,110 @@
+{
+  "engine": "ClickHouse",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 6,
+        "distribute": 0,
+        "hash": 525,
+        "join": 41160426,
+        "scan": 41159943,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       -         1  PROJECT a1 AS movie_keyword, a2 AS actor_name, a3 AS marvel_movie\n       -         1  AGGREGATE MIN(keyword) AS a1, MIN(name) AS a2, MIN(title) AS a3\n       -         6  PROJECT keyword, name, title\n       -         6  PROJECT keyword, name, title\n       -         6  INNER JOIN HASH ON tuple(PROJECTION_4595.movie_id,PROJECTION_4595.movie_id) = tuple(PROJECTION_4580.movie_id,PROJECTION_4580.id)\n       -        11  │└PROJECT movie_id AS movie_id_right, id, keyword, title\n       -        11  │ PROJECT movie_id, keyword, title, id\n       -        11  │ INNER JOIN HASH ON PROJECTION_4592.id = PROJECTION_4583.movie_id\n       -        14  │ │└PROJECT movie_id, keyword\n       -        14  │ │ PROJECT movie_id, keyword\n       -        14  │ │ INNER JOIN HASH ON PROJECTION_4589.keyword_id = PROJECTION_4586.id\n       -         1  │ │ │└PROJECT id, keyword\n       -         1  │ │ │ PROJECT id, keyword\n       -         1  │ │ │ TABLE SCAN keyword WHERE keyword = 'marvel-cinematic-universe'\n       -   4523930  │ │ PROJECT keyword_id, movie_id\n       -   4523930  │ │ PROJECT movie_id, keyword_id\n       -   4523930  │ │ TABLE SCAN movie_keyword\n       -    391666  │ PROJECT id, title\n       -    391666  │ PROJECT id, title\n       -    391666  │ TABLE SCAN title WHERE production_year > 2010\n       -       486  PROJECT movie_id AS movie_id_left, name\n       -       486  PROJECT movie_id, name\n       -       486  INNER JOIN HASH ON PROJECTION_4601.person_id = PROJECTION_4598.id\n       -         2  │└PROJECT id, name\n       -         2  │ PROJECT id, name\n       -         2  │ TABLE SCAN name WHERE name LIKE '%Downey%Robert%'\n       -  36244344  PROJECT person_id, movie_id\n       -  36244344  PROJECT movie_id, person_id\n       -  36244344  TABLE SCAN cast_info\n",
+      "sql": "SELECT MIN(k.keyword) AS movie_keyword,\n       MIN(n.name) AS actor_name,\n       MIN(t.title) AS marvel_movie\nFROM job.cast_info AS ci,\n     job.keyword AS k,\n     job.movie_keyword AS mk,\n     job.name AS n,\n     job.title AS t\nWHERE k.keyword = 'marvel-cinematic-universe'\n  AND n.name LIKE '%Downey%Robert%'\n  AND t.production_year > 2010\n  AND k.id = mk.keyword_id\n  AND t.id = mk.movie_id\n  AND t.id = ci.movie_id\n  AND ci.movie_id = mk.movie_id\n  AND n.id = ci.person_id;\n",
+      "startTime": "2026-06-17T14:05:00.169341Z",
+      "status": "OK",
+      "timeMs": 3072.626
+    }
+  ],
+  "runtime": {
+    "avgMs": 3072.626,
+    "bestMs": 3072.626,
+    "maxMs": 3072.626,
+    "minMs": 3072.626,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 6A Analysis",
+    "displayName": "JOB-6A",
+    "name": "JOB-6A",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "26.1.12.23"
+}

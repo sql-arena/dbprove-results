@@ -1,0 +1,109 @@
+{
+  "engine": "Trino",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 1,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 1
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 4,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 153232,
+        "distribute": 245681,
+        "hash": 380100,
+        "join": 1708970,
+        "scan": 7651240,
+        "seek": 0,
+        "sort": 38182
+      },
+      "plan": "Estimate    Actual  Operator\n       -     38182  PROJECT o_custkey AS c_custkey, c_name, sum AS revenue, c_acctbal, n_name, c_address, c_phone, c_comment\n       -     38182  SORT sum\n       -     38182  AGGREGATE SUM(sum_9) AS sum GROUP BY HASH o_custkey, c_name, c_acctbal, c_phone, n_name, c_address, c_comment\n       -     38182  DISTRIBUTE HASH ON o_custkey, c_name, c_acctbal, c_phone, n_name, c_address, c_comment\n       -     38182  AGGREGATE SUM(expr) AS sum_9 GROUP BY PARTIAL o_custkey, c_name, c_acctbal, c_phone, n_name, c_address, c_comment\n       -    115050  PROJECT l_extendedprice * (1 - l_discount) AS expr, o_custkey, c_name, c_acctbal, c_phone, n_name, c_address, c_comment\n       -    115050  INNER JOIN HASH ON c_nationkey = n_nationkey\n      25        25  │└DISTRIBUTE GATHER\n      25        25  │ TABLE SCAN nation\n       -    115050  INNER JOIN HASH ON o_custkey = c_custkey\n  150000    150000  │└DISTRIBUTE GATHER\n  150000    150000  │ TABLE SCAN customer\n       -    115050  INNER JOIN HASH ON l_orderkey = o_orderkey\n   57380     57474  │└DISTRIBUTE HASH ON o_orderkey\n 1500000     57474  │ FILTER (o_orderdate >= '1994-06-01') AND (o_orderdate < '1994-09-01')\n 1500000   1500000  │ TABLE SCAN orders\n 6001215   1478870  FILTER l_returnflag = 'R'\n 6001215   6001215  TABLE SCAN lineitem\n",
+      "sql": "/* TPC-H Q10 */\nSELECT c_custkey,\n       c_name,\n       SUM(l_extendedprice * (1 - l_discount)) AS revenue,\n       c_acctbal,\n       n_name,\n       c_address,\n       c_phone,\n       c_comment\nFROM tpch_sf1.lineitem\nINNER JOIN tpch_sf1.orders\n    ON l_orderkey = o_orderkey\nINNER JOIN tpch_sf1.customer\n    ON o_custkey = c_custkey\nINNER JOIN tpch_sf1.nation\n    ON c_nationkey = n_nationkey\nWHERE o_orderdate >= '1994-06-01'\n  AND o_orderdate < '1994-09-01'\n  AND l_returnflag = 'R'\nGROUP BY c_custkey,\n         c_name,\n         c_acctbal,\n         c_phone,\n         n_name,\n         c_address,\n         c_comment\nORDER BY revenue DESC",
+      "startTime": "2026-06-23T11:48:50.939370Z",
+      "status": "OK",
+      "timeMs": 1251.764
+    }
+  ],
+  "runtime": {
+    "avgMs": 1251.764,
+    "bestMs": 1251.764,
+    "maxMs": 1251.764,
+    "minMs": 1251.764,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "iceberg",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "TPC-H Q10 Analysis",
+    "displayName": "TPCH-Q10",
+    "name": "PLAN-TPC-H-Q10",
+    "tags": [
+      "TPC-H"
+    ]
+  },
+  "version": "481"
+}

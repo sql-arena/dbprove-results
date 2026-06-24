@@ -1,0 +1,110 @@
+{
+  "engine": "Trino",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 3,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 3000001,
+        "distribute": 150001,
+        "hash": 1500000,
+        "join": 1500000,
+        "scan": 1650000,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  PROJECT count AS _col0\n       1         1  AGGREGATE COUNT(count_5) AS count\n       -         1  DISTRIBUTE GATHER\n       -         1  AGGREGATE COUNT(o_orderkey) AS count_5\n       -   1500000  GROUP BY HASH o_orderkey, o_custkey, unique_value\n       -   1500000  INNER JOIN HASH ON operator_add = operator_add_4\n  150000    150000  │└DISTRIBUTE GATHER\n  150000    150000  │ PROJECT c_custkey + 1 AS operator_add_4\n  150000    150000  │ TABLE SCAN customer\n 1500000   1500000  PROJECT o_orderkey, o_custkey, unique_value, o_custkey + 1 AS operator_add\n 1500000   1500000  PROJECT o_orderkey, o_custkey, row_number() OVER() AS unique_value\n 1500000   1500000  TABLE SCAN orders\n",
+      "sql": "SELECT COUNT(o.o_orderkey)\nFROM tpch_sf1.orders AS o\nWHERE EXISTS (\n  SELECT 1\n  FROM tpch_sf1.customer AS c\n  WHERE c.c_custkey + 1 = o.o_custkey + 1\n);\n",
+      "startTime": "2026-06-23T11:49:49.481084Z",
+      "status": "OK",
+      "timeMs": 208.746
+    }
+  ],
+  "runtime": {
+    "avgMs": 208.746,
+    "bestMs": 208.746,
+    "maxMs": 208.746,
+    "minMs": 208.746,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "iceberg",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Count ORDERS rows with a matching CUSTOMER via EXISTS on +1 adjusted keys",
+    "displayName": "PLAN_JOIN_CHECK-SEMI-ORDERS-CUSTOMER-PLUS1",
+    "name": "PLAN_JOIN_CHECK-SEMI-ORDERS-CUSTOMER-PLUS1",
+    "tags": [
+      "PLAN_JOIN_CHECK",
+      "join"
+    ]
+  },
+  "version": "481"
+}

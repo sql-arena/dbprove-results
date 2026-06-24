@@ -1,0 +1,110 @@
+{
+  "engine": "DataFusion",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 1
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 3
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 3
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 1,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 2
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 6,
+          ">16x": 1
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 22,
+        "distribute": 42467207,
+        "hash": 217330332,
+        "join": 433095371,
+        "scan": 46490264,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  PROJECT movie_keyword, actor_name, hero_movie\n       1         1  AGGREGATE MIN(keyword), MIN(name), MIN(title)\n   95230        10  DISTRIBUTE GATHER\n   95230        10  AGGREGATE MIN(keyword), MIN(name), MIN(title)\n   95230        12  PROJECT keyword, name, title\n   95230        12  INNER JOIN HASH ON id = movie_id AND id = movie_id\n   90297       438  │└DISTRIBUTE GATHER\n   90297       438  │ FILTER production_year > 2014\n 2528312   1420329  │ TABLE SCAN title WHERE production_year > 2014\n 2663974       112  PROJECT movie_id, movie_id, keyword, name\n 2663974       112  INNER JOIN HASH ON id = person_id\n  833499         2  │└DISTRIBUTE HASH ON id\n  833499         2  │ FILTER name LIKE '%Downey%Robert%'\n 4167491   4167491  │ TABLE SCAN name WHERE name LIKE '%Downey%Robert%'\n12982462   1564305  DISTRIBUTE HASH ON person_id\n12982462   1564305  PROJECT person_id, movie_id, movie_id, keyword\n12982462   1564305  INNER JOIN HASH ON id = keyword_id\n   26834         8  │└DISTRIBUTE GATHER\n   26834         8  │ FILTER keyword IN('superhero','sequel','second-part','marvel-comics','based-on-comic','tv-special','fight','violence')\n  134170    134170  │ DISTRIBUTE ROUND ROBIN\n  134170    134170  │ TABLE SCAN keyword WHERE keyword IN('superhero','sequel','second-part','marvel-comics','based-on-comic','tv-special','fight','violence')\n64912311      215M  PROJECT person_id, movie_id, movie_id, keyword_id\n64912311      215M  INNER JOIN HASH ON movie_id = movie_id\n 4523930   4523930  │└DISTRIBUTE HASH ON movie_id\n 4523930   4523930  │ TABLE SCAN movie_keyword WHERE (((keyword_id >= 393) AND (keyword_id <= 8201)) AND keyword_id IN(8201,393,2905,1732,875,1038,398,1578)) AND ((((movie_id >= 203875) AND (movie_id <= 2520697)) AND ((movie_id >= 203875) AND (movie_id <= 2520697))) AND TRUE)\n36244344  36244344  DISTRIBUTE HASH ON movie_id\n36244344  36244344  TABLE SCAN cast_info WHERE CASE MOD(HASH_REPARTITION movie_id,10) WHEN 0 THEN (((movie_id >= 86) AND (movie_id <= 2525771)) AND TRUE) WHEN 1 THEN (((movie_id >= 64) AND (movie_id <= 2525732)) AND TRUE) WHEN 2 THEN (((movie_id >= 24) AND (movie_id <= 2525642)) AND TRUE) WHEN 3 THEN (((movie_id >= 2) AND (movie_id <= 2525707)) AND TRUE) WHEN 4 THEN (((movie_id >= 228) AND (movie_id <= 2525736)) AND TRUE) WHEN 5 THEN (((movie_id >= 302) AND (movie_id <= 2525715)) AND TRUE) WH...\n",
+      "sql": "SELECT MIN(k.keyword) AS movie_keyword,\n       MIN(n.name) AS actor_name,\n       MIN(t.title) AS hero_movie\nFROM job.cast_info AS ci,\n     job.keyword AS k,\n     job.movie_keyword AS mk,\n     job.name AS n,\n     job.title AS t\nWHERE k.keyword IN ('superhero',\n                    'sequel',\n                    'second-part',\n                    'marvel-comics',\n                    'based-on-comic',\n                    'tv-special',\n                    'fight',\n                    'violence')\n  AND n.name LIKE '%Downey%Robert%'\n  AND t.production_year > 2014\n  AND k.id = mk.keyword_id\n  AND t.id = mk.movie_id\n  AND t.id = ci.movie_id\n  AND ci.movie_id = mk.movie_id\n  AND n.id = ci.person_id;\n",
+      "startTime": "2026-06-23T17:15:58.208851Z",
+      "status": "OK",
+      "timeMs": 633.662
+    }
+  ],
+  "runtime": {
+    "avgMs": 633.662,
+    "bestMs": 633.662,
+    "maxMs": 633.662,
+    "minMs": 633.662,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "iceberg",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 6B Analysis",
+    "displayName": "JOB-6B",
+    "name": "PLAN-JOB-6B",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "Apache DataFusion 54.0.0, aarch64 on linux"
+}

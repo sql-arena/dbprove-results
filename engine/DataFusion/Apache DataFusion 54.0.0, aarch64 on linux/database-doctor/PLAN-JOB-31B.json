@@ -1,0 +1,110 @@
+{
+  "engine": "DataFusion",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 1
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 1,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 7
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 10
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 1,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 9
+        },
+        "scan": {
+          "+2x": 3,
+          "+4x": 0,
+          "+8x": 1,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 8,
+          ">16x": 1
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 94,
+        "distribute": 1460109,
+        "hash": 20807,
+        "join": 8117506,
+        "scan": 27845180,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  PROJECT movie_budget, movie_votes, writer, violent_liongate_movie\n       1         1  AGGREGATE MIN(info), MIN(info), MIN(name), MIN(title)\n   26834        10  DISTRIBUTE GATHER\n   26834        10  AGGREGATE MIN(info), MIN(info), MIN(name), MIN(title)\n   26834        84  INNER JOIN HASH ON movie_id = id AND movie_id = id AND movie_id = id AND movie_id = id AND movie_id = id\n   26834       227  │└DISTRIBUTE GATHER\n   26834       227  │ INNER JOIN HASH ON person_id = id\n   26834       254  │ │└DISTRIBUTE GATHER\n   26834       254  │ │ INNER JOIN HASH ON id = keyword_id\n   26834         7  │ │ │└DISTRIBUTE GATHER\n   26834         7  │ │ │ FILTER keyword IN('murder','violence','blood','gore','death','female-nudity','hospital')\n  134170    134170  │ │ │ DISTRIBUTE ROUND ROBIN\n  134170    134170  │ │ │ TABLE SCAN keyword WHERE keyword IN('murder','violence','blood','gore','death','female-nudity','hospital')\n  131720     11486  │ │ INNER JOIN HASH ON movie_id = movie_id AND movie_id = movie_id AND movie_id = movie_id AND movie_id = movie_id\n   73547        83  │ │ │└DISTRIBUTE GATHER\n   73547        83  │ │ │ INNER JOIN HASH ON id = info_type_id\n      23         1  │ │ │ │└DISTRIBUTE GATHER\n      23         1  │ │ │ │ FILTER info = 'votes'\n     113       113  │ │ │ │ DISTRIBUTE ROUND ROBIN\n     113       113  │ │ │ │ TABLE SCAN info_type WHERE info = 'votes'\n   73547       257  │ │ │ INNER JOIN HASH ON movie_id = movie_id AND movie_id = movie_id AND movie_id = movie_id\n   73547        83  │ │ │ │└DISTRIBUTE GATHER\n   73547        83  │ │ │ │ INNER JOIN HASH ON id = info_type_id\n      23         1  │ │ │ │ │└DISTRIBUTE GATHER\n      23         1  │ │ │ │ │ FILTER info = 'genres'\n     113       113  │ │ │ │ │ DISTRIBUTE ROUND ROBIN\n     113       113  │ │ │ │ │ TABLE SCAN info_type WHERE info = 'genres'\n  351748        83  │ │ │ │ INNER JOIN HASH ON movie_id = movie_id AND movie_id = movie_id\n  299503       100  │ │ │ │ │└DISTRIBUTE HASH ON movie_id, movie_id\n  299503       100  │ │ │ │ │ INNER JOIN HASH ON id = company_id\n   47000        10  │ │ │ │ │ │└DISTRIBUTE GATHER\n   47000        10  │ │ │ │ │ │ FILTER name LIKE 'Lionsgate%'\n  234997    234997  │ │ │ │ │ │ TABLE SCAN company_name WHERE name LIKE 'Lionsgate%'\n 1497500      7151  │ │ │ │ │ PROJECT person_id, movie_id, movie_id, company_id\n 1497500      7151  │ │ │ │ │ INNER JOIN HASH ON movie_id = movie_id\n  521826      7963  │ │ │ │ │ │└DISTRIBUTE HASH ON movie_id\n  521826      7963  │ │ │ │ │ │ FILTER note LIKE '%(Blu-ray)%'\n 2609129   2609129  │ │ │ │ │ │ TABLE SCAN movie_companies WHERE note LIKE '%(Blu-ray)%' AND (((company_id >= 2653) AND (company_id <= 194377)) AND company_id IN(9863,2653,39981,65153,7253,7435,57326,3016,6473,194377))\n 7248869   1244716  │ │ │ │ │ DISTRIBUTE HASH ON movie_id\n 7248869   1244716  │ │ │ │ │ FILTER note IN('(writer)','(head writer)','(written by)','(story)','(story editor)')\n36244344  15326137  │ │ │ │ │ TABLE SCAN cast_info WHERE note IN('(writer)','(head writer)','(written by)','(story)','(story editor)') AND CASE MOD(HASH_REPARTITION movie_id,10) WHEN 0 THEN (((movie_id >= 73574) AND (movie_id <= 2523338)) AND TRUE) WHEN 1 THEN (((movie_id >= 8969) AND (movie_id <= 2517488)) AND TRUE) WHEN 2 THEN (((movie_id >= 8982) AND (movie_id <= 2524105)) AND TRUE) WHEN 3 THEN (((movie_id >= 8962) AND (movie_id <= 2525010)) AND TRUE) WHEN 4 THEN (((movie_id >= 8...\n 2967144     72258  │ │ │ │ DISTRIBUTE HASH ON movie_id, movie_id\n 2967144     72258  │ │ │ │ FILTER (info = 'Horror') OR (info = 'Thriller')\n14835720   1724005  │ │ │ │ TABLE SCAN movie_info WHERE (((info = 'Horror') OR (info = 'Thriller')) AND CASE MOD(HASH_REPARTITION(movie_id,movie_id),10) WHEN 1 THEN ((((movie_id >= 1673153) AND (movie_id <= 2452149)) AND ((movie_id >= 1673153) AND (movie_id <= 2452149))) AND struct(movie_id,movie_id) IN( < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr ...\n 1380035   1010660  │ │ │ TABLE SCAN movie_info_idx WHERE (((((movie_id >= 1693872) AND (movie_id <= 2487658)) AND ((movie_id >= 1693872) AND (movie_id <= 2487658))) AND ((movie_id >= 1693872) AND (movie_id <= 2487658))) AND struct(movie_id,movie_id,movie_id) IN( < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr ...\n 4523930   4031165  │ │ TABLE SCAN movie_keyword WHERE ((((((movie_id >= 1693872) AND (movie_id <= 2487658)) AND ((movie_id >= 1693872) AND (movie_id <= 2487658))) AND ((movie_id >= 1693872) AND (movie_id <= 2487658))) AND ((movie_id >= 1693872) AND (movie_id <= 2487658))) AND struct(movie_id,movie_id,movie_id,movie_id) IN( < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < ...\n  833499   1739579  │ FILTER gender = 'm'\n 4167491   1846761  │ TABLE SCAN name WHERE (gender = 'm') AND (((id >= 71482) AND (id <= 3201552)) AND id IN(400502,400502,1806914,1806914,1806914,1806914,2978121,3201552,1505509,2978121,3201552,1505509,1125977,1125977,238235,386222,238235,386222,228370,228370,228370,228370,291356,857898,291356,857898,291356,857898,1692203,655400,655405,1692203,655400,655405,1692203,655400,655405,1692203,655400,655405,1185775,1185775,3187874,3187874,1532980,1532980,1532980,1532980,71482,71482,1532980,15329...\n  505663       151  FILTER (production_year > 2000) AND ((title LIKE '%Freddy%' OR title LIKE '%Jason%') OR title LIKE 'Saw%')\n 2528312    927930  TABLE SCAN title WHERE ((production_year > 2000) AND ((title LIKE '%Freddy%' OR title LIKE '%Jason%') OR title LIKE 'Saw%')) AND (((((((id >= 1751226) AND (id <= 2487658)) AND ((id >= 1751226) AND (id <= 2487658))) AND ((id >= 1751226) AND (id <= 2487658))) AND ((id >= 1751226) AND (id <= 2487658))) AND ((id >= 1751226) AND (id <= 2487658))) AND struct(id,id,id,id,id) IN( < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < e...\n",
+      "sql": "SELECT MIN(mi.info) AS movie_budget,\n       MIN(mi_idx.info) AS movie_votes,\n       MIN(n.name) AS writer,\n       MIN(t.title) AS violent_liongate_movie\nFROM job.cast_info AS ci,\n     job.company_name AS cn,\n     job.info_type AS it1,\n     job.info_type AS it2,\n     job.keyword AS k,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.movie_info_idx AS mi_idx,\n     job.movie_keyword AS mk,\n     job.name AS n,\n     job.title AS t\nWHERE ci.note IN ('(writer)',\n                  '(head writer)',\n                  '(written by)',\n                  '(story)',\n                  '(story editor)')\n  AND cn.name LIKE 'Lionsgate%'\n  AND it1.info = 'genres'\n  AND it2.info = 'votes'\n  AND k.keyword IN ('murder',\n                    'violence',\n                    'blood',\n                    'gore',\n                    'death',\n                    'female-nudity',\n                    'hospital')\n  AND mc.note LIKE '%(Blu-ray)%'\n  AND mi.info IN ('Horror',\n                  'Thriller')\n  AND n.gender = 'm'\n  AND t.production_year > 2000\n  AND (t.title LIKE '%Freddy%'\n       OR t.title LIKE '%Jason%'\n       OR t.title LIKE 'Saw%')\n  AND t.id = mi.movie_id\n  AND t.id = mi_idx.movie_id\n  AND t.id = ci.movie_id\n  AND t.id = mk.movie_id\n  AND t.id = mc.movie_id\n  AND ci.movie_id = mi.movie_id\n  AND ci.movie_id = mi_idx.movie_id\n  AND ci.movie_id = mk.movie_id\n  AND ci.movie_id = mc.movie_id\n  AND mi.movie_id = mi_idx.movie_id\n  AND mi.movie_id = mk.movie_id\n  AND mi.movie_id = mc.movie_id\n  AND mi_idx.movie_id = mk.movie_id\n  AND mi_idx.movie_id = mc.movie_id\n  AND mk.movie_id = mc.movie_id\n  AND n.id = ci.person_id\n  AND it1.id = mi.info_type_id\n  AND it2.id = mi_idx.info_type_id\n  AND k.id = mk.keyword_id\n  AND cn.id = mc.company_id;\n",
+      "startTime": "2026-06-23T17:15:48.829886Z",
+      "status": "OK",
+      "timeMs": 291.456
+    }
+  ],
+  "runtime": {
+    "avgMs": 291.456,
+    "bestMs": 291.456,
+    "maxMs": 291.456,
+    "minMs": 291.456,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "iceberg",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 31B Analysis",
+    "displayName": "JOB-31B",
+    "name": "PLAN-JOB-31B",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "Apache DataFusion 54.0.0, aarch64 on linux"
+}

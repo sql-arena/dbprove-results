@@ -1,0 +1,110 @@
+{
+  "engine": "DuckDB",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 2,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 2,
+          ">16x": 6
+        },
+        "hash": {
+          "+2x": 2,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 3,
+          "-8x": 0,
+          "<16x": 7,
+          "=": 2,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 1,
+          "<16x": 10,
+          "=": 1,
+          ">16x": 2
+        },
+        "scan": {
+          "+2x": 3,
+          "+4x": 1,
+          "+8x": 1,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 3,
+          ">16x": 4
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 8024,
+        "distribute": 0,
+        "hash": 2783117,
+        "join": 1713818,
+        "scan": 1383937,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       -         1  AGGREGATE MIN(#0), MIN(#1), MIN(#2), MIN(#3)\n       0      8024  PROJECT info, info, name, title\n       0      8024  INNER JOIN HASH ON id = person_id\n       1     11863  │└INNER JOIN HASH ON movie_id = id\n       0     14655  │ │└INNER JOIN HASH ON id = keyword_id\n       3    643428  │ │ │└INNER JOIN HASH ON movie_id = id\n       1     10291  │ │ │ │└INNER JOIN HASH ON info_type_id = id\n       2         1  │ │ │ │ │└FILTER id <= 110\n       2         1  │ │ │ │ │ TABLE SCAN info_type WHERE info = 'genres'\n      97     10291  │ │ │ │ INNER JOIN HASH ON movie_id = id\n      82     17018  │ │ │ │ │└INNER JOIN HASH ON id = movie_id\n      82     17018  │ │ │ │ │ │└INNER JOIN HASH ON status_id = id\n       1         1  │ │ │ │ │ │ │└FILTER id >= 3\n       1         1  │ │ │ │ │ │ │ TABLE SCAN comp_cast_type WHERE kind = 'complete+verified'\n     328     17018  │ │ │ │ │ │ INNER JOIN HASH ON subject_id = id\n       1         1  │ │ │ │ │ │ │└FILTER id <= 2\n       1         1  │ │ │ │ │ │ │ TABLE SCAN comp_cast_type WHERE kind = 'cast'\n    1312     17018  │ │ │ │ │ │ INNER JOIN HASH ON movie_id = movie_id\n   24425    459891  │ │ │ │ │ │ │└INNER JOIN HASH ON info_type_id = id\n       2         1  │ │ │ │ │ │ │ │└FILTER id >= 99\n       2         1  │ │ │ │ │ │ │ │ TABLE SCAN info_type WHERE info = 'votes'\n 1380035    459891  │ │ │ │ │ │ │ TABLE SCAN movie_info_idx WHERE movie_id >= 285\n  135086     17602  │ │ │ │ │ │ TABLE SCAN complete_cast WHERE movie_id <= 2525793\n 2528312     31128  │ │ │ │ │ TABLE SCAN title WHERE id >= 285 AND id <= 2525793\n 2967144     11302  │ │ │ │ FILTER movie_id BETWEEN 285 AND 2525793\n 2967144     11302  │ │ │ │ FILTER IN ...\n14835720     44636  │ │ │ │ INNER JOIN HASH ON info = #0\n       0         6  │ │ │ │ │└SCAN MATERIALISED\n14835720     44636  │ │ │ │ TABLE SCAN movie_info WHERE info IN('Horror','Action','Sci-Fi','Thriller','Crime','War')\n 4523930    402452  │ │ │ TABLE SCAN movie_keyword WHERE movie_id >= 285 AND movie_id <= 2525793\n   26834         7  │ │ FILTER IN ...\n  134170    134134  │ │ INNER JOIN HASH ON keyword = #0\n       0         7  │ │ │└SCAN MATERIALISED\n  134170    134134  │ │ TABLE SCAN keyword WHERE keyword IN('murder','violence','blood','gore','death','female-nudity','hospital')\n 7248868      2945  │ FILTER movie_id BETWEEN 285 AND 2525793\n 7248868      2945  │ FILTER IN ...\n36244344    292828  │ INNER JOIN HASH ON note = #0\n       0         5  │ │└SCAN MATERIALISED\n36244344    292828  │ TABLE SCAN cast_info WHERE note IN('(writer)','(head writer)','(written by)','(story)','(story editor)')\n 2083746      1244  FILTER id <= 4061926\n 2083746      1244  TABLE SCAN \"name\" WHERE gender = 'm'\n",
+      "sql": "SELECT MIN(mi.info) AS movie_budget,\n       MIN(mi_idx.info) AS movie_votes,\n       MIN(n.name) AS writer,\n       MIN(t.title) AS complete_violent_movie\nFROM job.complete_cast AS cc,\n     job.comp_cast_type AS cct1,\n     job.comp_cast_type AS cct2,\n     job.cast_info AS ci,\n     job.info_type AS it1,\n     job.info_type AS it2,\n     job.keyword AS k,\n     job.movie_info AS mi,\n     job.movie_info_idx AS mi_idx,\n     job.movie_keyword AS mk,\n     job.name AS n,\n     job.title AS t\nWHERE cct1.kind = 'cast'\n  AND cct2.kind ='complete+verified'\n  AND ci.note IN ('(writer)',\n                  '(head writer)',\n                  '(written by)',\n                  '(story)',\n                  '(story editor)')\n  AND it1.info = 'genres'\n  AND it2.info = 'votes'\n  AND k.keyword IN ('murder',\n                    'violence',\n                    'blood',\n                    'gore',\n                    'death',\n                    'female-nudity',\n                    'hospital')\n  AND mi.info IN ('Horror',\n                  'Action',\n                  'Sci-Fi',\n                  'Thriller',\n                  'Crime',\n                  'War')\n  AND n.gender = 'm'\n  AND t.id = mi.movie_id\n  AND t.id = mi_idx.movie_id\n  AND t.id = ci.movie_id\n  AND t.id = mk.movie_id\n  AND t.id = cc.movie_id\n  AND ci.movie_id = mi.movie_id\n  AND ci.movie_id = mi_idx.movie_id\n  AND ci.movie_id = mk.movie_id\n  AND ci.movie_id = cc.movie_id\n  AND mi.movie_id = mi_idx.movie_id\n  AND mi.movie_id = mk.movie_id\n  AND mi.movie_id = cc.movie_id\n  AND mi_idx.movie_id = mk.movie_id\n  AND mi_idx.movie_id = cc.movie_id\n  AND mk.movie_id = cc.movie_id\n  AND n.id = ci.person_id\n  AND it1.id = mi.info_type_id\n  AND it2.id = mi_idx.info_type_id\n  AND k.id = mk.keyword_id\n  AND cct1.id = cc.subject_id\n  AND cct2.id = cc.status_id;\n",
+      "startTime": "2026-06-17T11:56:32.913678Z",
+      "status": "OK",
+      "timeMs": 129.295
+    }
+  ],
+  "runtime": {
+    "avgMs": 129.295,
+    "bestMs": 129.295,
+    "maxMs": 129.295,
+    "minMs": 129.295,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 30C Analysis",
+    "displayName": "JOB-30C",
+    "name": "JOB-30C",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "1.5.0"
+}

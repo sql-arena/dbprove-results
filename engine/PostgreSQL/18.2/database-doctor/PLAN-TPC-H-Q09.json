@@ -1,0 +1,109 @@
+{
+  "engine": "PostgreSQL",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 2
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 3,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 5,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 1,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 5,
+          ">16x": 2
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 327672,
+        "distribute": 0,
+        "hash": 821515,
+        "join": 2023515,
+        "scan": 1520932,
+        "seek": 370838,
+        "sort": 327147
+      },
+      "plan": "Estimate    Actual  Operator\n   60150       175  AGGREGATE SUM((l_extendedprice * ('1' - l_discount)) - (ps_supplycost * l_quantity)) GROUP BY SORT n_name, EXTRACT(year FROM o_orderdate)\n  180450       525  AGGREGATE PARTIAL SUM((l_extendedprice * ('1' - l_discount)) - (ps_supplycost * l_quantity)) GROUP BY SORT n_name, EXTRACT(year FROM o_orderdate)\n  378978    327147  SORT n_name, EXTRACT(year FROM o_orderdate)\n  126326    109049  INNER JOIN HASH ON s_nationkey = n_nationkey\n      25        25  │└TABLE SCAN nation AS nation\n  126326    109049  INNER JOIN HASH ON o_orderkey = l_orderkey\n  378978    327147  │└INNER JOIN LOOP ON (l_partkey = ps_partkey) AND (l_suppkey = ps_suppkey)\n   16835     14542  │ │└INNER JOIN HASH ON ps_suppkey = s_suppkey\n   10000     10000  │ │ │└TABLE SCAN supplier AS supplier\n   50505     43628  │ │ INNER JOIN LOOP ON ps_partkey = p_partkey\n   12627     10907  │ │ │└TABLE SCAN part AS part WHERE p_name LIKE '%lace%'\n   43628     43628  │ │ TABLE SEEK partsupp AS partsupp\n   43628    327210  │ TABLE SEEK lineitem AS lineitem\n 1875000   1500000  TABLE SCAN orders AS orders\n",
+      "sql": "/* TPC-H Q09 */\nSELECT nation,\n       o_year,\n       SUM(amount) AS sum_profit\nFROM (SELECT n_name                                                          AS nation,\n             EXTRACT(YEAR FROM o_orderdate)                                  AS o_year,\n             l_extendedprice * (1 - l_discount) - ps_supplycost * l_quantity AS amount\n      FROM tpch.lineitem\n      INNER JOIN tpch.orders\n          ON l_orderkey = o_orderkey\n      INNER JOIN tpch.partsupp\n          ON l_suppkey = ps_suppkey\n          AND l_partkey = ps_partkey\n      INNER JOIN tpch.part\n          ON l_partkey = p_partkey\n      INNER JOIN tpch.supplier\n          ON l_suppkey = s_suppkey\n      INNER JOIN tpch.nation\n          ON s_nationkey = n_nationkey\n      WHERE p_name LIKE '%lace%') AS profit\nGROUP BY nation,\n         o_year\nORDER BY nation,\n         o_year DESC",
+      "startTime": "2026-06-17T12:34:45.856268Z",
+      "status": "OK",
+      "timeMs": 1039.473
+    }
+  ],
+  "runtime": {
+    "avgMs": 1039.473,
+    "bestMs": 1039.473,
+    "maxMs": 1039.473,
+    "minMs": 1039.473,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "TPC-H Q09 Analysis",
+    "displayName": "TPCH-Q09",
+    "name": "PLAN-TPC-H-Q09",
+    "tags": [
+      "TPC-H"
+    ]
+  },
+  "version": "18.2"
+}

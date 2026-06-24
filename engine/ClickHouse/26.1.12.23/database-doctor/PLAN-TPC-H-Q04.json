@@ -1,0 +1,109 @@
+{
+  "engine": "ClickHouse",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 51276,
+        "distribute": 0,
+        "hash": 55935,
+        "join": 3793296,
+        "scan": 3849231,
+        "seek": 0,
+        "sort": 5
+      },
+      "plan": "Estimate    Actual  Operator\n       -         5  PROJECT o_orderpriority, a1 AS order_count\n       -         5  SORT o_orderpriority\n       -         5  PROJECT o_orderpriority, a1\n       -         5  AGGREGATE COUNT() AS a1 GROUP BY HASH o_orderpriority\n       -     51276  PROJECT o_orderpriority\n       -     51276  PROJECT o_orderpriority\n       -     51276  RIGHT SEMI INNER JOIN HASH ON PROJECTION_94.l_orderkey = PROJECTION_91.o_orderkey\n       -     55935  │└PROJECT o_orderkey AS o_orderkey_right, o_orderpriority\n       -     55935  │ PROJECT o_orderkey, o_orderpriority\n       -     55935  │ TABLE SCAN orders WHERE (o_orderdate >= '1995-02-01') AND (o_orderdate < '1995-05-01')\n       -   3793296  PROJECT l_orderkey\n       -   3793296  TABLE SCAN lineitem WHERE (l_orderkey = l_orderkey) AND (l_commitdate < l_receiptdate)\n",
+      "sql": "/* TPC-H Q04 */\nSELECT o_orderpriority,\n       COUNT(*) AS order_count\nFROM tpch_sf1.orders\nWHERE o_orderdate >= '1995-02-01'\n  AND o_orderdate < '1995-05-01'\n  AND EXISTS (SELECT *\n              FROM tpch_sf1.lineitem\n              WHERE l_orderkey = o_orderkey\n                AND l_commitdate < l_receiptdate)\nGROUP BY o_orderpriority\nORDER BY o_orderpriority\n",
+      "startTime": "2026-06-23T11:14:21.576718Z",
+      "status": "OK",
+      "timeMs": 75.526
+    }
+  ],
+  "runtime": {
+    "avgMs": 75.526,
+    "bestMs": 75.526,
+    "maxMs": 75.526,
+    "minMs": 75.526,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "TPC-H Q04 Analysis",
+    "displayName": "TPCH-Q04",
+    "name": "PLAN-TPC-H-Q04",
+    "tags": [
+      "TPC-H"
+    ]
+  },
+  "version": "26.1.12.23"
+}

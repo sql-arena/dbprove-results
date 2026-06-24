@@ -1,0 +1,109 @@
+{
+  "engine": "SQL Server",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 1,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 2,
+          "-4x": 0,
+          "-8x": 1,
+          "<16x": 0,
+          "=": 2,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 4,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 2,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 1,
+          "-8x": 1,
+          "<16x": 2,
+          "=": 4,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 7453,
+        "distribute": 0,
+        "hash": 536176,
+        "join": 1883579,
+        "scan": 25,
+        "seek": 7661225,
+        "sort": 55
+      },
+      "plan": "Estimate    Actual  Operator\n       5         5  SORT Expr1018\n       5         5  AGGREGATE SUM(partialagg1027) AS Expr1018 GROUP BY SORT n_name\n      25        50  SORT n_name\n      25        50  AGGREGATE SUM(Expr1019) AS partialagg1027 GROUP BY HASH n_name\n    7320      7403  INNER JOIN HASH ON n_regionkey = r_regionkey\n       1         1  │└FILTER r_name = 'EUROPE'\n       5         5  │ INNER JOIN LOOP ON Bmk1015 = Bmk1015\n       1         5  │ │└TABLE SEEK region\n       5         5  │ TABLE SEEK region\n    3660      7403  INNER JOIN HASH ON n_nationkey = s_nationkey AND s_suppkey = l_suppkey\n   10000     10000  │└TABLE SEEK supplier\n   91434      7403  FILTER BLOOM(n_nationkey,l_suppkey)\n   91434    184384  INNER JOIN HASH ON c_nationkey = n_nationkey\n       2         5  │└FILTER BLOOM(n_regionkey)\n      25        25  │ TABLE SCAN nation\n   91434    184384  INNER JOIN HASH ON l_orderkey = o_orderkey\n   22854     46197  │└INNER JOIN HASH ON o_custkey = c_custkey\n   15000    150000  │ │└TABLE SEEK customer WHERE BLOOM(c_nationkey)\n   22854   1500000  │ TABLE SEEK orders WHERE o_orderdate >= '1995-01-01' AND o_orderdate < '1996-01-01' AND BLOOM(o_custkey)\n   60012    184384  PROJECT l_extendedprice * (1. - l_discount) AS Expr1019\n   60012   6001215  TABLE SEEK lineitem WHERE BLOOM(l_orderkey)\n",
+      "sql": "/* TPC-H Q05 */\nSELECT n_name,\n       SUM(l_extendedprice * (1 - l_discount)) AS revenue\nFROM tpch_sf1.lineitem\nINNER JOIN tpch_sf1.orders\n    ON l_orderkey = o_orderkey\nINNER JOIN tpch_sf1.customer\n    ON o_custkey = c_custkey\nINNER JOIN tpch_sf1.supplier\n    ON l_suppkey = s_suppkey\nINNER JOIN tpch_sf1.nation\n    ON s_nationkey = n_nationkey\nINNER JOIN tpch_sf1.region\n    ON n_regionkey = r_regionkey\nWHERE r_name = 'EUROPE'\n  AND o_orderdate >= '1995-01-01'\n  AND o_orderdate < '1996-01-01'\n  AND s_nationkey = c_nationkey\nGROUP BY n_name\nORDER BY revenue DESC\n",
+      "startTime": "2026-06-22T17:08:05.621676Z",
+      "status": "OK",
+      "timeMs": 373.999
+    }
+  ],
+  "runtime": {
+    "avgMs": 373.999,
+    "bestMs": 373.999,
+    "maxMs": 373.999,
+    "minMs": 373.999,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "TPC-H Q05 Analysis",
+    "displayName": "TPCH-Q05",
+    "name": "PLAN-TPC-H-Q05",
+    "tags": [
+      "TPC-H"
+    ]
+  },
+  "version": "16.0.4236.2"
+}

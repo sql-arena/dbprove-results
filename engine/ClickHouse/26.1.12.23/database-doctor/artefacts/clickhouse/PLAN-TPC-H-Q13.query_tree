@@ -1,0 +1,52 @@
+QUERY id: 0
+  PROJECTION COLUMNS
+    c_count UInt64
+    custdist UInt64
+  PROJECTION
+    LIST id: 1, nodes: 2
+      COLUMN id: 2, column_name: c_count, result_type: UInt64, source_id: 3
+      FUNCTION id: 4, function_name: count, function_type: aggregate, result_type: UInt64
+  JOIN TREE
+    QUERY id: 3, alias: __table1, is_subquery: 1
+      PROJECTION COLUMNS
+        c_count UInt64
+      PROJECTION
+        LIST id: 5, nodes: 1
+          FUNCTION id: 6, function_name: count, function_type: aggregate, result_type: UInt64
+            ARGUMENTS
+              LIST id: 7, nodes: 1
+                COLUMN id: 8, column_name: o_orderkey, result_type: Nullable(Int32), source_id: 9
+      JOIN TREE
+        JOIN id: 10, strictness: ALL, kind: LEFT
+          LEFT TABLE EXPRESSION
+            TABLE id: 11, alias: __table2, table_name: tpch_sf1.customer
+          RIGHT TABLE EXPRESSION
+            TABLE id: 9, alias: __table3, table_name: tpch_sf1.orders
+          JOIN EXPRESSION
+            FUNCTION id: 12, function_name: and, function_type: ordinary, result_type: UInt8
+              ARGUMENTS
+                LIST id: 13, nodes: 2
+                  FUNCTION id: 14, function_name: equals, function_type: ordinary, result_type: UInt8
+                    ARGUMENTS
+                      LIST id: 15, nodes: 2
+                        COLUMN id: 16, column_name: c_custkey, result_type: Int32, source_id: 11
+                        COLUMN id: 17, column_name: o_custkey, result_type: Int32, source_id: 9
+                  FUNCTION id: 18, function_name: notLike, function_type: ordinary, result_type: UInt8
+                    ARGUMENTS
+                      LIST id: 19, nodes: 2
+                        COLUMN id: 20, column_name: o_comment, result_type: String, source_id: 9
+                        CONSTANT id: 21, constant_value: ' % special % requests % ', constant_value_type: String
+      GROUP BY
+        LIST id: 22, nodes: 1
+          COLUMN id: 23, column_name: c_custkey, result_type: Int32, source_id: 11
+  GROUP BY
+    LIST id: 24, nodes: 1
+      COLUMN id: 25, column_name: c_count, result_type: UInt64, source_id: 3
+  ORDER BY
+    LIST id: 26, nodes: 2
+      SORT id: 27, sort_direction: DESCENDING, with_fill: 0
+        EXPRESSION custdist
+          FUNCTION id: 28, function_name: count, function_type: aggregate, result_type: UInt64
+      SORT id: 29, sort_direction: DESCENDING, with_fill: 0
+        EXPRESSION c_count
+          COLUMN id: 30, column_name: c_count, result_type: UInt64, source_id: 3

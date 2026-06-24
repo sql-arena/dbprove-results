@@ -1,0 +1,109 @@
+{
+  "engine": "SQL Server",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 2,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 1,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 3,
+          "-4x": 2,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 3,
+          "-8x": 0,
+          "<16x": 4,
+          "=": 2,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 1,
+          "-2x": 2,
+          "-4x": 1,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 21927,
+        "distribute": 0,
+        "hash": 39364,
+        "join": 6030549,
+        "scan": 6003464,
+        "seek": 29176,
+        "sort": 14905
+      },
+      "plan": "Estimate    Actual  Operator\n      52       158  SORT s_name\n      52       158  INNER JOIN MERGE ON n_nationkey = s_nationkey\n       1         1  │└SORT n_nationkey\n       1         1  │ FILTER n_name = 'KENYA'\n      25        25  │ TABLE SCAN nation\n    1303       158  SORT s_nationkey\n    1303      4558  INNER JOIN LOOP ON Bmk1000 = Bmk1000\n       1      4558  │└TABLE SEEK supplier\n    1303      4558  SORT Expr1108\n    1303      4558  PROJECT BmkToPage Bmk1000 AS Expr1108\n    1303      4558  INNER JOIN LOOP ON ps_suppkey = s_suppkey\n       1      4558  │└TABLE SEEK supplier\n    1303      4558  GROUP BY SORT ps_suppkey\n    1390      5869  GROUP BY SORT ps_suppkey\n    1401      6028  FILTER ps_availqty > 0.5 * Expr1013\n    1328      6043  AGGREGATE SUM(l_quantity as l_quantity) AS Expr1013, ps_availqty GROUP BY SORT ps_suppkey, ps_partkey\n    1401     10030  SORT ps_suppkey, ps_partkey\n    1401     10030  INNER JOIN LOOP ON Bmk1006 = Bmk1006\n       1     10030  │└TABLE SEEK partsupp\n    1401     10030  PROJECT BmkToPage Bmk1006 AS Expr1188\n    1401     10030  INNER JOIN LOOP ON li_inner.l_partkey = ps_partkey AND li_inner.l_suppkey = ps_suppkey\n       1     10030  │└TABLE SEEK partsupp\n   10499     10030  INNER JOIN HASH ON li_inner.l_partkey = p_inner.p_partkey\n    2304      2224  │└TABLE SCAN part AS p_inner WHERE p_name as p_name LIKE 'almond%'\n  911172   6001215  TABLE SCAN lineitem AS li_inner WHERE l_shipdate as l_shipdate >= '1993-01-01' AND l_shipdate as l_shipdate < '1994-01-01' AND PROBE(Bitmap1186,l_partkey as l_partkey,N'IN ROW')\n",
+      "sql": "/* TPC-H Q20 */\nSELECT s_name,\n       s_address\nFROM tpch_sf1.supplier\nINNER JOIN tpch_sf1.nation\n    ON s_nationkey = n_nationkey\nWHERE s_suppkey IN (SELECT ps_suppkey\n                    FROM tpch_sf1.partsupp\n                    WHERE ps_partkey IN (SELECT p_partkey\n                                         FROM tpch_sf1.part AS p_inner\n                                         WHERE p_name LIKE 'almond%')\n                      AND ps_availqty > (SELECT 0.5 * SUM(l_quantity) AS qty\n                                         FROM tpch_sf1.lineitem as li_inner\n                                         WHERE l_partkey = ps_partkey\n                                           AND l_suppkey = ps_suppkey\n                                           AND l_shipdate >= '1993-01-01'\n                                           AND l_shipdate < '1994-01-01'))\n  AND n_name = 'KENYA'\nORDER BY s_name\n\n",
+      "startTime": "2026-06-22T16:16:22.984052Z",
+      "status": "OK",
+      "timeMs": 483.269
+    }
+  ],
+  "runtime": {
+    "avgMs": 483.269,
+    "bestMs": 483.269,
+    "maxMs": 483.269,
+    "minMs": 483.269,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "TPC-H Q20 Analysis",
+    "displayName": "TPCH-Q20",
+    "name": "PLAN-TPC-H-Q20",
+    "tags": [
+      "TPC-H"
+    ]
+  },
+  "version": "16.0.4236.2"
+}

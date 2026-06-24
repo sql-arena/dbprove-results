@@ -1,0 +1,110 @@
+{
+  "engine": "Trino",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 1,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 1
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 8,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 1113121,
+        "distribute": 10433086,
+        "hash": 3273337383,
+        "join": 6372159614,
+        "scan": 50442373,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  PROJECT min AS member_in_charnamed_movie\n       1         1  AGGREGATE MIN(min_35) AS min\n       -         1  DISTRIBUTE GATHER\n       -         1  AGGREGATE MIN(name_20) AS min_35\n       -   1113120  INNER JOIN HASH ON movie_id = id_27\n 2528312   2528312  │└DISTRIBUTE HASH ON id_27\n 2528312   2528312  │ PROJECT id AS id_27\n 2528312   2528312  │ TABLE SCAN title\n       -   1113120  INNER JOIN HASH ON person_id = id_19\n       -    536716  │└DISTRIBUTE HASH ON id_19\n 4167491    536716  │ PROJECT id AS id_19, name AS name_20\n 4167491    536716  │ FILTER name LIKE '%B%'\n 4167491   4167491  │ TABLE SCAN name\n       -   7796926  INNER JOIN HASH ON keyword_id = id_4\n       -         1  │└DISTRIBUTE GATHER\n  134170         1  │ PROJECT id AS id_4\n  134170         1  │ FILTER keyword = 'character-name-in-title'\n  134170    134170  │ TABLE SCAN keyword\n       -     3101M  INNER JOIN HASH ON movie_id = movie_id_15\n 4523930   4523930  │└DISTRIBUTE HASH ON movie_id_15\n 4523930   4523930  │ PROJECT movie_id AS movie_id_15, keyword_id\n 4523930   4523930  │ TABLE SCAN movie_keyword\n       -  80274241  INNER JOIN HASH ON company_id = id_0\n  234997    234997  │└DISTRIBUTE GATHER\n  234997    234997  │ PROJECT id AS id_0\n  234997    234997  │ TABLE SCAN company_name\n       -  80274241  INNER JOIN HASH ON movie_id = movie_id_9\n 2609129   2609129  │└DISTRIBUTE HASH ON movie_id_9\n 2609129   2609129  │ PROJECT movie_id AS movie_id_9, company_id\n 2609129   2609129  │ TABLE SCAN movie_companies\n36244344  36244344  TABLE SCAN cast_info\n",
+      "sql": "SELECT MIN(n.name) AS member_in_charnamed_movie\nFROM job.cast_info AS ci,\n     job.company_name AS cn,\n     job.keyword AS k,\n     job.movie_companies AS mc,\n     job.movie_keyword AS mk,\n     job.name AS n,\n     job.title AS t\nWHERE k.keyword ='character-name-in-title'\n  AND n.name LIKE '%B%'\n  AND n.id = ci.person_id\n  AND ci.movie_id = t.id\n  AND t.id = mk.movie_id\n  AND mk.keyword_id = k.id\n  AND t.id = mc.movie_id\n  AND mc.company_id = cn.id\n  AND ci.movie_id = mc.movie_id\n  AND ci.movie_id = mk.movie_id\n  AND mc.movie_id = mk.movie_id;\n",
+      "startTime": "2026-06-23T15:21:14.716793Z",
+      "status": "OK",
+      "timeMs": 1625.386
+    }
+  ],
+  "runtime": {
+    "avgMs": 1625.386,
+    "bestMs": 1625.386,
+    "maxMs": 1625.386,
+    "minMs": 1625.386,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "iceberg",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 17F Analysis",
+    "displayName": "JOB-17F",
+    "name": "PLAN-JOB-17F",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "481"
+}

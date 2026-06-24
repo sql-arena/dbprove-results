@@ -1,0 +1,109 @@
+{
+  "engine": "Trino",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 1
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 3,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 71637,
+        "distribute": 71638,
+        "hash": 71636,
+        "join": 200000,
+        "scan": 6201215,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  PROJECT expr_5 AS promo_revenue\n       1         1  PROJECT (sum * 100.00) / sum_4 AS expr_5\n       1         1  DISTRIBUTE ROUND ROBIN\n       1         1  AGGREGATE SUM(sum_6) AS sum, SUM(sum_7) AS sum_4\n       -         1  DISTRIBUTE GATHER\n       -         1  AGGREGATE SUM(expr) AS sum_6, SUM(expr_3) AS sum_7\n       -     71636  PROJECT CASE WHEN (p_type LIKE 'PROMO%') THEN (l_extendedprice * (1 - l_discount)) ELSE 0.0000 END AS expr, l_extendedprice * (1 - l_discount) AS expr_3\n       -     71636  INNER JOIN HASH ON p_partkey = l_partkey\n   68924     71636  │└DISTRIBUTE HASH ON l_partkey\n 6001215     71636  │ FILTER (l_shipdate >= '1996-02-01') AND (l_shipdate < '1996-03-01')\n 6001215   6001215  │ TABLE SCAN lineitem\n  200000    200000  TABLE SCAN part\n",
+      "sql": "/* TPC-H Q14 */\nSELECT 100.00 * SUM(CASE\n                        WHEN p_type LIKE 'PROMO%'\n                            THEN l_extendedprice * (1 - l_discount)\n                        ELSE 0\n    END) / SUM(l_extendedprice * (1 - l_discount)) AS promo_revenue\nFROM tpch_sf1.lineitem\nINNER JOIN tpch_sf1.part\n    ON l_partkey = p_partkey\nWHERE l_shipdate >= '1996-02-01'\n  AND l_shipdate < '1996-03-01'",
+      "startTime": "2026-06-23T11:49:03.688523Z",
+      "status": "OK",
+      "timeMs": 349.399
+    }
+  ],
+  "runtime": {
+    "avgMs": 349.399,
+    "bestMs": 349.399,
+    "maxMs": 349.399,
+    "minMs": 349.399,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "iceberg",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "TPC-H Q14 Analysis",
+    "displayName": "TPCH-Q14",
+    "name": "PLAN-TPC-H-Q14",
+    "tags": [
+      "TPC-H"
+    ]
+  },
+  "version": "481"
+}

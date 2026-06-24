@@ -1,0 +1,110 @@
+{
+  "engine": "Trino",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 2,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 2,
+          ">16x": 4
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 11,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 0,
+        "distribute": 7801778,
+        "hash": 7801778,
+        "join": 2609129,
+        "scan": 26246530,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         ∞  PROJECT min AS movie_company, min_53 AS rating, min_54 AS western_violent_movie\n       1         ∞  AGGREGATE MIN(min_55) AS min, MIN(min_56) AS min_53, MIN(min_57) AS min_54\n       -         ∞  DISTRIBUTE GATHER\n       -         ∞  AGGREGATE MIN(name) AS min_55, MIN(info_36) AS min_56, MIN(title) AS min_57\n       -         ∞  INNER JOIN HASH ON kind_id = id_17\n       -         2  │└DISTRIBUTE GATHER\n       7         2  │ PROJECT id AS id_17\n       7         2  │ FILTER kind IN('episode','movie')\n       7         7  │ TABLE SCAN kind_type\n       -         ∞  INNER JOIN HASH ON movie_id = id_46\n  247388   1012920  │└DISTRIBUTE HASH ON id_46\n 2528312   1012920  │ PROJECT id AS id_46, title, kind_id\n 2528312   1012920  │ FILTER production_year > 2005\n 2528312   2528312  │ TABLE SCAN title\n       -         ∞  INNER JOIN HASH ON keyword_id = id_13\n       -         3  │└DISTRIBUTE GATHER\n  134170         3  │ PROJECT id AS id_13\n  134170         3  │ FILTER keyword IN('blood','murder','murder-in-title','violence')\n  134170    134170  │ TABLE SCAN keyword\n       -         ∞  INNER JOIN HASH ON movie_id = movie_id_42\n 4523930   4523930  │└DISTRIBUTE HASH ON movie_id_42\n 4523930   4523930  │ PROJECT movie_id AS movie_id_42, keyword_id\n 4523930   4523930  │ TABLE SCAN movie_keyword\n       -         ∞  INNER JOIN HASH ON info_type_id_35 = id_8\n       -         1  │└DISTRIBUTE GATHER\n     113         1  │ PROJECT id AS id_8\n     113         1  │ FILTER info = 'rating'\n     113       113  │ TABLE SCAN info_type\n       -         ∞  INNER JOIN HASH ON movie_id = movie_id_34\n 1380035   1337634  │└DISTRIBUTE HASH ON movie_id_34\n 1380035   1337634  │ PROJECT movie_id AS movie_id_34, info_type_id AS info_type_id_35, info AS info_36\n 1380035   1337634  │ FILTER info < '8.5'\n 1380035   1380035  │ TABLE SCAN movie_info_idx\n       -         ∞  INNER JOIN HASH ON info_type_id = id_4\n       -         1  │└DISTRIBUTE GATHER\n     113         1  │ PROJECT id AS id_4\n     113         1  │ FILTER info = 'countries'\n     113       113  │ TABLE SCAN info_type\n       -         ∞  INNER JOIN HASH ON movie_id = movie_id_27\n13352148    716210  │└DISTRIBUTE HASH ON movie_id_27\n14835720    716210  │ PROJECT movie_id AS movie_id_27, info_type_id\n14835720    716210  │ FILTER info IN('American','Danish','Denmark','German','Germany','Norway','Norwegian','Sweden','Swedish','USA')\n14835720  14835720  │ TABLE SCAN movie_info\n       -         ∞  INNER JOIN HASH ON company_type_id = id_0\n       4         4  │└DISTRIBUTE GATHER\n       4         4  │ PROJECT id AS id_0\n       4         4  │ TABLE SCAN company_type\n       -         ∞  INNER JOIN HASH ON company_id = id\n  105536    211073  │└DISTRIBUTE GATHER\n  234997    211073  │ FILTER country_code <> 'us'\n  234997    234997  │ TABLE SCAN company_name\n 2609129   2609129  TABLE SCAN movie_companies\n",
+      "sql": "SELECT MIN(cn.name) AS movie_company,\n       MIN(mi_idx.info) AS rating,\n       MIN(t.title) AS western_violent_movie\nFROM job.company_name AS cn,\n     job.company_type AS ct,\n     job.info_type AS it1,\n     job.info_type AS it2,\n     job.keyword AS k,\n     job.kind_type AS kt,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.movie_info_idx AS mi_idx,\n     job.movie_keyword AS mk,\n     job.title AS t\nWHERE cn.country_code != '[us]'\n  AND it1.info = 'countries'\n  AND it2.info = 'rating'\n  AND k.keyword IN ('murder',\n                    'murder-in-title',\n                    'blood',\n                    'violence')\n  AND kt.kind IN ('movie',\n                  'episode')\n  AND mi.info IN ('Sweden',\n                  'Norway',\n                  'Germany',\n                  'Denmark',\n                  'Swedish',\n                  'Danish',\n                  'Norwegian',\n                  'German',\n                  'USA',\n                  'American')\n  AND mi_idx.info < '8.5'\n  AND t.production_year > 2005\n  AND kt.id = t.kind_id\n  AND t.id = mi.movie_id\n  AND t.id = mk.movie_id\n  AND t.id = mi_idx.movie_id\n  AND t.id = mc.movie_id\n  AND mk.movie_id = mi.movie_id\n  AND mk.movie_id = mi_idx.movie_id\n  AND mk.movie_id = mc.movie_id\n  AND mi.movie_id = mi_idx.movie_id\n  AND mi.movie_id = mc.movie_id\n  AND mc.movie_id = mi_idx.movie_id\n  AND k.id = mk.keyword_id\n  AND it1.id = mi.info_type_id\n  AND it2.id = mi_idx.info_type_id\n  AND ct.id = mc.company_type_id\n  AND cn.id = mc.company_id;\n",
+      "startTime": "2026-06-23T15:24:29.085976Z",
+      "status": "OK",
+      "timeMs": 965.453
+    }
+  ],
+  "runtime": {
+    "avgMs": 965.453,
+    "bestMs": 965.453,
+    "maxMs": 965.453,
+    "minMs": 965.453,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "iceberg",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 22D Analysis",
+    "displayName": "JOB-22D",
+    "name": "PLAN-JOB-22D",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "481"
+}

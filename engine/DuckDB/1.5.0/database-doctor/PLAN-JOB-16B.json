@@ -1,0 +1,110 @@
+{
+  "engine": "DuckDB",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 1
+        },
+        "hash": {
+          "+2x": 1,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 6,
+          "=": 0,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 7,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 1,
+          "+4x": 0,
+          "+8x": 1,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 1,
+          "=": 1,
+          ">16x": 4
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 3710592,
+        "distribute": 0,
+        "hash": 10660997,
+        "join": 10622349,
+        "scan": 1981854,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       -         1  AGGREGATE MIN(#0), MIN(#1)\n       2   3710592  PROJECT name, title\n       2   3710592  INNER JOIN HASH ON id = person_id\n       1   3710592  │└INNER JOIN HASH ON person_id = person_id\n       7   2832555  │ │└INNER JOIN HASH ON movie_id = id\n       0     68316  │ │ │└INNER JOIN HASH ON id = movie_id\n       0     68316  │ │ │ │└INNER JOIN HASH ON id = company_id\n      72    148552  │ │ │ │ │└INNER JOIN HASH ON movie_id = movie_id\n      69     41838  │ │ │ │ │ │└INNER JOIN HASH ON keyword_id = id\n       2         1  │ │ │ │ │ │ │└TABLE SCAN keyword WHERE keyword = 'character-name-in-title'\n 4523930     41838  │ │ │ │ │ │ TABLE SCAN movie_keyword WHERE movie_id <= 2525745\n 2609129    173613  │ │ │ │ │ TABLE SCAN movie_companies\n    1644     84843  │ │ │ │ TABLE SCAN company_name WHERE country_code = 'us'\n 2528312     25740  │ │ │ TABLE SCAN title WHERE id >= 2 AND id <= 2525745\n36244344    764634  │ │ FILTER person_id >= 4\n36244344    764634  │ │ TABLE SCAN cast_info WHERE movie_id >= 2 AND movie_id <= 2525745\n  901343    772581  │ TABLE SCAN aka_name WHERE person_id <= 4061926\n 4167491    118604  TABLE SCAN \"name\" WHERE id >= 4 AND id <= 4061926\n",
+      "sql": "SELECT MIN(an.name) AS cool_actor_pseudonym,\n       MIN(t.title) AS series_named_after_char\nFROM job.aka_name AS an,\n     job.cast_info AS ci,\n     job.company_name AS cn,\n     job.keyword AS k,\n     job.movie_companies AS mc,\n     job.movie_keyword AS mk,\n     job.name AS n,\n     job.title AS t\nWHERE cn.country_code ='[us]'\n  AND k.keyword ='character-name-in-title'\n  AND an.person_id = n.id\n  AND n.id = ci.person_id\n  AND ci.movie_id = t.id\n  AND t.id = mk.movie_id\n  AND mk.keyword_id = k.id\n  AND t.id = mc.movie_id\n  AND mc.company_id = cn.id\n  AND an.person_id = ci.person_id\n  AND ci.movie_id = mc.movie_id\n  AND ci.movie_id = mk.movie_id\n  AND mc.movie_id = mk.movie_id;\n",
+      "startTime": "2026-06-23T14:00:49.318059Z",
+      "status": "OK",
+      "timeMs": 167.636
+    }
+  ],
+  "runtime": {
+    "avgMs": 167.636,
+    "bestMs": 167.636,
+    "maxMs": 167.636,
+    "minMs": 167.636,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 16B Analysis",
+    "displayName": "JOB-16B",
+    "name": "PLAN-JOB-16B",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "1.5.0"
+}

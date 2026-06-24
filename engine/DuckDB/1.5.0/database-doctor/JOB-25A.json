@@ -1,0 +1,110 @@
+{
+  "engine": "DuckDB",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 2,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 1,
+          "=": 0,
+          ">16x": 4
+        },
+        "hash": {
+          "+2x": 1,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 2,
+          "-8x": 0,
+          "<16x": 7,
+          "=": 0,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 8,
+          "=": 1,
+          ">16x": 1
+        },
+        "scan": {
+          "+2x": 2,
+          "+4x": 0,
+          "+8x": 1,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 1,
+          "=": 1,
+          ">16x": 4
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 4407,
+        "distribute": 0,
+        "hash": 1198081,
+        "join": 877305,
+        "scan": 835453,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       -         1  AGGREGATE MIN(#0), MIN(#1), MIN(#2), MIN(#3)\n       0      4407  PROJECT info, info, name, title\n       0      4407  INNER JOIN HASH ON id = person_id\n       0      7112  │└INNER JOIN HASH ON movie_id = id\n       0     11389  │ │└INNER JOIN HASH ON id = movie_id\n       0     11389  │ │ │└INNER JOIN HASH ON id = keyword_id\n       0    319480  │ │ │ │└INNER JOIN HASH ON movie_id = movie_id\n       0     16480  │ │ │ │ │└INNER JOIN HASH ON id = info_type_id\n       0     49452  │ │ │ │ │ │└INNER JOIN HASH ON movie_id = movie_id\n       0     30413  │ │ │ │ │ │ │└INNER JOIN HASH ON info_type_id = id\n       2         1  │ │ │ │ │ │ │ │└FILTER id <= 110\n       2         1  │ │ │ │ │ │ │ │ TABLE SCAN info_type WHERE info = 'genres'\n      16     30413  │ │ │ │ │ │ │ FILTER movie_id BETWEEN 2 AND 2525793\n      16     30413  │ │ │ │ │ │ │ TABLE SCAN movie_info WHERE info = 'Horror'\n 1380035     54819  │ │ │ │ │ │ TABLE SCAN movie_info_idx\n       2         1  │ │ │ │ │ FILTER id >= 99\n       2         1  │ │ │ │ │ TABLE SCAN info_type WHERE info = 'votes'\n 4523930    341382  │ │ │ │ TABLE SCAN movie_keyword WHERE movie_id <= 2525793\n   26834         5  │ │ │ FILTER IN ...\n  134170    134156  │ │ │ INNER JOIN HASH ON keyword = #0\n       0         5  │ │ │ │└SCAN MATERIALISED\n  134170    134156  │ │ │ TABLE SCAN keyword WHERE keyword IN('murder','blood','gore','death','female-nudity')\n 2528312      6697  │ │ TABLE SCAN title WHERE id >= 2 AND id <= 2525793\n 7248868      3952  │ FILTER movie_id BETWEEN 2 AND 2525793\n 7248868      3952  │ FILTER IN ...\n36244344    265758  │ INNER JOIN HASH ON note = #0\n       0         5  │ │└SCAN MATERIALISED\n36244344    265758  │ TABLE SCAN cast_info WHERE note IN('(writer)','(head writer)','(written by)','(story)','(story editor)')\n 2083746      2216  FILTER id <= 4061926\n 2083746      2216  TABLE SCAN \"name\" WHERE gender = 'm'\n",
+      "sql": "SELECT MIN(mi.info) AS movie_budget,\n       MIN(mi_idx.info) AS movie_votes,\n       MIN(n.name) AS male_writer,\n       MIN(t.title) AS violent_movie_title\nFROM job.cast_info AS ci,\n     job.info_type AS it1,\n     job.info_type AS it2,\n     job.keyword AS k,\n     job.movie_info AS mi,\n     job.movie_info_idx AS mi_idx,\n     job.movie_keyword AS mk,\n     job.name AS n,\n     job.title AS t\nWHERE ci.note IN ('(writer)',\n                  '(head writer)',\n                  '(written by)',\n                  '(story)',\n                  '(story editor)')\n  AND it1.info = 'genres'\n  AND it2.info = 'votes'\n  AND k.keyword IN ('murder',\n                    'blood',\n                    'gore',\n                    'death',\n                    'female-nudity')\n  AND mi.info = 'Horror'\n  AND n.gender = 'm'\n  AND t.id = mi.movie_id\n  AND t.id = mi_idx.movie_id\n  AND t.id = ci.movie_id\n  AND t.id = mk.movie_id\n  AND ci.movie_id = mi.movie_id\n  AND ci.movie_id = mi_idx.movie_id\n  AND ci.movie_id = mk.movie_id\n  AND mi.movie_id = mi_idx.movie_id\n  AND mi.movie_id = mk.movie_id\n  AND mi_idx.movie_id = mk.movie_id\n  AND n.id = ci.person_id\n  AND it1.id = mi.info_type_id\n  AND it2.id = mi_idx.info_type_id\n  AND k.id = mk.keyword_id;\n",
+      "startTime": "2026-06-17T11:56:30.709223Z",
+      "status": "OK",
+      "timeMs": 69.635
+    }
+  ],
+  "runtime": {
+    "avgMs": 69.635,
+    "bestMs": 69.635,
+    "maxMs": 69.635,
+    "minMs": 69.635,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 25A Analysis",
+    "displayName": "JOB-25A",
+    "name": "JOB-25A",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "1.5.0"
+}

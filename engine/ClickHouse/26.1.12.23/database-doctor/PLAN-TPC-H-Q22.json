@@ -1,0 +1,109 @@
+{
+  "engine": "ClickHouse",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 22836,
+        "distribute": 0,
+        "hash": 68282,
+        "join": 1500000,
+        "scan": 1568282,
+        "seek": 0,
+        "sort": 25
+      },
+      "plan": "Estimate    Actual  Operator\n       -        25  PROJECT cntrycode, a1 AS numcust, a2 AS totacctbal\n       -        25  SORT cntrycode\n       -        25  PROJECT cntrycode, a1, a2\n       -        25  AGGREGATE COUNT() AS a1, SUM(c_acctbal) AS a2 GROUP BY HASH cntrycode\n       -     22836  PROJECT left(c_phone,2) AS cntrycode, c_acctbal\n       -     22836  PROJECT c_phone, c_acctbal\n       -     22836  RIGHT ANTI JOIN HASH ON PROJECTION_528.o_custkey = PROJECTION_525.c_custkey\n       -     68282  │└PROJECT c_custkey AS c_custkey_right, c_phone, c_acctbal\n       -     68282  │ PROJECT c_custkey, c_acctbal, c_phone\n       -     68282  │ TABLE SCAN customer WHERE (c_acctbal > 4979.819810133222) AND TRUE\n       -   1500000  PROJECT o_custkey\n       -   1500000  TABLE SCAN orders WHERE o_custkey = o_custkey\n",
+      "sql": "/* TPC-H Q22 */\nSELECT cntrycode,\n       COUNT(*)       AS numcust,\n       SUM(c_acctbal) AS totacctbal\nFROM (SELECT LEFT(c_phone,2) AS cntrycode,\n             c_acctbal\n      FROM tpch_sf1.customer\n      WHERE LEFT(c_phone,2) IN\n            ('10', '17', '19', '23', '22', '31', '27')\n        AND c_acctbal > (SELECT AVG(c_acctbal)\n                         FROM tpch_sf1.customer\n                         WHERE c_acctbal > 0.00\n                           AND LEFT(c_phone,2) IN\n                               ('10', '17', '19', '23', '22', '31', '27'))\n        AND NOT EXISTS (SELECT *\n                        FROM tpch_sf1.orders\n                        WHERE o_custkey = c_custkey)) AS custsale\nGROUP BY cntrycode\nORDER BY cntrycode\n\n\n",
+      "startTime": "2026-06-23T11:16:19.252314Z",
+      "status": "OK",
+      "timeMs": 27.942
+    }
+  ],
+  "runtime": {
+    "avgMs": 27.942,
+    "bestMs": 27.942,
+    "maxMs": 27.942,
+    "minMs": 27.942,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "TPC-H Q22 Analysis",
+    "displayName": "TPCH-Q22",
+    "name": "PLAN-TPC-H-Q22",
+    "tags": [
+      "TPC-H"
+    ]
+  },
+  "version": "26.1.12.23"
+}

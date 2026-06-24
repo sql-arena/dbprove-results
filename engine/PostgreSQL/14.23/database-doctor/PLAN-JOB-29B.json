@@ -1,0 +1,110 @@
+{
+  "engine": "PostgreSQL",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 3,
+          "-8x": 7,
+          "<16x": 5,
+          "=": 1,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 2,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 2,
+          "-8x": 0,
+          "<16x": 1,
+          "=": 13,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 15,
+        "distribute": 0,
+        "hash": 6372,
+        "join": 6307,
+        "scan": 0,
+        "seek": 6273,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(name), MIN(name), MIN(title)\n       1        15  INNER JOIN LOOP ON id = status_id\n       1        15  │└INNER JOIN LOOP ON id = subject_id\n       1        15  │ │└INNER JOIN LOOP ON movie_id = movie_id AND id = movie_id AND (id = movie_id)\n       1        15  │ │ │└INNER JOIN LOOP ON id = info_type_id\n       1      2445  │ │ │ │└INNER JOIN LOOP ON person_id = person_id AND id = person_id AND (id = person_id)\n       1        15  │ │ │ │ │└INNER JOIN LOOP ON id = person_id\n       1        15  │ │ │ │ │ │└INNER JOIN LOOP ON id = person_role_id\n       2        80  │ │ │ │ │ │ │└INNER JOIN LOOP ON person_id = person_id\n       1        55  │ │ │ │ │ │ │ │└INNER JOIN LOOP ON id = role_id\n       1       190  │ │ │ │ │ │ │ │ │└INNER JOIN LOOP ON movie_id = movie_id AND id = movie_id AND (id = movie_id)\n       1         5  │ │ │ │ │ │ │ │ │ │└INNER JOIN LOOP ON id = info_type_id\n       1         5  │ │ │ │ │ │ │ │ │ │ │└INNER JOIN LOOP ON movie_id = movie_id AND id = movie_id AND (id = movie_id)\n       1         5  │ │ │ │ │ │ │ │ │ │ │ │└INNER JOIN LOOP ON id = company_id\n       1        22  │ │ │ │ │ │ │ │ │ │ │ │ │└INNER JOIN LOOP ON movie_id = movie_id AND id = movie_id AND (id = movie_id)\n       1         1  │ │ │ │ │ │ │ │ │ │ │ │ │ │└INNER JOIN LOOP ON id = movie_id\n      34       414  │ │ │ │ │ │ │ │ │ │ │ │ │ │ │└INNER JOIN LOOP ON keyword_id = id\n       1         1  │ │ │ │ │ │ │ │ │ │ │ │ │ │ │ │└TABLE SEEK keyword AS k\n     301       414  │ │ │ │ │ │ │ │ │ │ │ │ │ │ │ TABLE SEEK movie_keyword AS mk\n     414       414  │ │ │ │ │ │ │ │ │ │ │ │ │ │ TABLE SEEK title AS t WHERE (t.production_year >= 2000) AND (t.production_year <= 2005) AND (t.title = 'Shrek 2')\n       5        22  │ │ │ │ │ │ │ │ │ │ │ │ │ TABLE SEEK movie_companies AS mc\n      22        22  │ │ │ │ │ │ │ │ │ │ │ │ TABLE SEEK company_name AS cn WHERE cn.country_code = 'us'\n       5         5  │ │ │ │ │ │ │ │ │ │ │ TABLE SEEK movie_info AS mi WHERE mi.info LIKE 'USA:%200%'\n       5         5  │ │ │ │ │ │ │ │ │ │ TABLE SEEK info_type AS it WHERE it.info = 'release dates'\n       5       190  │ │ │ │ │ │ │ │ │ TABLE SEEK cast_info AS ci WHERE ci.note IN('(voice)','(voice) (uncredited)','(voice: English version)')\n     190       190  │ │ │ │ │ │ │ │ TABLE SEEK role_type AS rt WHERE rt.role = 'actress'\n     110        55  │ │ │ │ │ │ │ TABLE SEEK aka_name AS an\n       5         5  │ │ │ │ │ │ TABLE SEEK char_name AS chn WHERE chn.name = 'Queen'\n      15        15  │ │ │ │ │ TABLE SEEK name AS n WHERE (n.name LIKE '%An%') AND (n.gender = 'f')\n     375      2445  │ │ │ │ TABLE SEEK person_info AS pi\n    2445      2445  │ │ │ TABLE SEEK info_type AS it3 WHERE it3.info = 'height'\n      30        15  │ │ TABLE SEEK complete_cast AS cc\n      15        15  │ TABLE SEEK comp_cast_type AS cct1 WHERE cct1.kind = 'cast'\n      15        15  TABLE SEEK comp_cast_type AS cct2 WHERE cct2.kind = 'complete+verified'\n",
+      "sql": "SELECT MIN(chn.name) AS voiced_char,\n       MIN(n.name) AS voicing_actress,\n       MIN(t.title) AS voiced_animation\nFROM job.aka_name AS an,\n     job.complete_cast AS cc,\n     job.comp_cast_type AS cct1,\n     job.comp_cast_type AS cct2,\n     job.char_name AS chn,\n     job.cast_info AS ci,\n     job.company_name AS cn,\n     job.info_type AS it,\n     job.info_type AS it3,\n     job.keyword AS k,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.movie_keyword AS mk,\n     job.name AS n,\n     job.person_info AS pi,\n     job.role_type AS rt,\n     job.title AS t\nWHERE cct1.kind ='cast'\n  AND cct2.kind ='complete+verified'\n  AND chn.name = 'Queen'\n  AND ci.note IN ('(voice)',\n                  '(voice) (uncredited)',\n                  '(voice: English version)')\n  AND cn.country_code ='[us]'\n  AND it.info = 'release dates'\n  AND it3.info = 'height'\n  AND k.keyword = 'computer-animation'\n  AND mi.info LIKE 'USA:%200%'\n  AND n.gender ='f'\n  AND n.name LIKE '%An%'\n  AND rt.role ='actress'\n  AND t.title = 'Shrek 2'\n  AND t.production_year BETWEEN 2000 AND 2005\n  AND t.id = mi.movie_id\n  AND t.id = mc.movie_id\n  AND t.id = ci.movie_id\n  AND t.id = mk.movie_id\n  AND t.id = cc.movie_id\n  AND mc.movie_id = ci.movie_id\n  AND mc.movie_id = mi.movie_id\n  AND mc.movie_id = mk.movie_id\n  AND mc.movie_id = cc.movie_id\n  AND mi.movie_id = ci.movie_id\n  AND mi.movie_id = mk.movie_id\n  AND mi.movie_id = cc.movie_id\n  AND ci.movie_id = mk.movie_id\n  AND ci.movie_id = cc.movie_id\n  AND mk.movie_id = cc.movie_id\n  AND cn.id = mc.company_id\n  AND it.id = mi.info_type_id\n  AND n.id = ci.person_id\n  AND rt.id = ci.role_id\n  AND n.id = an.person_id\n  AND ci.person_id = an.person_id\n  AND chn.id = ci.person_role_id\n  AND n.id = pi.person_id\n  AND ci.person_id = pi.person_id\n  AND it3.id = pi.info_type_id\n  AND k.id = mk.keyword_id\n  AND cct1.id = cc.subject_id\n  AND cct2.id = cc.status_id;\n",
+      "startTime": "2026-06-23T15:46:34.350663Z",
+      "status": "OK",
+      "timeMs": 133.008
+    }
+  ],
+  "runtime": {
+    "avgMs": 133.008,
+    "bestMs": 133.008,
+    "maxMs": 133.008,
+    "minMs": 133.008,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 29B Analysis",
+    "displayName": "JOB-29B",
+    "name": "PLAN-JOB-29B",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "14.23"
+}

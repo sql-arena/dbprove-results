@@ -1,0 +1,747 @@
+<?xml version="1.0"?>
+<ShowPlanXML xmlns="http://schemas.microsoft.com/sqlserver/2004/07/showplan" Version="1.564" Build="16.0.4236.2">
+  <BatchSequence>
+    <Batch>
+      <Statements>
+        <StmtSimple StatementText="SELECT l_returnflag,&#10;       l_linestatus,&#10;       SUM(l_quantity)                                       AS sum_qty,&#10;       SUM(l_extendedprice)                                  AS sum_base_price,&#10;       SUM(l_extendedprice * (1 - l_discount))               AS sum_disc_price,&#10;       SUM(l_extendedprice * (1 - l_discount) * (1 + l_tax)) AS sum_charge,&#10;       AVG(l_quantity)                                       AS avg_qty,&#10;       AVG(l_extendedprice)                                  AS avg_price,&#10;       AVG(l_discount)                                       AS avg_disc,&#10;       COUNT(*)                                              AS count_order&#10;FROM tpch_sf1.lineitem&#10;WHERE l_shipdate &lt;= '1998-10-01'&#10;GROUP BY l_returnflag,&#10;         l_linestatus&#10;ORDER BY l_returnflag,&#10;         l_linestatus" StatementId="1" StatementCompId="1" StatementType="SELECT" StatementSqlHandle="0x09001ADD86CE18A26CFD53FBE48A8AAFB4A90000000000000000000000000000000000000000000000000000" DatabaseContextSettingsId="1" ParentObjectId="0" StatementParameterizationType="0" RetrievedFromCache="true" StatementSubTreeCost="81.4656" StatementEstRows="6" SecurityPolicyApplied="false" StatementOptmLevel="FULL" QueryHash="0x1F89F150E286C377" QueryPlanHash="0x864D49C9AB7BCACD" CardinalityEstimationModelVersion="160">
+          <StatementSetOptions QUOTED_IDENTIFIER="true" ARITHABORT="false" CONCAT_NULL_YIELDS_NULL="true" ANSI_NULLS="true" ANSI_PADDING="true" ANSI_WARNINGS="true" NUMERIC_ROUNDABORT="false" />
+          <QueryPlan DegreeOfParallelism="10" MemoryGrant="15944" CachedPlanSize="104" CompileTime="674" CompileCPU="638" CompileMemory="744">
+            <ThreadStat Branches="1" UsedThreads="10">
+              <ThreadReservation NodeId="0" ReservedThreads="5" />
+              <ThreadReservation NodeId="1" ReservedThreads="5" />
+            </ThreadStat>
+            <MemoryGrantInfo SerialRequiredMemory="1536" SerialDesiredMemory="1616" RequiredMemory="15864" DesiredMemory="15944" RequestedMemory="15944" GrantWaitTime="0" MaxQueryMemory="1499296" GrantedMemory="15944" MaxUsedMemory="2264" LastRequestedMemory="15944" IsMemoryGrantFeedbackAdjusted="No: Accurate Grant" />
+            <OptimizerHardwareDependentProperties EstimatedAvailableMemoryGrant="97873" EstimatedPagesCached="61171" EstimatedAvailableDegreeOfParallelism="5" MaxCompileMemory="4876752" />
+            <OptimizerStatsUsage>
+              <StatisticsInfo LastUpdate="2026-06-18T15:28:52.92" ModificationCount="0" SamplingPercent="2.44884" Statistics="[_WA_Sys_0000000A_18EBB532]" Table="[lineitem]" Schema="[tpch_sf1]" Database="[dbprove]" />
+              <StatisticsInfo LastUpdate="2026-06-18T15:28:52.61" ModificationCount="0" SamplingPercent="2.44884" Statistics="[_WA_Sys_00000009_18EBB532]" Table="[lineitem]" Schema="[tpch_sf1]" Database="[dbprove]" />
+              <StatisticsInfo LastUpdate="2026-06-18T15:28:52.29" ModificationCount="0" SamplingPercent="2.44884" Statistics="[_WA_Sys_0000000B_18EBB532]" Table="[lineitem]" Schema="[tpch_sf1]" Database="[dbprove]" />
+            </OptimizerStatsUsage>
+            <WaitStats>
+              <Wait WaitType="CXSYNC_PORT" WaitTimeMs="1761" WaitCount="11" />
+              <Wait WaitType="SOS_SCHEDULER_YIELD" WaitTimeMs="20" WaitCount="3672" />
+              <Wait WaitType="LATCH_EX" WaitTimeMs="1" WaitCount="9" />
+              <Wait WaitType="LATCH_SH" WaitTimeMs="1" WaitCount="5" />
+            </WaitStats>
+            <QueryTimeStats ElapsedTime="1488" CpuTime="14591" />
+            <RelOp NodeId="1" PhysicalOp="Compute Scalar" LogicalOp="Compute Scalar" EstimateRows="6" EstimateIO="0" EstimateCPU="6e-07" AvgRowSize="273" EstimatedTotalSubtreeCost="81.4656" Parallel="0" EstimateRebinds="0" EstimateRewinds="0" EstimatedExecutionMode="Row">
+              <OutputList>
+                <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[lineitem]" Column="l_returnflag" />
+                <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[lineitem]" Column="l_linestatus" />
+                <ColumnReference Column="Expr1003" />
+                <ColumnReference Column="Expr1004" />
+                <ColumnReference Column="Expr1005" />
+                <ColumnReference Column="Expr1006" />
+                <ColumnReference Column="Expr1007" />
+                <ColumnReference Column="Expr1008" />
+                <ColumnReference Column="Expr1009" />
+                <ColumnReference Column="Expr1010" />
+              </OutputList>
+              <ComputeScalar>
+                <DefinedValues>
+                  <DefinedValue>
+                    <ColumnReference Column="Expr1007" />
+                    <ScalarOperator ScalarString="CASE WHEN [globalagg1018]=(0) THEN NULL ELSE [globalagg1020]/CONVERT_IMPLICIT(decimal(19,0),[globalagg1018],0) END">
+                      <IF>
+                        <Condition>
+                          <ScalarOperator>
+                            <Compare CompareOp="EQ">
+                              <ScalarOperator>
+                                <Identifier>
+                                  <ColumnReference Column="globalagg1018" />
+                                </Identifier>
+                              </ScalarOperator>
+                              <ScalarOperator>
+                                <Const ConstValue="(0)" />
+                              </ScalarOperator>
+                            </Compare>
+                          </ScalarOperator>
+                        </Condition>
+                        <Then>
+                          <ScalarOperator>
+                            <Const ConstValue="NULL" />
+                          </ScalarOperator>
+                        </Then>
+                        <Else>
+                          <ScalarOperator>
+                            <Arithmetic Operation="DIV">
+                              <ScalarOperator>
+                                <Identifier>
+                                  <ColumnReference Column="globalagg1020" />
+                                </Identifier>
+                              </ScalarOperator>
+                              <ScalarOperator>
+                                <Convert DataType="decimal" Precision="19" Scale="0" Style="0" Implicit="1">
+                                  <ScalarOperator>
+                                    <Identifier>
+                                      <ColumnReference Column="globalagg1018" />
+                                    </Identifier>
+                                  </ScalarOperator>
+                                </Convert>
+                              </ScalarOperator>
+                            </Arithmetic>
+                          </ScalarOperator>
+                        </Else>
+                      </IF>
+                    </ScalarOperator>
+                  </DefinedValue>
+                  <DefinedValue>
+                    <ColumnReference Column="Expr1008" />
+                    <ScalarOperator ScalarString="CASE WHEN [globalagg1022]=(0) THEN NULL ELSE [globalagg1024]/CONVERT_IMPLICIT(decimal(19,0),[globalagg1022],0) END">
+                      <IF>
+                        <Condition>
+                          <ScalarOperator>
+                            <Compare CompareOp="EQ">
+                              <ScalarOperator>
+                                <Identifier>
+                                  <ColumnReference Column="globalagg1022" />
+                                </Identifier>
+                              </ScalarOperator>
+                              <ScalarOperator>
+                                <Const ConstValue="(0)" />
+                              </ScalarOperator>
+                            </Compare>
+                          </ScalarOperator>
+                        </Condition>
+                        <Then>
+                          <ScalarOperator>
+                            <Const ConstValue="NULL" />
+                          </ScalarOperator>
+                        </Then>
+                        <Else>
+                          <ScalarOperator>
+                            <Arithmetic Operation="DIV">
+                              <ScalarOperator>
+                                <Identifier>
+                                  <ColumnReference Column="globalagg1024" />
+                                </Identifier>
+                              </ScalarOperator>
+                              <ScalarOperator>
+                                <Convert DataType="decimal" Precision="19" Scale="0" Style="0" Implicit="1">
+                                  <ScalarOperator>
+                                    <Identifier>
+                                      <ColumnReference Column="globalagg1022" />
+                                    </Identifier>
+                                  </ScalarOperator>
+                                </Convert>
+                              </ScalarOperator>
+                            </Arithmetic>
+                          </ScalarOperator>
+                        </Else>
+                      </IF>
+                    </ScalarOperator>
+                  </DefinedValue>
+                  <DefinedValue>
+                    <ColumnReference Column="Expr1009" />
+                    <ScalarOperator ScalarString="CASE WHEN [globalagg1026]=(0) THEN NULL ELSE [globalagg1028]/CONVERT_IMPLICIT(decimal(19,0),[globalagg1026],0) END">
+                      <IF>
+                        <Condition>
+                          <ScalarOperator>
+                            <Compare CompareOp="EQ">
+                              <ScalarOperator>
+                                <Identifier>
+                                  <ColumnReference Column="globalagg1026" />
+                                </Identifier>
+                              </ScalarOperator>
+                              <ScalarOperator>
+                                <Const ConstValue="(0)" />
+                              </ScalarOperator>
+                            </Compare>
+                          </ScalarOperator>
+                        </Condition>
+                        <Then>
+                          <ScalarOperator>
+                            <Const ConstValue="NULL" />
+                          </ScalarOperator>
+                        </Then>
+                        <Else>
+                          <ScalarOperator>
+                            <Arithmetic Operation="DIV">
+                              <ScalarOperator>
+                                <Identifier>
+                                  <ColumnReference Column="globalagg1028" />
+                                </Identifier>
+                              </ScalarOperator>
+                              <ScalarOperator>
+                                <Convert DataType="decimal" Precision="19" Scale="0" Style="0" Implicit="1">
+                                  <ScalarOperator>
+                                    <Identifier>
+                                      <ColumnReference Column="globalagg1026" />
+                                    </Identifier>
+                                  </ScalarOperator>
+                                </Convert>
+                              </ScalarOperator>
+                            </Arithmetic>
+                          </ScalarOperator>
+                        </Else>
+                      </IF>
+                    </ScalarOperator>
+                  </DefinedValue>
+                  <DefinedValue>
+                    <ColumnReference Column="Expr1010" />
+                    <ScalarOperator ScalarString="CONVERT_IMPLICIT(int,[globalagg1030],0)">
+                      <Convert DataType="int" Style="0" Implicit="1">
+                        <ScalarOperator>
+                          <Identifier>
+                            <ColumnReference Column="globalagg1030" />
+                          </Identifier>
+                        </ScalarOperator>
+                      </Convert>
+                    </ScalarOperator>
+                  </DefinedValue>
+                </DefinedValues>
+                <RelOp NodeId="2" PhysicalOp="Stream Aggregate" LogicalOp="Aggregate" EstimateRows="6" EstimateIO="0" EstimateCPU="2.1e-05" AvgRowSize="301" EstimatedTotalSubtreeCost="81.4656" Parallel="0" EstimateRebinds="0" EstimateRewinds="0" EstimatedExecutionMode="Row">
+                  <OutputList>
+                    <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[lineitem]" Column="l_returnflag" />
+                    <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[lineitem]" Column="l_linestatus" />
+                    <ColumnReference Column="Expr1003" />
+                    <ColumnReference Column="Expr1004" />
+                    <ColumnReference Column="Expr1005" />
+                    <ColumnReference Column="Expr1006" />
+                    <ColumnReference Column="globalagg1018" />
+                    <ColumnReference Column="globalagg1020" />
+                    <ColumnReference Column="globalagg1022" />
+                    <ColumnReference Column="globalagg1024" />
+                    <ColumnReference Column="globalagg1026" />
+                    <ColumnReference Column="globalagg1028" />
+                    <ColumnReference Column="globalagg1030" />
+                  </OutputList>
+                  <RunTimeInformation>
+                    <RunTimeCountersPerThread Thread="0" ActualRows="4" Batches="0" ActualElapsedms="1488" ActualCPUms="0" ActualEndOfScans="1" ActualExecutions="1" ActualExecutionMode="Row" />
+                  </RunTimeInformation>
+                  <StreamAggregate>
+                    <DefinedValues>
+                      <DefinedValue>
+                        <ColumnReference Column="Expr1003" />
+                        <ScalarOperator ScalarString="SUM([partialagg1013])">
+                          <Aggregate Distinct="0" AggType="SUM">
+                            <ScalarOperator>
+                              <Identifier>
+                                <ColumnReference Column="partialagg1013" />
+                              </Identifier>
+                            </ScalarOperator>
+                          </Aggregate>
+                        </ScalarOperator>
+                      </DefinedValue>
+                      <DefinedValue>
+                        <ColumnReference Column="Expr1004" />
+                        <ScalarOperator ScalarString="SUM([partialagg1014])">
+                          <Aggregate Distinct="0" AggType="SUM">
+                            <ScalarOperator>
+                              <Identifier>
+                                <ColumnReference Column="partialagg1014" />
+                              </Identifier>
+                            </ScalarOperator>
+                          </Aggregate>
+                        </ScalarOperator>
+                      </DefinedValue>
+                      <DefinedValue>
+                        <ColumnReference Column="Expr1005" />
+                        <ScalarOperator ScalarString="SUM([partialagg1015])">
+                          <Aggregate Distinct="0" AggType="SUM">
+                            <ScalarOperator>
+                              <Identifier>
+                                <ColumnReference Column="partialagg1015" />
+                              </Identifier>
+                            </ScalarOperator>
+                          </Aggregate>
+                        </ScalarOperator>
+                      </DefinedValue>
+                      <DefinedValue>
+                        <ColumnReference Column="Expr1006" />
+                        <ScalarOperator ScalarString="SUM([partialagg1016])">
+                          <Aggregate Distinct="0" AggType="SUM">
+                            <ScalarOperator>
+                              <Identifier>
+                                <ColumnReference Column="partialagg1016" />
+                              </Identifier>
+                            </ScalarOperator>
+                          </Aggregate>
+                        </ScalarOperator>
+                      </DefinedValue>
+                      <DefinedValue>
+                        <ColumnReference Column="globalagg1018" />
+                        <ScalarOperator ScalarString="SUM([partialagg1017])">
+                          <Aggregate Distinct="0" AggType="SUM">
+                            <ScalarOperator>
+                              <Identifier>
+                                <ColumnReference Column="partialagg1017" />
+                              </Identifier>
+                            </ScalarOperator>
+                          </Aggregate>
+                        </ScalarOperator>
+                      </DefinedValue>
+                      <DefinedValue>
+                        <ColumnReference Column="globalagg1020" />
+                        <ScalarOperator ScalarString="SUM([partialagg1019])">
+                          <Aggregate Distinct="0" AggType="SUM">
+                            <ScalarOperator>
+                              <Identifier>
+                                <ColumnReference Column="partialagg1019" />
+                              </Identifier>
+                            </ScalarOperator>
+                          </Aggregate>
+                        </ScalarOperator>
+                      </DefinedValue>
+                      <DefinedValue>
+                        <ColumnReference Column="globalagg1022" />
+                        <ScalarOperator ScalarString="SUM([partialagg1021])">
+                          <Aggregate Distinct="0" AggType="SUM">
+                            <ScalarOperator>
+                              <Identifier>
+                                <ColumnReference Column="partialagg1021" />
+                              </Identifier>
+                            </ScalarOperator>
+                          </Aggregate>
+                        </ScalarOperator>
+                      </DefinedValue>
+                      <DefinedValue>
+                        <ColumnReference Column="globalagg1024" />
+                        <ScalarOperator ScalarString="SUM([partialagg1023])">
+                          <Aggregate Distinct="0" AggType="SUM">
+                            <ScalarOperator>
+                              <Identifier>
+                                <ColumnReference Column="partialagg1023" />
+                              </Identifier>
+                            </ScalarOperator>
+                          </Aggregate>
+                        </ScalarOperator>
+                      </DefinedValue>
+                      <DefinedValue>
+                        <ColumnReference Column="globalagg1026" />
+                        <ScalarOperator ScalarString="SUM([partialagg1025])">
+                          <Aggregate Distinct="0" AggType="SUM">
+                            <ScalarOperator>
+                              <Identifier>
+                                <ColumnReference Column="partialagg1025" />
+                              </Identifier>
+                            </ScalarOperator>
+                          </Aggregate>
+                        </ScalarOperator>
+                      </DefinedValue>
+                      <DefinedValue>
+                        <ColumnReference Column="globalagg1028" />
+                        <ScalarOperator ScalarString="SUM([partialagg1027])">
+                          <Aggregate Distinct="0" AggType="SUM">
+                            <ScalarOperator>
+                              <Identifier>
+                                <ColumnReference Column="partialagg1027" />
+                              </Identifier>
+                            </ScalarOperator>
+                          </Aggregate>
+                        </ScalarOperator>
+                      </DefinedValue>
+                      <DefinedValue>
+                        <ColumnReference Column="globalagg1030" />
+                        <ScalarOperator ScalarString="SUM([partialagg1029])">
+                          <Aggregate Distinct="0" AggType="SUM">
+                            <ScalarOperator>
+                              <Identifier>
+                                <ColumnReference Column="partialagg1029" />
+                              </Identifier>
+                            </ScalarOperator>
+                          </Aggregate>
+                        </ScalarOperator>
+                      </DefinedValue>
+                    </DefinedValues>
+                    <GroupBy>
+                      <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[lineitem]" Column="l_returnflag" />
+                      <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[lineitem]" Column="l_linestatus" />
+                    </GroupBy>
+                    <RelOp NodeId="3" PhysicalOp="Sort" LogicalOp="Sort" EstimateRows="30" EstimateIO="0.0112613" EstimateCPU="0.000329943" AvgRowSize="301" EstimatedTotalSubtreeCost="81.4655" Parallel="0" EstimateRebinds="0" EstimateRewinds="0" EstimatedExecutionMode="Row">
+                      <OutputList>
+                        <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[lineitem]" Column="l_returnflag" />
+                        <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[lineitem]" Column="l_linestatus" />
+                        <ColumnReference Column="partialagg1013" />
+                        <ColumnReference Column="partialagg1014" />
+                        <ColumnReference Column="partialagg1015" />
+                        <ColumnReference Column="partialagg1016" />
+                        <ColumnReference Column="partialagg1017" />
+                        <ColumnReference Column="partialagg1019" />
+                        <ColumnReference Column="partialagg1021" />
+                        <ColumnReference Column="partialagg1023" />
+                        <ColumnReference Column="partialagg1025" />
+                        <ColumnReference Column="partialagg1027" />
+                        <ColumnReference Column="partialagg1029" />
+                      </OutputList>
+                      <MemoryFractions Input="0.6" Output="1" />
+                      <RunTimeInformation>
+                        <RunTimeCountersPerThread Thread="0" ActualRows="40" Batches="0" ActualElapsedms="1488" ActualCPUms="0" ActualScans="0" ActualLogicalReads="0" ActualPhysicalReads="0" ActualReadAheads="0" ActualLobLogicalReads="0" ActualLobPhysicalReads="0" ActualLobReadAheads="0" ActualRebinds="1" ActualRewinds="0" ActualEndOfScans="1" ActualExecutions="1" InputMemoryGrant="512" OutputMemoryGrant="136" UsedMemoryGrant="24" ActualExecutionMode="Row" />
+                      </RunTimeInformation>
+                      <Sort Distinct="0">
+                        <OrderBy>
+                          <OrderByColumn Ascending="1">
+                            <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[lineitem]" Column="l_returnflag" />
+                          </OrderByColumn>
+                          <OrderByColumn Ascending="1">
+                            <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[lineitem]" Column="l_linestatus" />
+                          </OrderByColumn>
+                        </OrderBy>
+                        <RelOp NodeId="4" PhysicalOp="Parallelism" LogicalOp="Gather Streams" EstimateRows="30" EstimateIO="0" EstimateCPU="0.0286661" AvgRowSize="301" EstimatedTotalSubtreeCost="81.4539" Parallel="1" EstimateRebinds="0" EstimateRewinds="0" EstimatedExecutionMode="Row">
+                          <OutputList>
+                            <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[lineitem]" Column="l_returnflag" />
+                            <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[lineitem]" Column="l_linestatus" />
+                            <ColumnReference Column="partialagg1013" />
+                            <ColumnReference Column="partialagg1014" />
+                            <ColumnReference Column="partialagg1015" />
+                            <ColumnReference Column="partialagg1016" />
+                            <ColumnReference Column="partialagg1017" />
+                            <ColumnReference Column="partialagg1019" />
+                            <ColumnReference Column="partialagg1021" />
+                            <ColumnReference Column="partialagg1023" />
+                            <ColumnReference Column="partialagg1025" />
+                            <ColumnReference Column="partialagg1027" />
+                            <ColumnReference Column="partialagg1029" />
+                          </OutputList>
+                          <RunTimeInformation>
+                            <RunTimeCountersPerThread Thread="0" ActualRows="40" Batches="0" ActualElapsedms="1488" ActualCPUms="0" ActualEndOfScans="1" ActualExecutions="1" ActualExecutionMode="Row" />
+                          </RunTimeInformation>
+                          <Parallelism>
+                            <RelOp NodeId="5" PhysicalOp="Compute Scalar" LogicalOp="Compute Scalar" EstimateRows="30" EstimateIO="0" EstimateCPU="0" AvgRowSize="301" EstimatedTotalSubtreeCost="81.4253" Parallel="1" EstimateRebinds="0" EstimateRewinds="0" EstimatedExecutionMode="Row">
+                              <OutputList>
+                                <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[lineitem]" Column="l_returnflag" />
+                                <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[lineitem]" Column="l_linestatus" />
+                                <ColumnReference Column="partialagg1013" />
+                                <ColumnReference Column="partialagg1014" />
+                                <ColumnReference Column="partialagg1015" />
+                                <ColumnReference Column="partialagg1016" />
+                                <ColumnReference Column="partialagg1017" />
+                                <ColumnReference Column="partialagg1019" />
+                                <ColumnReference Column="partialagg1021" />
+                                <ColumnReference Column="partialagg1023" />
+                                <ColumnReference Column="partialagg1025" />
+                                <ColumnReference Column="partialagg1027" />
+                                <ColumnReference Column="partialagg1029" />
+                              </OutputList>
+                              <ComputeScalar>
+                                <DefinedValues>
+                                  <DefinedValue>
+                                    <ColumnReference Column="partialagg1019" />
+                                    <ScalarOperator ScalarString="[partialagg1013]">
+                                      <Identifier>
+                                        <ColumnReference Column="partialagg1013" />
+                                      </Identifier>
+                                    </ScalarOperator>
+                                  </DefinedValue>
+                                  <DefinedValue>
+                                    <ColumnReference Column="partialagg1021" />
+                                    <ScalarOperator ScalarString="[partialagg1017]">
+                                      <Identifier>
+                                        <ColumnReference Column="partialagg1017" />
+                                      </Identifier>
+                                    </ScalarOperator>
+                                  </DefinedValue>
+                                  <DefinedValue>
+                                    <ColumnReference Column="partialagg1023" />
+                                    <ScalarOperator ScalarString="[partialagg1014]">
+                                      <Identifier>
+                                        <ColumnReference Column="partialagg1014" />
+                                      </Identifier>
+                                    </ScalarOperator>
+                                  </DefinedValue>
+                                  <DefinedValue>
+                                    <ColumnReference Column="partialagg1025" />
+                                    <ScalarOperator ScalarString="[partialagg1017]">
+                                      <Identifier>
+                                        <ColumnReference Column="partialagg1017" />
+                                      </Identifier>
+                                    </ScalarOperator>
+                                  </DefinedValue>
+                                  <DefinedValue>
+                                    <ColumnReference Column="partialagg1029" />
+                                    <ScalarOperator ScalarString="[partialagg1017]">
+                                      <Identifier>
+                                        <ColumnReference Column="partialagg1017" />
+                                      </Identifier>
+                                    </ScalarOperator>
+                                  </DefinedValue>
+                                </DefinedValues>
+                                <RelOp NodeId="6" PhysicalOp="Hash Match" LogicalOp="Aggregate" EstimateRows="30" EstimateIO="0" EstimateCPU="8.68935" AvgRowSize="301" EstimatedTotalSubtreeCost="81.4253" Parallel="1" EstimateRebinds="0" EstimateRewinds="0" EstimatedExecutionMode="Row">
+                                  <OutputList>
+                                    <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[lineitem]" Column="l_returnflag" />
+                                    <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[lineitem]" Column="l_linestatus" />
+                                    <ColumnReference Column="partialagg1013" />
+                                    <ColumnReference Column="partialagg1014" />
+                                    <ColumnReference Column="partialagg1015" />
+                                    <ColumnReference Column="partialagg1016" />
+                                    <ColumnReference Column="partialagg1017" />
+                                    <ColumnReference Column="partialagg1027" />
+                                  </OutputList>
+                                  <MemoryFractions Input="1" Output="0.4" />
+                                  <RunTimeInformation>
+                                    <RunTimeCountersPerThread Thread="10" ActualRows="4" Batches="0" ActualElapsedms="1436" ActualCPUms="1436" ActualScans="0" ActualLogicalReads="0" ActualPhysicalReads="0" ActualReadAheads="0" ActualLobLogicalReads="0" ActualLobPhysicalReads="0" ActualLobReadAheads="0" ActualEndOfScans="1" ActualExecutions="1" InputMemoryGrant="1032" OutputMemoryGrant="1024" UsedMemoryGrant="176" ActualExecutionMode="Row" />
+                                    <RunTimeCountersPerThread Thread="9" ActualRows="4" Batches="0" ActualElapsedms="1487" ActualCPUms="1486" ActualScans="0" ActualLogicalReads="0" ActualPhysicalReads="0" ActualReadAheads="0" ActualLobLogicalReads="0" ActualLobPhysicalReads="0" ActualLobReadAheads="0" ActualEndOfScans="1" ActualExecutions="1" InputMemoryGrant="1032" OutputMemoryGrant="1024" UsedMemoryGrant="176" ActualExecutionMode="Row" />
+                                    <RunTimeCountersPerThread Thread="8" ActualRows="4" Batches="0" ActualElapsedms="1476" ActualCPUms="1476" ActualScans="0" ActualLogicalReads="0" ActualPhysicalReads="0" ActualReadAheads="0" ActualLobLogicalReads="0" ActualLobPhysicalReads="0" ActualLobReadAheads="0" ActualEndOfScans="1" ActualExecutions="1" InputMemoryGrant="1032" OutputMemoryGrant="1024" UsedMemoryGrant="176" ActualExecutionMode="Row" />
+                                    <RunTimeCountersPerThread Thread="7" ActualRows="4" Batches="0" ActualElapsedms="1451" ActualCPUms="1451" ActualScans="0" ActualLogicalReads="0" ActualPhysicalReads="0" ActualReadAheads="0" ActualLobLogicalReads="0" ActualLobPhysicalReads="0" ActualLobReadAheads="0" ActualEndOfScans="1" ActualExecutions="1" InputMemoryGrant="1032" OutputMemoryGrant="1024" UsedMemoryGrant="176" ActualExecutionMode="Row" />
+                                    <RunTimeCountersPerThread Thread="6" ActualRows="4" Batches="0" ActualElapsedms="1441" ActualCPUms="1441" ActualScans="0" ActualLogicalReads="0" ActualPhysicalReads="0" ActualReadAheads="0" ActualLobLogicalReads="0" ActualLobPhysicalReads="0" ActualLobReadAheads="0" ActualEndOfScans="1" ActualExecutions="1" InputMemoryGrant="1032" OutputMemoryGrant="1024" UsedMemoryGrant="176" ActualExecutionMode="Row" />
+                                    <RunTimeCountersPerThread Thread="5" ActualRows="4" Batches="0" ActualElapsedms="1473" ActualCPUms="1473" ActualScans="0" ActualLogicalReads="0" ActualPhysicalReads="0" ActualReadAheads="0" ActualLobLogicalReads="0" ActualLobPhysicalReads="0" ActualLobReadAheads="0" ActualEndOfScans="1" ActualExecutions="1" InputMemoryGrant="1032" OutputMemoryGrant="1024" UsedMemoryGrant="176" ActualExecutionMode="Row" />
+                                    <RunTimeCountersPerThread Thread="4" ActualRows="4" Batches="0" ActualElapsedms="1463" ActualCPUms="1463" ActualScans="0" ActualLogicalReads="0" ActualPhysicalReads="0" ActualReadAheads="0" ActualLobLogicalReads="0" ActualLobPhysicalReads="0" ActualLobReadAheads="0" ActualEndOfScans="1" ActualExecutions="1" InputMemoryGrant="1032" OutputMemoryGrant="1024" UsedMemoryGrant="176" ActualExecutionMode="Row" />
+                                    <RunTimeCountersPerThread Thread="3" ActualRows="4" Batches="0" ActualElapsedms="1441" ActualCPUms="1441" ActualScans="0" ActualLogicalReads="0" ActualPhysicalReads="0" ActualReadAheads="0" ActualLobLogicalReads="0" ActualLobPhysicalReads="0" ActualLobReadAheads="0" ActualEndOfScans="1" ActualExecutions="1" InputMemoryGrant="1032" OutputMemoryGrant="1024" UsedMemoryGrant="176" ActualExecutionMode="Row" />
+                                    <RunTimeCountersPerThread Thread="2" ActualRows="4" Batches="0" ActualElapsedms="1429" ActualCPUms="1428" ActualScans="0" ActualLogicalReads="0" ActualPhysicalReads="0" ActualReadAheads="0" ActualLobLogicalReads="0" ActualLobPhysicalReads="0" ActualLobReadAheads="0" ActualEndOfScans="1" ActualExecutions="1" InputMemoryGrant="1032" OutputMemoryGrant="1024" UsedMemoryGrant="176" ActualExecutionMode="Row" />
+                                    <RunTimeCountersPerThread Thread="1" ActualRows="4" Batches="0" ActualElapsedms="1484" ActualCPUms="1483" ActualScans="0" ActualLogicalReads="0" ActualPhysicalReads="0" ActualReadAheads="0" ActualLobLogicalReads="0" ActualLobPhysicalReads="0" ActualLobReadAheads="0" ActualEndOfScans="1" ActualExecutions="1" InputMemoryGrant="1032" OutputMemoryGrant="1024" UsedMemoryGrant="176" ActualExecutionMode="Row" />
+                                    <RunTimeCountersPerThread Thread="0" ActualRows="0" Batches="0" ActualElapsedms="0" ActualCPUms="0" ActualScans="0" ActualLogicalReads="0" ActualPhysicalReads="0" ActualReadAheads="0" ActualLobLogicalReads="0" ActualLobPhysicalReads="0" ActualLobReadAheads="0" ActualEndOfScans="0" ActualExecutions="0" InputMemoryGrant="0" OutputMemoryGrant="0" UsedMemoryGrant="0" ActualExecutionMode="Row" />
+                                  </RunTimeInformation>
+                                  <Hash>
+                                    <DefinedValues>
+                                      <DefinedValue>
+                                        <ColumnReference Column="partialagg1013" />
+                                        <ScalarOperator ScalarString="SUM([dbprove].[tpch_sf1].[lineitem].[l_quantity])">
+                                          <Aggregate Distinct="0" AggType="SUM">
+                                            <ScalarOperator>
+                                              <Identifier>
+                                                <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[lineitem]" Column="l_quantity" />
+                                              </Identifier>
+                                            </ScalarOperator>
+                                          </Aggregate>
+                                        </ScalarOperator>
+                                      </DefinedValue>
+                                      <DefinedValue>
+                                        <ColumnReference Column="partialagg1014" />
+                                        <ScalarOperator ScalarString="SUM([dbprove].[tpch_sf1].[lineitem].[l_extendedprice])">
+                                          <Aggregate Distinct="0" AggType="SUM">
+                                            <ScalarOperator>
+                                              <Identifier>
+                                                <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[lineitem]" Column="l_extendedprice" />
+                                              </Identifier>
+                                            </ScalarOperator>
+                                          </Aggregate>
+                                        </ScalarOperator>
+                                      </DefinedValue>
+                                      <DefinedValue>
+                                        <ColumnReference Column="partialagg1015" />
+                                        <ScalarOperator ScalarString="SUM([Expr1011])">
+                                          <Aggregate Distinct="0" AggType="SUM">
+                                            <ScalarOperator>
+                                              <Identifier>
+                                                <ColumnReference Column="Expr1011" />
+                                              </Identifier>
+                                            </ScalarOperator>
+                                          </Aggregate>
+                                        </ScalarOperator>
+                                      </DefinedValue>
+                                      <DefinedValue>
+                                        <ColumnReference Column="partialagg1016" />
+                                        <ScalarOperator ScalarString="SUM([Expr1012])">
+                                          <Aggregate Distinct="0" AggType="SUM">
+                                            <ScalarOperator>
+                                              <Identifier>
+                                                <ColumnReference Column="Expr1012" />
+                                              </Identifier>
+                                            </ScalarOperator>
+                                          </Aggregate>
+                                        </ScalarOperator>
+                                      </DefinedValue>
+                                      <DefinedValue>
+                                        <ColumnReference Column="partialagg1017" />
+                                        <ScalarOperator ScalarString="COUNT(*)">
+                                          <Aggregate Distinct="0" AggType="COUNT*" />
+                                        </ScalarOperator>
+                                      </DefinedValue>
+                                      <DefinedValue>
+                                        <ColumnReference Column="partialagg1027" />
+                                        <ScalarOperator ScalarString="SUM([dbprove].[tpch_sf1].[lineitem].[l_discount])">
+                                          <Aggregate Distinct="0" AggType="SUM">
+                                            <ScalarOperator>
+                                              <Identifier>
+                                                <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[lineitem]" Column="l_discount" />
+                                              </Identifier>
+                                            </ScalarOperator>
+                                          </Aggregate>
+                                        </ScalarOperator>
+                                      </DefinedValue>
+                                    </DefinedValues>
+                                    <HashKeysBuild>
+                                      <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[lineitem]" Column="l_returnflag" />
+                                      <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[lineitem]" Column="l_linestatus" />
+                                    </HashKeysBuild>
+                                    <BuildResidual>
+                                      <ScalarOperator ScalarString="[dbprove].[tpch_sf1].[lineitem].[l_returnflag] = [dbprove].[tpch_sf1].[lineitem].[l_returnflag] AND [dbprove].[tpch_sf1].[lineitem].[l_linestatus] = [dbprove].[tpch_sf1].[lineitem].[l_linestatus]">
+                                        <Logical Operation="AND">
+                                          <ScalarOperator>
+                                            <Compare CompareOp="IS">
+                                              <ScalarOperator>
+                                                <Identifier>
+                                                  <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[lineitem]" Column="l_returnflag" />
+                                                </Identifier>
+                                              </ScalarOperator>
+                                              <ScalarOperator>
+                                                <Identifier>
+                                                  <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[lineitem]" Column="l_returnflag" />
+                                                </Identifier>
+                                              </ScalarOperator>
+                                            </Compare>
+                                          </ScalarOperator>
+                                          <ScalarOperator>
+                                            <Compare CompareOp="IS">
+                                              <ScalarOperator>
+                                                <Identifier>
+                                                  <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[lineitem]" Column="l_linestatus" />
+                                                </Identifier>
+                                              </ScalarOperator>
+                                              <ScalarOperator>
+                                                <Identifier>
+                                                  <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[lineitem]" Column="l_linestatus" />
+                                                </Identifier>
+                                              </ScalarOperator>
+                                            </Compare>
+                                          </ScalarOperator>
+                                        </Logical>
+                                      </ScalarOperator>
+                                    </BuildResidual>
+                                    <RelOp NodeId="7" PhysicalOp="Compute Scalar" LogicalOp="Compute Scalar" EstimateRows="5.95786e+06" EstimateIO="0" EstimateCPU="0.120024" AvgRowSize="213" EstimatedTotalSubtreeCost="72.1598" Parallel="1" EstimateRebinds="0" EstimateRewinds="0" EstimatedExecutionMode="Row">
+                                      <OutputList>
+                                        <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[lineitem]" Column="l_quantity" />
+                                        <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[lineitem]" Column="l_extendedprice" />
+                                        <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[lineitem]" Column="l_discount" />
+                                        <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[lineitem]" Column="l_returnflag" />
+                                        <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[lineitem]" Column="l_linestatus" />
+                                        <ColumnReference Column="Expr1011" />
+                                        <ColumnReference Column="Expr1012" />
+                                      </OutputList>
+                                      <ComputeScalar>
+                                        <DefinedValues>
+                                          <DefinedValue>
+                                            <ColumnReference Column="Expr1011" />
+                                            <ScalarOperator ScalarString="[dbprove].[tpch_sf1].[lineitem].[l_extendedprice]*((1.)-[dbprove].[tpch_sf1].[lineitem].[l_discount])">
+                                              <Arithmetic Operation="MULT">
+                                                <ScalarOperator>
+                                                  <Identifier>
+                                                    <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[lineitem]" Column="l_extendedprice" />
+                                                  </Identifier>
+                                                </ScalarOperator>
+                                                <ScalarOperator>
+                                                  <Arithmetic Operation="SUB">
+                                                    <ScalarOperator>
+                                                      <Const ConstValue="(1.)" />
+                                                    </ScalarOperator>
+                                                    <ScalarOperator>
+                                                      <Identifier>
+                                                        <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[lineitem]" Column="l_discount" />
+                                                      </Identifier>
+                                                    </ScalarOperator>
+                                                  </Arithmetic>
+                                                </ScalarOperator>
+                                              </Arithmetic>
+                                            </ScalarOperator>
+                                          </DefinedValue>
+                                          <DefinedValue>
+                                            <ColumnReference Column="Expr1012" />
+                                            <ScalarOperator ScalarString="[dbprove].[tpch_sf1].[lineitem].[l_extendedprice]*((1.)-[dbprove].[tpch_sf1].[lineitem].[l_discount])*((1.)+[dbprove].[tpch_sf1].[lineitem].[l_tax])">
+                                              <Arithmetic Operation="MULT">
+                                                <ScalarOperator>
+                                                  <Arithmetic Operation="MULT">
+                                                    <ScalarOperator>
+                                                      <Identifier>
+                                                        <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[lineitem]" Column="l_extendedprice" />
+                                                      </Identifier>
+                                                    </ScalarOperator>
+                                                    <ScalarOperator>
+                                                      <Arithmetic Operation="SUB">
+                                                        <ScalarOperator>
+                                                          <Const ConstValue="(1.)" />
+                                                        </ScalarOperator>
+                                                        <ScalarOperator>
+                                                          <Identifier>
+                                                            <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[lineitem]" Column="l_discount" />
+                                                          </Identifier>
+                                                        </ScalarOperator>
+                                                      </Arithmetic>
+                                                    </ScalarOperator>
+                                                  </Arithmetic>
+                                                </ScalarOperator>
+                                                <ScalarOperator>
+                                                  <Arithmetic Operation="ADD">
+                                                    <ScalarOperator>
+                                                      <Const ConstValue="(1.)" />
+                                                    </ScalarOperator>
+                                                    <ScalarOperator>
+                                                      <Identifier>
+                                                        <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[lineitem]" Column="l_tax" />
+                                                      </Identifier>
+                                                    </ScalarOperator>
+                                                  </Arithmetic>
+                                                </ScalarOperator>
+                                              </Arithmetic>
+                                            </ScalarOperator>
+                                          </DefinedValue>
+                                        </DefinedValues>
+                                        <RelOp NodeId="8" PhysicalOp="Table Scan" LogicalOp="Table Scan" EstimateRows="5.95786e+06" EstimatedRowsRead="6.00122e+06" EstimateIO="70.7195" EstimateCPU="1.32028" AvgRowSize="188" EstimatedTotalSubtreeCost="72.0398" TableCardinality="6.00122e+06" Parallel="1" EstimateRebinds="0" EstimateRewinds="0" EstimatedExecutionMode="Row">
+                                          <OutputList>
+                                            <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[lineitem]" Column="l_quantity" />
+                                            <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[lineitem]" Column="l_extendedprice" />
+                                            <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[lineitem]" Column="l_discount" />
+                                            <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[lineitem]" Column="l_tax" />
+                                            <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[lineitem]" Column="l_returnflag" />
+                                            <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[lineitem]" Column="l_linestatus" />
+                                          </OutputList>
+                                          <RunTimeInformation>
+                                            <RunTimeCountersPerThread Thread="10" ActualRows="575521" Batches="0" ActualElapsedms="327" ActualCPUms="327" ActualScans="1" ActualLogicalReads="9216" ActualPhysicalReads="0" ActualReadAheads="0" ActualLobLogicalReads="0" ActualLobPhysicalReads="0" ActualLobReadAheads="0" ActualRowsRead="579415" ActualEndOfScans="1" ActualExecutions="1" ActualExecutionMode="Row" />
+                                            <RunTimeCountersPerThread Thread="9" ActualRows="631501" Batches="0" ActualElapsedms="340" ActualCPUms="339" ActualScans="1" ActualLogicalReads="10112" ActualPhysicalReads="0" ActualReadAheads="0" ActualLobLogicalReads="0" ActualLobPhysicalReads="0" ActualLobReadAheads="0" ActualRowsRead="635634" ActualEndOfScans="1" ActualExecutions="1" ActualExecutionMode="Row" />
+                                            <RunTimeCountersPerThread Thread="8" ActualRows="599748" Batches="0" ActualElapsedms="344" ActualCPUms="344" ActualScans="1" ActualLogicalReads="9600" ActualPhysicalReads="0" ActualReadAheads="0" ActualLobLogicalReads="0" ActualLobPhysicalReads="0" ActualLobReadAheads="0" ActualRowsRead="603541" ActualEndOfScans="1" ActualExecutions="1" ActualExecutionMode="Row" />
+                                            <RunTimeCountersPerThread Thread="7" ActualRows="591519" Batches="0" ActualElapsedms="330" ActualCPUms="329" ActualScans="1" ActualLogicalReads="9472" ActualPhysicalReads="0" ActualReadAheads="0" ActualLobLogicalReads="0" ActualLobPhysicalReads="0" ActualLobReadAheads="0" ActualRowsRead="595475" ActualEndOfScans="1" ActualExecutions="1" ActualExecutionMode="Row" />
+                                            <RunTimeCountersPerThread Thread="6" ActualRows="646224" Batches="0" ActualElapsedms="328" ActualCPUms="328" ActualScans="1" ActualLogicalReads="10348" ActualPhysicalReads="0" ActualReadAheads="0" ActualLobLogicalReads="0" ActualLobPhysicalReads="0" ActualLobReadAheads="0" ActualRowsRead="650419" ActualEndOfScans="1" ActualExecutions="1" ActualExecutionMode="Row" />
+                                            <RunTimeCountersPerThread Thread="5" ActualRows="623480" Batches="0" ActualElapsedms="332" ActualCPUms="332" ActualScans="1" ActualLogicalReads="9984" ActualPhysicalReads="0" ActualReadAheads="0" ActualLobLogicalReads="0" ActualLobPhysicalReads="0" ActualLobReadAheads="0" ActualRowsRead="627575" ActualEndOfScans="1" ActualExecutions="1" ActualExecutionMode="Row" />
+                                            <RunTimeCountersPerThread Thread="4" ActualRows="567618" Batches="0" ActualElapsedms="345" ActualCPUms="345" ActualScans="1" ActualLogicalReads="9088" ActualPhysicalReads="0" ActualReadAheads="0" ActualLobLogicalReads="0" ActualLobPhysicalReads="0" ActualLobReadAheads="0" ActualRowsRead="571380" ActualEndOfScans="1" ActualExecutions="1" ActualExecutionMode="Row" />
+                                            <RunTimeCountersPerThread Thread="3" ActualRows="559421" Batches="0" ActualElapsedms="331" ActualCPUms="331" ActualScans="1" ActualLogicalReads="8960" ActualPhysicalReads="0" ActualReadAheads="0" ActualLobLogicalReads="0" ActualLobPhysicalReads="0" ActualLobReadAheads="0" ActualRowsRead="563180" ActualEndOfScans="1" ActualExecutions="1" ActualExecutionMode="Row" />
+                                            <RunTimeCountersPerThread Thread="2" ActualRows="543819" Batches="0" ActualElapsedms="323" ActualCPUms="323" ActualScans="1" ActualLogicalReads="8704" ActualPhysicalReads="0" ActualReadAheads="0" ActualLobLogicalReads="0" ActualLobPhysicalReads="0" ActualLobReadAheads="0" ActualRowsRead="547154" ActualEndOfScans="1" ActualExecutions="1" ActualExecutionMode="Row" />
+                                            <RunTimeCountersPerThread Thread="1" ActualRows="623295" Batches="0" ActualElapsedms="343" ActualCPUms="343" ActualScans="1" ActualLogicalReads="9984" ActualPhysicalReads="0" ActualReadAheads="0" ActualLobLogicalReads="0" ActualLobPhysicalReads="0" ActualLobReadAheads="0" ActualRowsRead="627442" ActualEndOfScans="1" ActualExecutions="1" ActualExecutionMode="Row" />
+                                            <RunTimeCountersPerThread Thread="0" ActualRows="0" Batches="0" ActualElapsedms="0" ActualCPUms="0" ActualScans="1" ActualLogicalReads="0" ActualPhysicalReads="0" ActualReadAheads="0" ActualLobLogicalReads="0" ActualLobPhysicalReads="0" ActualLobReadAheads="0" ActualEndOfScans="0" ActualExecutions="0" ActualExecutionMode="Row" />
+                                          </RunTimeInformation>
+                                          <TableScan Ordered="0" ForcedIndex="0" ForceScan="0" NoExpandHint="0" Storage="RowStore">
+                                            <DefinedValues>
+                                              <DefinedValue>
+                                                <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[lineitem]" Column="l_quantity" />
+                                              </DefinedValue>
+                                              <DefinedValue>
+                                                <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[lineitem]" Column="l_extendedprice" />
+                                              </DefinedValue>
+                                              <DefinedValue>
+                                                <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[lineitem]" Column="l_discount" />
+                                              </DefinedValue>
+                                              <DefinedValue>
+                                                <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[lineitem]" Column="l_tax" />
+                                              </DefinedValue>
+                                              <DefinedValue>
+                                                <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[lineitem]" Column="l_returnflag" />
+                                              </DefinedValue>
+                                              <DefinedValue>
+                                                <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[lineitem]" Column="l_linestatus" />
+                                              </DefinedValue>
+                                            </DefinedValues>
+                                            <Object Database="[dbprove]" Schema="[tpch_sf1]" Table="[lineitem]" IndexKind="Heap" Storage="RowStore" />
+                                            <Predicate>
+                                              <ScalarOperator ScalarString="[dbprove].[tpch_sf1].[lineitem].[l_shipdate]&lt;='1998-10-01'">
+                                                <Compare CompareOp="LE">
+                                                  <ScalarOperator>
+                                                    <Identifier>
+                                                      <ColumnReference Database="[dbprove]" Schema="[tpch_sf1]" Table="[lineitem]" Column="l_shipdate" />
+                                                    </Identifier>
+                                                  </ScalarOperator>
+                                                  <ScalarOperator>
+                                                    <Const ConstValue="'1998-10-01'" />
+                                                  </ScalarOperator>
+                                                </Compare>
+                                              </ScalarOperator>
+                                            </Predicate>
+                                          </TableScan>
+                                        </RelOp>
+                                      </ComputeScalar>
+                                    </RelOp>
+                                  </Hash>
+                                </RelOp>
+                              </ComputeScalar>
+                            </RelOp>
+                          </Parallelism>
+                        </RelOp>
+                      </Sort>
+                    </RelOp>
+                  </StreamAggregate>
+                </RelOp>
+              </ComputeScalar>
+            </RelOp>
+          </QueryPlan>
+        </StmtSimple>
+      </Statements>
+    </Batch>
+  </BatchSequence>
+</ShowPlanXML>

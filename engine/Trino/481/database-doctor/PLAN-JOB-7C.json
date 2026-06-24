@@ -1,0 +1,110 @@
+{
+  "engine": "Trino",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 1,
+          "+8x": 1,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 2,
+          ">16x": 2
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 8,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 0,
+        "distribute": 2863498,
+        "hash": 29773566,
+        "join": 63840507,
+        "scan": 46835282,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         ∞  PROJECT min AS cast_member_name, min_42 AS cast_member_info\n       1         ∞  AGGREGATE MIN(min_43) AS min, MIN(min_44) AS min_42\n       -         ∞  DISTRIBUTE GATHER\n       -         ∞  AGGREGATE MIN(name_19) AS min_43, MIN(info_30) AS min_44\n       -         ∞  INNER JOIN HASH ON movie_id = id_35\n  530118   1555597  │└DISTRIBUTE HASH ON id_35\n 2528312   1555597  │ PROJECT id AS id_35\n 2528312   1555597  │ FILTER production_year BETWEEN 1980 AND 2010\n 2528312   2528312  │ TABLE SCAN title\n       -         ∞  INNER JOIN HASH ON info_type_id = id_5\n       -         1  │└DISTRIBUTE GATHER\n     113         1  │ PROJECT id AS id_5\n     113         1  │ FILTER info = 'mini biography'\n     113       113  │ TABLE SCAN info_type\n       -         ∞  INNER JOIN HASH ON person_id_1 = person_id_29\n   84183     84183  │└DISTRIBUTE HASH ON person_id_29\n 2963664     84183  │ PROJECT person_id AS person_id_29, info_type_id, info AS info_30\n 2963664     84183  │ FILTER  NOT (note IS NULL)\n 2963664   2963664  │ TABLE SCAN person_info\n       -         ∞  INNER JOIN HASH ON person_id_1 = id_18\n 3750741    507621  │└DISTRIBUTE HASH ON id_18\n 4167491    507621  │ PROJECT id AS id_18, name AS name_19\n 4167491    507621  │ FILTER (gender IN('f','m')) AND (name_pcode_cf BETWEEN 'A' AND 'F') AND ((gender = 'm') OR ((gender = 'f') AND (name LIKE 'A%')))\n 4167491   4167491  │ TABLE SCAN name\n       -         ∞  INNER JOIN HASH ON link_type_id = id_9\n       -         4  │└DISTRIBUTE GATHER\n      18         4  │ PROJECT id AS id_9\n      18         4  │ FILTER link IN('featured in','features','referenced in','references')\n      18        18  │ TABLE SCAN link_type\n       -         ∞  INNER JOIN HASH ON movie_id = linked_movie_id\n   29997     29997  │└DISTRIBUTE GATHER\n   29997     29997  │ TABLE SCAN movie_link\n       -  27596163  INNER JOIN HASH ON person_id_1 = person_id\n  811208    686095  │└DISTRIBUTE GATHER\n  901343    686095  │ FILTER  NOT (name IS NULL) AND ((name LIKE '%a%') OR (name LIKE 'A%'))\n  901343    901343  │ TABLE SCAN aka_name\n36244344  36244344  PROJECT person_id AS person_id_1, movie_id\n36244344  36244344  TABLE SCAN cast_info\n",
+      "sql": "SELECT MIN(n.name) AS cast_member_name,\n       MIN(pi.info) AS cast_member_info\nFROM job.aka_name AS an,\n     job.cast_info AS ci,\n     job.info_type AS it,\n     job.link_type AS lt,\n     job.movie_link AS ml,\n     job.name AS n,\n     job.person_info AS pi,\n     job.title AS t\nWHERE an.name IS NOT NULL\n  AND (an.name LIKE '%a%'\n       OR an.name LIKE 'A%')\n  AND it.info ='mini biography'\n  AND lt.link IN ('references',\n                  'referenced in',\n                  'features',\n                  'featured in')\n  AND n.name_pcode_cf BETWEEN 'A' AND 'F'\n  AND (n.gender='m'\n       OR (n.gender = 'f'\n           AND n.name LIKE 'A%'))\n  AND pi.note IS NOT NULL\n  AND t.production_year BETWEEN 1980 AND 2010\n  AND n.id = an.person_id\n  AND n.id = pi.person_id\n  AND ci.person_id = n.id\n  AND t.id = ci.movie_id\n  AND ml.linked_movie_id = t.id\n  AND lt.id = ml.link_type_id\n  AND it.id = pi.info_type_id\n  AND pi.person_id = an.person_id\n  AND pi.person_id = ci.person_id\n  AND an.person_id = ci.person_id\n  AND ci.movie_id = ml.linked_movie_id;\n",
+      "startTime": "2026-06-23T15:35:19.324161Z",
+      "status": "OK",
+      "timeMs": 3470.886
+    }
+  ],
+  "runtime": {
+    "avgMs": 3470.886,
+    "bestMs": 3470.886,
+    "maxMs": 3470.886,
+    "minMs": 3470.886,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "iceberg",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 7C Analysis",
+    "displayName": "JOB-7C",
+    "name": "PLAN-JOB-7C",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "481"
+}

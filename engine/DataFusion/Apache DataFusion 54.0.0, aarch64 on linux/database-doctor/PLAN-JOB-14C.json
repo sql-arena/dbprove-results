@@ -1,0 +1,110 @@
+{
+  "engine": "DataFusion",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 1
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 1,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 2,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 3
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 1,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 1,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 2,
+          ">16x": 3
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 2,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 1,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 2,
+          ">16x": 1
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 1,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 8,
+          ">16x": 1
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 4125,
+        "distribute": 6844441,
+        "hash": 4513696,
+        "join": 9717727,
+        "scan": 9922505,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  PROJECT rating, north_european_dark_production\n       1         1  AGGREGATE MIN(info), MIN(title)\n   28246        10  DISTRIBUTE GATHER\n   28246        10  AGGREGATE MIN(info), MIN(title)\n   28246      4115  INNER JOIN HASH ON id = kind_id\n       2         2  │└DISTRIBUTE GATHER\n       2         2  │ FILTER (kind = 'movie') OR (kind = 'episode')\n       7         7  │ DISTRIBUTE ROUND ROBIN\n       7         7  │ TABLE SCAN kind_type WHERE (kind = 'movie') OR (kind = 'episode')\n   98863      5131  INNER JOIN HASH ON movie_id = id AND movie_id = id AND movie_id = id\n   98863     20967  │└DISTRIBUTE GATHER\n   98863     20967  │ INNER JOIN HASH ON id = keyword_id\n   26834         3  │ │└DISTRIBUTE GATHER\n   26834         3  │ │ FILTER keyword IS NOT NULL AND keyword IN('murder','murder-in-title','blood','violence')\n  134170    134170  │ │ DISTRIBUTE ROUND ROBIN\n  134170    134170  │ │ TABLE SCAN keyword WHERE keyword IS NOT NULL AND keyword IN('murder','murder-in-title','blood','violence')\n  494319   2302523  │ INNER JOIN HASH ON movie_id = movie_id AND movie_id = movie_id\n  276007    213239  │ │└DISTRIBUTE HASH ON movie_id, movie_id\n  276007    213239  │ │ INNER JOIN HASH ON id = info_type_id\n      23         1  │ │ │└DISTRIBUTE GATHER\n      23         1  │ │ │ FILTER info = 'rating'\n     113       113  │ │ │ DISTRIBUTE ROUND ROBIN\n     113       113  │ │ │ TABLE SCAN info_type WHERE info = 'rating'\n  276007    629486  │ │ PROJECT movie_id, movie_id, info_type_id, info\n  276007    629486  │ │ INNER JOIN HASH ON movie_id = movie_id\n  276007   1337634  │ │ │└DISTRIBUTE HASH ON movie_id\n  276007   1337634  │ │ │ FILTER info < '8.5'\n 1380035   1380035  │ │ │ TABLE SCAN movie_info_idx WHERE (info < '8.5') AND (((info_type_id >= 101) AND (info_type_id <= 101)) AND info_type_id IN 101)\n  620402    614251  │ │ DISTRIBUTE HASH ON movie_id\n  620402    614251  │ │ INNER JOIN HASH ON id = info_type_id\n      23         1  │ │ │└DISTRIBUTE GATHER\n      23         1  │ │ │ FILTER info = 'countries'\n     113       113  │ │ │ DISTRIBUTE ROUND ROBIN\n     113       113  │ │ │ TABLE SCAN info_type WHERE info = 'countries'\n 2967144    614251  │ │ FILTER info IN('Sweden','Norway','Germany','Denmark','Swedish','Danish','Norwegian','German','USA','American')\n14835720   1355825  │ │ TABLE SCAN movie_info WHERE (info IN('Sweden','Norway','Germany','Denmark','Swedish','Danish','Norwegian','German','USA','American') AND (((info_type_id >= 8) AND (info_type_id <= 8)) AND info_type_id IN 8)) AND CASE MOD(HASH_REPARTITION movie_id,10) WHEN 0 THEN (((movie_id >= 67) AND (movie_id <= 2525666)) AND TRUE) WHEN 1 THEN (((movie_id >= 63) AND (movie_id <= 2525670)) AND TRUE) WHEN 2 THEN (((movie_id >= 24) AND (movie_id <= 2525791)) AND TRUE) WHEN 3 THEN ((...\n 4523930   4523930  │ DISTRIBUTE HASH ON movie_id, movie_id\n 4523930   4523930  │ TABLE SCAN movie_keyword WHERE CASE MOD(HASH_REPARTITION(movie_id,movie_id),10) WHEN 1 THEN ((((movie_id >= 57) AND (movie_id <= 2525790)) AND ((movie_id >= 57) AND (movie_id <= 2525790))) AND TRUE) WHEN 3 THEN ((((movie_id >= 51) AND (movie_id <= 2525784)) AND ((movie_id >= 51) AND (movie_id <= 2525784))) AND TRUE) WHEN 5 THEN ((((movie_id >= 52) AND (movie_id <= 2525792)) AND ((movie_id >= 52) AND (movie_id <= 2525792))) AND TRUE) WHEN 7 THEN ((((movie_id >= 24) AND ...\n  252832   1012920  FILTER production_year > 2005\n 2528312   2528312  TABLE SCAN title WHERE ((production_year > 2005) AND (((((id >= 581) AND (id <= 2525471)) AND ((id >= 581) AND (id <= 2525471))) AND ((id >= 581) AND (id <= 2525471))) AND TRUE)) AND (((kind_id >= 1) AND (kind_id <= 7)) AND kind_id IN(1,7))\n",
+      "sql": "SELECT MIN(mi_idx.info) AS rating,\n       MIN(t.title) AS north_european_dark_production\nFROM job.info_type AS it1,\n     job.info_type AS it2,\n     job.keyword AS k,\n     job.kind_type AS kt,\n     job.movie_info AS mi,\n     job.movie_info_idx AS mi_idx,\n     job.movie_keyword AS mk,\n     job.title AS t\nWHERE it1.info = 'countries'\n  AND it2.info = 'rating'\n  AND k.keyword IS NOT NULL\n  AND k.keyword IN ('murder',\n                    'murder-in-title',\n                    'blood',\n                    'violence')\n  AND kt.kind IN ('movie',\n                  'episode')\n  AND mi.info IN ('Sweden',\n                  'Norway',\n                  'Germany',\n                  'Denmark',\n                  'Swedish',\n                  'Danish',\n                  'Norwegian',\n                  'German',\n                  'USA',\n                  'American')\n  AND mi_idx.info < '8.5'\n  AND t.production_year > 2005\n  AND kt.id = t.kind_id\n  AND t.id = mi.movie_id\n  AND t.id = mk.movie_id\n  AND t.id = mi_idx.movie_id\n  AND mk.movie_id = mi.movie_id\n  AND mk.movie_id = mi_idx.movie_id\n  AND mi.movie_id = mi_idx.movie_id\n  AND k.id = mk.keyword_id\n  AND it1.id = mi.info_type_id\n  AND it2.id = mi_idx.info_type_id;\n",
+      "startTime": "2026-06-23T16:40:59.472861Z",
+      "status": "OK",
+      "timeMs": 154.749
+    }
+  ],
+  "runtime": {
+    "avgMs": 154.749,
+    "bestMs": 154.749,
+    "maxMs": 154.749,
+    "minMs": 154.749,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "iceberg",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 14C Analysis",
+    "displayName": "JOB-14C",
+    "name": "PLAN-JOB-14C",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "Apache DataFusion 54.0.0, aarch64 on linux"
+}

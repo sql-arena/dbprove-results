@@ -1,0 +1,110 @@
+{
+  "engine": "SQL Server",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 2,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 3,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 2
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 1,
+          "<16x": 0,
+          "=": 5,
+          ">16x": 1
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 30,
+        "distribute": 0,
+        "hash": 4085481,
+        "join": 2951563,
+        "scan": 1716080,
+        "seek": 2609129,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(partialagg1026) AS Expr1014, MIN(partialagg1027) AS Expr1015\n       5         4  AGGREGATE MIN(name as name) AS partialagg1026, MIN(title as title) AS partialagg1027\n  473011        26  INNER JOIN HASH ON t.id = mc.movie_id\n  939036   1153798  │└INNER JOIN HASH ON mc.company_id = cn.id\n   84576     84843  │ │└TABLE SCAN company_name AS cn WHERE country_code as country_code = 'us'\n 2609130   2609129  │ TABLE SEEK movie_companies AS mc WHERE BLOOM(company_id as company_id)\n   50946        12  INNER JOIN HASH ON id as id = person_role_id as person_role_id\n  101857    342396  │└INNER JOIN HASH ON t.id = ci.movie_id\n 1475210   1435489  │ │└TABLE SCAN cast_info AS ci WHERE note as note LIKE '%(producer)%'\n   17456    195744  │ TABLE SCAN title AS t WHERE (production_year as production_year > 1990) AND (BLOOM(id as id) AND BLOOM(id as id))\n   31403         4  TABLE SCAN char_name AS chn WHERE BLOOM(id as id)\n",
+      "sql": "SELECT MIN(chn.name) AS character,\n       MIN(t.title) AS movie_with_american_producer\nFROM job.char_name AS chn,\n     job.cast_info AS ci,\n     job.company_name AS cn,\n     job.company_type AS ct,\n     job.movie_companies AS mc,\n     job.role_type AS rt,\n     job.title AS t\nWHERE ci.note LIKE '%(producer)%'\n  AND cn.country_code = '[us]'\n  AND t.production_year > 1990\n  AND t.id = mc.movie_id\n  AND t.id = ci.movie_id\n  AND ci.movie_id = mc.movie_id\n  AND chn.id = ci.person_role_id\n  AND rt.id = ci.role_id\n  AND cn.id = mc.company_id\n  AND ct.id = mc.company_type_id;\n",
+      "startTime": "2026-06-23T08:17:35.220143Z",
+      "status": "OK",
+      "timeMs": 1904.578
+    }
+  ],
+  "runtime": {
+    "avgMs": 1904.578,
+    "bestMs": 1904.578,
+    "maxMs": 1904.578,
+    "minMs": 1904.578,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 10C Analysis",
+    "displayName": "JOB-10C",
+    "name": "PLAN-JOB-10C",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "16.0.4236.2"
+}

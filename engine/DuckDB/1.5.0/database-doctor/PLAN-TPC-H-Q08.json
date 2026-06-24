@@ -1,4 +1,5 @@
 {
+  "config": "M5 Macbook Pro",
   "engine": "DuckDB",
   "queries": [
     {
@@ -81,16 +82,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       -         2  SORT all_nations.o_year\n    1588         2  PROJECT o_year, mkt_share\n       -         2  AGGREGATE SUM(#1), SUM(#2) GROUP BY HASH #0\n    1757      2647  PROJECT o_year, CASE WHEN (nation = 'FRANCE') THEN volume ELSE 0.0000 END, volume\n    1757      2647  PROJECT o_year, volume, nation\n    1757      2647  INNER JOIN HASH ON s_nationkey = n_nationkey\n      25        25  │└TABLE SCAN nation\n    1827      2647  INNER JOIN HASH ON s_suppkey = l_suppkey\n    1827      2647  │└INNER JOIN HASH ON c_nationkey = n_nationkey\n       5         5  │ │└INNER JOIN HASH ON n_regionkey = r_regionkey\n       1         1  │ │ │└TABLE SCAN region WHERE r_name = 'EUROPE'\n      25         5  │ │ TABLE SCAN nation\n    9502     10715  │ INNER JOIN HASH ON c_custkey = o_custkey\n    9003     12905  │ │└INNER JOIN HASH ON o_orderkey = l_orderkey\n   44646     42054  │ │ │└INNER JOIN HASH ON l_partkey = p_partkey\n    1419      1403  │ │ │ │└TABLE SCAN part WHERE p_type = 'SMALL POLISHED NICKEL'\n 6001215   6000567  │ │ │ TABLE SCAN lineitem\n  300000     17277  │ │ TABLE SCAN orders WHERE o_orderdate >= '1995-01-01' AND o_orderdate <= '1996-12-31'\n  150000     10088  │ TABLE SCAN customer WHERE c_custkey <= 149999\n   10000      1928  TABLE SCAN supplier\n",
       "sql": "/* TPC-H Q08 */\nSELECT o_year,\n       SUM(CASE\n               WHEN nation = 'FRANCE'\n                   THEN volume\n               ELSE 0\n           END) / SUM(volume) AS mkt_share\nFROM (SELECT EXTRACT(YEAR FROM o_orderdate)     AS o_year,\n             l_extendedprice * (1 - l_discount) AS volume,\n             n2.n_name                          AS nation\n      FROM tpch_sf1.lineitem\n      INNER JOIN tpch_sf1.orders\n          ON o_orderkey = l_orderkey\n      INNER JOIN tpch_sf1.part\n          ON l_partkey = p_partkey\n      INNER JOIN tpch_sf1.supplier\n          ON l_suppkey = s_suppkey\n      INNER JOIN tpch_sf1.customer\n          ON o_custkey = c_custkey\n      INNER JOIN tpch_sf1.nation n1\n          ON c_nationkey = n1.n_nationkey\n      INNER JOIN tpch_sf1.region\n          ON n1.n_regionkey = r_regionkey\n      INNER JOIN tpch_sf1.nation n2\n          ON s_nationkey = n2.n_nationkey\n      WHERE r_name = 'EUROPE'\n        AND o_orderdate BETWEEN '1995-01-01' AND '1996-12-31'\n        AND p_type = 'SMALL POLISHED NICKEL') AS all_nations\nGROUP BY o_year\nORDER BY o_year",
-      "startTime": "2026-06-22T16:08:56.045547Z",
+      "startTime": "2026-06-24T10:15:49.906107Z",
       "status": "OK",
-      "timeMs": 12.623
+      "timeMs": 12.607
     }
   ],
   "runtime": {
-    "avgMs": 12.623,
-    "bestMs": 12.623,
-    "maxMs": 12.623,
-    "minMs": 12.623,
+    "avgMs": 12.607,
+    "bestMs": 12.607,
+    "maxMs": 12.607,
+    "minMs": 12.607,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

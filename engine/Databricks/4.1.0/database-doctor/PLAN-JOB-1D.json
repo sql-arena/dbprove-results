@@ -1,0 +1,111 @@
+{
+  "config": "M5 Macbook Pro",
+  "engine": "Databricks",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 2,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 3
+        },
+        "join": {
+          "+2x": 1,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 3
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 1,
+          "=": 2,
+          ">16x": 3
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 5,
+        "distribute": 1381472,
+        "hash": 74301,
+        "join": 1530013,
+        "scan": 1455740,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(mc.note), MIN(t.title), MIN(t.production_year)\n       1         1  DISTRIBUTE GATHER\n       1         1  AGGREGATE MIN(mc.note), MIN(t.title), MIN(t.production_year)\n  401000         4  INNER JOIN HASH ON mi_idx.movie_id = mc.movie_id\n  401000         6  │└DISTRIBUTE GATHER\n  290000         6  │ INNER JOIN HASH ON mi_idx.movie_id = t.id\n  290000        10  │ │└DISTRIBUTE GATHER\n  401000        10  │ │ INNER JOIN HASH ON mi_idx.info_type_id = it.id\n       4        10  │ │ │└TABLE SCAN sql - movie_info_idx\n  401000         1  │ │ DISTRIBUTE GATHER\n 2610000         1  │ │ TABLE SCAN sql - info_type WHERE it.info = 'bottom 10 rank'\n  290000   1381453  │ DISTRIBUTE HASH ON t.id\n     113   1381453  │ TABLE SCAN sql - title WHERE (t.production_year IS NOT NULL) AND (t.production_year > 2000L)\n  276000     74275  INNER JOIN HASH ON ct.id = mc.company_type_id\n  276000         1  │└DISTRIBUTE GATHER\n 2530000         1  │ TABLE SCAN sql - company_type WHERE ct.kind = 'production companies'\n 1380000     74275  TABLE SCAN sql - movie_companies WHERE (mc.note IS NOT NULL) AND ( NOT contains(mc.note,'(as Metro-Goldwyn-Mayer Pictures)'))\n",
+      "sql": "SELECT MIN(mc.note) AS production_note,\n       MIN(t.title) AS movie_title,\n       MIN(t.production_year) AS movie_year\nFROM job.company_type AS ct,\n     job.info_type AS it,\n     job.movie_companies AS mc,\n     job.movie_info_idx AS mi_idx,\n     job.title AS t\nWHERE ct.kind = 'production companies'\n  AND it.info = 'bottom 10 rank'\n  AND mc.note NOT LIKE '%(as Metro-Goldwyn-Mayer Pictures)%'\n  AND t.production_year >2000\n  AND ct.id = mc.company_type_id\n  AND t.id = mc.movie_id\n  AND t.id = mi_idx.movie_id\n  AND mc.movie_id = mi_idx.movie_id\n  AND it.id = mi_idx.info_type_id;\n",
+      "startTime": "2026-06-24T13:52:53.713323Z",
+      "status": "OK",
+      "timeMs": 4158.014
+    }
+  ],
+  "runtime": {
+    "avgMs": 4158.014,
+    "bestMs": 4158.014,
+    "maxMs": 4158.014,
+    "minMs": 4158.014,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 1D Analysis",
+    "displayName": "JOB-1D",
+    "name": "PLAN-JOB-1D",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "4.1.0"
+}

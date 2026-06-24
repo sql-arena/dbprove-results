@@ -1,0 +1,37 @@
+== Optimized Logical Plan ==
+Aggregate [((100.00 * sum(CASE WHEN StartsWith(p_type#30083, PROMO) THEN (l_extendedprice#30068 * (1 - l_discount#30069)) ELSE 0.0000 END)) / sum((l_extendedprice#30068 * (1 - l_discount#30069)))) AS promo_revenue#30056], Statistics(sizeInBytes=24.0 B, rowCount=1, ColumnStat: N/A)
++- Project [l_extendedprice#30068, l_discount#30069, p_type#30083], Statistics(sizeInBytes=48.0 TiB, rowCount=1.20E+12, ColumnStat: N/A)
+   +- Join Inner, (l_partkey#30064L = p_partkey#30079L), Statistics(sizeInBytes=65.5 TiB, rowCount=1.20E+12, ColumnStat: N/A)
+      :- Project [l_partkey#30064L, l_extendedprice#30068, l_discount#30069], Statistics(sizeInBytes=183.1 MiB, rowCount=6.00E+6, ColumnStat: N/A), Predicted Statistics(sizeInBytes=5.4 MiB, rowCount=1.77E+5)
+      :  +- Filter ((l_shipdate#30073 >= 1996-02-01) AND (l_shipdate#30073 < 1996-03-01)), Statistics(sizeInBytes=1053.1 MiB, rowCount=6.00E+6, ColumnStat: N/A), Predicted Statistics(sizeInBytes=12.6 MiB, rowCount=7.16E+4)
+      :     +- Relation sql-arena.tpch_sf1.lineitem[l_orderkey#30063L,l_partkey#30064L,l_suppkey#30065L,l_linenumber#30066L,l_quantity#30067,l_extendedprice#30068,l_discount#30069,l_tax#30070,l_returnflag#30071,l_linestatus#30072,l_shipdate#30073,l_commitdate#30074,l_receiptdate#30075,l_shipinstruct#30076,l_shipmode#30077,l_comment#30078] parquet, Statistics(sizeInBytes=1053.1 MiB, rowCount=6.00E+6, ColumnStat: N/A)
+      +- Project [p_partkey#30079L, p_type#30083], Statistics(sizeInBytes=6.9 MiB, rowCount=2.00E+5, ColumnStat: N/A), Predicted Statistics(sizeInBytes=5.1 MiB, rowCount=1.50E+5)
+         +- Relation sql-arena.tpch_sf1.part[p_partkey#30079L,p_name#30080,p_mfgr#30081,p_brand#30082,p_type#30083,p_size#30084,p_container#30085,p_retailprice#30086,p_comment#30087] parquet, Statistics(sizeInBytes=28.2 MiB, rowCount=2.00E+5, ColumnStat: N/A)
+
+== Physical Plan ==
+AdaptiveSparkPlan isFinalPlan=false
++- == Initial Plan ==
+   PhotonResultStage
+   +- PhotonColumnarToRow
+      +- PhotonAgg(limit=None, keys=[], functions=[finalmerge_sum(merge sum#30114, isEmpty#30115) AS sum(CASE WHEN startswith(p_type, PROMO) THEN (l_extendedprice * (1 - l_discount)) ELSE 0.0000 END)#30088, finalmerge_sum(merge sum#30118, isEmpty#30119) AS sum((l_extendedprice * (1 - l_discount)))#30089], output=[promo_revenue#30056])
+         +- PhotonShuffleExchangeSource
+            +- PhotonShuffleMapStage ENSURE_REQUIREMENTS, [id=#39129]
+               +- PhotonShuffleExchangeSink SinglePartition
+                  +- PhotonAgg(limit=None, keys=[], functions=[partial_sum(CASE WHEN StartsWith(p_type#30083, PROMO) THEN (l_extendedprice#30068 * (1 - l_discount#30069)) ELSE 0.0000 END) AS (sum#30114, isEmpty#30115), partial_sum((l_extendedprice#30068 * (1 - l_discount#30069))) AS (sum#30118, isEmpty#30119)], output=[sum#30114, isEmpty#30115, sum#30118, isEmpty#30119])
+                     +- PhotonProject [l_extendedprice#30068, l_discount#30069, p_type#30083]
+                        +- PhotonBroadcastHashJoin [l_partkey#30064L], [p_partkey#30079L], Inner, BuildRight, false, true
+                           :- PhotonProject [l_partkey#30064L, l_extendedprice#30068, l_discount#30069]
+                           :  +- PhotonScan parquet sql-arena.tpch_sf1.lineitem[l_partkey#30064L,l_extendedprice#30068,l_discount#30069,l_shipdate#30073] DataFilters: [(l_shipdate#30073 >= 1996-02-01), (l_shipdate#30073 < 1996-03-01)], DictionaryFilters: [((l_shipdate#30073 >= 1996-02-01) AND (l_shipdate#30073 < 1996-03-01))], Format: parquet, Location: PreparedDeltaFileIndex(1 paths)[s3://floedb-databricks-metastore-367509577365/metastore/82a33d38-..., OptionalDataFilters: [hashedrelationcontains(l_partkey#30064L)], PartitionFilters: [], ReadSchema: struct<l_partkey:bigint,l_extendedprice:decimal(15,2),l_discount:decimal(15,2),l_shipdate:date>, RequiredDataFilters: [(l_shipdate#30073 >= 1996-02-01), (l_shipdate#30073 < 1996-03-01)]
+                           +- PhotonShuffleExchangeSource
+                              +- PhotonShuffleMapStage EXECUTOR_BROADCAST, [id=#39116]
+                                 +- PhotonShuffleExchangeSink SinglePartition
+                                    +- PhotonScan parquet sql-arena.tpch_sf1.part[p_partkey#30079L,p_type#30083] DataFilters: [], DictionaryFilters: [], Format: parquet, Location: PreparedDeltaFileIndex(1 paths)[s3://floedb-databricks-metastore-367509577365/metastore/82a33d38-..., OptionalDataFilters: [], PartitionFilters: [], ReadSchema: struct<p_partkey:bigint,p_type:string>, RequiredDataFilters: []
+
+
+== Optimizer Statistics (table names per statistics state) ==
+  missing = 
+  partial = lineitem, part
+  full    = 
+Corrective actions: consider running the following command on all tables with missing or partial statistics
+  ANALYZE TABLE <table-name> COMPUTE STATISTICS FOR ALL COLUMNS
+

@@ -1,0 +1,111 @@
+{
+  "config": "M5 Macbook Pro",
+  "engine": "Databricks",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 1
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 1,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 1
+        },
+        "hash": {
+          "+2x": 1,
+          "+4x": 1,
+          "+8x": 1,
+          "-2x": 2,
+          "-4x": 4,
+          "-8x": 0,
+          "<16x": 4,
+          "=": 2,
+          ">16x": 1
+        },
+        "join": {
+          "+2x": 1,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 4,
+          "-8x": 0,
+          "<16x": 5,
+          "=": 4,
+          ">16x": 1
+        },
+        "scan": {
+          "+2x": 3,
+          "+4x": 1,
+          "+8x": 2,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 3,
+          "=": 5,
+          ">16x": 5
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 271961,
+        "distribute": 2674659,
+        "hash": 11857556,
+        "join": 8693175,
+        "scan": 16322399,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n     142         0  SEQUENCE\n       1         1  ├─AGGREGATE MIN(chn.name), MIN(n.name), MIN(t.title)\n       1         2  │ DISTRIBUTE GATHER\n       1         2  │ AGGREGATE MIN(chn.name), MIN(n.name), MIN(t.title)\n   29900     16308  │ INNER JOIN HASH ON ci.movie_id = t.id\n   28500     16368  │ │└INNER JOIN HASH ON n.id = pi.person_id\n   28500       204  │ │ │└INNER JOIN HASH ON ci.person_id = n.id\n   28500      4191  │ │ │ │└DISTRIBUTE GATHER\n    5350      4191  │ │ │ │ INNER JOIN HASH ON mc.movie_id = mk.movie_id\n    5350     24426  │ │ │ │ │└INNER JOIN HASH ON mi.info_type_id = it.id\n    5350     24426  │ │ │ │ │ │└INNER JOIN HASH ON mc.movie_id = mi.movie_id\n    5350     14965  │ │ │ │ │ │ │└DISTRIBUTE GATHER\n     332     14965  │ │ │ │ │ │ │ INNER JOIN HASH ON ci.movie_id = mc.movie_id\n     332      2436  │ │ │ │ │ │ │ │└DISTRIBUTE GATHER\n     332      2436  │ │ │ │ │ │ │ │ INNER JOIN HASH ON ci.person_role_id = chn.id\n     332      2436  │ │ │ │ │ │ │ │ │└DISTRIBUTE GATHER\n     332      2436  │ │ │ │ │ │ │ │ │ INNER JOIN HASH ON cc.status_id = cct2.id\n     226     18889  │ │ │ │ │ │ │ │ │ │└INNER JOIN HASH ON cc.subject_id = cct1.id\n   12100     29582  │ │ │ │ │ │ │ │ │ │ │└INNER JOIN HASH ON ci.movie_id = cc.movie_id\n      71    483319  │ │ │ │ │ │ │ │ │ │ │ │└INNER JOIN HASH ON an.person_id = ci.person_id\n 2960000    897302  │ │ │ │ │ │ │ │ │ │ │ │ │└TABLE SCAN sql - aka_name\n      71    255651  │ │ │ │ │ │ │ │ │ │ │ │ DISTRIBUTE GATHER\n  135000    255651  │ │ │ │ │ │ │ │ │ │ │ │ INNER JOIN HASH ON ci.role_id = rt.id\n 2530000    255651  │ │ │ │ │ │ │ │ │ │ │ │ │└TABLE SCAN sql - cast_info WHERE (ci.note IN('(voice)','(voice: Japanese version)','(voice) (uncredited)','(voice: English version)')) AND (ci.person_role_id IS NOT NULL)\n  135000         1  │ │ │ │ │ │ │ │ │ │ │ │ DISTRIBUTE GATHER\n       -         1  │ │ │ │ │ │ │ │ │ │ │ │ TABLE SCAN sql - role_type WHERE rt.role = 'actress'\n   12100    135086  │ │ │ │ │ │ │ │ │ │ │ DISTRIBUTE GATHER\n     113    135086  │ │ │ │ │ │ │ │ │ │ │ TABLE SCAN sql - complete_cast WHERE cc.movie_id IS NOT NULL\n     226         1  │ │ │ │ │ │ │ │ │ │ DISTRIBUTE GATHER\n      12         1  │ │ │ │ │ │ │ │ │ │ TABLE SCAN sql - comp_cast_type WHERE cct1.kind = 'cast'\n     332         1  │ │ │ │ │ │ │ │ │ DISTRIBUTE GATHER\n 4170000         1  │ │ │ │ │ │ │ │ │ TABLE SCAN sql - comp_cast_type WHERE cct2.kind = 'complete+verified'\n 4520000   3132154  │ │ │ │ │ │ │ │ TABLE SCAN sql - char_name\n     332   1142114  │ │ │ │ │ │ │ INNER JOIN HASH ON mc.company_id = cn.id\n     113   2584557  │ │ │ │ │ │ │ │└TABLE SCAN sql - movie_companies\n     332     84843  │ │ │ │ │ │ │ DISTRIBUTE GATHER\n  134000     84843  │ │ │ │ │ │ │ TABLE SCAN sql - company_name WHERE (cn.country_code IS NOT NULL) AND (cn.country_code = 'us')\n  135000     29376  │ │ │ │ │ │ FILTER \n  235000    434546  │ │ │ │ │ │ TABLE SCAN sql - movie_info WHERE mi.info LIKE 'Japan:%200%' OR mi.info LIKE 'USA:%200%'\n    5350         1  │ │ │ │ │ DISTRIBUTE GATHER\n 2610000         1  │ │ │ │ │ TABLE SCAN sql - info_type WHERE it.info = 'release dates'\n    5350       414  │ │ │ │ DISTRIBUTE GATHER\n     849       414  │ │ │ │ INNER JOIN HASH ON mk.keyword_id = k.id\n 3140000   4503451  │ │ │ │ │└TABLE SCAN sql - movie_keyword\n     849         1  │ │ │ │ DISTRIBUTE GATHER\n14800000         1  │ │ │ │ TABLE SCAN sql - keyword WHERE k.keyword = 'computer-animation'\n  135000     39153  │ │ │ TABLE SCAN sql - name WHERE (n.gender IS NOT NULL) AND (n.gender = 'f') AND contains(n.name,'An')\n   28500    620526  │ │ DISTRIBUTE GATHER\n    5350    620526  │ │ INNER JOIN HASH ON pi.info_type_id = it3.id\n       4   2957199  │ │ │└TABLE SCAN sql - person_info\n    5350         1  │ │ DISTRIBUTE GATHER\n       4         1  │ │ TABLE SCAN sql - info_type WHERE it3.info = 'trivia'\n   29900   1042800  │ DISTRIBUTE GATHER\n36200000   1042800  │ TABLE SCAN sql - title WHERE (t.production_year IS NOT NULL) AND (t.production_year >= 2000L) AND (t.production_year <= 2010L)\n     142         0  └─FILTER \n   28500         1    DISTRIBUTE HASH\n   28500         1    AGGREGATE bloom_filter_agg(bloom_expr(ci.movie_id,ci.movie_id),255651L,2097152L)\n  901000    255651    DISTRIBUTE HASH\n  901000    255651    DISTRIBUTE HASH\n  901000    255651    TABLE SCAN sql - cast_info WHERE (ci.note IN('(voice)','(voice: Japanese version)','(voice) (uncredited)','(voice: English version)')) AND (ci.person_role_id IS NOT NULL)\n",
+      "sql": "SELECT MIN(chn.name) AS voiced_char,\n       MIN(n.name) AS voicing_actress,\n       MIN(t.title) AS voiced_animation\nFROM job.aka_name AS an,\n     job.complete_cast AS cc,\n     job.comp_cast_type AS cct1,\n     job.comp_cast_type AS cct2,\n     job.char_name AS chn,\n     job.cast_info AS ci,\n     job.company_name AS cn,\n     job.info_type AS it,\n     job.info_type AS it3,\n     job.keyword AS k,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.movie_keyword AS mk,\n     job.name AS n,\n     job.person_info AS pi,\n     job.role_type AS rt,\n     job.title AS t\nWHERE cct1.kind ='cast'\n  AND cct2.kind ='complete+verified'\n  AND ci.note IN ('(voice)',\n                  '(voice: Japanese version)',\n                  '(voice) (uncredited)',\n                  '(voice: English version)')\n  AND cn.country_code ='[us]'\n  AND it.info = 'release dates'\n  AND it3.info = 'trivia'\n  AND k.keyword = 'computer-animation'\n  AND mi.info IS NOT NULL\n  AND (mi.info LIKE 'Japan:%200%'\n       OR mi.info LIKE 'USA:%200%')\n  AND n.gender ='f'\n  AND n.name LIKE '%An%'\n  AND rt.role ='actress'\n  AND t.production_year BETWEEN 2000 AND 2010\n  AND t.id = mi.movie_id\n  AND t.id = mc.movie_id\n  AND t.id = ci.movie_id\n  AND t.id = mk.movie_id\n  AND t.id = cc.movie_id\n  AND mc.movie_id = ci.movie_id\n  AND mc.movie_id = mi.movie_id\n  AND mc.movie_id = mk.movie_id\n  AND mc.movie_id = cc.movie_id\n  AND mi.movie_id = ci.movie_id\n  AND mi.movie_id = mk.movie_id\n  AND mi.movie_id = cc.movie_id\n  AND ci.movie_id = mk.movie_id\n  AND ci.movie_id = cc.movie_id\n  AND mk.movie_id = cc.movie_id\n  AND cn.id = mc.company_id\n  AND it.id = mi.info_type_id\n  AND n.id = ci.person_id\n  AND rt.id = ci.role_id\n  AND n.id = an.person_id\n  AND ci.person_id = an.person_id\n  AND chn.id = ci.person_role_id\n  AND n.id = pi.person_id\n  AND ci.person_id = pi.person_id\n  AND it3.id = pi.info_type_id\n  AND k.id = mk.keyword_id\n  AND cct1.id = cc.subject_id\n  AND cct2.id = cc.status_id;\n",
+      "startTime": "2026-06-24T13:55:39.906926Z",
+      "status": "OK",
+      "timeMs": 4073.247
+    }
+  ],
+  "runtime": {
+    "avgMs": 4073.247,
+    "bestMs": 4073.247,
+    "maxMs": 4073.247,
+    "minMs": 4073.247,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 29C Analysis",
+    "displayName": "JOB-29C",
+    "name": "PLAN-JOB-29C",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "4.1.0"
+}

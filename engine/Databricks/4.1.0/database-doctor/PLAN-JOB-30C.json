@@ -1,0 +1,111 @@
+{
+  "config": "M5 Macbook Pro",
+  "engine": "Databricks",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 1
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 1,
+          "=": 0,
+          ">16x": 1
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 1,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 1,
+          "<16x": 9,
+          "=": 0,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 2,
+          "<16x": 9,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 1,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 1,
+          "<16x": 4,
+          "=": 2,
+          ">16x": 6
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 194620,
+        "distribute": 3584247,
+        "hash": 5358911,
+        "join": 5053498,
+        "scan": 11849471,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n      34         0  SEQUENCE\n       1         1  ├─AGGREGATE MIN(mi.info), MIN(mi_idx.info), MIN(n.name), MIN(t.title)\n       1         2  │ DISTRIBUTE GATHER\n       1         2  │ AGGREGATE MIN(mi.info), MIN(mi_idx.info), MIN(n.name), MIN(t.title)\n     875      8024  │ INNER JOIN HASH ON cc.movie_id = mi_idx.movie_id\n     254      4386  │ │└INNER JOIN HASH ON ci.person_id = n.id\n     254      7263  │ │ │└INNER JOIN HASH ON cc.movie_id = ci.movie_id\n      50     10327  │ │ │ │└INNER JOIN HASH ON cc.movie_id = t.id\n      50     10327  │ │ │ │ │└DISTRIBUTE GATHER\n      50     10327  │ │ │ │ │ INNER JOIN HASH ON cc.subject_id = cct1.id\n     875     13281  │ │ │ │ │ │└INNER JOIN HASH ON cc.status_id = cct2.id\n     875     33335  │ │ │ │ │ │ │└INNER JOIN HASH ON mi.movie_id = cc.movie_id\n     875    186594  │ │ │ │ │ │ │ │└DISTRIBUTE GATHER\n     281    186594  │ │ │ │ │ │ │ │ INNER JOIN HASH ON mi.info_type_id = it1.id\n     113    186594  │ │ │ │ │ │ │ │ │└TABLE SCAN sql - movie_info WHERE mi.info IN('Horror','Action','Sci-Fi','Thriller','Crime','War')\n     281         1  │ │ │ │ │ │ │ │ DISTRIBUTE GATHER\n       -         1  │ │ │ │ │ │ │ │ TABLE SCAN sql - info_type WHERE it1.info = 'genres'\n  134000    131301  │ │ │ │ │ │ │ TABLE SCAN sql - complete_cast WHERE cc.movie_id IS NOT NULL\n     875         1  │ │ │ │ │ │ DISTRIBUTE GATHER\n 1380000         1  │ │ │ │ │ │ TABLE SCAN sql - comp_cast_type WHERE cct2.kind = 'complete+verified'\n      50         1  │ │ │ │ │ DISTRIBUTE GATHER\n 4170000         1  │ │ │ │ │ TABLE SCAN sql - comp_cast_type WHERE cct1.kind = 'cast'\n       1    147635  │ │ │ │ FILTER \n       4   2520168  │ │ │ │ TABLE SCAN sql - title\n     254   1244716  │ │ │ DISTRIBUTE GATHER\n       4   1244716  │ │ │ TABLE SCAN sql - cast_info WHERE ci.note IN('(writer)','(head writer)','(written by)','(story)','(story editor)')\n     254   1739579  │ │ DISTRIBUTE GATHER\n     113   1739579  │ │ TABLE SCAN sql - name WHERE (n.gender IS NOT NULL) AND (n.gender = 'm')\n     875     63701  │ DISTRIBUTE GATHER\n      53     63701  │ INNER JOIN HASH ON mi_idx.info_type_id = it2.id\n      50    191657  │ │└INNER JOIN HASH ON mk.movie_id = mi_idx.movie_id\n      50     76714  │ │ │└DISTRIBUTE GATHER\n      34     76714  │ │ │ INNER JOIN HASH ON mk.keyword_id = k.id\n36200000   4519852  │ │ │ │└TABLE SCAN sql - movie_keyword\n      34         7  │ │ │ DISTRIBUTE GATHER\n 4520000         7  │ │ │ TABLE SCAN sql - keyword WHERE k.keyword IN('murder','violence','blood','gore','death','female-nudity','hospital')\n  135000   1375949  │ │ TABLE SCAN sql - movie_info_idx\n      53         1  │ DISTRIBUTE GATHER\n 2530000         1  │ TABLE SCAN sql - info_type WHERE it2.info = 'votes'\n      34         0  └─FILTER \n     254         1    DISTRIBUTE HASH\n     254         1    AGGREGATE bloom_filter_agg(bloom_expr(mi.movie_id,mi.movie_id),186594L,2097152L)\n     254    186594    SELECT\n14800000    131301    DISTRIBUTE HASH\n14800000    131301    DISTRIBUTE HASH\n14800000    131301    TABLE SCAN sql - complete_cast WHERE cc.movie_id IS NOT NULL\n",
+      "sql": "SELECT MIN(mi.info) AS movie_budget,\n       MIN(mi_idx.info) AS movie_votes,\n       MIN(n.name) AS writer,\n       MIN(t.title) AS complete_violent_movie\nFROM job.complete_cast AS cc,\n     job.comp_cast_type AS cct1,\n     job.comp_cast_type AS cct2,\n     job.cast_info AS ci,\n     job.info_type AS it1,\n     job.info_type AS it2,\n     job.keyword AS k,\n     job.movie_info AS mi,\n     job.movie_info_idx AS mi_idx,\n     job.movie_keyword AS mk,\n     job.name AS n,\n     job.title AS t\nWHERE cct1.kind = 'cast'\n  AND cct2.kind ='complete+verified'\n  AND ci.note IN ('(writer)',\n                  '(head writer)',\n                  '(written by)',\n                  '(story)',\n                  '(story editor)')\n  AND it1.info = 'genres'\n  AND it2.info = 'votes'\n  AND k.keyword IN ('murder',\n                    'violence',\n                    'blood',\n                    'gore',\n                    'death',\n                    'female-nudity',\n                    'hospital')\n  AND mi.info IN ('Horror',\n                  'Action',\n                  'Sci-Fi',\n                  'Thriller',\n                  'Crime',\n                  'War')\n  AND n.gender = 'm'\n  AND t.id = mi.movie_id\n  AND t.id = mi_idx.movie_id\n  AND t.id = ci.movie_id\n  AND t.id = mk.movie_id\n  AND t.id = cc.movie_id\n  AND ci.movie_id = mi.movie_id\n  AND ci.movie_id = mi_idx.movie_id\n  AND ci.movie_id = mk.movie_id\n  AND ci.movie_id = cc.movie_id\n  AND mi.movie_id = mi_idx.movie_id\n  AND mi.movie_id = mk.movie_id\n  AND mi.movie_id = cc.movie_id\n  AND mi_idx.movie_id = mk.movie_id\n  AND mi_idx.movie_id = cc.movie_id\n  AND mk.movie_id = cc.movie_id\n  AND n.id = ci.person_id\n  AND it1.id = mi.info_type_id\n  AND it2.id = mi_idx.info_type_id\n  AND k.id = mk.keyword_id\n  AND cct1.id = cc.subject_id\n  AND cct2.id = cc.status_id;\n",
+      "startTime": "2026-06-24T13:56:13.792252Z",
+      "status": "OK",
+      "timeMs": 3413.502
+    }
+  ],
+  "runtime": {
+    "avgMs": 3413.502,
+    "bestMs": 3413.502,
+    "maxMs": 3413.502,
+    "minMs": 3413.502,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 30C Analysis",
+    "displayName": "JOB-30C",
+    "name": "PLAN-JOB-30C",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "4.1.0"
+}

@@ -1,0 +1,111 @@
+{
+  "config": "M5 Macbook Pro",
+  "engine": "Databricks",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 2,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 1,
+          "-2x": 3,
+          "-4x": 0,
+          "-8x": 3,
+          "<16x": 1,
+          "=": 1,
+          ">16x": 2
+        },
+        "join": {
+          "+2x": 1,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 2,
+          "-4x": 0,
+          "-8x": 3,
+          "<16x": 1,
+          "=": 2,
+          ">16x": 2
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 1,
+          "+8x": 1,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 2,
+          "=": 3,
+          ">16x": 6
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 94,
+        "distribute": 48792,
+        "hash": 4594091,
+        "join": 22381525,
+        "scan": 26884384,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(chn.name), MIN(mi_idx.info), MIN(t.title)\n       1         1  DISTRIBUTE GATHER\n       1         1  AGGREGATE MIN(chn.name), MIN(mi_idx.info), MIN(t.title)\n   14000        93  INNER JOIN HASH ON mi_idx.info_type_id = it2.id\n   14000       201  │└INNER JOIN HASH ON cc.movie_id = mi_idx.movie_id\n   14000      1262  │ │└DISTRIBUTE GATHER\n    4500      1262  │ │ INNER JOIN HASH ON ci.person_role_id = chn.id\n    4500     17300  │ │ │└DISTRIBUTE GATHER\n    4500     17300  │ │ │ INNER JOIN HASH ON ci.person_id = n.id\n    4500     17300  │ │ │ │└DISTRIBUTE GATHER\n    4500     17300  │ │ │ │ INNER JOIN HASH ON cc.movie_id = ci.movie_id\n    4500       269  │ │ │ │ │└DISTRIBUTE GATHER\n     273       269  │ │ │ │ │ INNER JOIN HASH ON t.kind_id = kt.id\n     273       292  │ │ │ │ │ │└INNER JOIN HASH ON cc.movie_id = t.id\n     273      2667  │ │ │ │ │ │ │└DISTRIBUTE GATHER\n     259      2667  │ │ │ │ │ │ │ INNER JOIN HASH ON cc.subject_id = cct1.id\n     259      3974  │ │ │ │ │ │ │ │└INNER JOIN HASH ON cc.status_id = cct2.id\n     259      3974  │ │ │ │ │ │ │ │ │└INNER JOIN HASH ON mk.movie_id = cc.movie_id\n     259      9984  │ │ │ │ │ │ │ │ │ │└DISTRIBUTE GATHER\n     176      9984  │ │ │ │ │ │ │ │ │ │ INNER JOIN HASH ON mk.keyword_id = k.id\n 1380000   4519837  │ │ │ │ │ │ │ │ │ │ │└TABLE SCAN sql - movie_keyword\n     176         4  │ │ │ │ │ │ │ │ │ │ DISTRIBUTE GATHER\n     113         4  │ │ │ │ │ │ │ │ │ │ TABLE SCAN sql - keyword WHERE k.keyword IN('superhero','marvel-comics','based-on-comic','fight')\n 4170000    131093  │ │ │ │ │ │ │ │ │ TABLE SCAN sql - complete_cast WHERE cc.movie_id IS NOT NULL\n     259         2  │ │ │ │ │ │ │ │ DISTRIBUTE GATHER\n 3140000         2  │ │ │ │ │ │ │ │ TABLE SCAN sql - comp_cast_type WHERE contains(cct2.kind,'complete')\n     259         1  │ │ │ │ │ │ │ DISTRIBUTE GATHER\n36200000         1  │ │ │ │ │ │ │ TABLE SCAN sql - comp_cast_type WHERE cct1.kind = 'cast'\n 2530000    314183  │ │ │ │ │ │ TABLE SCAN sql - title WHERE (t.production_year IS NOT NULL) AND (t.production_year > 2005L)\n     273         1  │ │ │ │ │ DISTRIBUTE GATHER\n       7         1  │ │ │ │ │ TABLE SCAN sql - kind_type WHERE kt.kind = 'movie'\n       4  17563862  │ │ │ │ TABLE SCAN sql - cast_info WHERE ci.person_role_id IS NOT NULL\n       4   4159328  │ │ │ TABLE SCAN sql - name\n  135000    179515  │ │ TABLE SCAN sql - char_name WHERE contains(chn.name,'man') OR contains(chn.name,'Man')\n 4520000     16557  │ TABLE SCAN sql - movie_info_idx WHERE mi_idx.info > '8.0'\n   14000         1  DISTRIBUTE GATHER\n  134000         1  TABLE SCAN sql - info_type WHERE it2.info = 'rating'\n",
+      "sql": "SELECT MIN(chn.name) AS character_name,\n       MIN(mi_idx.info) AS rating,\n       MIN(t.title) AS complete_hero_movie\nFROM job.complete_cast AS cc,\n     job.comp_cast_type AS cct1,\n     job.comp_cast_type AS cct2,\n     job.char_name AS chn,\n     job.cast_info AS ci,\n     job.info_type AS it2,\n     job.keyword AS k,\n     job.kind_type AS kt,\n     job.movie_info_idx AS mi_idx,\n     job.movie_keyword AS mk,\n     job.name AS n,\n     job.title AS t\nWHERE cct1.kind = 'cast'\n  AND cct2.kind LIKE '%complete%'\n  AND chn.name IS NOT NULL\n  AND (chn.name LIKE '%man%'\n       OR chn.name LIKE '%Man%')\n  AND it2.info = 'rating'\n  AND k.keyword IN ('superhero',\n                    'marvel-comics',\n                    'based-on-comic',\n                    'fight')\n  AND kt.kind = 'movie'\n  AND mi_idx.info > '8.0'\n  AND t.production_year > 2005\n  AND kt.id = t.kind_id\n  AND t.id = mk.movie_id\n  AND t.id = ci.movie_id\n  AND t.id = cc.movie_id\n  AND t.id = mi_idx.movie_id\n  AND mk.movie_id = ci.movie_id\n  AND mk.movie_id = cc.movie_id\n  AND mk.movie_id = mi_idx.movie_id\n  AND ci.movie_id = cc.movie_id\n  AND ci.movie_id = mi_idx.movie_id\n  AND cc.movie_id = mi_idx.movie_id\n  AND chn.id = ci.person_role_id\n  AND n.id = ci.person_id\n  AND k.id = mk.keyword_id\n  AND cct1.id = cc.subject_id\n  AND cct2.id = cc.status_id\n  AND it2.id = mi_idx.info_type_id;\n",
+      "startTime": "2026-06-24T13:54:44.302635Z",
+      "status": "OK",
+      "timeMs": 3593.407
+    }
+  ],
+  "runtime": {
+    "avgMs": 3593.407,
+    "bestMs": 3593.407,
+    "maxMs": 3593.407,
+    "minMs": 3593.407,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 26B Analysis",
+    "displayName": "JOB-26B",
+    "name": "PLAN-JOB-26B",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "4.1.0"
+}

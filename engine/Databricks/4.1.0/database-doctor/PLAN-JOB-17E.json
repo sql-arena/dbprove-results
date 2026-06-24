@@ -1,0 +1,111 @@
+{
+  "config": "M5 Macbook Pro",
+  "engine": "Databricks",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 1
+        },
+        "filter": {
+          "+2x": 1,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 1,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 5,
+          "=": 1,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 6,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 1,
+          "+4x": 0,
+          "+8x": 1,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 1,
+          "<16x": 1,
+          "=": 4,
+          ">16x": 1
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 2874397,
+        "distribute": 75526170,
+        "hash": 10523901,
+        "join": 12244379,
+        "scan": 86346618,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       2         0  SEQUENCE\n       1         1  ├─AGGREGATE MIN(n.name)\n       1         2  │ DISTRIBUTE GATHER\n       1         2  │ AGGREGATE MIN(n.name)\n    3280   2832555  │ INNER JOIN HASH ON ci.person_id = n.id\n    3280   2832555  │ │└DISTRIBUTE GATHER\n    3280   2832555  │ │ INNER JOIN HASH ON mc.movie_id = ci.movie_id\n    3280     68316  │ │ │└DISTRIBUTE GATHER\n     199     68316  │ │ │ INNER JOIN HASH ON mc.company_id = cn.id\n     192    148545  │ │ │ │└INNER JOIN HASH ON mk.movie_id = mc.movie_id\n     192     41840  │ │ │ │ │└DISTRIBUTE GATHER\n      75     41840  │ │ │ │ │ INNER JOIN HASH ON mk.movie_id = t.id\n      75     41840  │ │ │ │ │ │└DISTRIBUTE GATHER\n      71     41840  │ │ │ │ │ │ INNER JOIN HASH ON mk.keyword_id = k.id\n 4170000   4519861  │ │ │ │ │ │ │└TABLE SCAN sql - movie_keyword\n      71         1  │ │ │ │ │ │ DISTRIBUTE GATHER\n       -         1  │ │ │ │ │ │ TABLE SCAN sql - keyword WHERE k.keyword = 'character-name-in-title'\n36200000   2520276  │ │ │ │ │ TABLE SCAN sql - title\n 2610000   2605052  │ │ │ │ TABLE SCAN sql - movie_companies\n     199     84843  │ │ │ DISTRIBUTE GATHER\n  235000     84843  │ │ │ TABLE SCAN sql - company_name WHERE (cn.country_code IS NOT NULL) AND (cn.country_code = 'us')\n    1050   1179185  │ │ FILTER \n 2530000  36228386  │ │ TABLE SCAN sql - cast_info\n 4520000   4159813  │ TABLE SCAN sql - name\n       2         0  └─FILTER \n    3280         1    DISTRIBUTE HASH\n    3280         1    AGGREGATE bloom_filter_agg(bloom_expr(mk.movie_id,mk.movie_id),41840L,524288L)\n    3280     41840    SELECT\n  134000  36228386    DISTRIBUTE HASH\n  134000  36228386    DISTRIBUTE HASH\n  134000  36228386    TABLE SCAN sql - cast_info\n",
+      "sql": "SELECT MIN(n.name) AS member_in_charnamed_movie\nFROM job.cast_info AS ci,\n     job.company_name AS cn,\n     job.keyword AS k,\n     job.movie_companies AS mc,\n     job.movie_keyword AS mk,\n     job.name AS n,\n     job.title AS t\nWHERE cn.country_code ='[us]'\n  AND k.keyword ='character-name-in-title'\n  AND n.id = ci.person_id\n  AND ci.movie_id = t.id\n  AND t.id = mk.movie_id\n  AND mk.keyword_id = k.id\n  AND t.id = mc.movie_id\n  AND mc.company_id = cn.id\n  AND ci.movie_id = mc.movie_id\n  AND ci.movie_id = mk.movie_id\n  AND mc.movie_id = mk.movie_id;\n",
+      "startTime": "2026-06-24T13:51:52.188659Z",
+      "status": "OK",
+      "timeMs": 2936.381
+    }
+  ],
+  "runtime": {
+    "avgMs": 2936.381,
+    "bestMs": 2936.381,
+    "maxMs": 2936.381,
+    "minMs": 2936.381,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 17E Analysis",
+    "displayName": "JOB-17E",
+    "name": "PLAN-JOB-17E",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "4.1.0"
+}

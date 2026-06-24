@@ -1,0 +1,111 @@
+{
+  "config": "M5 Macbook Pro",
+  "engine": "Databricks",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 2,
+          ">16x": 1
+        },
+        "filter": {
+          "+2x": 1,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 1
+        },
+        "hash": {
+          "+2x": 2,
+          "+4x": 1,
+          "+8x": 2,
+          "-2x": 0,
+          "-4x": 3,
+          "-8x": 0,
+          "<16x": 3,
+          "=": 0,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 2,
+          "+4x": 2,
+          "+8x": 2,
+          "-2x": 0,
+          "-4x": 3,
+          "-8x": 0,
+          "<16x": 2,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 2,
+          "+4x": 0,
+          "+8x": 1,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 2,
+          "=": 3,
+          ">16x": 7
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 301523,
+        "distribute": 2402001,
+        "hash": 4536875,
+        "join": 7474830,
+        "scan": 12585452,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       3         0  SEQUENCE\n       1         1  ├─AGGREGATE MIN(chn.name), MIN(n.name), MIN(t.title)\n       1         1  │ DISTRIBUTE GATHER\n       1         1  │ AGGREGATE MIN(chn.name), MIN(n.name), MIN(t.title)\n    3750       275  │ INNER JOIN HASH ON mi.info_type_id = it.id\n    3750       275  │ │└INNER JOIN HASH ON ci.movie_id = mi.movie_id\n     595       125  │ │ │└INNER JOIN HASH ON ci.person_id = an.person_id\n     375       107  │ │ │ │└INNER JOIN HASH ON mc.company_id = cn.id\n     363       178  │ │ │ │ │└INNER JOIN HASH ON ci.movie_id = mc.movie_id\n     363        29  │ │ │ │ │ │└DISTRIBUTE GATHER\n     142        29  │ │ │ │ │ │ INNER JOIN HASH ON ci.person_id = n.id\n     142       588  │ │ │ │ │ │ │└DISTRIBUTE GATHER\n     142       588  │ │ │ │ │ │ │ INNER JOIN HASH ON ci.person_role_id = chn.id\n     142       588  │ │ │ │ │ │ │ │└DISTRIBUTE GATHER\n     142       588  │ │ │ │ │ │ │ │ INNER JOIN HASH ON ci.role_id = rt.id\n     142      2568  │ │ │ │ │ │ │ │ │└INNER JOIN HASH ON mk.movie_id = ci.movie_id\n     112       495  │ │ │ │ │ │ │ │ │ │└INNER JOIN HASH ON mk.movie_id = t.id\n     112      9696  │ │ │ │ │ │ │ │ │ │ │└DISTRIBUTE GATHER\n     106      9696  │ │ │ │ │ │ │ │ │ │ │ INNER JOIN HASH ON mk.keyword_id = k.id\n     113   4519836  │ │ │ │ │ │ │ │ │ │ │ │└TABLE SCAN sql - movie_keyword\n     106         3  │ │ │ │ │ │ │ │ │ │ │ DISTRIBUTE GATHER\n       -         3  │ │ │ │ │ │ │ │ │ │ │ TABLE SCAN sql - keyword WHERE k.keyword IN('hero','martial-arts','hand-to-hand-combat')\n  901000    390312  │ │ │ │ │ │ │ │ │ │ TABLE SCAN sql - title WHERE (t.production_year IS NOT NULL) AND (t.production_year > 2010L)\n     142    801259  │ │ │ │ │ │ │ │ │ DISTRIBUTE GATHER\n14800000    801259  │ │ │ │ │ │ │ │ │ TABLE SCAN sql - cast_info WHERE (ci.note IN('(voice)','(voice: Japanese version)','(voice) (uncredited)','(voice: English version)')) AND (ci.person_role_id IS NOT NULL)\n     142         1  │ │ │ │ │ │ │ │ DISTRIBUTE GATHER\n  235000         1  │ │ │ │ │ │ │ │ TABLE SCAN sql - role_type WHERE rt.role = 'actress'\n 2610000   3115766  │ │ │ │ │ │ │ TABLE SCAN sql - char_name\n 4170000     35600  │ │ │ │ │ │ TABLE SCAN sql - name WHERE (n.gender IS NOT NULL) AND (n.gender = 'f') AND contains(n.name,'An')\n      12   2133994  │ │ │ │ │ TABLE SCAN sql - movie_companies\n     375     84843  │ │ │ │ DISTRIBUTE GATHER\n 3140000     84843  │ │ │ │ TABLE SCAN sql - company_name WHERE (cn.country_code IS NOT NULL) AND (cn.country_code = 'us')\n     595    901343  │ │ │ DISTRIBUTE GATHER\n 2530000    901343  │ │ │ TABLE SCAN sql - aka_name\n    3750      1154  │ │ DISTRIBUTE HASH ON mi.movie_id, mi.movie_id, mi.movie_id, mi.movie_id\n  164000      1154  │ │ FILTER \n36200000    301247  │ │ TABLE SCAN sql - movie_info WHERE mi.info LIKE 'Japan:%201%' OR mi.info LIKE 'USA:%201%'\n    3750         1  │ DISTRIBUTE GATHER\n  134000         1  │ TABLE SCAN sql - info_type WHERE it.info = 'release dates'\n       3         0  └─FILTER \n 4520000         1    DISTRIBUTE HASH\n 4520000         1    AGGREGATE bloom_filter_agg(bloom_expr(mk.movie_id,mk.movie_id),9696L,131072L)\n 4520000    301247    DISTRIBUTE HASH\n 4520000    301247    DISTRIBUTE HASH\n 4520000    301247    TABLE SCAN sql - movie_info WHERE mi.info LIKE 'Japan:%201%' OR mi.info LIKE 'USA:%201%'\n",
+      "sql": "SELECT MIN(chn.name) AS voiced_char_name,\n       MIN(n.name) AS voicing_actress_name,\n       MIN(t.title) AS voiced_action_movie_jap_eng\nFROM job.aka_name AS an,\n     job.char_name AS chn,\n     job.cast_info AS ci,\n     job.company_name AS cn,\n     job.info_type AS it,\n     job.keyword AS k,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.movie_keyword AS mk,\n     job.name AS n,\n     job.role_type AS rt,\n     job.title AS t\nWHERE ci.note IN ('(voice)',\n                  '(voice: Japanese version)',\n                  '(voice) (uncredited)',\n                  '(voice: English version)')\n  AND cn.country_code ='[us]'\n  AND it.info = 'release dates'\n  AND k.keyword IN ('hero',\n                    'martial-arts',\n                    'hand-to-hand-combat')\n  AND mi.info IS NOT NULL\n  AND (mi.info LIKE 'Japan:%201%'\n       OR mi.info LIKE 'USA:%201%')\n  AND n.gender ='f'\n  AND n.name LIKE '%An%'\n  AND rt.role ='actress'\n  AND t.production_year > 2010\n  AND t.id = mi.movie_id\n  AND t.id = mc.movie_id\n  AND t.id = ci.movie_id\n  AND t.id = mk.movie_id\n  AND mc.movie_id = ci.movie_id\n  AND mc.movie_id = mi.movie_id\n  AND mc.movie_id = mk.movie_id\n  AND mi.movie_id = ci.movie_id\n  AND mi.movie_id = mk.movie_id\n  AND ci.movie_id = mk.movie_id\n  AND cn.id = mc.company_id\n  AND it.id = mi.info_type_id\n  AND n.id = ci.person_id\n  AND rt.id = ci.role_id\n  AND n.id = an.person_id\n  AND ci.person_id = an.person_id\n  AND chn.id = ci.person_role_id\n  AND k.id = mk.keyword_id;\n",
+      "startTime": "2026-06-24T13:54:12.132171Z",
+      "status": "OK",
+      "timeMs": 3702.955
+    }
+  ],
+  "runtime": {
+    "avgMs": 3702.955,
+    "bestMs": 3702.955,
+    "maxMs": 3702.955,
+    "minMs": 3702.955,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 24A Analysis",
+    "displayName": "JOB-24A",
+    "name": "PLAN-JOB-24A",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "4.1.0"
+}

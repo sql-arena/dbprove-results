@@ -1,0 +1,111 @@
+{
+  "config": "M5 Macbook Pro",
+  "engine": "Databricks",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 2,
+          ">16x": 1
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 2
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 8
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 9
+        },
+        "scan": {
+          "+2x": 2,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 1,
+          "=": 4,
+          ">16x": 6
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 19,
+        "distribute": 1417058,
+        "hash": 4589840,
+        "join": 1569931,
+        "scan": 13142170,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n17600000         0  SEQUENCE\n       1         1  ├─AGGREGATE MIN(t.title)\n       1         1  │ DISTRIBUTE GATHER\n       1         1  │ AGGREGATE MIN(t.title)\n    7660        17  │ INNER JOIN HASH ON cc.movie_id = ci.movie_id\n 1110000      8765  │ │└INNER JOIN HASH ON cc.subject_id = cct1.id\n 1110000     12810  │ │ │└INNER JOIN HASH ON cc.status_id = cct2.id\n 2220000     12810  │ │ │ │└INNER JOIN HASH ON mk.movie_id = cc.movie_id\n 2220000     35548  │ │ │ │ │└DISTRIBUTE GATHER\n17600000     35548  │ │ │ │ │ INNER JOIN HASH ON mk.keyword_id = k.id\n 2530000   4519843  │ │ │ │ │ │└TABLE SCAN sql - movie_keyword\n17600000         8  │ │ │ │ │ DISTRIBUTE GATHER\n  134000         8  │ │ │ │ │ TABLE SCAN sql - keyword WHERE k.keyword IN('superhero','sequel','second-part','marvel-comics','based-on-comic','tv-special','fight','violence')\n 3140000    131283  │ │ │ │ TABLE SCAN sql - complete_cast WHERE cc.movie_id IS NOT NULL\n 1110000         2  │ │ │ DISTRIBUTE GATHER\n       4         2  │ │ │ TABLE SCAN sql - comp_cast_type WHERE contains(cct2.kind,'complete')\n 1110000         1  │ │ DISTRIBUTE GATHER\n 4170000         1  │ │ TABLE SCAN sql - comp_cast_type WHERE cct1.kind = 'cast'\n    7660         9  │ DISTRIBUTE GATHER\n 1110000         9  │ INNER JOIN HASH ON t.kind_id = kt.id\n 2220000        16  │ │└INNER JOIN HASH ON ci.movie_id = t.id\n 9690000        16  │ │ │└INNER JOIN HASH ON ci.person_id = n.id\n     317        16  │ │ │ │└INNER JOIN HASH ON ci.person_role_id = chn.id\n 2920000        16  │ │ │ │ │└FILTER \n 4520000   7109546  │ │ │ │ │ TABLE SCAN sql - cast_info WHERE ci.person_role_id IS NOT NULL\n     317        30  │ │ │ │ DISTRIBUTE GATHER\n       -        30  │ │ │ │ TABLE SCAN sql - char_name WHERE ( NOT contains(chn.name,'Sherlock')) AND (chn.name LIKE '%Tony%Stark%' OR chn.name LIKE '%Iron%Man%')\n 9690000         2  │ │ │ DISTRIBUTE GATHER\n       7         2  │ │ │ TABLE SCAN sql - name WHERE n.name LIKE '%Downey%Robert%'\n 2220000   1381453  │ │ DISTRIBUTE GATHER\n       4   1381453  │ │ TABLE SCAN sql - title WHERE (t.production_year IS NOT NULL) AND (t.production_year > 2000L)\n 1110000         1  │ DISTRIBUTE GATHER\n  135000         1  │ TABLE SCAN sql - kind_type WHERE kt.kind = 'movie'\n17600000         0  └─FILTER \n36200000         1    DISTRIBUTE HASH\n36200000         1    AGGREGATE bloom_filter_agg(bloom_expr(n.id,n.id),2L,256L)\n36200000         1    DISTRIBUTE HASH\n36200000         1    DISTRIBUTE HASH\n36200000         1    TABLE SCAN sql - comp_cast_type WHERE cct1.kind = 'cast'\n",
+      "sql": "SELECT MIN(t.title) AS complete_downey_ironman_movie\nFROM job.complete_cast AS cc,\n     job.comp_cast_type AS cct1,\n     job.comp_cast_type AS cct2,\n     job.char_name AS chn,\n     job.cast_info AS ci,\n     job.keyword AS k,\n     job.kind_type AS kt,\n     job.movie_keyword AS mk,\n     job.name AS n,\n     job.title AS t\nWHERE cct1.kind = 'cast'\n  AND cct2.kind LIKE '%complete%'\n  AND chn.name NOT LIKE '%Sherlock%'\n  AND (chn.name LIKE '%Tony%Stark%'\n       OR chn.name LIKE '%Iron%Man%')\n  AND k.keyword IN ('superhero',\n                    'sequel',\n                    'second-part',\n                    'marvel-comics',\n                    'based-on-comic',\n                    'tv-special',\n                    'fight',\n                    'violence')\n  AND kt.kind = 'movie'\n  AND n.name LIKE '%Downey%Robert%'\n  AND t.production_year > 2000\n  AND kt.id = t.kind_id\n  AND t.id = mk.movie_id\n  AND t.id = ci.movie_id\n  AND t.id = cc.movie_id\n  AND mk.movie_id = ci.movie_id\n  AND mk.movie_id = cc.movie_id\n  AND ci.movie_id = cc.movie_id\n  AND chn.id = ci.person_role_id\n  AND n.id = ci.person_id\n  AND k.id = mk.keyword_id\n  AND cct1.id = cc.subject_id\n  AND cct2.id = cc.status_id;\n",
+      "startTime": "2026-06-24T13:53:07.085757Z",
+      "status": "OK",
+      "timeMs": 3317.448
+    }
+  ],
+  "runtime": {
+    "avgMs": 3317.448,
+    "bestMs": 3317.448,
+    "maxMs": 3317.448,
+    "minMs": 3317.448,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 20B Analysis",
+    "displayName": "JOB-20B",
+    "name": "PLAN-JOB-20B",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "4.1.0"
+}

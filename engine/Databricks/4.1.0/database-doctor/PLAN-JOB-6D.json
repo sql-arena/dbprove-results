@@ -1,0 +1,111 @@
+{
+  "config": "M5 Macbook Pro",
+  "engine": "Databricks",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 2,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 1,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 3
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 1,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 3
+        },
+        "scan": {
+          "+2x": 1,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 1,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 3,
+          ">16x": 2
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 89,
+        "distribute": 1381770,
+        "hash": 16742959,
+        "join": 5680499,
+        "scan": 22412386,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(k.keyword), MIN(n.name), MIN(t.title)\n       1         1  DISTRIBUTE GATHER\n       1         1  AGGREGATE MIN(k.keyword), MIN(n.name), MIN(t.title)\n     398        88  INNER JOIN HASH ON mk.keyword_id = k.id\n 5690000      5190  │└INNER JOIN HASH ON ci.movie_id = mk.movie_id\n 5690000       306  │ │└DISTRIBUTE GATHER\n 5690000       306  │ │ INNER JOIN HASH ON ci.movie_id = t.id\n25700000       307  │ │ │└INNER JOIN HASH ON ci.person_id = n.id\n 2530000  16732272  │ │ │ │└TABLE SCAN sql - cast_info\n25700000         2  │ │ │ DISTRIBUTE HASH ON n.id\n  134000         2  │ │ │ TABLE SCAN sql - name WHERE n.name LIKE '%Downey%Robert%'\n 5690000   1381453  │ │ DISTRIBUTE GATHER\n 4520000   1381453  │ │ TABLE SCAN sql - title WHERE (t.production_year IS NOT NULL) AND (t.production_year > 2000L)\n 4170000   4298651  │ TABLE SCAN sql - movie_keyword\n     398         8  DISTRIBUTE GATHER\n36200000         8  TABLE SCAN sql - keyword WHERE k.keyword IN('superhero','sequel','second-part','marvel-comics','based-on-comic','tv-special','fight','violence')\n",
+      "sql": "SELECT MIN(k.keyword) AS movie_keyword,\n       MIN(n.name) AS actor_name,\n       MIN(t.title) AS hero_movie\nFROM job.cast_info AS ci,\n     job.keyword AS k,\n     job.movie_keyword AS mk,\n     job.name AS n,\n     job.title AS t\nWHERE k.keyword IN ('superhero',\n                    'sequel',\n                    'second-part',\n                    'marvel-comics',\n                    'based-on-comic',\n                    'tv-special',\n                    'fight',\n                    'violence')\n  AND n.name LIKE '%Downey%Robert%'\n  AND t.production_year > 2000\n  AND k.id = mk.keyword_id\n  AND t.id = mk.movie_id\n  AND t.id = ci.movie_id\n  AND ci.movie_id = mk.movie_id\n  AND n.id = ci.person_id;\n",
+      "startTime": "2026-06-24T13:57:44.156357Z",
+      "status": "OK",
+      "timeMs": 2097.753
+    }
+  ],
+  "runtime": {
+    "avgMs": 2097.753,
+    "bestMs": 2097.753,
+    "maxMs": 2097.753,
+    "minMs": 2097.753,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 6D Analysis",
+    "displayName": "JOB-6D",
+    "name": "PLAN-JOB-6D",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "4.1.0"
+}

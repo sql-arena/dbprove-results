@@ -1,0 +1,42 @@
+== Optimized Logical Plan ==
+Project [count(1)#35722L AS count(c_custkey)#35723L], Statistics(sizeInBytes=16.0 B, rowCount=1, ColumnStat: N/A)
++- AggregatePart [finalmerge_count(merge count#35751L) AS count(1)#35722L], true, Statistics(sizeInBytes=8.0 B, rowCount=1, ColumnStat: N/A)
+   +- AggregatePart [merge_count(merge count#35751L) AS count#35751L], false, Statistics(sizeInBytes=16.0 B, rowCount=2, ColumnStat: N/A)
+      +- Join LeftSemi, Statistics(sizeInBytes=32.0 B, rowCount=2, ColumnStat: N/A)
+         :- AggregatePart [partial_count(1) AS count#35751L], false, Statistics(sizeInBytes=16.0 B, rowCount=2, ColumnStat: N/A)
+         :  +- Project, Statistics(sizeInBytes=16.0 B, rowCount=2, ColumnStat: N/A), Predicted Statistics(sizeInBytes=1504.2 KiB, rowCount=1.93E+5)
+         :     +- Filter (c_custkey#35713L = 1), Statistics(sizeInBytes=458.0 B, rowCount=2, [c_comment#35720 -> ColumnStat(distinctCount: 2, min: N/A, max: N/A, nullCount: 0, avgLen: 73, maxLen: 116, histogram: N/A, version: 2), c_custkey#35713L -> ColumnStat(distinctCount: 1, min: 1, max: 1, nullCount: 0, avgLen: 8, maxLen: 8, histogram: N/A, version: 2), c_phone#35717 -> ColumnStat(distinctCount: 2, min: N/A, max: N/A, nullCount: 0, avgLen: 15, maxLen: 15, histogram: N/A, version: 2), c_mktsegment#35719 -> ColumnStat(distinctCount: 1, min: N/A, max: N/A, nullCount: 0, avgLen: 9, maxLen: 10, histogram: N/A, version: 2), c_nationkey#35716 -> ColumnStat(distinctCount: 1, min: 0, max: 24, nullCount: 0, avgLen: 4, maxLen: 4, histogram: N/A, version: 2), c_acctbal#35718 -> ColumnStat(distinctCount: 2, min: -999.99, max: 9999.99, nullCount: 0, avgLen: 8, maxLen: 8, histogram: N/A, version: 2), c_name#35714 -> ColumnStat(distinctCount: 2, min: N/A, max: N/A, nullCount: 0, avgLen: 18, maxLen: 18, histogram: N/A, version: 2), c_address#35715 -> ColumnStat(distinctCount: 2, min: N/A, max: N/A, nullCount: 0, avgLen: 26, maxLen: 40, histogram: N/A, version: 2)]), Predicted Statistics(sizeInBytes=33.3 KiB, rowCount=149)
+         :        +- Relation sql-arena.tpch_sf1.customer[c_custkey#35713L,c_name#35714,c_address#35715,c_nationkey#35716,c_phone#35717,c_acctbal#35718,c_mktsegment#35719,c_comment#35720] parquet, Statistics(sizeInBytes=32.8 MiB, rowCount=1.50E+5, [c_comment#35720 -> ColumnStat(distinctCount: 150000, min: N/A, max: N/A, nullCount: 0, avgLen: 73, maxLen: 116, histogram: N/A, version: 2), c_custkey#35713L -> ColumnStat(distinctCount: 147100, min: 1, max: 150000, nullCount: 0, avgLen: 8, maxLen: 8, histogram: N/A, version: 2), c_phone#35717 -> ColumnStat(distinctCount: 142481, min: N/A, max: N/A, nullCount: 0, avgLen: 15, maxLen: 15, histogram: N/A, version: 2), c_mktsegment#35719 -> ColumnStat(distinctCount: 5, min: N/A, max: N/A, nullCount: 0, avgLen: 9, maxLen: 10, histogram: N/A, version: 2), c_nationkey#35716 -> ColumnStat(distinctCount: 26, min: 0, max: 24, nullCount: 0, avgLen: 4, maxLen: 4, histogram: N/A, version: 2), c_acctbal#35718 -> ColumnStat(distinctCount: 134059, min: -999.99, max: 9999.99, nullCount: 0, avgLen: 8, maxLen: 8, histogram: N/A, version: 2), c_name#35714 -> ColumnStat(distinctCount: 150000, min: N/A, max: N/A, nullCount: 0, avgLen: 18, maxLen: 18, histogram: N/A, version: 2), c_address#35715 -> ColumnStat(distinctCount: 148226, min: N/A, max: N/A, nullCount: 0, avgLen: 26, maxLen: 40, histogram: N/A, version: 2)])
+         +- LocalLimit 1, Statistics(sizeInBytes=11.4 MiB, rowCount=1.50E+6, ColumnStat: N/A)
+            +- Project, Statistics(sizeInBytes=11.4 MiB, rowCount=1.50E+6, ColumnStat: N/A), Predicted Statistics(sizeInBytes=5.1 MiB, rowCount=6.66E+5)
+               +- Filter (o_custkey#35705L = 1), Statistics(sizeInBytes=171.7 MiB, rowCount=1.50E+6, ColumnStat: N/A), Predicted Statistics(sizeInBytes=10.9 MiB, rowCount=9.49E+4)
+                  +- Relation sql-arena.tpch_sf1.orders[o_orderkey#35704L,o_custkey#35705L,o_orderstatus#35706,o_totalprice#35707,o_orderdate#35708,o_orderpriority#35709,o_clerk#35710,o_shippriority#35711,o_comment#35712] parquet, Statistics(sizeInBytes=171.7 MiB, rowCount=1.50E+6, ColumnStat: N/A)
+
+== Physical Plan ==
+AdaptiveSparkPlan isFinalPlan=false
++- == Initial Plan ==
+   Project [count(1)#35722L AS count(c_custkey)#35723L]
+   +- HashAggregate(keys=[], functions=[finalmerge_count(merge count#35751L) AS count(1)#35722L], output=[count(1)#35722L])
+      +- Exchange SinglePartition, ENSURE_REQUIREMENTS, [plan_id=59751]
+         +- HashAggregate(keys=[], functions=[merge_count(merge count#35751L) AS count#35751L], output=[count#35751L])
+            +- BroadcastNestedLoopJoin BuildLeft, LeftSemi, false
+               :- BroadcastExchange IdentityBroadcastMode, [plan_id=59747]
+               :  +- HashAggregate(keys=[], functions=[partial_count(1) AS count#35751L], output=[count#35751L])
+               :     +- ColumnarToRow
+               :        +- PhotonResultStage
+               :           +- PhotonProject
+               :              +- PhotonScan parquet sql-arena.tpch_sf1.customer[c_custkey#35713L] DataFilters: [(c_custkey#35713L = 1)], DictionaryFilters: [(c_custkey#35713L = 1)], Format: parquet, Location: PreparedDeltaFileIndex(1 paths)[s3://floedb-databricks-metastore-367509577365/metastore/82a33d38-..., OptionalDataFilters: [], PartitionFilters: [], ReadSchema: struct<c_custkey:bigint>, RequiredDataFilters: [(c_custkey#35713L = 1)]
+               +- ColumnarToRow
+                  +- PhotonResultStage
+                     +- PhotonLocalLimit 1
+                        +- PhotonProject
+                           +- PhotonScan parquet sql-arena.tpch_sf1.orders[o_custkey#35705L] DataFilters: [(o_custkey#35705L = 1)], DictionaryFilters: [(o_custkey#35705L = 1)], Format: parquet, Location: PreparedDeltaFileIndex(1 paths)[s3://floedb-databricks-metastore-367509577365/metastore/82a33d38-..., OptionalDataFilters: [], PartitionFilters: [], ReadSchema: struct<o_custkey:bigint>, RequiredDataFilters: [(o_custkey#35705L = 1)]
+
+
+== Optimizer Statistics (table names per statistics state) ==
+  missing = 
+  partial = orders
+  full    = customer
+Corrective actions: consider running the following command on all tables with missing or partial statistics
+  ANALYZE TABLE <table-name> COMPUTE STATISTICS FOR ALL COLUMNS
+

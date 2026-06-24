@@ -1,0 +1,111 @@
+{
+  "config": "M5 Macbook Pro",
+  "engine": "Databricks",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 2,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 1,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 2,
+          "=": 0,
+          ">16x": 1
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 1,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 1,
+          "=": 0,
+          ">16x": 2
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 1,
+          "+8x": 1,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 2,
+          ">16x": 3
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 1,
+        "distribute": 355964,
+        "hash": 355962,
+        "join": 1163591,
+        "scan": 1163598,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(t.title)\n       1         1  DISTRIBUTE GATHER\n       1         1  AGGREGATE MIN(t.title)\n     121         0  INNER JOIN HASH ON mc.company_type_id = ct.id\n     115         0  │└INNER JOIN HASH ON mi.movie_id = mc.movie_id\n     115     48168  │ │└DISTRIBUTE GATHER\n     115     48168  │ │ INNER JOIN HASH ON mi.movie_id = t.id\n     115    153897  │ │ │└DISTRIBUTE GATHER\n  655000    153897  │ │ │ INNER JOIN HASH ON mi.info_type_id = it.id\n  655000    153897  │ │ │ │└DISTRIBUTE GATHER\n 2530000    153897  │ │ │ │ TABLE SCAN sql - movie_info WHERE mi.info IN('Sweden','Norway','Germany','Denmark','Swedish','Denish','Norwegian','German')\n     113         7  │ │ │ TABLE SCAN sql - info_type\n14800000   1009693  │ │ TABLE SCAN sql - title WHERE (t.production_year IS NOT NULL) AND (t.production_year > 2005L)\n 2610000         0  │ TABLE SCAN sql - movie_companies WHERE (mc.note IS NOT NULL) AND contains(mc.note,'(theatrical)') AND contains(mc.note,'(France)')\n     121         1  DISTRIBUTE GATHER\n       4         1  TABLE SCAN sql - company_type WHERE ct.kind = 'production companies'\n",
+      "sql": "SELECT MIN(t.title) AS typical_european_movie\nFROM job.company_type AS ct,\n     job.info_type AS it,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.title AS t\nWHERE ct.kind = 'production companies'\n  AND mc.note LIKE '%(theatrical)%'\n  AND mc.note LIKE '%(France)%'\n  AND mi.info IN ('Sweden',\n                  'Norway',\n                  'Germany',\n                  'Denmark',\n                  'Swedish',\n                  'Denish',\n                  'Norwegian',\n                  'German')\n  AND t.production_year > 2005\n  AND t.id = mi.movie_id\n  AND t.id = mc.movie_id\n  AND mc.movie_id = mi.movie_id\n  AND ct.id = mc.company_type_id\n  AND it.id = mi.info_type_id;\n",
+      "startTime": "2026-06-24T13:57:21.182714Z",
+      "status": "OK",
+      "timeMs": 1825.769
+    }
+  ],
+  "runtime": {
+    "avgMs": 1825.769,
+    "bestMs": 1825.769,
+    "maxMs": 1825.769,
+    "minMs": 1825.769,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 5A Analysis",
+    "displayName": "JOB-5A",
+    "name": "PLAN-JOB-5A",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "4.1.0"
+}

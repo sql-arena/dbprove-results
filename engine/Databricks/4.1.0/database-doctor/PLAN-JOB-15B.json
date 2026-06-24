@@ -1,0 +1,111 @@
+{
+  "config": "M5 Macbook Pro",
+  "engine": "Databricks",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 2,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 1,
+          "+4x": 1,
+          "+8x": 2,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 2,
+          "=": 1,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 2,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 3,
+          "=": 2,
+          ">16x": 1
+        },
+        "scan": {
+          "+2x": 1,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 3,
+          "=": 2,
+          ">16x": 5
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 38,
+        "distribute": 134934,
+        "hash": 62723,
+        "join": 5471385,
+        "scan": 5532147,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(mi.info), MIN(t.title)\n       1         1  DISTRIBUTE GATHER\n       1         1  AGGREGATE MIN(mi.info), MIN(t.title)\n    1610        37  INNER JOIN HASH ON mc.movie_id = aka_t.movie_id\n    1610       151  │└DISTRIBUTE GATHER\n     766       151  │ INNER JOIN HASH ON mk.keyword_id = k.id\n     735       151  │ │└INNER JOIN HASH ON mc.movie_id = mk.movie_id\n     735        74  │ │ │└DISTRIBUTE GATHER\n      82        74  │ │ │ INNER JOIN HASH ON mi.info_type_id = it1.id\n      82        74  │ │ │ │└INNER JOIN HASH ON mc.movie_id = mi.movie_id\n      82       254  │ │ │ │ │└DISTRIBUTE GATHER\n      13       254  │ │ │ │ │ INNER JOIN HASH ON mc.movie_id = t.id\n      13       278  │ │ │ │ │ │└DISTRIBUTE GATHER\n      12       278  │ │ │ │ │ │ INNER JOIN HASH ON mc.company_type_id = ct.id\n      12       278  │ │ │ │ │ │ │└INNER JOIN HASH ON mc.company_id = cn.id\n  134000     61386  │ │ │ │ │ │ │ │└TABLE SCAN sql - movie_companies WHERE (mc.note IS NOT NULL) AND mc.note LIKE '%(200%)%' AND contains(mc.note,'(worldwide)')\n      12         1  │ │ │ │ │ │ │ DISTRIBUTE GATHER\n  361000         1  │ │ │ │ │ │ │ TABLE SCAN sql - company_name WHERE (cn.country_code IS NOT NULL) AND (cn.country_code = 'us') AND (cn.name = 'YouTube')\n      12         4  │ │ │ │ │ │ DISTRIBUTE GATHER\n 4520000         4  │ │ │ │ │ │ TABLE SCAN sql - company_type\n     113    711648  │ │ │ │ │ TABLE SCAN sql - title WHERE (t.production_year IS NOT NULL) AND (t.production_year >= 2005L) AND (t.production_year <= 2010L)\n 2530000      1765  │ │ │ │ TABLE SCAN sql - movie_info WHERE (mi.note IS NOT NULL) AND contains(mi.note,'internet') AND mi.info LIKE 'USA:% 200%'\n      82         1  │ │ │ DISTRIBUTE GATHER\n14800000         1  │ │ │ TABLE SCAN sql - info_type WHERE it1.info = 'release dates'\n  235000   4515744  │ │ TABLE SCAN sql - movie_keyword\n     766    134170  │ DISTRIBUTE GATHER\n       4    134170  │ TABLE SCAN sql - keyword\n 2610000    107428  TABLE SCAN sql - aka_title WHERE aka_t.movie_id IS NOT NULL\n",
+      "sql": "SELECT MIN(mi.info) AS release_date,\n       MIN(t.title) AS youtube_movie\nFROM job.aka_title AS aka_t,\n     job.company_name AS cn,\n     job.company_type AS ct,\n     job.info_type AS it1,\n     job.keyword AS k,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.movie_keyword AS mk,\n     job.title AS t\nWHERE cn.country_code = '[us]'\n  AND cn.name = 'YouTube'\n  AND it1.info = 'release dates'\n  AND mc.note LIKE '%(200%)%'\n  AND mc.note LIKE '%(worldwide)%'\n  AND mi.note LIKE '%internet%'\n  AND mi.info LIKE 'USA:% 200%'\n  AND t.production_year BETWEEN 2005 AND 2010\n  AND t.id = aka_t.movie_id\n  AND t.id = mi.movie_id\n  AND t.id = mk.movie_id\n  AND t.id = mc.movie_id\n  AND mk.movie_id = mi.movie_id\n  AND mk.movie_id = mc.movie_id\n  AND mk.movie_id = aka_t.movie_id\n  AND mi.movie_id = mc.movie_id\n  AND mi.movie_id = aka_t.movie_id\n  AND mc.movie_id = aka_t.movie_id\n  AND k.id = mk.keyword_id\n  AND it1.id = mi.info_type_id\n  AND cn.id = mc.company_id\n  AND ct.id = mc.company_type_id;\n",
+      "startTime": "2026-06-24T13:50:48.887943Z",
+      "status": "OK",
+      "timeMs": 3038.274
+    }
+  ],
+  "runtime": {
+    "avgMs": 3038.274,
+    "bestMs": 3038.274,
+    "maxMs": 3038.274,
+    "minMs": 3038.274,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 15B Analysis",
+    "displayName": "JOB-15B",
+    "name": "PLAN-JOB-15B",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "4.1.0"
+}

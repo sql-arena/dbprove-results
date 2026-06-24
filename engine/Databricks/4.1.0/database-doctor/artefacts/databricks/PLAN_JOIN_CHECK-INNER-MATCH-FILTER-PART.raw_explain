@@ -1,0 +1,37 @@
+== Optimized Logical Plan ==
+Aggregate [count(1) AS count(l_partkey)#34648L, count(1) AS count(p_partkey)#34650L], Statistics(sizeInBytes=24.0 B, rowCount=1, ColumnStat: N/A)
++- Project, Statistics(sizeInBytes=8.7 TiB, rowCount=1.20E+12, ColumnStat: N/A), Predicted Statistics(sizeInBytes=1134.5 KiB, rowCount=1.45E+5)
+   +- Join Inner, (l_partkey#34632L = p_partkey#34622L), Statistics(sizeInBytes=26.2 TiB, rowCount=1.20E+12, ColumnStat: N/A)
+      :- Project [l_partkey#34632L], Statistics(sizeInBytes=91.6 MiB, rowCount=6.00E+6, ColumnStat: N/A), Predicted Statistics(sizeInBytes=57.9 MiB, rowCount=3.79E+6)
+      :  +- Filter (l_partkey#34632L = 1), Statistics(sizeInBytes=1053.1 MiB, rowCount=6.00E+6, ColumnStat: N/A), Predicted Statistics(sizeInBytes=22.2 MiB, rowCount=1.27E+5)
+      :     +- Relation sql-arena.tpch_sf1.lineitem[l_orderkey#34631L,l_partkey#34632L,l_suppkey#34633L,l_linenumber#34634L,l_quantity#34635,l_extendedprice#34636,l_discount#34637,l_tax#34638,l_returnflag#34639,l_linestatus#34640,l_shipdate#34641,l_commitdate#34642,l_receiptdate#34643,l_shipinstruct#34644,l_shipmode#34645,l_comment#34646] parquet, Statistics(sizeInBytes=1053.1 MiB, rowCount=6.00E+6, ColumnStat: N/A)
+      +- Project [p_partkey#34622L], Statistics(sizeInBytes=3.1 MiB, rowCount=2.00E+5, ColumnStat: N/A), Predicted Statistics(sizeInBytes=2.9 MiB, rowCount=1.93E+5)
+         +- Filter (p_partkey#34622L = 1), Statistics(sizeInBytes=28.2 MiB, rowCount=2.00E+5, ColumnStat: N/A), Predicted Statistics(sizeInBytes=148.0 B, rowCount=1)
+            +- Relation sql-arena.tpch_sf1.part[p_partkey#34622L,p_name#34623,p_mfgr#34624,p_brand#34625,p_type#34626,p_size#34627,p_container#34628,p_retailprice#34629,p_comment#34630] parquet, Statistics(sizeInBytes=28.2 MiB, rowCount=2.00E+5, ColumnStat: N/A)
+
+== Physical Plan ==
+AdaptiveSparkPlan isFinalPlan=false
++- == Initial Plan ==
+   PhotonResultStage
+   +- PhotonColumnarToRow
+      +- PhotonAgg(limit=None, keys=[], functions=[finalmerge_count(merge count#34678L) AS count(1)#34647L], output=[count(l_partkey)#34648L, count(p_partkey)#34650L])
+         +- PhotonShuffleExchangeSource
+            +- PhotonShuffleMapStage ENSURE_REQUIREMENTS, [id=#56163]
+               +- PhotonShuffleExchangeSink SinglePartition
+                  +- PhotonAgg(limit=None, keys=[], functions=[partial_count(1) AS count#34678L], output=[count#34678L])
+                     +- PhotonProject
+                        +- PhotonBroadcastHashJoin [l_partkey#34632L], [p_partkey#34622L], Inner, BuildRight, false, true
+                           :- PhotonScan parquet sql-arena.tpch_sf1.lineitem[l_partkey#34632L] DataFilters: [(l_partkey#34632L = 1)], DictionaryFilters: [(l_partkey#34632L = 1)], Format: parquet, Location: PreparedDeltaFileIndex(1 paths)[s3://floedb-databricks-metastore-367509577365/metastore/82a33d38-..., OptionalDataFilters: [hashedrelationcontains(l_partkey#34632L)], PartitionFilters: [], ReadSchema: struct<l_partkey:bigint>, RequiredDataFilters: [(l_partkey#34632L = 1)]
+                           +- PhotonShuffleExchangeSource
+                              +- PhotonShuffleMapStage EXECUTOR_BROADCAST, [id=#56151]
+                                 +- PhotonShuffleExchangeSink SinglePartition
+                                    +- PhotonScan parquet sql-arena.tpch_sf1.part[p_partkey#34622L] DataFilters: [(p_partkey#34622L = 1)], DictionaryFilters: [(p_partkey#34622L = 1)], Format: parquet, Location: PreparedDeltaFileIndex(1 paths)[s3://floedb-databricks-metastore-367509577365/metastore/82a33d38-..., OptionalDataFilters: [], PartitionFilters: [], ReadSchema: struct<p_partkey:bigint>, RequiredDataFilters: [(p_partkey#34622L = 1)]
+
+
+== Optimizer Statistics (table names per statistics state) ==
+  missing = 
+  partial = lineitem, part
+  full    = 
+Corrective actions: consider running the following command on all tables with missing or partial statistics
+  ANALYZE TABLE <table-name> COMPUTE STATISTICS FOR ALL COLUMNS
+

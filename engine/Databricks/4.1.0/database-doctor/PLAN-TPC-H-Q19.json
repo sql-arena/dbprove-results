@@ -1,0 +1,110 @@
+{
+  "config": "M5 Macbook Pro",
+  "engine": "Databricks",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 1
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 1
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 2
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 129,
+        "distribute": 513,
+        "hash": 131625,
+        "join": 511,
+        "scan": 132136,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE SUM(sql - l_extendedprice * (1BD - sql - l_discount))\n       1         2  DISTRIBUTE GATHER\n       1         2  AGGREGATE SUM(sql - l_extendedprice * (1BD - sql - l_discount))\n      1B       127  INNER JOIN HASH ON sql - l_partkey = sql - p_partkey\n 6000000    131625  │└TABLE SCAN sql - lineitem WHERE (sql - l_shipmode IN('AIR','AIR REG')) AND (sql - l_shipinstruct = 'DELIVER IN PERSON') AND (sql - l_quantity >= 5.00BD) AND (sql - l_quantity <= 35.00BD)\n      1B       511  DISTRIBUTE HASH ON sql - p_partkey\n  200000       511  TABLE SCAN sql - part WHERE (sql - p_size >= 1) AND (((((sql - p_brand = 'Brand#11') AND (sql - p_container IN('SM CASE','SM BOX','SM PACK','SM PKG'))) AND (sql - p_size <= 5)) OR (((sql - p_brand = 'Brand#22') AND (sql - p_container IN('MED BAG','MED BOX','MED PKG','MED PACK'))) AND (sql - p_size <= 10))) OR (((sql - p_brand = 'Brand#33') AND (sql - p_container IN('LG CASE','LG BOX','LG PACK','LG PKG'))) AND (sql - p_size <= 15)))\n",
+      "sql": "/* TPC-H Q19 */\nSELECT SUM(l_extendedprice * (1 - l_discount)) AS revenue\nFROM tpch_sf1.lineitem\nINNER JOIN tpch_sf1.part ON p_partkey = l_partkey\nWHERE (\n\n        p_brand = 'Brand#11'\n        AND p_container IN ('SM CASE', 'SM BOX', 'SM PACK', 'SM PKG')\n        AND l_quantity >= 5 AND l_quantity <= 5 + 10\n        AND p_size BETWEEN 1 AND 5\n        AND l_shipmode IN ('AIR', 'AIR REG')\n        AND l_shipinstruct = 'DELIVER IN PERSON'\n    )\n   OR ( p_brand = 'Brand#22'\n        AND p_container IN ('MED BAG', 'MED BOX', 'MED PKG', 'MED PACK')\n        AND l_quantity >= 15 AND l_quantity <= 15 + 10\n        AND p_size BETWEEN 1 AND 10\n        AND l_shipmode IN ('AIR', 'AIR REG')\n        AND l_shipinstruct = 'DELIVER IN PERSON'\n    )\n   OR ( p_brand = 'Brand#33'\n        AND p_container IN ('LG CASE', 'LG BOX', 'LG PACK', 'LG PKG')\n        AND l_quantity >= 25 AND l_quantity <= 25 + 10\n        AND p_size BETWEEN 1 AND 15\n        AND l_shipmode IN ('AIR', 'AIR REG')\n        AND l_shipinstruct = 'DELIVER IN PERSON'\n    )\n",
+      "startTime": "2026-06-24T13:59:54.163813Z",
+      "status": "OK",
+      "timeMs": 1056.819
+    }
+  ],
+  "runtime": {
+    "avgMs": 1056.819,
+    "bestMs": 1056.819,
+    "maxMs": 1056.819,
+    "minMs": 1056.819,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "TPC-H Q19 Analysis",
+    "displayName": "TPCH-Q19",
+    "name": "PLAN-TPC-H-Q19",
+    "tags": [
+      "TPC-H"
+    ]
+  },
+  "version": "4.1.0"
+}

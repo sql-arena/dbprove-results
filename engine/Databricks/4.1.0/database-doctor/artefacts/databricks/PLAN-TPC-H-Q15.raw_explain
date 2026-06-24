@@ -1,0 +1,66 @@
+== Optimized Logical Plan ==
+Sort [s_suppkey#30374L ASC NULLS FIRST], true, Statistics(sizeInBytes=6.9 TiB, rowCount=6.00E+10, [s_suppkey#30374L -> ColumnStat(distinctCount: 9571, min: 1, max: 10000, nullCount: 0, avgLen: 8, maxLen: 8, histogram: N/A, version: 2), s_name#30375 -> ColumnStat(distinctCount: 10000, min: N/A, max: N/A, nullCount: 0, avgLen: 18, maxLen: 18, histogram: N/A, version: 2), s_address#30376 -> ColumnStat(distinctCount: 10000, min: N/A, max: N/A, nullCount: 0, avgLen: 25, maxLen: 40, histogram: N/A, version: 2), s_phone#30378 -> ColumnStat(distinctCount: 10000, min: N/A, max: N/A, nullCount: 0, avgLen: 15, maxLen: 15, histogram: N/A, version: 2)])
++- Project [s_suppkey#30374L, s_name#30375, s_address#30376, s_phone#30378, total_revenue#30351], Statistics(sizeInBytes=6.9 TiB, rowCount=6.00E+10, [s_suppkey#30374L -> ColumnStat(distinctCount: 9571, min: 1, max: 10000, nullCount: 0, avgLen: 8, maxLen: 8, histogram: N/A, version: 2), s_name#30375 -> ColumnStat(distinctCount: 10000, min: N/A, max: N/A, nullCount: 0, avgLen: 18, maxLen: 18, histogram: N/A, version: 2), s_address#30376 -> ColumnStat(distinctCount: 10000, min: N/A, max: N/A, nullCount: 0, avgLen: 25, maxLen: 40, histogram: N/A, version: 2), s_phone#30378 -> ColumnStat(distinctCount: 10000, min: N/A, max: N/A, nullCount: 0, avgLen: 15, maxLen: 15, histogram: N/A, version: 2)])
+   +- Join Inner, (s_suppkey#30374L = supplier_no#30350L), Statistics(sizeInBytes=7.3 TiB, rowCount=6.00E+10, [s_suppkey#30374L -> ColumnStat(distinctCount: 9571, min: 1, max: 10000, nullCount: 0, avgLen: 8, maxLen: 8, histogram: N/A, version: 2), s_name#30375 -> ColumnStat(distinctCount: 10000, min: N/A, max: N/A, nullCount: 0, avgLen: 18, maxLen: 18, histogram: N/A, version: 2), s_address#30376 -> ColumnStat(distinctCount: 10000, min: N/A, max: N/A, nullCount: 0, avgLen: 25, maxLen: 40, histogram: N/A, version: 2), s_phone#30378 -> ColumnStat(distinctCount: 10000, min: N/A, max: N/A, nullCount: 0, avgLen: 15, maxLen: 15, histogram: N/A, version: 2)])
+      :- Project [s_suppkey#30374L, s_name#30375, s_address#30376, s_phone#30378], Statistics(sizeInBytes=1074.2 KiB, rowCount=1.00E+4, [s_suppkey#30374L -> ColumnStat(distinctCount: 9571, min: 1, max: 10000, nullCount: 0, avgLen: 8, maxLen: 8, histogram: N/A, version: 2), s_name#30375 -> ColumnStat(distinctCount: 10000, min: N/A, max: N/A, nullCount: 0, avgLen: 18, maxLen: 18, histogram: N/A, version: 2), s_address#30376 -> ColumnStat(distinctCount: 10000, min: N/A, max: N/A, nullCount: 0, avgLen: 25, maxLen: 40, histogram: N/A, version: 2), s_phone#30378 -> ColumnStat(distinctCount: 10000, min: N/A, max: N/A, nullCount: 0, avgLen: 15, maxLen: 15, histogram: N/A, version: 2)])
+      :  +- Relation sql-arena.tpch_sf1.supplier[s_suppkey#30374L,s_name#30375,s_address#30376,s_nationkey#30377,s_phone#30378,s_acctbal#30379,s_comment#30380] parquet, Statistics(sizeInBytes=1923.8 KiB, rowCount=1.00E+4, [s_name#30375 -> ColumnStat(distinctCount: 10000, min: N/A, max: N/A, nullCount: 0, avgLen: 18, maxLen: 18, histogram: N/A, version: 2), s_phone#30378 -> ColumnStat(distinctCount: 10000, min: N/A, max: N/A, nullCount: 0, avgLen: 15, maxLen: 15, histogram: N/A, version: 2), s_suppkey#30374L -> ColumnStat(distinctCount: 9571, min: 1, max: 10000, nullCount: 0, avgLen: 8, maxLen: 8, histogram: N/A, version: 2), s_acctbal#30379 -> ColumnStat(distinctCount: 9490, min: -998.22, max: 9999.72, nullCount: 0, avgLen: 8, maxLen: 8, histogram: N/A, version: 2), s_comment#30380 -> ColumnStat(distinctCount: 10000, min: N/A, max: N/A, nullCount: 0, avgLen: 63, maxLen: 100, histogram: N/A, version: 2), s_address#30376 -> ColumnStat(distinctCount: 10000, min: N/A, max: N/A, nullCount: 0, avgLen: 25, maxLen: 40, histogram: N/A, version: 2), s_nationkey#30377 -> ColumnStat(distinctCount: 26, min: 0, max: 24, nullCount: 0, avgLen: 4, maxLen: 4, histogram: N/A, version: 2)])
+      +- Filter (isnotnull(total_revenue#30351) AND (total_revenue#30351 = scalar-subquery#30349 [])), Statistics(sizeInBytes=183.1 MiB, rowCount=6.00E+6, ColumnStat: N/A)
+         :  +- Aggregate [max(total_revenue#30383) AS max(total_revenue)#30385], Statistics(sizeInBytes=24.0 B, rowCount=1, ColumnStat: N/A)
+         :     +- Aggregate [l_suppkey#30406L], [sum((l_extendedprice#30409 * (1 - l_discount#30410))) AS total_revenue#30383], Statistics(sizeInBytes=137.4 MiB, rowCount=6.00E+6, ColumnStat: N/A)
+         :        +- Project [l_suppkey#30406L, l_extendedprice#30409, l_discount#30410], Statistics(sizeInBytes=183.1 MiB, rowCount=6.00E+6, ColumnStat: N/A), Predicted Statistics(sizeInBytes=5.4 MiB, rowCount=1.77E+5)
+         :           +- Filter ((l_shipdate#30414 >= 1997-09-01) AND (l_shipdate#30414 < 1997-12-01)), Statistics(sizeInBytes=1053.1 MiB, rowCount=6.00E+6, ColumnStat: N/A), Predicted Statistics(sizeInBytes=31.1 MiB, rowCount=1.77E+5)
+         :              +- Relation sql-arena.tpch_sf1.lineitem[l_orderkey#30404L,l_partkey#30405L,l_suppkey#30406L,l_linenumber#30407L,l_quantity#30408,l_extendedprice#30409,l_discount#30410,l_tax#30411,l_returnflag#30412,l_linestatus#30413,l_shipdate#30414,l_commitdate#30415,l_receiptdate#30416,l_shipinstruct#30417,l_shipmode#30418,l_comment#30419] parquet, Statistics(sizeInBytes=1053.1 MiB, rowCount=6.00E+6, ColumnStat: N/A)
+         +- Aggregate [l_suppkey#30360L], [l_suppkey#30360L AS supplier_no#30350L, sum((l_extendedprice#30363 * (1 - l_discount#30364))) AS total_revenue#30351], Statistics(sizeInBytes=183.1 MiB, rowCount=6.00E+6, ColumnStat: N/A)
+            +- Project [l_suppkey#30360L, l_extendedprice#30363, l_discount#30364], Statistics(sizeInBytes=183.1 MiB, rowCount=6.00E+6, ColumnStat: N/A), Predicted Statistics(sizeInBytes=5.4 MiB, rowCount=1.77E+5)
+               +- Filter ((l_shipdate#30368 >= 1997-09-01) AND (l_shipdate#30368 < 1997-12-01)), Statistics(sizeInBytes=1053.1 MiB, rowCount=6.00E+6, ColumnStat: N/A), Predicted Statistics(sizeInBytes=12.6 MiB, rowCount=7.16E+4)
+                  +- Relation sql-arena.tpch_sf1.lineitem[l_orderkey#30358L,l_partkey#30359L,l_suppkey#30360L,l_linenumber#30361L,l_quantity#30362,l_extendedprice#30363,l_discount#30364,l_tax#30365,l_returnflag#30366,l_linestatus#30367,l_shipdate#30368,l_commitdate#30369,l_receiptdate#30370,l_shipinstruct#30371,l_shipmode#30372,l_comment#30373] parquet, Statistics(sizeInBytes=1053.1 MiB, rowCount=6.00E+6, ColumnStat: N/A)
+
+== Physical Plan ==
+AdaptiveSparkPlan isFinalPlan=false
++- == Initial Plan ==
+   PhotonResultStage
+   +- PhotonColumnarToRow
+      +- PhotonSort [s_suppkey#30374L ASC NULLS FIRST]
+         +- PhotonShuffleExchangeSource
+            +- PhotonShuffleMapStage ENSURE_REQUIREMENTS, [id=#40165]
+               +- PhotonShuffleExchangeSink rangepartitioning(s_suppkey#30374L ASC NULLS FIRST, 64)
+                  +- PhotonProject [s_suppkey#30374L, s_name#30375, s_address#30376, s_phone#30378, total_revenue#30351]
+                     +- PhotonBroadcastHashJoin [s_suppkey#30374L], [supplier_no#30350L], Inner, BuildLeft, false, true
+                        :- PhotonShuffleExchangeSource
+                        :  +- PhotonShuffleMapStage EXECUTOR_BROADCAST, [id=#40158]
+                        :     +- PhotonShuffleExchangeSink SinglePartition
+                        :        +- PhotonScan parquet sql-arena.tpch_sf1.supplier[s_suppkey#30374L,s_name#30375,s_address#30376,s_phone#30378] DataFilters: [], DictionaryFilters: [], Format: parquet, Location: PreparedDeltaFileIndex(1 paths)[s3://floedb-databricks-metastore-367509577365/metastore/82a33d38-..., OptionalDataFilters: [], PartitionFilters: [], ReadSchema: struct<s_suppkey:bigint,s_name:string,s_address:string,s_phone:string>, RequiredDataFilters: []
+                        +- PhotonFilter (isnotnull(total_revenue#30351) AND (total_revenue#30351 = Subquery subquery#30349, [id=#40041]))
+                           :  +- Subquery subquery#30349, [id=#40041]
+                           :     +- AdaptiveSparkPlan isFinalPlan=false
+                                 +- == Initial Plan ==
+                                    PhotonResultStage
+                                    +- PhotonColumnarToRow
+                                       +- PhotonAgg(limit=None, keys=[], functions=[finalmerge_max(merge max#30423) AS max(total_revenue)#30384], output=[max(total_revenue)#30385])
+                                          +- PhotonShuffleExchangeSource
+                                             +- PhotonShuffleMapStage ENSURE_REQUIREMENTS, [id=#40017]
+                                                +- PhotonShuffleExchangeSink SinglePartition
+                                                   +- PhotonAgg(limit=None, keys=[], functions=[partial_max(total_revenue#30383) AS max#30423], output=[max#30423])
+                                                      +- PhotonGroupingAgg(limit=None, keys=[l_suppkey#30406L], functions=[finalmerge_sum(merge sum#30426, isEmpty#30427) AS sum((l_extendedprice * (1 - l_discount)))#30381], output=[total_revenue#30383])
+                                                         +- PhotonShuffleExchangeSource
+                                                            +- PhotonShuffleMapStage ENSURE_REQUIREMENTS, [id=#40009]
+                                                               +- PhotonShuffleExchangeSink hashpartitioning(l_suppkey#30406L, 64)
+                                                                  +- PhotonGroupingAgg(limit=None, keys=[l_suppkey#30406L], functions=[partial_sum((l_extendedprice#30409 * (1 - l_discount#30410))) AS (sum#30426, isEmpty#30427)], output=[l_suppkey#30406L, sum#30426, isEmpty#30427])
+                                                                     +- PhotonProject [l_suppkey#30406L, l_extendedprice#30409, l_discount#30410]
+                                                                        +- PhotonScan parquet sql-arena.tpch_sf1.lineitem[l_suppkey#30406L,l_extendedprice#30409,l_discount#30410,l_shipdate#30414] DataFilters: [(l_shipdate#30414 >= 1997-09-01), (l_shipdate#30414 < 1997-12-01)], DictionaryFilters: [((l_shipdate#30414 >= 1997-09-01) AND (l_shipdate#30414 < 1997-12-01))], Format: parquet, Location: PreparedDeltaFileIndex(1 paths)[s3://floedb-databricks-metastore-367509577365/metastore/82a33d38-..., OptionalDataFilters: [], PartitionFilters: [], ReadSchema: struct<l_suppkey:bigint,l_extendedprice:decimal(15,2),l_discount:decimal(15,2),l_shipdate:date>, RequiredDataFilters: [(l_shipdate#30414 >= 1997-09-01), (l_shipdate#30414 < 1997-12-01)]
+                           +- PhotonGroupingAgg(limit=None, keys=[l_suppkey#30360L], functions=[finalmerge_sum(merge sum#30452, isEmpty#30453) AS sum((l_extendedprice * (1 - l_discount)))#30381], output=[supplier_no#30350L, total_revenue#30351])
+                              +- PhotonShuffleExchangeSource
+                                 +- PhotonShuffleMapStage ENSURE_REQUIREMENTS, [id=#40150]
+                                    +- PhotonShuffleExchangeSink hashpartitioning(l_suppkey#30360L, 64)
+                                       +- PhotonGroupingAgg(limit=None, keys=[l_suppkey#30360L], functions=[partial_sum((l_extendedprice#30363 * (1 - l_discount#30364))) AS (sum#30452, isEmpty#30453)], output=[l_suppkey#30360L, sum#30452, isEmpty#30453])
+                                          +- PhotonProject [l_suppkey#30360L, l_extendedprice#30363, l_discount#30364]
+                                             +- PhotonScan parquet sql-arena.tpch_sf1.lineitem[l_suppkey#30360L,l_extendedprice#30363,l_discount#30364,l_shipdate#30368] DataFilters: [(l_shipdate#30368 >= 1997-09-01), (l_shipdate#30368 < 1997-12-01)], DictionaryFilters: [((l_shipdate#30368 >= 1997-09-01) AND (l_shipdate#30368 < 1997-12-01))], Format: parquet, Location: PreparedDeltaFileIndex(1 paths)[s3://floedb-databricks-metastore-367509577365/metastore/82a33d38-..., OptionalDataFilters: [], PartitionFilters: [], ReadSchema: struct<l_suppkey:bigint,l_extendedprice:decimal(15,2),l_discount:decimal(15,2),l_shipdate:date>, RequiredDataFilters: [(l_shipdate#30368 >= 1997-09-01), (l_shipdate#30368 < 1997-12-01)]
+
+
+== Optimizer Statistics (table names per statistics state) ==
+  missing = 
+  partial = lineitem
+  full    = supplier
+Corrective actions: consider running the following command on all tables with missing or partial statistics
+  ANALYZE TABLE <table-name> COMPUTE STATISTICS FOR ALL COLUMNS
+

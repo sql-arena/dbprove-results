@@ -1,0 +1,27 @@
+== Optimized Logical Plan ==
+Aggregate [sum((l_extendedprice#27172 * l_discount#27173)) AS revenue#27160], Statistics(sizeInBytes=24.0 B, rowCount=1, ColumnStat: N/A)
++- Project [l_extendedprice#27172, l_discount#27173], Statistics(sizeInBytes=137.4 MiB, rowCount=6.00E+6, ColumnStat: N/A), Predicted Statistics(sizeInBytes=19.1 KiB, rowCount=815)
+   +- Filter (((((l_shipdate#27177 >= 1994-01-01) AND (l_shipdate#27177 < 1995-01-01)) AND (l_discount#27173 >= 0.04)) AND (l_discount#27173 <= 0.06)) AND (l_quantity#27171 < 24.00)), Statistics(sizeInBytes=1053.1 MiB, rowCount=6.00E+6, ColumnStat: N/A), Predicted Statistics(sizeInBytes=568.9 MiB, rowCount=3.24E+6)
+      +- Relation sql-arena.tpch_sf1.lineitem[l_orderkey#27167L,l_partkey#27168L,l_suppkey#27169L,l_linenumber#27170L,l_quantity#27171,l_extendedprice#27172,l_discount#27173,l_tax#27174,l_returnflag#27175,l_linestatus#27176,l_shipdate#27177,l_commitdate#27178,l_receiptdate#27179,l_shipinstruct#27180,l_shipmode#27181,l_comment#27182] parquet, Statistics(sizeInBytes=1053.1 MiB, rowCount=6.00E+6, ColumnStat: N/A)
+
+== Physical Plan ==
+AdaptiveSparkPlan isFinalPlan=false
++- == Initial Plan ==
+   PhotonResultStage
+   +- PhotonColumnarToRow
+      +- PhotonAgg(limit=None, keys=[], functions=[finalmerge_sum(merge sum#27205, isEmpty#27206) AS sum((l_extendedprice * l_discount))#27183], output=[revenue#27160])
+         +- PhotonShuffleExchangeSource
+            +- PhotonShuffleMapStage ENSURE_REQUIREMENTS, [id=#26300]
+               +- PhotonShuffleExchangeSink SinglePartition
+                  +- PhotonAgg(limit=None, keys=[], functions=[partial_sum((l_extendedprice#27172 * l_discount#27173)) AS (sum#27205, isEmpty#27206)], output=[sum#27205, isEmpty#27206])
+                     +- PhotonProject [l_extendedprice#27172, l_discount#27173]
+                        +- PhotonScan parquet sql-arena.tpch_sf1.lineitem[l_quantity#27171,l_extendedprice#27172,l_discount#27173,l_shipdate#27177] DataFilters: [(l_shipdate#27177 >= 1994-01-01), (l_shipdate#27177 < 1995-01-01), (l_discount#27173 >= 0.04), (..., DictionaryFilters: [(l_quantity#27171 < 24.00), ((l_discount#27173 >= 0.04) AND (l_discount#27173 <= 0.06)), ((l_shi..., Format: parquet, Location: PreparedDeltaFileIndex(1 paths)[s3://floedb-databricks-metastore-367509577365/metastore/82a33d38-..., OptionalDataFilters: [], PartitionFilters: [], ReadSchema: struct<l_quantity:decimal(15,2),l_extendedprice:decimal(15,2),l_discount:decimal(15,2),l_shipdate..., RequiredDataFilters: [(l_shipdate#27177 >= 1994-01-01), (l_shipdate#27177 < 1995-01-01), (l_discount#27173 >= 0.04), (...
+
+
+== Optimizer Statistics (table names per statistics state) ==
+  missing = 
+  partial = lineitem
+  full    = 
+Corrective actions: consider running the following command on all tables with missing or partial statistics
+  ANALYZE TABLE <table-name> COMPUTE STATISTICS FOR ALL COLUMNS
+

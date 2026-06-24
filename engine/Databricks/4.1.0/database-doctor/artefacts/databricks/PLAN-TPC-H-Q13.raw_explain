@@ -1,0 +1,47 @@
+== Optimized Logical Plan ==
+Sort [custdist#29835L DESC NULLS LAST, c_count#29862L DESC NULLS LAST], true, Statistics(sizeInBytes=3.4 MiB, rowCount=1.47E+5, ColumnStat: N/A)
++- Aggregate [c_count#29862L], [c_count#29862L, count(1) AS custdist#29835L], Statistics(sizeInBytes=3.4 MiB, rowCount=1.47E+5, ColumnStat: N/A)
+   +- Aggregate [c_custkey#29851L], [count(o_orderkey#29842L) AS c_count#29862L], Statistics(sizeInBytes=2.2 MiB, rowCount=1.47E+5, ColumnStat: N/A)
+      +- Project [c_custkey#29851L, o_orderkey#29842L], Statistics(sizeInBytes=1508.7 GiB, rowCount=6.75E+10, [c_custkey#29851L -> ColumnStat(distinctCount: 147100, min: 1, max: 150000, nullCount: 0, avgLen: 8, maxLen: 8, histogram: N/A, version: 2)]), Predicted Statistics(sizeInBytes=7.4 MiB, rowCount=3.24E+5)
+         +- Join LeftOuter, (c_custkey#29851L = o_custkey#29843L), Statistics(sizeInBytes=2011.7 GiB, rowCount=6.75E+10, [c_custkey#29851L -> ColumnStat(distinctCount: 147100, min: 1, max: 150000, nullCount: 0, avgLen: 8, maxLen: 8, histogram: N/A, version: 2)])
+            :- Project [c_custkey#29851L], Statistics(sizeInBytes=2.3 MiB, rowCount=1.50E+5, [c_custkey#29851L -> ColumnStat(distinctCount: 147100, min: 1, max: 150000, nullCount: 0, avgLen: 8, maxLen: 8, histogram: N/A, version: 2)]), Predicted Statistics(sizeInBytes=2.3 MiB, rowCount=1.50E+5)
+            :  +- Relation sql-arena.tpch_sf1.customer[c_custkey#29851L,c_name#29852,c_address#29853,c_nationkey#29854,c_phone#29855,c_acctbal#29856,c_mktsegment#29857,c_comment#29858] parquet, Statistics(sizeInBytes=32.8 MiB, rowCount=1.50E+5, [c_name#29852 -> ColumnStat(distinctCount: 150000, min: N/A, max: N/A, nullCount: 0, avgLen: 18, maxLen: 18, histogram: N/A, version: 2), c_acctbal#29856 -> ColumnStat(distinctCount: 134059, min: -999.99, max: 9999.99, nullCount: 0, avgLen: 8, maxLen: 8, histogram: N/A, version: 2), c_comment#29858 -> ColumnStat(distinctCount: 150000, min: N/A, max: N/A, nullCount: 0, avgLen: 73, maxLen: 116, histogram: N/A, version: 2), c_address#29853 -> ColumnStat(distinctCount: 148226, min: N/A, max: N/A, nullCount: 0, avgLen: 26, maxLen: 40, histogram: N/A, version: 2), c_mktsegment#29857 -> ColumnStat(distinctCount: 5, min: N/A, max: N/A, nullCount: 0, avgLen: 9, maxLen: 10, histogram: N/A, version: 2), c_nationkey#29854 -> ColumnStat(distinctCount: 26, min: 0, max: 24, nullCount: 0, avgLen: 4, maxLen: 4, histogram: N/A, version: 2), c_custkey#29851L -> ColumnStat(distinctCount: 147100, min: 1, max: 150000, nullCount: 0, avgLen: 8, maxLen: 8, histogram: N/A, version: 2), c_phone#29855 -> ColumnStat(distinctCount: 142481, min: N/A, max: N/A, nullCount: 0, avgLen: 15, maxLen: 15, histogram: N/A, version: 2)])
+            +- Project [o_orderkey#29842L, o_custkey#29843L], Statistics(sizeInBytes=10.3 MiB, rowCount=4.50E+5, ColumnStat: N/A), Predicted Statistics(sizeInBytes=2.2 MiB, rowCount=9.50E+4)
+               +- Filter NOT o_comment#29850 LIKE  % special % requests %, Statistics(sizeInBytes=51.5 MiB, rowCount=4.50E+5, ColumnStat: N/A), Predicted Statistics(sizeInBytes=10.9 MiB, rowCount=9.49E+4)
+                  +- Relation sql-arena.tpch_sf1.orders[o_orderkey#29842L,o_custkey#29843L,o_orderstatus#29844,o_totalprice#29845,o_orderdate#29846,o_orderpriority#29847,o_clerk#29848,o_shippriority#29849,o_comment#29850] parquet, Statistics(sizeInBytes=171.7 MiB, rowCount=1.50E+6, ColumnStat: N/A)
+
+== Physical Plan ==
+AdaptiveSparkPlan isFinalPlan=false
++- == Initial Plan ==
+   PhotonResultStage
+   +- PhotonColumnarToRow
+      +- PhotonSort [custdist#29835L DESC NULLS LAST, c_count#29862L DESC NULLS LAST]
+         +- PhotonShuffleExchangeSource
+            +- PhotonShuffleMapStage ENSURE_REQUIREMENTS, [id=#38535]
+               +- PhotonShuffleExchangeSink rangepartitioning(custdist#29835L DESC NULLS LAST, c_count#29862L DESC NULLS LAST, 64)
+                  +- PhotonGroupingAgg(limit=None, keys=[c_count#29862L], functions=[finalmerge_count(merge count#29883L) AS count(1)#29863L], output=[c_count#29862L, custdist#29835L])
+                     +- PhotonShuffleExchangeSource
+                        +- PhotonShuffleMapStage ENSURE_REQUIREMENTS, [id=#38529]
+                           +- PhotonShuffleExchangeSink hashpartitioning(c_count#29862L, 64)
+                              +- PhotonGroupingAgg(limit=None, keys=[c_count#29862L], functions=[partial_count(1) AS count#29883L], output=[c_count#29862L, count#29883L])
+                                 +- PhotonGroupingAgg(limit=None, keys=[c_custkey#29851L], functions=[count(o_orderkey#29842L)], output=[c_count#29862L])
+                                    +- PhotonProject [c_custkey#29851L, o_orderkey#29842L]
+                                       +- PhotonShuffledHashJoin [c_custkey#29851L], [o_custkey#29843L], LeftOuter, BuildRight
+                                          :- PhotonShuffleExchangeSource
+                                          :  +- PhotonShuffleMapStage ENSURE_REQUIREMENTS, [id=#38508]
+                                          :     +- PhotonShuffleExchangeSink hashpartitioning(c_custkey#29851L, 64)
+                                          :        +- PhotonScan parquet sql-arena.tpch_sf1.customer[c_custkey#29851L] DataFilters: [], DictionaryFilters: [], Format: parquet, Location: PreparedDeltaFileIndex(1 paths)[s3://floedb-databricks-metastore-367509577365/metastore/82a33d38-..., OptionalDataFilters: [], PartitionFilters: [], ReadSchema: struct<c_custkey:bigint>, RequiredDataFilters: []
+                                          +- PhotonShuffleExchangeSource
+                                             +- PhotonShuffleMapStage ENSURE_REQUIREMENTS, [id=#38516]
+                                                +- PhotonShuffleExchangeSink hashpartitioning(o_custkey#29843L, 64)
+                                                   +- PhotonProject [o_orderkey#29842L, o_custkey#29843L]
+                                                      +- PhotonScan parquet sql-arena.tpch_sf1.orders[o_orderkey#29842L,o_custkey#29843L,o_comment#29850] DataFilters: [NOT o_comment#29850 LIKE  % special % requests % ], DictionaryFilters: [], Format: parquet, Location: PreparedDeltaFileIndex(1 paths)[s3://floedb-databricks-metastore-367509577365/metastore/82a33d38-..., OptionalDataFilters: [], PartitionFilters: [], ReadSchema: struct<o_orderkey:bigint,o_custkey:bigint,o_comment:string>, RequiredDataFilters: [NOT o_comment#29850 LIKE  % special % requests % ]
+
+
+== Optimizer Statistics (table names per statistics state) ==
+  missing = 
+  partial = orders
+  full    = customer
+Corrective actions: consider running the following command on all tables with missing or partial statistics
+  ANALYZE TABLE <table-name> COMPUTE STATISTICS FOR ALL COLUMNS
+

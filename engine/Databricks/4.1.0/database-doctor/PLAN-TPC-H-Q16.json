@@ -1,0 +1,110 @@
+{
+  "config": "M5 Macbook Pro",
+  "engine": "Databricks",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 2,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 2
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 2,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 1
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 2,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 3
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 1
+        }
+      },
+      "operatorRows": {
+        "aggregate": 392293,
+        "distribute": 184016,
+        "hash": 1592626,
+        "join": 915197,
+        "scan": 826251,
+        "seek": 0,
+        "sort": 18282
+      },
+      "plan": "Estimate    Actual  Operator\n      0B     18282  SORT supplier_cnt DESC NULLS LAST, sql - p_brand ASC NULLS FIRST, sql - p_type ASC NULLS FIRST, sql - p_size ASC NULLS FIRST\n      0B     18282  AGGREGATE COUNT(DISTINCT sql - ps_suppkey) GROUP BY HASH sql - p_brand, sql - p_type, sql - p_size\n      0B     35216  DISTRIBUTE HASH ON sql - p_brand, sql - p_type, sql - p_size\n  800000     35216  AGGREGATE COUNT(DISTINCT sql - ps_suppkey) GROUP BY HASH sql - p_brand, sql - p_type, sql - p_size\n  800000    119013  GROUP BY HASH sql - p_brand, sql - p_type, sql - p_size, sql - ps_suppkey\n  800000    119021  DISTRIBUTE HASH ON sql - p_brand, sql - p_type, sql - p_size, sql - ps_suppkey\n  800000    119021  GROUP BY HASH sql - p_brand, sql - p_type, sql - p_size, sql - ps_suppkey\n      0B    119043  INNER JOIN HASH ON sql - ps_partkey = sql - p_partkey\n  800000    796154  │└LEFT ANTI JOIN HASH ON sql - ps_suppkey = sql - s_suppkey\n  800000    796472  │ │└TABLE SCAN sql - partsupp\n  800000         4  │ DISTRIBUTE GATHER\n  200000         4  │ TABLE SCAN sql - supplier WHERE sql - s_comment LIKE '%Customer%Complaints%'\n      0B     29775  DISTRIBUTE GATHER\n   10000     29775  TABLE SCAN sql - part WHERE ( NOT (sql - p_brand = 'Brand#42')) AND (sql - p_size IN(3,7,11,29,31,37,41,49)) AND ( NOT startswith(sql - p_type,'STANDARD ANODIZED'))\n",
+      "sql": "/* TPC-H Q16 */\nSELECT p_brand,\n       p_type,\n       p_size,\n       COUNT(DISTINCT ps_suppkey) AS supplier_cnt\nFROM tpch_sf1.partsupp\nINNER JOIN tpch_sf1.part\n    ON ps_partkey = p_partkey\n\nWHERE p_brand <> 'Brand#42'\n  AND p_type NOT LIKE 'STANDARD ANODIZED%'\n  AND p_size IN (3, 7, 11, 29, 31, 37, 41, 49)\n  AND ps_suppkey NOT IN (SELECT s_suppkey\n                         FROM tpch_sf1.supplier\n                         WHERE s_comment LIKE '%Customer%Complaints%')\nGROUP BY p_brand,\n         p_type,\n         p_size\nORDER BY supplier_cnt DESC,\n         p_brand,\n         p_type,\n         p_size",
+      "startTime": "2026-06-24T13:59:44.469424Z",
+      "status": "OK",
+      "timeMs": 1728.023
+    }
+  ],
+  "runtime": {
+    "avgMs": 1728.023,
+    "bestMs": 1728.023,
+    "maxMs": 1728.023,
+    "minMs": 1728.023,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "TPC-H Q16 Analysis",
+    "displayName": "TPCH-Q16",
+    "name": "PLAN-TPC-H-Q16",
+    "tags": [
+      "TPC-H"
+    ]
+  },
+  "version": "4.1.0"
+}

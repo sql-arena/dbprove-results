@@ -1,0 +1,32 @@
+== Optimized Logical Plan ==
+Sort [l_returnflag#27092 ASC NULLS FIRST, l_linestatus#27093 ASC NULLS FIRST], true, Statistics(sizeInBytes=961.5 MiB, rowCount=6.00E+6, ColumnStat: N/A)
++- Aggregate [l_returnflag#27092, l_linestatus#27093], [l_returnflag#27092, l_linestatus#27093, sum(l_quantity#27088) AS sum_qty#27070, sum(l_extendedprice#27089) AS sum_base_price#27071, sum((l_extendedprice#27089 * (1 - l_discount#27090))) AS sum_disc_price#27072, sum(((l_extendedprice#27089 * (1 - l_discount#27090)) * (1 + l_tax#27091))) AS sum_charge#27073, avg(l_quantity#27088) AS avg_qty#27074, avg(l_extendedprice#27089) AS avg_price#27075, avg(l_discount#27090) AS avg_disc#27076, count(1) AS count_order#27077L], Statistics(sizeInBytes=961.5 MiB, rowCount=6.00E+6, ColumnStat: N/A)
+   +- Project [l_quantity#27088, l_extendedprice#27089, l_discount#27090, l_tax#27091, l_returnflag#27092, l_linestatus#27093], Statistics(sizeInBytes=457.9 MiB, rowCount=6.00E+6, ColumnStat: N/A), Predicted Statistics(sizeInBytes=63.7 KiB, rowCount=815)
+      +- Filter (l_shipdate#27094 <= 1998-10-01), Statistics(sizeInBytes=1053.1 MiB, rowCount=6.00E+6, ColumnStat: N/A)
+         +- Relation sql-arena.tpch_sf1.lineitem[l_orderkey#27084L,l_partkey#27085L,l_suppkey#27086L,l_linenumber#27087L,l_quantity#27088,l_extendedprice#27089,l_discount#27090,l_tax#27091,l_returnflag#27092,l_linestatus#27093,l_shipdate#27094,l_commitdate#27095,l_receiptdate#27096,l_shipinstruct#27097,l_shipmode#27098,l_comment#27099] parquet, Statistics(sizeInBytes=1053.1 MiB, rowCount=6.00E+6, ColumnStat: N/A)
+
+== Physical Plan ==
+AdaptiveSparkPlan isFinalPlan=false
++- == Initial Plan ==
+   ColumnarToRow
+   +- PhotonResultStage
+      +- PhotonSort [l_returnflag#27092 ASC NULLS FIRST, l_linestatus#27093 ASC NULLS FIRST]
+         +- PhotonShuffleExchangeSource
+            +- PhotonShuffleMapStage ENSURE_REQUIREMENTS, [id=#18529]
+               +- PhotonShuffleExchangeSink rangepartitioning(l_returnflag#27092 ASC NULLS FIRST, l_linestatus#27093 ASC NULLS FIRST, 64)
+                  +- PhotonGroupingAgg(limit=None, keys=[l_returnflag#27092, l_linestatus#27093], functions=[finalmerge_sum(merge sum#27121, isEmpty#27122) AS sum(l_quantity)#27100, finalmerge_sum(merge sum#27125, isEmpty#27126) AS sum(l_extendedprice)#27101, finalmerge_sum(merge sum#27129, isEmpty#27130) AS sum((l_extendedprice * (1 - l_discount)))#27102, finalmerge_sum(merge sum#27133, isEmpty#27134) AS sum(((l_extendedprice * (1 - l_discount)) * (1 + l_tax)))#27103, finalmerge_avg(merge sum#27137, count#27138L) AS avg(l_quantity)#27104, finalmerge_avg(merge sum#27141, count#27142L) AS avg(l_extendedprice)#27105, finalmerge_avg(merge sum#27145, count#27146L) AS avg(l_discount)#27106, finalmerge_count(merge count#27148L) AS count(1)#27107L], output=[l_returnflag#27092, l_linestatus#27093, sum_qty#27070, sum_base_price#27071, sum_disc_price#27072, sum_charge#27073, avg_qty#27074, avg_price#27075, avg_disc#27076, count_order#27077L])
+                     +- PhotonShuffleExchangeSource
+                        +- PhotonShuffleMapStage ENSURE_REQUIREMENTS, [id=#18523]
+                           +- PhotonShuffleExchangeSink hashpartitioning(l_returnflag#27092, l_linestatus#27093, 64)
+                              +- PhotonGroupingAgg(limit=None, keys=[l_returnflag#27092, l_linestatus#27093], functions=[partial_sum(l_quantity#27088) AS (sum#27121, isEmpty#27122), partial_sum(l_extendedprice#27089) AS (sum#27125, isEmpty#27126), partial_sum((l_extendedprice#27089 * (1 - l_discount#27090))) AS (sum#27129, isEmpty#27130), partial_sum(((l_extendedprice#27089 * (1 - l_discount#27090)) * (1 + l_tax#27091))) AS (sum#27133, isEmpty#27134), partial_avg(l_quantity#27088) AS (sum#27137, count#27138L), partial_avg(l_extendedprice#27089) AS (sum#27141, count#27142L), partial_avg(l_discount#27090) AS (sum#27145, count#27146L), partial_count(1) AS count#27148L], output=[l_returnflag#27092, l_linestatus#27093, sum#27121, isEmpty#27122, sum#27125, isEmpty#27126, sum#27129, isEmpty#27130, sum#27133, isEmpty#27134, sum#27137, count#27138L, sum#27141, count#27142L, sum#27145, count#27146L, count#27148L])
+                                 +- PhotonProject [l_quantity#27088, l_extendedprice#27089, l_discount#27090, l_tax#27091, l_returnflag#27092, l_linestatus#27093]
+                                    +- PhotonScan parquet sql-arena.tpch_sf1.lineitem[l_quantity#27088,l_extendedprice#27089,l_discount#27090,l_tax#27091,l_returnflag#27092,l_linestatus#27093,l_shipdate#27094] DataFilters: [(l_shipdate#27094 <= 1998-10-01)], DictionaryFilters: [(l_shipdate#27094 <= 1998-10-01)], Format: parquet, Location: PreparedDeltaFileIndex(1 paths)[s3://floedb-databricks-metastore-367509577365/metastore/82a33d38-..., OptionalDataFilters: [], PartitionFilters: [], ReadSchema: struct<l_quantity:decimal(15,2),l_extendedprice:decimal(15,2),l_discount:decimal(15,2),l_tax:deci..., RequiredDataFilters: [(l_shipdate#27094 <= 1998-10-01)]
+
+
+== Optimizer Statistics (table names per statistics state) ==
+  missing = 
+  partial = lineitem
+  full    = 
+Corrective actions: consider running the following command on all tables with missing or partial statistics
+  ANALYZE TABLE <table-name> COMPUTE STATISTICS FOR ALL COLUMNS
+

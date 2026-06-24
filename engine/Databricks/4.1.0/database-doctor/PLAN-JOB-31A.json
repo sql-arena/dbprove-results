@@ -1,0 +1,111 @@
+{
+  "config": "M5 Macbook Pro",
+  "engine": "Databricks",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 2,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 1,
+          "+4x": 1,
+          "+8x": 1,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 3,
+          "=": 0,
+          ">16x": 3
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 1,
+          "+8x": 1,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 4,
+          "=": 1,
+          ">16x": 2
+        },
+        "scan": {
+          "+2x": 1,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 1,
+          "-8x": 0,
+          "<16x": 1,
+          "=": 5,
+          ">16x": 5
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 1274,
+        "distribute": 3269246,
+        "hash": 5569925,
+        "join": 9537582,
+        "scan": 13852613,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(mi.info), MIN(mi_idx.info), MIN(n.name), MIN(t.title)\n       1         1  DISTRIBUTE GATHER\n       1         1  AGGREGATE MIN(mi.info), MIN(mi_idx.info), MIN(n.name), MIN(t.title)\n    2230      1273  INNER JOIN HASH ON ci.movie_id = mi_idx.movie_id\n    2230       444  │└INNER JOIN HASH ON ci.person_id = n.id\n  705000       594  │ │└INNER JOIN HASH ON mc.movie_id = ci.movie_id\n     281       724  │ │ │└INNER JOIN HASH ON mc.company_id = cn.id\n     207    259826  │ │ │ │└INNER JOIN HASH ON mi.movie_id = mc.movie_id\n     207     72258  │ │ │ │ │└DISTRIBUTE GATHER\n      13     72258  │ │ │ │ │ INNER JOIN HASH ON mi.movie_id = t.id\n      13     72258  │ │ │ │ │ │└DISTRIBUTE GATHER\n      12     72258  │ │ │ │ │ │ INNER JOIN HASH ON mi.info_type_id = it1.id\n36200000     72258  │ │ │ │ │ │ │└TABLE SCAN sql - movie_info WHERE mi.info IN('Horror','Thriller')\n      12         1  │ │ │ │ │ │ DISTRIBUTE GATHER\n 4170000         1  │ │ │ │ │ │ TABLE SCAN sql - info_type WHERE it1.info = 'genres'\n     113   2520486  │ │ │ │ │ TABLE SCAN sql - title\n 4520000   2379754  │ │ │ │ TABLE SCAN sql - movie_companies\n     281        10  │ │ │ DISTRIBUTE GATHER\n  134000        10  │ │ │ TABLE SCAN sql - company_name WHERE startswith(cn.name,'Lionsgate')\n  705000   1244716  │ │ DISTRIBUTE GATHER\n 1380000   1244716  │ │ TABLE SCAN sql - cast_info WHERE ci.note IN('(writer)','(head writer)','(written by)','(story)','(story editor)')\n    2230   1739579  │ DISTRIBUTE GATHER\n 2610000   1739579  │ TABLE SCAN sql - name WHERE (n.gender IS NOT NULL) AND (n.gender = 'm')\n    2230     63701  DISTRIBUTE GATHER\n 3530000     63701  INNER JOIN HASH ON mi_idx.info_type_id = it2.id\n 1890000    191657  │└INNER JOIN HASH ON mk.movie_id = mi_idx.movie_id\n 1890000     76714  │ │└DISTRIBUTE GATHER\n     207     76714  │ │ INNER JOIN HASH ON mk.keyword_id = k.id\n14800000   4519852  │ │ │└TABLE SCAN sql - movie_keyword\n     207         7  │ │ DISTRIBUTE GATHER\n 2530000         7  │ │ TABLE SCAN sql - keyword WHERE k.keyword IN('murder','violence','blood','gore','death','female-nudity','hospital')\n  235000   1375949  │ TABLE SCAN sql - movie_info_idx\n 3530000         1  DISTRIBUTE GATHER\n     113         1  TABLE SCAN sql - info_type WHERE it2.info = 'votes'\n",
+      "sql": "SELECT MIN(mi.info) AS movie_budget,\n       MIN(mi_idx.info) AS movie_votes,\n       MIN(n.name) AS writer,\n       MIN(t.title) AS violent_liongate_movie\nFROM job.cast_info AS ci,\n     job.company_name AS cn,\n     job.info_type AS it1,\n     job.info_type AS it2,\n     job.keyword AS k,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.movie_info_idx AS mi_idx,\n     job.movie_keyword AS mk,\n     job.name AS n,\n     job.title AS t\nWHERE ci.note IN ('(writer)',\n                  '(head writer)',\n                  '(written by)',\n                  '(story)',\n                  '(story editor)')\n  AND cn.name LIKE 'Lionsgate%'\n  AND it1.info = 'genres'\n  AND it2.info = 'votes'\n  AND k.keyword IN ('murder',\n                    'violence',\n                    'blood',\n                    'gore',\n                    'death',\n                    'female-nudity',\n                    'hospital')\n  AND mi.info IN ('Horror',\n                  'Thriller')\n  AND n.gender = 'm'\n  AND t.id = mi.movie_id\n  AND t.id = mi_idx.movie_id\n  AND t.id = ci.movie_id\n  AND t.id = mk.movie_id\n  AND t.id = mc.movie_id\n  AND ci.movie_id = mi.movie_id\n  AND ci.movie_id = mi_idx.movie_id\n  AND ci.movie_id = mk.movie_id\n  AND ci.movie_id = mc.movie_id\n  AND mi.movie_id = mi_idx.movie_id\n  AND mi.movie_id = mk.movie_id\n  AND mi.movie_id = mc.movie_id\n  AND mi_idx.movie_id = mk.movie_id\n  AND mi_idx.movie_id = mc.movie_id\n  AND mk.movie_id = mc.movie_id\n  AND n.id = ci.person_id\n  AND it1.id = mi.info_type_id\n  AND it2.id = mi_idx.info_type_id\n  AND k.id = mk.keyword_id\n  AND cn.id = mc.company_id;\n",
+      "startTime": "2026-06-24T13:56:19.689769Z",
+      "status": "OK",
+      "timeMs": 3376.984
+    }
+  ],
+  "runtime": {
+    "avgMs": 3376.984,
+    "bestMs": 3376.984,
+    "maxMs": 3376.984,
+    "minMs": 3376.984,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 31A Analysis",
+    "displayName": "JOB-31A",
+    "name": "PLAN-JOB-31A",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "4.1.0"
+}

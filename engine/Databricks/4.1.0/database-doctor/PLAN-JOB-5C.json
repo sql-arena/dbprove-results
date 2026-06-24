@@ -1,0 +1,111 @@
+{
+  "config": "M5 Macbook Pro",
+  "engine": "Databricks",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 2,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 2,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 1
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 2,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 1
+        },
+        "scan": {
+          "+2x": 1,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 3,
+          ">16x": 2
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 670,
+        "distribute": 708241,
+        "hash": 709037,
+        "join": 3118691,
+        "scan": 2412026,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(t.title)\n       1         1  DISTRIBUTE GATHER\n       1         1  AGGREGATE MIN(t.title)\n     154       669  INNER JOIN HASH ON mc.movie_id = mi.movie_id\n     154       767  │└DISTRIBUTE GATHER\n     154       767  │ INNER JOIN HASH ON mc.movie_id = t.id\n     154       798  │ │└DISTRIBUTE GATHER\n  281000       798  │ │ INNER JOIN HASH ON ct.id = mc.company_type_id\n  281000         1  │ │ │└DISTRIBUTE GATHER\n     113         1  │ │ │ TABLE SCAN sql - company_type WHERE ct.kind = 'production companies'\n14800000       798  │ │ TABLE SCAN sql - movie_companies WHERE (mc.note IS NOT NULL) AND ( NOT contains(mc.note,'(TV)')) AND contains(mc.note,'(USA)')\n 2610000   1704545  │ TABLE SCAN sql - title WHERE (t.production_year IS NOT NULL) AND (t.production_year > 1990L)\n  295000    706674  INNER JOIN HASH ON mi.info_type_id = it.id\n  295000    706674  │└DISTRIBUTE GATHER\n 2530000    706674  │ TABLE SCAN sql - movie_info WHERE mi.info IN('Sweden','Norway','Germany','Denmark','Swedish','Denish','Norwegian','German','USA','American')\n       4         8  TABLE SCAN sql - info_type\n",
+      "sql": "SELECT MIN(t.title) AS american_movie\nFROM job.company_type AS ct,\n     job.info_type AS it,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.title AS t\nWHERE ct.kind = 'production companies'\n  AND mc.note NOT LIKE '%(TV)%'\n  AND mc.note LIKE '%(USA)%'\n  AND mi.info IN ('Sweden',\n                  'Norway',\n                  'Germany',\n                  'Denmark',\n                  'Swedish',\n                  'Denish',\n                  'Norwegian',\n                  'German',\n                  'USA',\n                  'American')\n  AND t.production_year > 1990\n  AND t.id = mi.movie_id\n  AND t.id = mc.movie_id\n  AND mc.movie_id = mi.movie_id\n  AND ct.id = mc.company_type_id\n  AND it.id = mi.info_type_id;\n",
+      "startTime": "2026-06-24T13:57:29.130767Z",
+      "status": "OK",
+      "timeMs": 1791.635
+    }
+  ],
+  "runtime": {
+    "avgMs": 1791.635,
+    "bestMs": 1791.635,
+    "maxMs": 1791.635,
+    "minMs": 1791.635,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 5C Analysis",
+    "displayName": "JOB-5C",
+    "name": "PLAN-JOB-5C",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "4.1.0"
+}

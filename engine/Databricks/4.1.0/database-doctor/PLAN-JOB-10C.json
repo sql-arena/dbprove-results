@@ -1,0 +1,111 @@
+{
+  "config": "M5 Macbook Pro",
+  "engine": "Databricks",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 2,
+          "+8x": 1,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 1,
+          "=": 0,
+          ">16x": 2
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 2,
+          "+8x": 1,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 3
+        },
+        "scan": {
+          "+2x": 1,
+          "+4x": 0,
+          "+8x": 1,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 1,
+          "=": 3,
+          ">16x": 2
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 12,
+        "distribute": 1834919,
+        "hash": 5510408,
+        "join": 6450774,
+        "scan": 6834567,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(chn.name), MIN(t.title)\n       1         2  DISTRIBUTE GATHER\n       1         2  AGGREGATE MIN(chn.name), MIN(t.title)\n   32200        10  INNER JOIN HASH ON ci.person_role_id = chn.id\n   32200        10  │└DISTRIBUTE GATHER\n 6940000        10  │ INNER JOIN HASH ON ci.role_id = rt.id\n 6940000        10  │ │└INNER JOIN HASH ON mc.movie_id = ci.movie_id\n 6940000    596250  │ │ │└DISTRIBUTE GATHER\n 6940000    596250  │ │ │ INNER JOIN HASH ON mc.movie_id = t.id\n 6940000   1153798  │ │ │ │└DISTRIBUTE GATHER\n 6940000   1153798  │ │ │ │ INNER JOIN HASH ON mc.company_type_id = ct.id\n 6940000   1153798  │ │ │ │ │└INNER JOIN HASH ON mc.company_id = cn.id\n       4   2606542  │ │ │ │ │ │└TABLE SCAN sql - movie_companies\n 6940000     84843  │ │ │ │ │ DISTRIBUTE GATHER\n  235000     84843  │ │ │ │ │ TABLE SCAN sql - company_name WHERE (cn.country_code IS NOT NULL) AND (cn.country_code = 'us')\n 6940000         4  │ │ │ │ DISTRIBUTE GATHER\n 2610000         4  │ │ │ │ TABLE SCAN sql - company_type\n 2530000   1744764  │ │ │ TABLE SCAN sql - title WHERE (t.production_year IS NOT NULL) AND (t.production_year > 1990L)\n 3140000        14  │ │ TABLE SCAN sql - cast_info WHERE (ci.note IS NOT NULL) AND (ci.person_role_id IS NOT NULL) AND contains(ci.note,'(producer)')\n 6940000        12  │ DISTRIBUTE GATHER\n      12        12  │ TABLE SCAN sql - role_type\n36200000   2398388  TABLE SCAN sql - char_name\n",
+      "sql": "SELECT MIN(chn.name) AS character,\n       MIN(t.title) AS movie_with_american_producer\nFROM job.char_name AS chn,\n     job.cast_info AS ci,\n     job.company_name AS cn,\n     job.company_type AS ct,\n     job.movie_companies AS mc,\n     job.role_type AS rt,\n     job.title AS t\nWHERE ci.note LIKE '%(producer)%'\n  AND cn.country_code = '[us]'\n  AND t.production_year > 1990\n  AND t.id = mc.movie_id\n  AND t.id = ci.movie_id\n  AND ci.movie_id = mc.movie_id\n  AND chn.id = ci.person_role_id\n  AND rt.id = ci.role_id\n  AND cn.id = mc.company_id\n  AND ct.id = mc.company_type_id;\n",
+      "startTime": "2026-06-24T13:49:30.654210Z",
+      "status": "OK",
+      "timeMs": 2305.499
+    }
+  ],
+  "runtime": {
+    "avgMs": 2305.499,
+    "bestMs": 2305.499,
+    "maxMs": 2305.499,
+    "minMs": 2305.499,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 10C Analysis",
+    "displayName": "JOB-10C",
+    "name": "PLAN-JOB-10C",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "4.1.0"
+}

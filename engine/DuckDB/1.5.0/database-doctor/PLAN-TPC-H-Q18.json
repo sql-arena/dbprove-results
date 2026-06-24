@@ -1,4 +1,5 @@
 {
+  "config": "M5 Macbook Pro",
   "engine": "DuckDB",
   "queries": [
     {
@@ -81,16 +82,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       -         9  SORT o_totalprice, o_orderdate\n 1277320         9  AGGREGATE SUM(#5) GROUP BY HASH #0, #1, #2, #3, #4\n 1277320        63  PROJECT c_name, c_custkey, o_orderkey, o_orderdate, o_totalprice, l_quantity\n 1277320        63  INNER JOIN HASH ON l_orderkey = o_orderkey\n  316622         9  │└INNER JOIN HASH ON o_custkey = c_custkey\n  150000    149999  │ │└TABLE SCAN customer WHERE c_custkey <= 149999\n  300000         9  │ LEFT SEMI JOIN HASH ON o_orderkey = #0\n   95211         9  │ │└FILTER SUM(l_quantity) > 314.00\n  476056   1500000  │ │ AGGREGATE sum_no_overflow #1 GROUP BY HASH #0\n 6001215   6001215  │ │ PROJECT l_orderkey, l_quantity\n 6001215   6001215  │ │ TABLE SCAN lineitem\n 1500000       116  │ TABLE SCAN orders\n 6001215       239  TABLE SCAN lineitem\n",
       "sql": "/* TPC-H Q18 */\nSELECT c_name,\n       c_custkey,\n       o_orderkey,\n       o_orderdate,\n       o_totalprice,\n       SUM(l_quantity)\nFROM tpch_sf1.lineitem\nINNER JOIN tpch_sf1.orders\n    ON l_orderkey = o_orderkey\nINNER JOIN tpch_sf1.customer\n    ON o_custkey = c_custkey\nWHERE o_orderkey IN (SELECT l_orderkey\n                     FROM tpch_sf1.lineitem\n                     GROUP BY l_orderkey\n                     HAVING SUM(l_quantity) > 314)\nGROUP BY c_name,\n         c_custkey,\n         o_orderkey,\n         o_orderdate,\n         o_totalprice\nORDER BY o_totalprice DESC,\n         o_orderdate",
-      "startTime": "2026-06-22T16:08:56.321654Z",
+      "startTime": "2026-06-24T10:15:50.238699Z",
       "status": "OK",
-      "timeMs": 18.586
+      "timeMs": 19.289
     }
   ],
   "runtime": {
-    "avgMs": 18.586,
-    "bestMs": 18.586,
-    "maxMs": 18.586,
-    "minMs": 18.586,
+    "avgMs": 19.289,
+    "bestMs": 19.289,
+    "maxMs": 19.289,
+    "minMs": 19.289,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

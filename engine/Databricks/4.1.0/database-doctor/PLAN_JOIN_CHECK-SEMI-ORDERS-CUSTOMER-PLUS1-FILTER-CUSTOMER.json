@@ -1,0 +1,111 @@
+{
+  "config": "M5 Macbook Pro",
+  "engine": "Databricks",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 2,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 1
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 1
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 2,
+          ">16x": 2
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 7,
+        "distribute": 2,
+        "hash": 6,
+        "join": 6,
+        "scan": 7,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE COUNT(1)\n       1         1  DISTRIBUTE GATHER\n       1         1  AGGREGATE COUNT(1)\n 1500000         6  LEFT SEMI JOIN HASH ON (o.o_custkey + 1L) = (c.c_custkey + 1L)\n 1500000         6  │└TABLE SCAN sql - orders WHERE 2L = (o.o_custkey + 1L)\n 1500000         1  DISTRIBUTE GATHER\n  150000         1  TABLE SCAN sql - customer WHERE c.c_custkey = 1L\n",
+      "sql": "SELECT COUNT(o.o_orderkey)\nFROM tpch_sf1.orders AS o\nWHERE EXISTS (\n  SELECT 1\n  FROM tpch_sf1.customer AS c\n  WHERE c.c_custkey + 1 = o.o_custkey + 1\n    AND c.c_custkey = 1\n);\n",
+      "startTime": "2026-06-24T14:01:13.834939Z",
+      "status": "OK",
+      "timeMs": 996.887
+    }
+  ],
+  "runtime": {
+    "avgMs": 996.887,
+    "bestMs": 996.887,
+    "maxMs": 996.887,
+    "minMs": 996.887,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Count ORDERS rows with a matching CUSTOMER via EXISTS on +1 adjusted keys and a one-sided CUSTOMER key filter",
+    "displayName": "PLAN_JOIN_CHECK-SEMI-ORDERS-CUSTOMER-PLUS1-FILTER-CUSTOMER",
+    "name": "PLAN_JOIN_CHECK-SEMI-ORDERS-CUSTOMER-PLUS1-FILTER-CUSTOMER",
+    "tags": [
+      "PLAN_JOIN_CHECK",
+      "join"
+    ]
+  },
+  "version": "4.1.0"
+}

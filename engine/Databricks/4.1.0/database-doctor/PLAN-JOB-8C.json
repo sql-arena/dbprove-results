@@ -1,0 +1,111 @@
+{
+  "config": "M5 Macbook Pro",
+  "engine": "Databricks",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 1,
+          "=": 1,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 2,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 1,
+          "=": 3,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 1,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 1,
+          "<16x": 2,
+          "=": 2,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 1,
+          "+8x": 1,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 2,
+          "=": 2,
+          ">16x": 2
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 2487630,
+        "distribute": 10190236,
+        "hash": 21050574,
+        "join": 15789524,
+        "scan": 21840514,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(a1.name), MIN(t.title)\n       1        19  DISTRIBUTE GATHER\n       1        19  AGGREGATE MIN(a1.name), MIN(t.title)\n  209000   2487611  INNER JOIN HASH ON ci.movie_id = mc.movie_id\n 3290000   2343724  │└INNER JOIN HASH ON a1.person_id = ci.person_id\n 3290000    901343  │ │└INNER JOIN HASH ON a1.person_id = n1.id\n 3290000    901343  │ │ │└DISTRIBUTE HASH ON a1.person_id\n 4170000    901343  │ │ │ TABLE SCAN sql - aka_name\n 3290000   4167491  │ │ DISTRIBUTE HASH ON n1.id\n36200000   4167491  │ │ TABLE SCAN sql - name\n 3290000   2728943  │ DISTRIBUTE HASH ON ci.person_id\n   12700   2728943  │ INNER JOIN HASH ON ci.role_id = rt.id\n      12  11557556  │ │└TABLE SCAN sql - cast_info\n   12700         1  │ DISTRIBUTE GATHER\n  235000         1  │ TABLE SCAN sql - role_type WHERE rt.role = 'writer'\n  209000   1153798  DISTRIBUTE GATHER\n  901000   1153798  INNER JOIN HASH ON mc.movie_id = t.id\n  901000   1153798  │└DISTRIBUTE GATHER\n   12100   1153798  │ INNER JOIN HASH ON mc.company_id = cn.id\n 2610000   2606542  │ │└TABLE SCAN sql - movie_companies\n   12100     84843  │ DISTRIBUTE GATHER\n 2530000     84843  │ TABLE SCAN sql - company_name WHERE (cn.country_code IS NOT NULL) AND (cn.country_code = 'us')\n  901000   2522738  TABLE SCAN sql - title\n",
+      "sql": "SELECT MIN(a1.name) AS writer_pseudo_name,\n       MIN(t.title) AS movie_title\nFROM job.aka_name AS a1,\n     job.cast_info AS ci,\n     job.company_name AS cn,\n     job.movie_companies AS mc,\n     job.name AS n1,\n     job.role_type AS rt,\n     job.title AS t\nWHERE cn.country_code ='[us]'\n  AND rt.role ='writer'\n  AND a1.person_id = n1.id\n  AND n1.id = ci.person_id\n  AND ci.movie_id = t.id\n  AND t.id = mc.movie_id\n  AND mc.company_id = cn.id\n  AND ci.role_id = rt.id\n  AND a1.person_id = ci.person_id\n  AND ci.movie_id = mc.movie_id;\n",
+      "startTime": "2026-06-24T13:58:20.872099Z",
+      "status": "OK",
+      "timeMs": 2365.185
+    }
+  ],
+  "runtime": {
+    "avgMs": 2365.185,
+    "bestMs": 2365.185,
+    "maxMs": 2365.185,
+    "minMs": 2365.185,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 8C Analysis",
+    "displayName": "JOB-8C",
+    "name": "PLAN-JOB-8C",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "4.1.0"
+}

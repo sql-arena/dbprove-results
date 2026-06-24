@@ -1,0 +1,111 @@
+{
+  "config": "M5 Macbook Pro",
+  "engine": "Databricks",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 7,
+          "=": 0,
+          ">16x": 1
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 8,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 1,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 2,
+          "=": 2,
+          ">16x": 5
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 26155,
+        "distribute": 3311315,
+        "hash": 5601453,
+        "join": 7271848,
+        "scan": 11587593,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(mi.info), MIN(mi_idx.info), MIN(n.name), MIN(t.title)\n       1         2  DISTRIBUTE GATHER\n       1         2  AGGREGATE MIN(mi.info), MIN(mi_idx.info), MIN(n.name), MIN(t.title)\n     875     26153  INNER JOIN HASH ON ci.movie_id = mi_idx.movie_id\n     254     45265  │└INNER JOIN HASH ON ci.person_id = n.id\n     254     93240  │ │└INNER JOIN HASH ON mi.movie_id = ci.movie_id\n      34    186594  │ │ │└INNER JOIN HASH ON mi.movie_id = t.id\n      34    186594  │ │ │ │└DISTRIBUTE GATHER\n     875    186594  │ │ │ │ INNER JOIN HASH ON mi.info_type_id = it1.id\n 4520000    186594  │ │ │ │ │└TABLE SCAN sql - movie_info WHERE mi.info IN('Horror','Action','Sci-Fi','Thriller','Crime','War')\n     875         1  │ │ │ │ DISTRIBUTE GATHER\n 1380000         1  │ │ │ │ TABLE SCAN sql - info_type WHERE it1.info = 'genres'\n14800000   2520894  │ │ │ TABLE SCAN sql - title\n     254   1244716  │ │ DISTRIBUTE GATHER\n36200000   1244716  │ │ TABLE SCAN sql - cast_info WHERE ci.note IN('(writer)','(head writer)','(written by)','(story)','(story editor)')\n     254   1739579  │ DISTRIBUTE GATHER\n     113   1739579  │ TABLE SCAN sql - name WHERE (n.gender IS NOT NULL) AND (n.gender = 'm')\n     875     63701  DISTRIBUTE GATHER\n      36     63701  INNER JOIN HASH ON mi_idx.info_type_id = it2.id\n     875    191657  │└INNER JOIN HASH ON mk.movie_id = mi_idx.movie_id\n     875     76714  │ │└DISTRIBUTE GATHER\n     281     76714  │ │ INNER JOIN HASH ON mk.keyword_id = k.id\n  134000   4519852  │ │ │└TABLE SCAN sql - movie_keyword\n     281         7  │ │ DISTRIBUTE GATHER\n     113         7  │ │ TABLE SCAN sql - keyword WHERE k.keyword IN('murder','violence','blood','gore','death','female-nudity','hospital')\n 2530000   1375949  │ TABLE SCAN sql - movie_info_idx\n      36         1  DISTRIBUTE GATHER\n 4170000         1  TABLE SCAN sql - info_type WHERE it2.info = 'votes'\n",
+      "sql": "SELECT MIN(mi.info) AS movie_budget,\n       MIN(mi_idx.info) AS movie_votes,\n       MIN(n.name) AS male_writer,\n       MIN(t.title) AS violent_movie_title\nFROM job.cast_info AS ci,\n     job.info_type AS it1,\n     job.info_type AS it2,\n     job.keyword AS k,\n     job.movie_info AS mi,\n     job.movie_info_idx AS mi_idx,\n     job.movie_keyword AS mk,\n     job.name AS n,\n     job.title AS t\nWHERE ci.note IN ('(writer)',\n                  '(head writer)',\n                  '(written by)',\n                  '(story)',\n                  '(story editor)')\n  AND it1.info = 'genres'\n  AND it2.info = 'votes'\n  AND k.keyword IN ('murder',\n                    'violence',\n                    'blood',\n                    'gore',\n                    'death',\n                    'female-nudity',\n                    'hospital')\n  AND mi.info IN ('Horror',\n                  'Action',\n                  'Sci-Fi',\n                  'Thriller',\n                  'Crime',\n                  'War')\n  AND n.gender = 'm'\n  AND t.id = mi.movie_id\n  AND t.id = mi_idx.movie_id\n  AND t.id = ci.movie_id\n  AND t.id = mk.movie_id\n  AND ci.movie_id = mi.movie_id\n  AND ci.movie_id = mi_idx.movie_id\n  AND ci.movie_id = mk.movie_id\n  AND mi.movie_id = mi_idx.movie_id\n  AND mi.movie_id = mk.movie_id\n  AND mi_idx.movie_id = mk.movie_id\n  AND n.id = ci.person_id\n  AND it1.id = mi.info_type_id\n  AND it2.id = mi_idx.info_type_id\n  AND k.id = mk.keyword_id;\n",
+      "startTime": "2026-06-24T13:54:33.085650Z",
+      "status": "OK",
+      "timeMs": 2740.8
+    }
+  ],
+  "runtime": {
+    "avgMs": 2740.8,
+    "bestMs": 2740.8,
+    "maxMs": 2740.8,
+    "minMs": 2740.8,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 25C Analysis",
+    "displayName": "JOB-25C",
+    "name": "PLAN-JOB-25C",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "4.1.0"
+}

@@ -1,4 +1,5 @@
 {
+  "config": "M5 Macbook Pro",
   "engine": "DuckDB",
   "queries": [
     {
@@ -81,16 +82,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       -     18282  SORT COUNT(DISTINCT ps_suppkey), p_brand, p_type, p_size\n    6718     18282  AGGREGATE COUNT(DISTINCT #3) GROUP BY HASH #0, #1, #2\n    6719    119043  PROJECT p_brand, p_type, p_size, ps_suppkey\n    6719    119043  FILTER  NOT SUBQUERY\n   33597    119100  INNER JOIN HASH ON ps_suppkey = #0\n    2000         4  │└TABLE SCAN supplier WHERE s_comment LIKE '%Customer%Complaints%'\n   33597    119100  INNER JOIN HASH ON ps_partkey = p_partkey\n    8000     29775  │└FILTER IN ...\n   40000    185548  │ INNER JOIN HASH ON p_size = #0\n       0         8  │ │└SCAN MATERIALISED\n   40000    185548  │ TABLE SCAN part WHERE p_brand != 'Brand#42' AND ( NOT prefix(p_type,'STANDARD ANODIZED')) AND p_size IN(3,7,11,29,31,37,41,49)\n  800000    800000  TABLE SCAN partsupp\n",
       "sql": "/* TPC-H Q16 */\nSELECT p_brand,\n       p_type,\n       p_size,\n       COUNT(DISTINCT ps_suppkey) AS supplier_cnt\nFROM tpch_sf1.partsupp\nINNER JOIN tpch_sf1.part\n    ON ps_partkey = p_partkey\n\nWHERE p_brand <> 'Brand#42'\n  AND p_type NOT LIKE 'STANDARD ANODIZED%'\n  AND p_size IN (3, 7, 11, 29, 31, 37, 41, 49)\n  AND ps_suppkey NOT IN (SELECT s_suppkey\n                         FROM tpch_sf1.supplier\n                         WHERE s_comment LIKE '%Customer%Complaints%')\nGROUP BY p_brand,\n         p_type,\n         p_size\nORDER BY supplier_cnt DESC,\n         p_brand,\n         p_type,\n         p_size",
-      "startTime": "2026-06-22T16:08:56.279920Z",
+      "startTime": "2026-06-24T10:15:50.188104Z",
       "status": "OK",
-      "timeMs": 10.143
+      "timeMs": 9.424
     }
   ],
   "runtime": {
-    "avgMs": 10.143,
-    "bestMs": 10.143,
-    "maxMs": 10.143,
-    "minMs": 10.143,
+    "avgMs": 9.424,
+    "bestMs": 9.424,
+    "maxMs": 9.424,
+    "minMs": 9.424,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

@@ -1,0 +1,110 @@
+{
+  "config": "M5 Macbook Pro",
+  "engine": "Databricks",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 2
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 1,
+          "=": 0,
+          ">16x": 6
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 7
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 1,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 1,
+          "<16x": 3,
+          "=": 0,
+          ">16x": 5
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 1
+        }
+      },
+      "operatorRows": {
+        "aggregate": 2651,
+        "distribute": 618721,
+        "hash": 6089325,
+        "join": 680384,
+        "scan": 6611758,
+        "seek": 0,
+        "sort": 2
+      },
+      "plan": "Estimate    Actual  Operator\n       ∞         2  SORT all_nations.o_year ASC NULLS FIRST\n       ∞         2  AGGREGATE SUM(CASE WHEN (all_nations.nation = 'FRANCE') THEN all_nations.volume ELSE 0.0000BD END), SUM(all_nations.volume) GROUP BY HASH all_nations.o_year\n       ∞         4  DISTRIBUTE HASH ON all_nations.o_year\n       ∞         4  AGGREGATE SUM(CASE WHEN (all_nations.nation = 'FRANCE') THEN all_nations.volume ELSE 0.0000BD END), SUM(all_nations.volume) GROUP BY HASH all_nations.o_year\n       ∞      2647  INNER JOIN HASH ON sql - s_nationkey = n2.n_nationkey\n       ∞      2647  │└INNER JOIN HASH ON n1.n_regionkey = sql - r_regionkey\n       ∞     12905  │ │└INNER JOIN HASH ON sql - c_nationkey = n1.n_nationkey\n       ∞     12905  │ │ │└INNER JOIN HASH ON sql - o_custkey = sql - c_custkey\n       ∞     12905  │ │ │ │└INNER JOIN HASH ON sql - l_suppkey = sql - s_suppkey\n       ∞     12905  │ │ │ │ │└INNER JOIN HASH ON sql - l_orderkey = sql - o_orderkey\n      1B     42017  │ │ │ │ │ │└INNER JOIN HASH ON sql - l_partkey = sql - p_partkey\n       5   5993041  │ │ │ │ │ │ │└TABLE SCAN sql - lineitem\n      1B      1403  │ │ │ │ │ │ DISTRIBUTE GATHER\n      25      1403  │ │ │ │ │ │ TABLE SCAN sql - part WHERE sql - p_type = 'SMALL POLISHED NICKEL'\n       ∞    457263  │ │ │ │ │ DISTRIBUTE HASH ON sql - o_orderkey\n      25    457263  │ │ │ │ │ TABLE SCAN sql - orders WHERE (sql - o_orderdate >= DATE'1995-01-01') AND (sql - o_orderdate <= DATE'1996-12-31')\n       ∞     10000  │ │ │ │ DISTRIBUTE GATHER\n  150000     10000  │ │ │ │ TABLE SCAN sql - supplier\n       ∞    150000  │ │ │ DISTRIBUTE GATHER\n   10000    150000  │ │ │ TABLE SCAN sql - customer\n       ∞        25  │ │ DISTRIBUTE GATHER\n 1500000        25  │ │ TABLE SCAN sql - nation\n       ∞         1  │ DISTRIBUTE GATHER\n  200000         1  │ TABLE SCAN sql - region WHERE sql - r_name = 'EUROPE'\n       ∞        25  DISTRIBUTE GATHER\n 6000000        25  TABLE SCAN sql - nation\n",
+      "sql": "/* TPC-H Q08 */\nSELECT o_year,\n       SUM(CASE\n               WHEN nation = 'FRANCE'\n                   THEN volume\n               ELSE 0\n           END) / SUM(volume) AS mkt_share\nFROM (SELECT EXTRACT(YEAR FROM o_orderdate)     AS o_year,\n             l_extendedprice * (1 - l_discount) AS volume,\n             n2.n_name                          AS nation\n      FROM tpch_sf1.lineitem\n      INNER JOIN tpch_sf1.orders\n          ON o_orderkey = l_orderkey\n      INNER JOIN tpch_sf1.part\n          ON l_partkey = p_partkey\n      INNER JOIN tpch_sf1.supplier\n          ON l_suppkey = s_suppkey\n      INNER JOIN tpch_sf1.customer\n          ON o_custkey = c_custkey\n      INNER JOIN tpch_sf1.nation n1\n          ON c_nationkey = n1.n_nationkey\n      INNER JOIN tpch_sf1.region\n          ON n1.n_regionkey = r_regionkey\n      INNER JOIN tpch_sf1.nation n2\n          ON s_nationkey = n2.n_nationkey\n      WHERE r_name = 'EUROPE'\n        AND o_orderdate BETWEEN '1995-01-01' AND '1996-12-31'\n        AND p_type = 'SMALL POLISHED NICKEL') AS all_nations\nGROUP BY o_year\nORDER BY o_year",
+      "startTime": "2026-06-24T13:59:18.921368Z",
+      "status": "OK",
+      "timeMs": 995.368
+    }
+  ],
+  "runtime": {
+    "avgMs": 995.368,
+    "bestMs": 995.368,
+    "maxMs": 995.368,
+    "minMs": 995.368,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "TPC-H Q08 Analysis",
+    "displayName": "TPCH-Q08",
+    "name": "PLAN-TPC-H-Q08",
+    "tags": [
+      "TPC-H"
+    ]
+  },
+  "version": "4.1.0"
+}

@@ -1,0 +1,111 @@
+{
+  "config": "M5 Macbook Pro",
+  "engine": "Databricks",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 2,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 1,
+          "+4x": 1,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 3,
+          "-8x": 0,
+          "<16x": 1,
+          "=": 1,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 2,
+          "+4x": 1,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 3,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 1,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 1,
+          "=": 4,
+          ">16x": 4
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 122,
+        "distribute": 887728,
+        "hash": 803643,
+        "join": 5780153,
+        "scan": 6580783,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(an.name), MIN(chn.name), MIN(t.title)\n       1         1  DISTRIBUTE GATHER\n       1         1  AGGREGATE MIN(an.name), MIN(chn.name), MIN(t.title)\n     630       121  INNER JOIN HASH ON ci.person_id = an.person_id\n     630       115  │└DISTRIBUTE GATHER\n     397       115  │ INNER JOIN HASH ON mc.company_id = cn.id\n     384       124  │ │└INNER JOIN HASH ON ci.movie_id = mc.movie_id\n     384       249  │ │ │└DISTRIBUTE GATHER\n     150       249  │ │ │ INNER JOIN HASH ON ci.movie_id = t.id\n     150       630  │ │ │ │└DISTRIBUTE GATHER\n     142       630  │ │ │ │ INNER JOIN HASH ON ci.person_role_id = chn.id\n     142       630  │ │ │ │ │└DISTRIBUTE GATHER\n     142       630  │ │ │ │ │ INNER JOIN HASH ON ci.role_id = rt.id\n     142       630  │ │ │ │ │ │└INNER JOIN HASH ON ci.person_id = n.id\n     142    801259  │ │ │ │ │ │ │└DISTRIBUTE GATHER\n  901000    801259  │ │ │ │ │ │ │ TABLE SCAN sql - cast_info WHERE (ci.note IN('(voice)','(voice: Japanese version)','(voice) (uncredited)','(voice: English version)')) AND (ci.person_role_id IS NOT NULL)\n 2610000      6557  │ │ │ │ │ │ TABLE SCAN sql - name WHERE (n.gender IS NOT NULL) AND (n.gender = 'f') AND contains(n.name,'Ang')\n     142         1  │ │ │ │ │ DISTRIBUTE GATHER\n  235000         1  │ │ │ │ │ TABLE SCAN sql - role_type WHERE rt.role = 'actress'\n 2530000   3128054  │ │ │ │ TABLE SCAN sql - char_name\n 3140000   1097880  │ │ │ TABLE SCAN sql - title WHERE (t.production_year IS NOT NULL) AND (t.production_year >= 2005L) AND (t.production_year <= 2015L)\n      12    581325  │ │ TABLE SCAN sql - movie_companies WHERE (mc.note IS NOT NULL) AND (contains(mc.note,'(USA)') OR contains(mc.note,'(worldwide)'))\n     397     84843  │ DISTRIBUTE GATHER\n 4170000     84843  │ TABLE SCAN sql - company_name WHERE (cn.country_code IS NOT NULL) AND (cn.country_code = 'us')\n36200000    880864  TABLE SCAN sql - aka_name\n",
+      "sql": "SELECT MIN(an.name) AS alternative_name,\n       MIN(chn.name) AS character_name,\n       MIN(t.title) AS movie\nFROM job.aka_name AS an,\n     job.char_name AS chn,\n     job.cast_info AS ci,\n     job.company_name AS cn,\n     job.movie_companies AS mc,\n     job.name AS n,\n     job.role_type AS rt,\n     job.title AS t\nWHERE ci.note IN ('(voice)',\n                  '(voice: Japanese version)',\n                  '(voice) (uncredited)',\n                  '(voice: English version)')\n  AND cn.country_code ='[us]'\n  AND mc.note IS NOT NULL\n  AND (mc.note LIKE '%(USA)%'\n       OR mc.note LIKE '%(worldwide)%')\n  AND n.gender ='f'\n  AND n.name LIKE '%Ang%'\n  AND rt.role ='actress'\n  AND t.production_year BETWEEN 2005 AND 2015\n  AND ci.movie_id = t.id\n  AND t.id = mc.movie_id\n  AND ci.movie_id = mc.movie_id\n  AND mc.company_id = cn.id\n  AND ci.role_id = rt.id\n  AND n.id = ci.person_id\n  AND chn.id = ci.person_role_id\n  AND an.person_id = n.id\n  AND an.person_id = ci.person_id;\n",
+      "startTime": "2026-06-24T13:58:29.595510Z",
+      "status": "OK",
+      "timeMs": 2668.335
+    }
+  ],
+  "runtime": {
+    "avgMs": 2668.335,
+    "bestMs": 2668.335,
+    "maxMs": 2668.335,
+    "minMs": 2668.335,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 9A Analysis",
+    "displayName": "JOB-9A",
+    "name": "PLAN-JOB-9A",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "4.1.0"
+}

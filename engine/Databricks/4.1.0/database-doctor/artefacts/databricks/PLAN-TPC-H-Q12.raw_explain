@@ -1,0 +1,45 @@
+== Optimized Logical Plan ==
+Sort [l_shipmode#29648 ASC NULLS FIRST], true, Statistics(sizeInBytes=360.2 TiB, rowCount=9.00E+12, ColumnStat: N/A)
++- Aggregate [l_shipmode#29648], [l_shipmode#29648, sum(CASE WHEN o_orderpriority#29655 IN (1-URGENT,2-HIGH) THEN 1 ELSE 0 END) AS high_line_count#29626L, sum(CASE WHEN NOT o_orderpriority#29655 IN (1-URGENT,2-HIGH) THEN 1 ELSE 0 END) AS low_line_count#29627L], Statistics(sizeInBytes=360.2 TiB, rowCount=9.00E+12, ColumnStat: N/A)
+   +- Project [l_shipmode#29648, o_orderpriority#29655], Statistics(sizeInBytes=393.0 TiB, rowCount=9.00E+12, ColumnStat: N/A)
+      +- Join Inner, (o_orderkey#29650L = l_orderkey#29634L), Statistics(sizeInBytes=524.0 TiB, rowCount=9.00E+12, ColumnStat: N/A)
+         :- Project [l_orderkey#29634L, l_shipmode#29648], Statistics(sizeInBytes=206.0 MiB, rowCount=6.00E+6, ColumnStat: N/A), Predicted Statistics(sizeInBytes=1084.1 KiB, rowCount=3.08E+4)
+         :  +- Filter (((((l_commitdate#29645 < l_receiptdate#29646) AND (l_shipdate#29644 < l_commitdate#29645)) AND (l_receiptdate#29646 >= 1994-01-01)) AND (l_receiptdate#29646 < 1995-01-01)) AND l_shipmode#29648 IN (AIR,TRUCK)), Statistics(sizeInBytes=1053.1 MiB, rowCount=6.00E+6, ColumnStat: N/A), Predicted Statistics(sizeInBytes=5.4 MiB, rowCount=3.08E+4)
+         :     +- Relation sql-arena.tpch_sf1.lineitem[l_orderkey#29634L,l_partkey#29635L,l_suppkey#29636L,l_linenumber#29637L,l_quantity#29638,l_extendedprice#29639,l_discount#29640,l_tax#29641,l_returnflag#29642,l_linestatus#29643,l_shipdate#29644,l_commitdate#29645,l_receiptdate#29646,l_shipinstruct#29647,l_shipmode#29648,l_comment#29649] parquet, Statistics(sizeInBytes=1053.1 MiB, rowCount=6.00E+6, ColumnStat: N/A)
+         +- Project [o_orderkey#29650L, o_orderpriority#29655], Statistics(sizeInBytes=51.5 MiB, rowCount=1.50E+6, ColumnStat: N/A), Predicted Statistics(sizeInBytes=51.5 MiB, rowCount=1.50E+6)
+            +- Relation sql-arena.tpch_sf1.orders[o_orderkey#29650L,o_custkey#29651L,o_orderstatus#29652,o_totalprice#29653,o_orderdate#29654,o_orderpriority#29655,o_clerk#29656,o_shippriority#29657,o_comment#29658] parquet, Statistics(sizeInBytes=171.7 MiB, rowCount=1.50E+6, ColumnStat: N/A)
+
+== Physical Plan ==
+AdaptiveSparkPlan isFinalPlan=false
++- == Initial Plan ==
+   PhotonResultStage
+   +- PhotonColumnarToRow
+      +- PhotonSort [l_shipmode#29648 ASC NULLS FIRST]
+         +- PhotonShuffleExchangeSource
+            +- PhotonShuffleMapStage ENSURE_REQUIREMENTS, [id=#37687]
+               +- PhotonShuffleExchangeSink rangepartitioning(l_shipmode#29648 ASC NULLS FIRST, 64)
+                  +- PhotonGroupingAgg(limit=None, keys=[l_shipmode#29648], functions=[finalmerge_sum(merge sum#29688L) AS sum(CASE WHEN (o_orderpriority IN (1-URGENT, 2-HIGH)) THEN 1 ELSE 0 END)#29659L, finalmerge_sum(merge sum#29690L) AS sum(CASE WHEN (NOT (o_orderpriority IN (1-URGENT, 2-HIGH))) THEN 1 ELSE 0 END)#29660L], output=[l_shipmode#29648, high_line_count#29626L, low_line_count#29627L])
+                     +- PhotonShuffleExchangeSource
+                        +- PhotonShuffleMapStage ENSURE_REQUIREMENTS, [id=#37681]
+                           +- PhotonShuffleExchangeSink hashpartitioning(l_shipmode#29648, 64)
+                              +- PhotonGroupingAgg(limit=None, keys=[l_shipmode#29648], functions=[partial_sum(CASE WHEN o_orderpriority#29655 IN (1-URGENT,2-HIGH) THEN 1 ELSE 0 END) AS sum#29688L, partial_sum(CASE WHEN NOT o_orderpriority#29655 IN (1-URGENT,2-HIGH) THEN 1 ELSE 0 END) AS sum#29690L], output=[l_shipmode#29648, sum#29688L, sum#29690L])
+                                 +- PhotonProject [l_shipmode#29648, o_orderpriority#29655]
+                                    +- PhotonShuffledHashJoin [l_orderkey#29634L], [o_orderkey#29650L], Inner, BuildRight
+                                       :- PhotonShuffleExchangeSource
+                                       :  +- PhotonShuffleMapStage ENSURE_REQUIREMENTS, [id=#37665]
+                                       :     +- PhotonShuffleExchangeSink hashpartitioning(l_orderkey#29634L, 64)
+                                       :        +- PhotonProject [l_orderkey#29634L, l_shipmode#29648]
+                                       :           +- PhotonScan parquet sql-arena.tpch_sf1.lineitem[l_orderkey#29634L,l_shipdate#29644,l_commitdate#29645,l_receiptdate#29646,l_shipmode#29648] DataFilters: [(l_commitdate#29645 < l_receiptdate#29646), (l_shipdate#29644 < l_commitdate#29645), (l_receiptd..., DictionaryFilters: [l_shipmode#29648 IN (AIR,TRUCK), ((l_receiptdate#29646 >= 1994-01-01) AND (l_receiptdate#29646 <..., Format: parquet, Location: PreparedDeltaFileIndex(1 paths)[s3://floedb-databricks-metastore-367509577365/metastore/82a33d38-..., OptionalDataFilters: [], PartitionFilters: [], ReadSchema: struct<l_orderkey:bigint,l_shipdate:date,l_commitdate:date,l_receiptdate:date,l_shipmode:string>, RequiredDataFilters: [(l_commitdate#29645 < l_receiptdate#29646), (l_shipdate#29644 < l_commitdate#29645), (l_receiptd...
+                                       +- PhotonShuffleExchangeSource
+                                          +- PhotonShuffleMapStage ENSURE_REQUIREMENTS, [id=#37670]
+                                             +- PhotonShuffleExchangeSink hashpartitioning(o_orderkey#29650L, 64)
+                                                +- PhotonScan parquet sql-arena.tpch_sf1.orders[o_orderkey#29650L,o_orderpriority#29655] DataFilters: [], DictionaryFilters: [], Format: parquet, Location: PreparedDeltaFileIndex(1 paths)[s3://floedb-databricks-metastore-367509577365/metastore/82a33d38-..., OptionalDataFilters: [], PartitionFilters: [], ReadSchema: struct<o_orderkey:bigint,o_orderpriority:string>, RequiredDataFilters: []
+
+
+== Optimizer Statistics (table names per statistics state) ==
+  missing = 
+  partial = lineitem, orders
+  full    = 
+Corrective actions: consider running the following command on all tables with missing or partial statistics
+  ANALYZE TABLE <table-name> COMPUTE STATISTICS FOR ALL COLUMNS
+

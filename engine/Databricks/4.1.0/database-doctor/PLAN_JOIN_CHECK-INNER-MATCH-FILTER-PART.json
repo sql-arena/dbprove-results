@@ -1,0 +1,111 @@
+{
+  "config": "M5 Macbook Pro",
+  "engine": "Databricks",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 1
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 1
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 2
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 33,
+        "distribute": 3,
+        "hash": 31,
+        "join": 31,
+        "scan": 32,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE COUNT(1)\n       1         2  DISTRIBUTE GATHER\n       1         2  AGGREGATE COUNT(1)\n      1B        31  INNER JOIN HASH ON l.l_partkey = p.p_partkey\n 6000000        31  │└TABLE SCAN sql - lineitem WHERE l.l_partkey = 1L\n      1B         1  DISTRIBUTE GATHER\n  200000         1  TABLE SCAN sql - part WHERE sql - p_partkey = 1L\n",
+      "sql": "SELECT COUNT(l.l_partkey), COUNT(p.p_partkey)\nFROM tpch_sf1.lineitem AS l\nJOIN (\n  SELECT *\n  FROM tpch_sf1.part\n  WHERE p_partkey = 1\n) AS p\n  ON l.l_partkey = p.p_partkey;\n",
+      "startTime": "2026-06-24T14:00:41.280631Z",
+      "status": "OK",
+      "timeMs": 1067.704
+    }
+  ],
+  "runtime": {
+    "avgMs": 1067.704,
+    "bestMs": 1067.704,
+    "maxMs": 1067.704,
+    "minMs": 1067.704,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Count rows in the LINEITEM to PART inner join with a one-sided PART key filter",
+    "displayName": "PLAN_JOIN_CHECK-INNER-MATCH-FILTER-PART",
+    "name": "PLAN_JOIN_CHECK-INNER-MATCH-FILTER-PART",
+    "tags": [
+      "PLAN_JOIN_CHECK",
+      "join"
+    ]
+  },
+  "version": "4.1.0"
+}

@@ -1,0 +1,47 @@
+== Optimized Logical Plan ==
+Sort [o_orderpriority#26575 ASC NULLS FIRST], true, Statistics(sizeInBytes=51.5 MiB, rowCount=1.50E+6, ColumnStat: N/A)
++- Aggregate [o_orderpriority#26575], [o_orderpriority#26575, count(1) AS order_count#26562L], Statistics(sizeInBytes=51.5 MiB, rowCount=1.50E+6, ColumnStat: N/A)
+   +- Project [o_orderpriority#26575], Statistics(sizeInBytes=40.1 MiB, rowCount=1.50E+6, ColumnStat: N/A)
+      +- Join LeftSemi, (l_orderkey#26579L = o_orderkey#26570L), Statistics(sizeInBytes=51.5 MiB, rowCount=1.50E+6, ColumnStat: N/A)
+         :- Project [o_orderkey#26570L, o_orderpriority#26575], Statistics(sizeInBytes=51.5 MiB, rowCount=1.50E+6, ColumnStat: N/A), Predicted Statistics(sizeInBytes=1966.5 KiB, rowCount=5.59E+4)
+         :  +- Filter ((o_orderdate#26574 >= 1995-02-01) AND (o_orderdate#26574 < 1995-05-01)), Statistics(sizeInBytes=171.7 MiB, rowCount=1.50E+6, ColumnStat: N/A), Predicted Statistics(sizeInBytes=120.0 B, rowCount=1)
+         :     +- Relation sql-arena.tpch_sf1.orders[o_orderkey#26570L,o_custkey#26571L,o_orderstatus#26572,o_totalprice#26573,o_orderdate#26574,o_orderpriority#26575,o_clerk#26576,o_shippriority#26577,o_comment#26578] parquet, Statistics(sizeInBytes=171.7 MiB, rowCount=1.50E+6, ColumnStat: N/A)
+         +- Project [l_orderkey#26579L], Statistics(sizeInBytes=91.6 MiB, rowCount=6.00E+6, ColumnStat: N/A), Predicted Statistics(sizeInBytes=3.0 MiB, rowCount=1.98E+5)
+            +- Filter (l_commitdate#26590 < l_receiptdate#26591), Statistics(sizeInBytes=1053.1 MiB, rowCount=6.00E+6, ColumnStat: N/A), Predicted Statistics(sizeInBytes=568.9 MiB, rowCount=3.24E+6)
+               +- Relation sql-arena.tpch_sf1.lineitem[l_orderkey#26579L,l_partkey#26580L,l_suppkey#26581L,l_linenumber#26582L,l_quantity#26583,l_extendedprice#26584,l_discount#26585,l_tax#26586,l_returnflag#26587,l_linestatus#26588,l_shipdate#26589,l_commitdate#26590,l_receiptdate#26591,l_shipinstruct#26592,l_shipmode#26593,l_comment#26594] parquet, Statistics(sizeInBytes=1053.1 MiB, rowCount=6.00E+6, ColumnStat: N/A)
+
+== Physical Plan ==
+AdaptiveSparkPlan isFinalPlan=false
++- == Initial Plan ==
+   PhotonResultStage
+   +- PhotonColumnarToRow
+      +- PhotonSort [o_orderpriority#26575 ASC NULLS FIRST]
+         +- PhotonShuffleExchangeSource
+            +- PhotonShuffleMapStage ENSURE_REQUIREMENTS, [id=#23893]
+               +- PhotonShuffleExchangeSink rangepartitioning(o_orderpriority#26575 ASC NULLS FIRST, 64)
+                  +- PhotonGroupingAgg(limit=None, keys=[o_orderpriority#26575], functions=[finalmerge_count(merge count#26619L) AS count(1)#26595L], output=[o_orderpriority#26575, order_count#26562L])
+                     +- PhotonShuffleExchangeSource
+                        +- PhotonShuffleMapStage ENSURE_REQUIREMENTS, [id=#23887]
+                           +- PhotonShuffleExchangeSink hashpartitioning(o_orderpriority#26575, 64)
+                              +- PhotonGroupingAgg(limit=None, keys=[o_orderpriority#26575], functions=[partial_count(1) AS count#26619L], output=[o_orderpriority#26575, count#26619L])
+                                 +- PhotonProject [o_orderpriority#26575]
+                                    +- PhotonShuffledHashJoin [o_orderkey#26570L], [l_orderkey#26579L], LeftSemi, BuildLeft
+                                       :- PhotonShuffleExchangeSource
+                                       :  +- PhotonShuffleMapStage ENSURE_REQUIREMENTS, [id=#23867]
+                                       :     +- PhotonShuffleExchangeSink hashpartitioning(o_orderkey#26570L, 64)
+                                       :        +- PhotonProject [o_orderkey#26570L, o_orderpriority#26575]
+                                       :           +- PhotonScan parquet sql-arena.tpch_sf1.orders[o_orderkey#26570L,o_orderdate#26574,o_orderpriority#26575] DataFilters: [(o_orderdate#26574 >= 1995-02-01), (o_orderdate#26574 < 1995-05-01)], DictionaryFilters: [((o_orderdate#26574 >= 1995-02-01) AND (o_orderdate#26574 < 1995-05-01))], Format: parquet, Location: PreparedDeltaFileIndex(1 paths)[s3://floedb-databricks-metastore-367509577365/metastore/82a33d38-..., OptionalDataFilters: [], PartitionFilters: [], ReadSchema: struct<o_orderkey:bigint,o_orderdate:date,o_orderpriority:string>, RequiredDataFilters: [(o_orderdate#26574 >= 1995-02-01), (o_orderdate#26574 < 1995-05-01)]
+                                       +- PhotonShuffleExchangeSource
+                                          +- PhotonShuffleMapStage ENSURE_REQUIREMENTS, [id=#23875]
+                                             +- PhotonShuffleExchangeSink hashpartitioning(l_orderkey#26579L, 64)
+                                                +- PhotonProject [l_orderkey#26579L]
+                                                   +- PhotonScan parquet sql-arena.tpch_sf1.lineitem[l_orderkey#26579L,l_commitdate#26590,l_receiptdate#26591] DataFilters: [(l_commitdate#26590 < l_receiptdate#26591)], DictionaryFilters: [], Format: parquet, Location: PreparedDeltaFileIndex(1 paths)[s3://floedb-databricks-metastore-367509577365/metastore/82a33d38-..., OptionalDataFilters: [], PartitionFilters: [], ReadSchema: struct<l_orderkey:bigint,l_commitdate:date,l_receiptdate:date>, RequiredDataFilters: [(l_commitdate#26590 < l_receiptdate#26591)]
+
+
+== Optimizer Statistics (table names per statistics state) ==
+  missing = 
+  partial = lineitem, orders
+  full    = 
+Corrective actions: consider running the following command on all tables with missing or partial statistics
+  ANALYZE TABLE <table-name> COMPUTE STATISTICS FOR ALL COLUMNS
+

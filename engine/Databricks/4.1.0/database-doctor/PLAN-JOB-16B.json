@@ -1,0 +1,111 @@
+{
+  "config": "M5 Macbook Pro",
+  "engine": "Databricks",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 2,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 6,
+          "=": 1,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 7,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 1,
+          "+8x": 1,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 2,
+          "<16x": 1,
+          "=": 3,
+          ">16x": 2
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 3710593,
+        "distribute": 5965660,
+        "hash": 14234507,
+        "join": 49349570,
+        "scan": 51015151,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(an.name), MIN(t.title)\n       1         1  DISTRIBUTE GATHER\n       1         1  AGGREGATE MIN(an.name), MIN(t.title)\n    5200   3710592  INNER JOIN HASH ON ci.person_id = an.person_id\n    5200   2832555  │└DISTRIBUTE GATHER\n    3280   2832555  │ INNER JOIN HASH ON ci.person_id = n.id\n    3280   2832555  │ │└DISTRIBUTE GATHER\n    3280   2832555  │ │ INNER JOIN HASH ON mc.movie_id = ci.movie_id\n    3280     68316  │ │ │└DISTRIBUTE GATHER\n     199     68316  │ │ │ INNER JOIN HASH ON mc.company_id = cn.id\n     199    148552  │ │ │ │└DISTRIBUTE GATHER\n     192    148552  │ │ │ │ INNER JOIN HASH ON mk.movie_id = mc.movie_id\n     192     41840  │ │ │ │ │└DISTRIBUTE GATHER\n      75     41840  │ │ │ │ │ INNER JOIN HASH ON mk.movie_id = t.id\n      75     41840  │ │ │ │ │ │└DISTRIBUTE GATHER\n      71     41840  │ │ │ │ │ │ INNER JOIN HASH ON mk.keyword_id = k.id\n 4170000   4519861  │ │ │ │ │ │ │└TABLE SCAN sql - movie_keyword\n      71         1  │ │ │ │ │ │ DISTRIBUTE GATHER\n  901000         1  │ │ │ │ │ │ TABLE SCAN sql - keyword WHERE k.keyword = 'character-name-in-title'\n36200000   2520276  │ │ │ │ │ TABLE SCAN sql - title\n  235000   2605059  │ │ │ │ TABLE SCAN sql - movie_companies\n 2610000     83604  │ │ │ TABLE SCAN sql - company_name WHERE (cn.country_code IS NOT NULL) AND (cn.country_code = 'us')\n 2530000  36228386  │ │ TABLE SCAN sql - cast_info\n  134000   4159813  │ TABLE SCAN sql - name\n 4520000    898151  TABLE SCAN sql - aka_name\n",
+      "sql": "SELECT MIN(an.name) AS cool_actor_pseudonym,\n       MIN(t.title) AS series_named_after_char\nFROM job.aka_name AS an,\n     job.cast_info AS ci,\n     job.company_name AS cn,\n     job.keyword AS k,\n     job.movie_companies AS mc,\n     job.movie_keyword AS mk,\n     job.name AS n,\n     job.title AS t\nWHERE cn.country_code ='[us]'\n  AND k.keyword ='character-name-in-title'\n  AND an.person_id = n.id\n  AND n.id = ci.person_id\n  AND ci.movie_id = t.id\n  AND t.id = mk.movie_id\n  AND mk.keyword_id = k.id\n  AND t.id = mc.movie_id\n  AND mc.company_id = cn.id\n  AND an.person_id = ci.person_id\n  AND ci.movie_id = mc.movie_id\n  AND ci.movie_id = mk.movie_id\n  AND mc.movie_id = mk.movie_id;\n",
+      "startTime": "2026-06-24T13:51:11.859531Z",
+      "status": "OK",
+      "timeMs": 3962.014
+    }
+  ],
+  "runtime": {
+    "avgMs": 3962.014,
+    "bestMs": 3962.014,
+    "maxMs": 3962.014,
+    "minMs": 3962.014,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 16B Analysis",
+    "displayName": "JOB-16B",
+    "name": "PLAN-JOB-16B",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "4.1.0"
+}

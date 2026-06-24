@@ -1,0 +1,41 @@
+== Optimized Logical Plan ==
+Aggregate [sum((l_extendedprice#31707 * (1 - l_discount#31708))) AS revenue#31686], Statistics(sizeInBytes=24.0 B, rowCount=1, ColumnStat: N/A)
++- Project [l_extendedprice#31707, l_discount#31708], Statistics(sizeInBytes=26.2 TiB, rowCount=1.20E+12, ColumnStat: N/A), Predicted Statistics(sizeInBytes=3.3 MiB, rowCount=1.45E+5)
+   +- Join Inner, ((((((((p_brand#31696 = Brand#11) AND p_container#31699 IN (SM CASE,SM BOX,SM PACK,SM PKG)) AND (l_quantity#31706 >= 5.00)) AND (l_quantity#31706 <= 15.00)) AND (p_size#31698 <= 5)) OR (((((p_brand#31696 = Brand#22) AND p_container#31699 IN (MED BAG,MED BOX,MED PKG,MED PACK)) AND (l_quantity#31706 >= 15.00)) AND (l_quantity#31706 <= 25.00)) AND (p_size#31698 <= 10))) OR (((((p_brand#31696 = Brand#33) AND p_container#31699 IN (LG CASE,LG BOX,LG PACK,LG PKG)) AND (l_quantity#31706 >= 25.00)) AND (l_quantity#31706 <= 35.00)) AND (p_size#31698 <= 15))) AND (p_partkey#31693L = l_partkey#31703L)), Statistics(sizeInBytes=100.4 TiB, rowCount=1.20E+12, ColumnStat: N/A)
+      :- Project [l_partkey#31703L, l_quantity#31706, l_extendedprice#31707, l_discount#31708], Statistics(sizeInBytes=228.9 MiB, rowCount=6.00E+6, ColumnStat: N/A), Predicted Statistics(sizeInBytes=5.0 MiB, rowCount=1.32E+5)
+      :  +- Filter ((((l_quantity#31706 >= 5.00) AND (l_quantity#31706 <= 35.00)) AND (l_shipinstruct#31715 = DELIVER IN PERSON)) AND l_shipmode#31716 IN (AIR,AIR REG)), Statistics(sizeInBytes=1053.1 MiB, rowCount=6.00E+6, ColumnStat: N/A), Predicted Statistics(sizeInBytes=23.1 MiB, rowCount=1.32E+5)
+      :     +- Relation sql-arena.tpch_sf1.lineitem[l_orderkey#31702L,l_partkey#31703L,l_suppkey#31704L,l_linenumber#31705L,l_quantity#31706,l_extendedprice#31707,l_discount#31708,l_tax#31709,l_returnflag#31710,l_linestatus#31711,l_shipdate#31712,l_commitdate#31713,l_receiptdate#31714,l_shipinstruct#31715,l_shipmode#31716,l_comment#31717] parquet, Statistics(sizeInBytes=1053.1 MiB, rowCount=6.00E+6, ColumnStat: N/A)
+      +- Project [p_partkey#31693L, p_brand#31696, p_size#31698, p_container#31699], Statistics(sizeInBytes=11.4 MiB, rowCount=2.00E+5, ColumnStat: N/A), Predicted Statistics(sizeInBytes=29.9 KiB, rowCount=511)
+         +- Filter ((p_size#31698 >= 1) AND (((((p_size#31698 <= 5) AND (p_brand#31696 = Brand#11)) AND p_container#31699 IN (SM CASE,SM BOX,SM PACK,SM PKG)) OR (((p_size#31698 <= 10) AND (p_brand#31696 = Brand#22)) AND p_container#31699 IN (MED BAG,MED BOX,MED PKG,MED PACK))) OR (((p_size#31698 <= 15) AND (p_brand#31696 = Brand#33)) AND p_container#31699 IN (LG CASE,LG BOX,LG PACK,LG PKG)))), Statistics(sizeInBytes=28.2 MiB, rowCount=2.00E+5, ColumnStat: N/A), Predicted Statistics(sizeInBytes=73.9 KiB, rowCount=511)
+            +- Relation sql-arena.tpch_sf1.part[p_partkey#31693L,p_name#31694,p_mfgr#31695,p_brand#31696,p_type#31697,p_size#31698,p_container#31699,p_retailprice#31700,p_comment#31701] parquet, Statistics(sizeInBytes=28.2 MiB, rowCount=2.00E+5, ColumnStat: N/A)
+
+== Physical Plan ==
+AdaptiveSparkPlan isFinalPlan=false
++- == Initial Plan ==
+   PhotonResultStage
+   +- PhotonColumnarToRow
+      +- PhotonAgg(limit=None, keys=[], functions=[finalmerge_sum(merge sum#31763, isEmpty#31764) AS sum((l_extendedprice * (1 - l_discount)))#31718], output=[revenue#31686])
+         +- PhotonShuffleExchangeSource
+            +- PhotonShuffleMapStage ENSURE_REQUIREMENTS, [id=#45141]
+               +- PhotonShuffleExchangeSink SinglePartition
+                  +- PhotonAgg(limit=None, keys=[], functions=[partial_sum((l_extendedprice#31707 * (1 - l_discount#31708))) AS (sum#31763, isEmpty#31764)], output=[sum#31763, isEmpty#31764])
+                     +- PhotonProject [l_extendedprice#31707, l_discount#31708]
+                        +- PhotonShuffledHashJoin [l_partkey#31703L], [p_partkey#31693L], Inner, BuildRight, (((((((p_brand#31696 = Brand#11) AND p_container#31699 IN (SM CASE,SM BOX,SM PACK,SM PKG)) AND (l_quantity#31706 >= 5.00)) AND (l_quantity#31706 <= 15.00)) AND (p_size#31698 <= 5)) OR (((((p_brand#31696 = Brand#22) AND p_container#31699 IN (MED BAG,MED BOX,MED PKG,MED PACK)) AND (l_quantity#31706 >= 15.00)) AND (l_quantity#31706 <= 25.00)) AND (p_size#31698 <= 10))) OR (((((p_brand#31696 = Brand#33) AND p_container#31699 IN (LG CASE,LG BOX,LG PACK,LG PKG)) AND (l_quantity#31706 >= 25.00)) AND (l_quantity#31706 <= 35.00)) AND (p_size#31698 <= 15)))
+                           :- PhotonShuffleExchangeSource
+                           :  +- PhotonShuffleMapStage ENSURE_REQUIREMENTS, [id=#45123]
+                           :     +- PhotonShuffleExchangeSink hashpartitioning(l_partkey#31703L, 64)
+                           :        +- PhotonProject [l_partkey#31703L, l_quantity#31706, l_extendedprice#31707, l_discount#31708]
+                           :           +- PhotonScan parquet sql-arena.tpch_sf1.lineitem[l_partkey#31703L,l_quantity#31706,l_extendedprice#31707,l_discount#31708,l_shipinstruct#31715,l_shipmode#31716] DataFilters: [(l_quantity#31706 >= 5.00), (l_quantity#31706 <= 35.00), (l_shipinstruct#31715 = DELIVER IN PERS..., DictionaryFilters: [l_shipmode#31716 IN (AIR,AIR REG), ((l_quantity#31706 >= 5.00) AND (l_quantity#31706 <= 35.00)),..., Format: parquet, Location: PreparedDeltaFileIndex(1 paths)[s3://floedb-databricks-metastore-367509577365/metastore/82a33d38-..., OptionalDataFilters: [], PartitionFilters: [], ReadSchema: struct<l_partkey:bigint,l_quantity:decimal(15,2),l_extendedprice:decimal(15,2),l_discount:decimal..., RequiredDataFilters: [(l_quantity#31706 >= 5.00), (l_quantity#31706 <= 35.00), (l_shipinstruct#31715 = DELIVER IN PERS...
+                           +- PhotonShuffleExchangeSource
+                              +- PhotonShuffleMapStage ENSURE_REQUIREMENTS, [id=#45129]
+                                 +- PhotonShuffleExchangeSink hashpartitioning(p_partkey#31693L, 64)
+                                    +- PhotonScan parquet sql-arena.tpch_sf1.part[p_partkey#31693L,p_brand#31696,p_size#31698,p_container#31699] DataFilters: [(p_size#31698 >= 1), (((((p_size#31698 <= 5) AND (p_brand#31696 = Brand#11)) AND p_container#316..., DictionaryFilters: [(p_size#31698 >= 1)], Format: parquet, Location: PreparedDeltaFileIndex(1 paths)[s3://floedb-databricks-metastore-367509577365/metastore/82a33d38-..., OptionalDataFilters: [], PartitionFilters: [], ReadSchema: struct<p_partkey:bigint,p_brand:string,p_size:int,p_container:string>, RequiredDataFilters: [(p_size#31698 >= 1), (((((p_size#31698 <= 5) AND (p_brand#31696 = Brand#11)) AND p_container#316...
+
+
+== Optimizer Statistics (table names per statistics state) ==
+  missing = 
+  partial = lineitem, part
+  full    = 
+Corrective actions: consider running the following command on all tables with missing or partial statistics
+  ANALYZE TABLE <table-name> COMPUTE STATISTICS FOR ALL COLUMNS
+

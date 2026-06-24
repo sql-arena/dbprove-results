@@ -1,0 +1,111 @@
+{
+  "config": "M5 Macbook Pro",
+  "engine": "Databricks",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 1,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 1
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 1,
+          "=": 0,
+          ">16x": 1
+        },
+        "hash": {
+          "+2x": 2,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 3,
+          "-4x": 2,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 1
+        },
+        "join": {
+          "+2x": 2,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 3,
+          "-4x": 1,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 2,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 1,
+          "+4x": 1,
+          "+8x": 1,
+          "-2x": 0,
+          "-4x": 2,
+          "-8x": 0,
+          "<16x": 1,
+          "=": 2,
+          ">16x": 4
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 1763620,
+        "distribute": 3435431,
+        "hash": 626433,
+        "join": 3652057,
+        "scan": 6604783,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n    1050         0  SEQUENCE\n       1         1  ├─AGGREGATE MIN(mi.info), MIN(miidx.info), MIN(t.title)\n       1         4  │ DISTRIBUTE GATHER\n       1         4  │ AGGREGATE MIN(mi.info), MIN(miidx.info), MIN(t.title)\n  203000    111101  │ INNER JOIN HASH ON mi.info_type_id = it2.id\n   39600    130365  │ │└INNER JOIN HASH ON mc.movie_id = mi.movie_id\n   39600     16470  │ │ │└DISTRIBUTE GATHER\n   12700     16470  │ │ │ INNER JOIN HASH ON miidx.info_type_id = it.id\n   12700     49368  │ │ │ │└INNER JOIN HASH ON mc.movie_id = miidx.movie_id\n   12700     32853  │ │ │ │ │└DISTRIBUTE GATHER\n   12100     32853  │ │ │ │ │ INNER JOIN HASH ON t.kind_id = kt.id\n   12100     53085  │ │ │ │ │ │└INNER JOIN HASH ON mc.movie_id = t.id\n   12100     71294  │ │ │ │ │ │ │└DISTRIBUTE GATHER\n  276000     71294  │ │ │ │ │ │ │ INNER JOIN HASH ON mc.company_type_id = ct.id\n  203000     71294  │ │ │ │ │ │ │ │└INNER JOIN HASH ON cn.id = mc.company_id\n  203000      9775  │ │ │ │ │ │ │ │ │└DISTRIBUTE GATHER\n       -      9775  │ │ │ │ │ │ │ │ │ TABLE SCAN sql - company_name WHERE (cn.country_code IS NOT NULL) AND (cn.country_code = 'de')\n14800000   1331236  │ │ │ │ │ │ │ │ TABLE SCAN sql - movie_companies\n  276000         1  │ │ │ │ │ │ │ DISTRIBUTE GATHER\n     113         1  │ │ │ │ │ │ │ TABLE SCAN sql - company_type WHERE ct.kind = 'production companies'\n 1380000   1119343  │ │ │ │ │ │ TABLE SCAN sql - title\n   12100         1  │ │ │ │ │ DISTRIBUTE GATHER\n     113         1  │ │ │ │ │ TABLE SCAN sql - kind_type WHERE kt.kind = 'movie'\n 2530000    839395  │ │ │ │ TABLE SCAN sql - movie_info_idx\n   12700         1  │ │ │ DISTRIBUTE GATHER\n       7         1  │ │ │ TABLE SCAN sql - info_type WHERE it.info = 'rating'\n       1    111543  │ │ FILTER \n       4   1652515  │ │ TABLE SCAN sql - movie_info\n  203000         1  │ DISTRIBUTE GATHER\n 2610000         1  │ TABLE SCAN sql - info_type WHERE it2.info = 'release dates'\n    1050         0  └─FILTER \n  235000         1    DISTRIBUTE HASH\n  235000         1    AGGREGATE bloom_filter_agg(bloom_expr(mc.movie_id,mc.movie_id),71294L,1048576L)\n  235000   1652515    DISTRIBUTE HASH\n  235000   1652515    DISTRIBUTE HASH\n  235000   1652515    TABLE SCAN sql - movie_info\n",
+      "sql": "SELECT MIN(mi.info) AS release_date,\n       MIN(miidx.info) AS rating,\n       MIN(t.title) AS german_movie\nFROM job.company_name AS cn,\n     job.company_type AS ct,\n     job.info_type AS it,\n     job.info_type AS it2,\n     job.kind_type AS kt,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.movie_info_idx AS miidx,\n     job.title AS t\nWHERE cn.country_code ='[de]'\n  AND ct.kind ='production companies'\n  AND it.info ='rating'\n  AND it2.info ='release dates'\n  AND kt.kind ='movie'\n  AND mi.movie_id = t.id\n  AND it2.id = mi.info_type_id\n  AND kt.id = t.kind_id\n  AND mc.movie_id = t.id\n  AND cn.id = mc.company_id\n  AND ct.id = mc.company_type_id\n  AND miidx.movie_id = t.id\n  AND it.id = miidx.info_type_id\n  AND mi.movie_id = miidx.movie_id\n  AND mi.movie_id = mc.movie_id\n  AND miidx.movie_id = mc.movie_id;\n",
+      "startTime": "2026-06-24T13:50:10.895619Z",
+      "status": "OK",
+      "timeMs": 2890.015
+    }
+  ],
+  "runtime": {
+    "avgMs": 2890.015,
+    "bestMs": 2890.015,
+    "maxMs": 2890.015,
+    "minMs": 2890.015,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 13A Analysis",
+    "displayName": "JOB-13A",
+    "name": "PLAN-JOB-13A",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "4.1.0"
+}

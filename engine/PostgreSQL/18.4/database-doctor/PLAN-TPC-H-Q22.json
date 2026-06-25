@@ -1,0 +1,110 @@
+{
+  "config": "M5 Macbook Pro",
+  "engine": "PostgreSQL",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 2,
+          ">16x": 1
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 1,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 1,
+          "-8x": 1,
+          "<16x": 0,
+          "=": 2,
+          ">16x": 2
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 1,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 44460,
+        "distribute": 0,
+        "hash": 18975,
+        "join": 18975,
+        "scan": 57111,
+        "seek": 18975,
+        "sort": 6321
+      },
+      "plan": "Estimate    Actual  Operator\n     757         7  SEQUENCE\n       1         1  ├─AGGREGATE AVG(c_acctbal)\n       3         3  │ AGGREGATE PARTIAL AVG(c_acctbal)\n    5967     38136  │ TABLE SCAN customer AS customer_1 WHERE (customer_1.c_acctbal > 0.00) AND (LEFT(customer_1.c_phone,2) IN('10','17','19','23','22','31','27'))\n     757         7  └─AGGREGATE COUNT(*), SUM(c_acctbal) GROUP BY SORT LEFT(c_phone,2)\n     945      6321    SORT LEFT(c_phone,2)\n     945      6321    LEFT ANTI JOIN LOOP ON o_custkey = c_custkey\n    2187     18975    │└TABLE SCAN customer AS customer WHERE (c_acctbal > (InitPlan 1) .col1) AND (LEFT(c_phone,2) IN('10','17','19','23','22','31','27'))\n  341550     18975    TABLE SEEK orders AS orders\n",
+      "sql": "/* TPC-H Q22 */\nSELECT cntrycode,\n       COUNT(*)       AS numcust,\n       SUM(c_acctbal) AS totacctbal\nFROM (SELECT LEFT(c_phone,2) AS cntrycode,\n             c_acctbal\n      FROM tpch_sf1.customer\n      WHERE LEFT(c_phone,2) IN\n            ('10', '17', '19', '23', '22', '31', '27')\n        AND c_acctbal > (SELECT AVG(c_acctbal)\n                         FROM tpch_sf1.customer\n                         WHERE c_acctbal > 0.00\n                           AND LEFT(c_phone,2) IN\n                               ('10', '17', '19', '23', '22', '31', '27'))\n        AND NOT EXISTS (SELECT *\n                        FROM tpch_sf1.orders\n                        WHERE o_custkey = c_custkey)) AS custsale\nGROUP BY cntrycode\nORDER BY cntrycode\n\n\n",
+      "startTime": "2026-06-25T13:01:31.905789Z",
+      "status": "OK",
+      "timeMs": 76.856
+    }
+  ],
+  "runtime": {
+    "avgMs": 76.856,
+    "bestMs": 76.856,
+    "maxMs": 76.856,
+    "minMs": 76.856,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "TPC-H Q22 Analysis",
+    "displayName": "TPCH-Q22",
+    "name": "PLAN-TPC-H-Q22",
+    "tags": [
+      "TPC-H"
+    ]
+  },
+  "version": "18.4"
+}

@@ -1,0 +1,110 @@
+{
+  "config": "M5 Macbook Pro",
+  "engine": "PostgreSQL",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 1,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 2,
+          "=": 3,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 1,
+          "+8x": 1,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 1,
+          "=": 4,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 2,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 3935,
+        "distribute": 0,
+        "hash": 1232780,
+        "join": 1413803,
+        "scan": 729414,
+        "seek": 684385,
+        "sort": 4331
+      },
+      "plan": "Estimate    Actual  Operator\n       1       396  SORT COUNT(*), s_name\n       1       396  AGGREGATE COUNT(*) GROUP BY SORT s_name\n       1      3935  SORT s_name\n       1      3935  LEFT SEMI JOIN LOOP ON l_orderkey = l_orderkey\n       4      6582  │└LEFT ANTI JOIN LOOP ON l_orderkey = l_orderkey\n   12585     18262  │ │└INNER JOIN HASH ON o_orderkey = l_orderkey\n  320088    603176  │ │ │└INNER JOIN LOOP ON l_suppkey = s_suppkey\n    1600      1584  │ │ │ │└INNER JOIN LOOP ON s_nationkey = n_nationkey\n       1         1  │ │ │ │ │└TABLE SCAN nation AS nation WHERE n_name = 'GERMANY'\n    1600      1584  │ │ │ │ TABLE SEEK supplier AS supplier\n  316800    603171  │ │ │ TABLE SEEK lineitem AS l1 WHERE l1.l_receiptdate > l1.l_commitdate\n  943612    729413  │ │ TABLE SCAN orders AS orders WHERE o_orderstatus = 'F'\n  292192     73048  │ TABLE SEEK lineitem AS l3 WHERE (l3.l_receiptdate > l3.l_commitdate) AND (l3.l_suppkey <> l1.l_suppkey)\n   85566      6582  TABLE SEEK lineitem AS l2 WHERE l2.l_suppkey <> l1.l_suppkey\n",
+      "sql": "/* TPC-H Q21 */\nSELECT s_name, COUNT(*) AS numwait\nFROM tpch_sf1.lineitem l1\nINNER JOIN tpch_sf1.orders\n    ON l1.l_orderkey = o_orderkey\nINNER JOIN tpch_sf1.supplier\n    ON l1.l_suppkey = s_suppkey\nINNER JOIN tpch_sf1.nation\n    ON s_nationkey = n_nationkey\nWHERE o_orderstatus = 'F'\n  AND l1.l_receiptdate > l1.l_commitdate\n  AND EXISTS (SELECT 1\n              FROM tpch_sf1.lineitem l2\n              WHERE l2.l_orderkey = l1.l_orderkey\n                AND l2.l_suppkey <> l1.l_suppkey)\n  AND NOT EXISTS (SELECT 1\n                  FROM tpch_sf1.lineitem l3\n                  WHERE l3.l_orderkey = l1.l_orderkey\n                    AND l3.l_suppkey <> l1.l_suppkey\n                    AND l3.l_receiptdate\n                      > l3.l_commitdate)\n  AND n_name = 'GERMANY'\nGROUP BY s_name\nORDER BY numwait DESC,\n         s_name\n",
+      "startTime": "2026-06-25T13:01:31.097173Z",
+      "status": "OK",
+      "timeMs": 765.363
+    }
+  ],
+  "runtime": {
+    "avgMs": 765.363,
+    "bestMs": 765.363,
+    "maxMs": 765.363,
+    "minMs": 765.363,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "TPC-H Q21 Analysis",
+    "displayName": "TPCH-Q21",
+    "name": "PLAN-TPC-H-Q21",
+    "tags": [
+      "TPC-H"
+    ]
+  },
+  "version": "18.4"
+}

@@ -1,0 +1,110 @@
+{
+  "config": "M5 Macbook Pro",
+  "engine": "PostgreSQL",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 2,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 4,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 129,
+        "distribute": 0,
+        "hash": 510,
+        "join": 511,
+        "scan": 510,
+        "seek": 511,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE SUM(l_extendedprice * ('1' - l_discount))\n       3         3  AGGREGATE PARTIAL SUM(l_extendedprice * ('1' - l_discount))\n     144       126  INNER JOIN LOOP ON l_partkey = p_partkey\n     585       510  │└TABLE SCAN part AS part WHERE (p_size >= 1) AND (((p_brand = 'Brand#11') AND (p_container IN('SM CASE','SM BOX','SM PACK','SM PKG')) AND (p_size <= 5)) OR ((p_brand = 'Brand#22') AND (p_container IN('MED BAG','MED BOX','MED PKG','MED PACK')) AND (p_size <= 10)) OR ((p_brand = 'Brand#33') AND (p_container IN('LG CASE','LG BOX','LG PACK','LG PKG')) AND (p_size <= 15)))\n     511       511  TABLE SEEK lineitem AS lineitem WHERE (l_shipmode IN('AIR','AIR REG')) AND (l_shipinstruct = 'DELIVER IN PERSON') AND (((l_quantity >= '5') AND (l_quantity <= '15')) OR ((l_quantity >= '15') AND (l_quantity <= '25')) OR ((l_quantity >= '25') AND (l_quantity <= '35'))) AND (((p_brand = 'Brand#11') AND (p_container IN('SM CASE','SM BOX','SM PACK','SM PKG')) AND (l_quantity >= '5') AND (l_quantity <= '15') AND (p_size <= 5)) OR ((p_brand = 'Brand#22') AND (p_container IN('MED...\n",
+      "sql": "/* TPC-H Q19 */\nSELECT SUM(l_extendedprice * (1 - l_discount)) AS revenue\nFROM tpch_sf1.lineitem\nINNER JOIN tpch_sf1.part ON p_partkey = l_partkey\nWHERE (\n\n        p_brand = 'Brand#11'\n        AND p_container IN ('SM CASE', 'SM BOX', 'SM PACK', 'SM PKG')\n        AND l_quantity >= 5 AND l_quantity <= 5 + 10\n        AND p_size BETWEEN 1 AND 5\n        AND l_shipmode IN ('AIR', 'AIR REG')\n        AND l_shipinstruct = 'DELIVER IN PERSON'\n    )\n   OR ( p_brand = 'Brand#22'\n        AND p_container IN ('MED BAG', 'MED BOX', 'MED PKG', 'MED PACK')\n        AND l_quantity >= 15 AND l_quantity <= 15 + 10\n        AND p_size BETWEEN 1 AND 10\n        AND l_shipmode IN ('AIR', 'AIR REG')\n        AND l_shipinstruct = 'DELIVER IN PERSON'\n    )\n   OR ( p_brand = 'Brand#33'\n        AND p_container IN ('LG CASE', 'LG BOX', 'LG PACK', 'LG PKG')\n        AND l_quantity >= 25 AND l_quantity <= 25 + 10\n        AND p_size BETWEEN 1 AND 15\n        AND l_shipmode IN ('AIR', 'AIR REG')\n        AND l_shipinstruct = 'DELIVER IN PERSON'\n    )\n",
+      "startTime": "2026-06-25T13:01:29.933785Z",
+      "status": "OK",
+      "timeMs": 182.082
+    }
+  ],
+  "runtime": {
+    "avgMs": 182.082,
+    "bestMs": 182.082,
+    "maxMs": 182.082,
+    "minMs": 182.082,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "TPC-H Q19 Analysis",
+    "displayName": "TPCH-Q19",
+    "name": "PLAN-TPC-H-Q19",
+    "tags": [
+      "TPC-H"
+    ]
+  },
+  "version": "18.4"
+}

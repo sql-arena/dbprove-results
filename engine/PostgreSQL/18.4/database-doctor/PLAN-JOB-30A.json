@@ -1,0 +1,111 @@
+{
+  "config": "M5 Macbook Pro",
+  "engine": "PostgreSQL",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 11,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 1,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 1,
+          "=": 11,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 757,
+        "distribute": 0,
+        "hash": 493485,
+        "join": 628519,
+        "scan": 2,
+        "seek": 422378,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(info), MIN(info), MIN(name), MIN(title)\n       1       757  INNER JOIN LOOP ON id = person_id\n       1      1021  │└INNER JOIN LOOP ON id = subject_id AND (id = subject_id)\n       1      1021  │ │└INNER JOIN LOOP ON id = movie_id AND movie_id = id AND (movie_id = id)\n       1      6488  │ │ │└INNER JOIN LOOP ON keyword IN('murder','violence','blood','gore','death','female-nudity','hospital') AND id = status_id AND (id = status_id)\n       1         1  │ │ │ │└TABLE SCAN comp_cast_type AS cct2 WHERE cct2.kind = 'complete+verified'\n       1     13438  │ │ │ INNER JOIN LOOP ON movie_id = movie_id AND movie_id = movie_id AND (movie_id = movie_id)\n       1     21209  │ │ │ │└INNER JOIN LOOP ON id = info_type_id\n       1     22462  │ │ │ │ │└INNER JOIN LOOP ON movie_id = movie_id AND movie_id = movie_id AND (movie_id = movie_id)\n       8     38991  │ │ │ │ │ │└INNER JOIN LOOP ON movie_id = movie_id AND movie_id = movie_id AND (movie_id = movie_id)\n       6     63701  │ │ │ │ │ │ │└INNER JOIN HASH ON info_type_id = id\n       1         1  │ │ │ │ │ │ │ │└TABLE SEEK info_type AS it2\n     686    191689  │ │ │ │ │ │ │ INNER JOIN LOOP ON movie_id = movie_id\n     236     76714  │ │ │ │ │ │ │ │└INNER JOIN LOOP ON keyword_id = id\n       7         7  │ │ │ │ │ │ │ │ │└TABLE SEEK keyword AS k\n    2135     76713  │ │ │ │ │ │ │ │ TABLE SEEK movie_keyword AS mk\n  230142    191785  │ │ │ │ │ │ │ TABLE SEEK movie_info_idx AS mi_idx\n   63701     63701  │ │ │ │ │ │ TABLE SEEK cast_info AS ci WHERE ci.note IN('(writer)','(head writer)','(written by)','(story)','(story editor)')\n   38991     38991  │ │ │ │ │ TABLE SEEK movie_info AS mi WHERE mi.info IN('Horror','Thriller')\n   22462     22462  │ │ │ │ TABLE SEEK info_type AS it1 WHERE it1.info = 'genres'\n   42418     21209  │ │ │ TABLE SEEK complete_cast AS cc\n    6488      6488  │ │ TABLE SEEK title AS t WHERE t.production_year > 2000\n       2         1  │ TABLE SCAN comp_cast_type AS cct1 WHERE cct1.kind IN('cast','crew')\n    1021      1021  TABLE SEEK name AS n WHERE n.gender = 'm'\n",
+      "sql": "SELECT MIN(mi.info) AS movie_budget,\n       MIN(mi_idx.info) AS movie_votes,\n       MIN(n.name) AS writer,\n       MIN(t.title) AS complete_violent_movie\nFROM job.complete_cast AS cc,\n     job.comp_cast_type AS cct1,\n     job.comp_cast_type AS cct2,\n     job.cast_info AS ci,\n     job.info_type AS it1,\n     job.info_type AS it2,\n     job.keyword AS k,\n     job.movie_info AS mi,\n     job.movie_info_idx AS mi_idx,\n     job.movie_keyword AS mk,\n     job.name AS n,\n     job.title AS t\nWHERE cct1.kind IN ('cast',\n                    'crew')\n  AND cct2.kind ='complete+verified'\n  AND ci.note IN ('(writer)',\n                  '(head writer)',\n                  '(written by)',\n                  '(story)',\n                  '(story editor)')\n  AND it1.info = 'genres'\n  AND it2.info = 'votes'\n  AND k.keyword IN ('murder',\n                    'violence',\n                    'blood',\n                    'gore',\n                    'death',\n                    'female-nudity',\n                    'hospital')\n  AND mi.info IN ('Horror',\n                  'Thriller')\n  AND n.gender = 'm'\n  AND t.production_year > 2000\n  AND t.id = mi.movie_id\n  AND t.id = mi_idx.movie_id\n  AND t.id = ci.movie_id\n  AND t.id = mk.movie_id\n  AND t.id = cc.movie_id\n  AND ci.movie_id = mi.movie_id\n  AND ci.movie_id = mi_idx.movie_id\n  AND ci.movie_id = mk.movie_id\n  AND ci.movie_id = cc.movie_id\n  AND mi.movie_id = mi_idx.movie_id\n  AND mi.movie_id = mk.movie_id\n  AND mi.movie_id = cc.movie_id\n  AND mi_idx.movie_id = mk.movie_id\n  AND mi_idx.movie_id = cc.movie_id\n  AND mk.movie_id = cc.movie_id\n  AND n.id = ci.person_id\n  AND it1.id = mi.info_type_id\n  AND it2.id = mi_idx.info_type_id\n  AND k.id = mk.keyword_id\n  AND cct1.id = cc.subject_id\n  AND cct2.id = cc.status_id;\n",
+      "startTime": "2026-06-25T12:56:35.206356Z",
+      "status": "OK",
+      "timeMs": 3426.019
+    }
+  ],
+  "runtime": {
+    "avgMs": 3426.019,
+    "bestMs": 3426.019,
+    "maxMs": 3426.019,
+    "minMs": 3426.019,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 30A Analysis",
+    "displayName": "JOB-30A",
+    "name": "PLAN-JOB-30A",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "18.4"
+}

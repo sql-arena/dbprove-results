@@ -1,0 +1,111 @@
+{
+  "config": "M5 Macbook Pro",
+  "engine": "PostgreSQL",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 5,
+          "-8x": 1,
+          "<16x": 5,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 1,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 1,
+          "=": 10,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 45,
+        "distribute": 0,
+        "hash": 705,
+        "join": 705,
+        "scan": 0,
+        "seek": 706,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(name), MIN(name), MIN(title)\n       1        45  INNER JOIN LOOP ON id = info_type_id\n       1        45  │└INNER JOIN LOOP ON movie_id = movie_id AND movie_id = id AND (movie_id = id)\n       1        25  │ │└INNER JOIN LOOP ON person_id = person_id AND person_id = id AND (person_id = id)\n       1         5  │ │ │└INNER JOIN LOOP ON id = role_id\n       1         5  │ │ │ │└INNER JOIN LOOP ON id = person_role_id\n       1         5  │ │ │ │ │└INNER JOIN LOOP ON id = person_id\n       1       108  │ │ │ │ │ │└INNER JOIN LOOP ON movie_id = movie_id AND movie_id = id AND (movie_id = id)\n       1         6  │ │ │ │ │ │ │└INNER JOIN LOOP ON id = keyword_id\n       2        83  │ │ │ │ │ │ │ │└INNER JOIN LOOP ON movie_id = movie_id AND movie_id = id AND (movie_id = id)\n       1         4  │ │ │ │ │ │ │ │ │└INNER JOIN LOOP ON id = movie_id\n      11        99  │ │ │ │ │ │ │ │ │ │└INNER JOIN LOOP ON company_id = id\n       1         1  │ │ │ │ │ │ │ │ │ │ │└TABLE SEEK company_name AS cn WHERE cn.country_code = 'us'\n     133        99  │ │ │ │ │ │ │ │ │ │ TABLE SEEK movie_companies AS mc\n      99        99  │ │ │ │ │ │ │ │ │ TABLE SEEK title AS t WHERE (t.production_year > 2010) AND (t.title LIKE 'Kung Fu Panda%')\n     180        83  │ │ │ │ │ │ │ │ TABLE SEEK movie_keyword AS mk\n      83        83  │ │ │ │ │ │ │ TABLE SEEK keyword AS k WHERE k.keyword IN('hero','martial-arts','hand-to-hand-combat','computer-animated-movie')\n       6       108  │ │ │ │ │ │ TABLE SEEK cast_info AS ci WHERE ci.note IN('(voice)','(voice: Japanese version)','(voice) (uncredited)','(voice: English version)')\n     108       108  │ │ │ │ │ TABLE SEEK name AS n WHERE (n.name LIKE '%An%') AND (n.gender = 'f')\n       5         5  │ │ │ │ TABLE SEEK char_name AS chn\n       5         5  │ │ │ TABLE SEEK role_type AS rt WHERE rt.role = 'actress'\n      10        25  │ │ TABLE SEEK aka_name AS an\n      25        45  │ TABLE SEEK movie_info AS mi WHERE (mi.info LIKE 'Japan:%201%') OR (mi.info LIKE 'USA:%201%')\n      45        45  TABLE SEEK info_type AS it WHERE it.info = 'release dates'\n",
+      "sql": "SELECT MIN(chn.name) AS voiced_char_name,\n       MIN(n.name) AS voicing_actress_name,\n       MIN(t.title) AS kung_fu_panda\nFROM job.aka_name AS an,\n     job.char_name AS chn,\n     job.cast_info AS ci,\n     job.company_name AS cn,\n     job.info_type AS it,\n     job.keyword AS k,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.movie_keyword AS mk,\n     job.name AS n,\n     job.role_type AS rt,\n     job.title AS t\nWHERE ci.note IN ('(voice)',\n                  '(voice: Japanese version)',\n                  '(voice) (uncredited)',\n                  '(voice: English version)')\n  AND cn.country_code ='[us]'\n  AND cn.name = 'DreamWorks Animation'\n  AND it.info = 'release dates'\n  AND k.keyword IN ('hero',\n                    'martial-arts',\n                    'hand-to-hand-combat',\n                    'computer-animated-movie')\n  AND mi.info IS NOT NULL\n  AND (mi.info LIKE 'Japan:%201%'\n       OR mi.info LIKE 'USA:%201%')\n  AND n.gender ='f'\n  AND n.name LIKE '%An%'\n  AND rt.role ='actress'\n  AND t.production_year > 2010\n  AND t.title LIKE 'Kung Fu Panda%'\n  AND t.id = mi.movie_id\n  AND t.id = mc.movie_id\n  AND t.id = ci.movie_id\n  AND t.id = mk.movie_id\n  AND mc.movie_id = ci.movie_id\n  AND mc.movie_id = mi.movie_id\n  AND mc.movie_id = mk.movie_id\n  AND mi.movie_id = ci.movie_id\n  AND mi.movie_id = mk.movie_id\n  AND ci.movie_id = mk.movie_id\n  AND cn.id = mc.company_id\n  AND it.id = mi.info_type_id\n  AND n.id = ci.person_id\n  AND rt.id = ci.role_id\n  AND n.id = an.person_id\n  AND ci.person_id = an.person_id\n  AND chn.id = ci.person_role_id\n  AND k.id = mk.keyword_id;\n",
+      "startTime": "2026-06-25T12:54:18.714867Z",
+      "status": "OK",
+      "timeMs": 151.579
+    }
+  ],
+  "runtime": {
+    "avgMs": 151.579,
+    "bestMs": 151.579,
+    "maxMs": 151.579,
+    "minMs": 151.579,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 24B Analysis",
+    "displayName": "JOB-24B",
+    "name": "PLAN-JOB-24B",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "18.4"
+}

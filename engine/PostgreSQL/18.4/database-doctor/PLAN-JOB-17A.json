@@ -1,0 +1,111 @@
+{
+  "config": "M5 Macbook Pro",
+  "engine": "PostgreSQL",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 6,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 1,
+          "=": 7,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 258289,
+        "distribute": 0,
+        "hash": 6045894,
+        "join": 6045894,
+        "scan": 0,
+        "seek": 6045701,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(name), MIN(name)\n     112    258289  INNER JOIN LOOP ON id = person_id\n    1380   2832555  │└INNER JOIN LOOP ON movie_id = id\n      63     68316  │ │└INNER JOIN LOOP ON id = company_id\n     173    148552  │ │ │└INNER JOIN LOOP ON movie_id = id\n      34     41840  │ │ │ │└INNER JOIN LOOP ON id = movie_id\n      34     41840  │ │ │ │ │└INNER JOIN LOOP ON keyword_id = id\n       1         1  │ │ │ │ │ │└TABLE SEEK keyword AS k\n     305     41840  │ │ │ │ │ TABLE SEEK movie_keyword AS mk\n   41840     41840  │ │ │ │ TABLE SEEK title AS t\n  209200    148532  │ │ │ TABLE SEEK movie_companies AS mc\n  148552    148552  │ │ TABLE SEEK company_name AS cn WHERE cn.country_code = 'us'\n 2664324   2832381  │ TABLE SEEK cast_info AS ci\n 2832555   2832555  TABLE SEEK name AS n WHERE n.name LIKE 'B%'\n",
+      "sql": "SELECT MIN(n.name) AS member_in_charnamed_american_movie,\n       MIN(n.name) AS a1\nFROM job.cast_info AS ci,\n     job.company_name AS cn,\n     job.keyword AS k,\n     job.movie_companies AS mc,\n     job.movie_keyword AS mk,\n     job.name AS n,\n     job.title AS t\nWHERE cn.country_code ='[us]'\n  AND k.keyword ='character-name-in-title'\n  AND n.name LIKE 'B%'\n  AND n.id = ci.person_id\n  AND ci.movie_id = t.id\n  AND t.id = mk.movie_id\n  AND mk.keyword_id = k.id\n  AND t.id = mc.movie_id\n  AND mc.company_id = cn.id\n  AND ci.movie_id = mc.movie_id\n  AND ci.movie_id = mk.movie_id\n  AND mc.movie_id = mk.movie_id;\n",
+      "startTime": "2026-06-25T12:49:48.653679Z",
+      "status": "OK",
+      "timeMs": 22642.242
+    }
+  ],
+  "runtime": {
+    "avgMs": 22642.242,
+    "bestMs": 22642.242,
+    "maxMs": 22642.242,
+    "minMs": 22642.242,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 17A Analysis",
+    "displayName": "JOB-17A",
+    "name": "PLAN-JOB-17A",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "18.4"
+}

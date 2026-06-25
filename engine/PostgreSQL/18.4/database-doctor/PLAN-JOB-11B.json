@@ -1,0 +1,111 @@
+{
+  "config": "M5 Macbook Pro",
+  "engine": "PostgreSQL",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 1,
+          "<16x": 6,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 1,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 1,
+          "=": 6,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 14,
+        "distribute": 0,
+        "hash": 21933,
+        "join": 22120,
+        "scan": 1,
+        "seek": 21870,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(name), MIN(link), MIN(title)\n       1        14  INNER JOIN LOOP ON id = movie_id AND movie_id = id AND (movie_id = id)\n       1       102  │└INNER JOIN LOOP ON id = company_type_id\n       1       103  │ │└INNER JOIN LOOP ON id = company_id\n       1       288  │ │ │└INNER JOIN LOOP ON movie_id = movie_id AND movie_id = movie_id AND (movie_id = movie_id)\n       1        64  │ │ │ │└INNER JOIN LOOP ON keyword = 'sequel' AND id = link_type_id AND (id = link_type_id)\n       1         1  │ │ │ │ │└TABLE SCAN link_type AS lt WHERE lt.link LIKE '%follows%'\n      10       251  │ │ │ │ INNER JOIN LOOP ON movie_id = movie_id\n      34     10544  │ │ │ │ │└INNER JOIN LOOP ON keyword_id = id\n       1         1  │ │ │ │ │ │└TABLE SEEK keyword AS k\n     305     10544  │ │ │ │ │ TABLE SEEK movie_keyword AS mk\n   52720     10544  │ │ │ │ TABLE SEEK movie_link AS ml\n     128       288  │ │ │ TABLE SEEK movie_companies AS mc WHERE mc.note IS NULL\n     288       288  │ │ TABLE SEEK company_name AS cn WHERE (cn.country_code <> 'pl') AND ((cn.name LIKE '%Film%') OR (cn.name LIKE '%Warner%'))\n     103       103  │ TABLE SEEK company_type AS ct WHERE ct.kind = 'production companies'\n     102       102  TABLE SEEK title AS t WHERE (t.title LIKE '%Money%') AND (t.production_year = 1998)\n",
+      "sql": "SELECT MIN(cn.name) AS from_company,\n       MIN(lt.link) AS movie_link_type,\n       MIN(t.title) AS sequel_movie\nFROM job.company_name AS cn,\n     job.company_type AS ct,\n     job.keyword AS k,\n     job.link_type AS lt,\n     job.movie_companies AS mc,\n     job.movie_keyword AS mk,\n     job.movie_link AS ml,\n     job.title AS t\nWHERE cn.country_code !='[pl]'\n  AND (cn.name LIKE '%Film%'\n       OR cn.name LIKE '%Warner%')\n  AND ct.kind ='production companies'\n  AND k.keyword ='sequel'\n  AND lt.link LIKE '%follows%'\n  AND mc.note IS NULL\n  AND t.production_year = 1998\n  AND t.title LIKE '%Money%'\n  AND lt.id = ml.link_type_id\n  AND ml.movie_id = t.id\n  AND t.id = mk.movie_id\n  AND mk.keyword_id = k.id\n  AND t.id = mc.movie_id\n  AND mc.company_type_id = ct.id\n  AND mc.company_id = cn.id\n  AND ml.movie_id = mk.movie_id\n  AND ml.movie_id = mc.movie_id\n  AND mk.movie_id = mc.movie_id;\n",
+      "startTime": "2026-06-25T12:48:26.602975Z",
+      "status": "OK",
+      "timeMs": 37.213
+    }
+  ],
+  "runtime": {
+    "avgMs": 37.213,
+    "bestMs": 37.213,
+    "maxMs": 37.213,
+    "minMs": 37.213,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 11B Analysis",
+    "displayName": "JOB-11B",
+    "name": "PLAN-JOB-11B",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "18.4"
+}

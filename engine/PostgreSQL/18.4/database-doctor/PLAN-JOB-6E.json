@@ -1,0 +1,111 @@
+{
+  "config": "M5 Macbook Pro",
+  "engine": "PostgreSQL",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 1,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 1,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 2,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 4,
+          ">16x": 1
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 6,
+        "distribute": 0,
+        "hash": 2476,
+        "join": 2476,
+        "scan": 0,
+        "seek": 2476,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(keyword), MIN(name), MIN(title)\n       1         6  INNER JOIN LOOP ON id = person_id\n     721      1224  │└INNER JOIN LOOP ON movie_id = movie_id AND movie_id = id AND (movie_id = id)\n      18        11  │ │└INNER JOIN LOOP ON id = movie_id\n      34        14  │ │ │└INNER JOIN LOOP ON keyword_id = id\n       1         1  │ │ │ │└TABLE SEEK keyword AS k\n     305        14  │ │ │ TABLE SEEK movie_keyword AS mk\n      14        14  │ │ TABLE SEEK title AS t WHERE t.production_year > 2000\n     429      1223  │ TABLE SEEK cast_info AS ci\n    1224      1224  TABLE SEEK name AS n WHERE n.name LIKE '%Downey%Robert%'\n",
+      "sql": "SELECT MIN(k.keyword) AS movie_keyword,\n       MIN(n.name) AS actor_name,\n       MIN(t.title) AS marvel_movie\nFROM job.cast_info AS ci,\n     job.keyword AS k,\n     job.movie_keyword AS mk,\n     job.name AS n,\n     job.title AS t\nWHERE k.keyword = 'marvel-cinematic-universe'\n  AND n.name LIKE '%Downey%Robert%'\n  AND t.production_year > 2000\n  AND k.id = mk.keyword_id\n  AND t.id = mk.movie_id\n  AND t.id = ci.movie_id\n  AND ci.movie_id = mk.movie_id\n  AND n.id = ci.person_id;\n",
+      "startTime": "2026-06-25T12:59:38.665458Z",
+      "status": "OK",
+      "timeMs": 152.361
+    }
+  ],
+  "runtime": {
+    "avgMs": 152.361,
+    "bestMs": 152.361,
+    "maxMs": 152.361,
+    "minMs": 152.361,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 6E Analysis",
+    "displayName": "JOB-6E",
+    "name": "PLAN-JOB-6E",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "18.4"
+}

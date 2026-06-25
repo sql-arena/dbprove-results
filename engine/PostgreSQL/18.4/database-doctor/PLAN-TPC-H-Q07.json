@@ -1,0 +1,110 @@
+{
+  "config": "M5 Macbook Pro",
+  "engine": "PostgreSQL",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 1
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 2,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 5,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 6,
+          ">16x": 1
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 5924,
+        "distribute": 0,
+        "hash": 1001938,
+        "join": 832162,
+        "scan": 150004,
+        "seek": 560795,
+        "sort": 5924
+      },
+      "plan": "Estimate    Actual  Operator\n    6063         4  AGGREGATE SUM(l_extendedprice * ('1' - l_discount)) GROUP BY SORT n_name, n_name, EXTRACT(year FROM l_shipdate)\n    7578      5924  SORT n_name, n_name, EXTRACT(year FROM l_shipdate)\n    2526      1974  INNER JOIN HASH ON o_orderkey = l_orderkey AND (((n_name = 'GERMANY') AND (n_name = 'FRANCE')) OR ((n_name = 'FRANCE') AND (n_name = 'GERMANY')))\n  437079    437109  │└INNER JOIN LOOP ON l_suppkey = s_suppkey\n    2400      2394  │ │└INNER JOIN LOOP ON s_nationkey = n_nationkey\n       2         2  │ │ │└TABLE SCAN nation AS n1 WHERE (n1.n_name = 'GERMANY') OR (n1.n_name = 'FRANCE')\n    2400      2394  │ │ TABLE SEEK supplier AS supplier\n  435708    437120  │ TABLE SEEK lineitem AS lineitem WHERE (l_shipdate >= '1995-01-01') AND (l_shipdate <= '1996-12-31')\n  150000    121323  INNER JOIN LOOP ON o_custkey = c_custkey\n    5000      4002  │└INNER JOIN HASH ON c_nationkey = n_nationkey\n       2         2  │ │└TABLE SCAN nation AS n2 WHERE (n2.n_name = 'FRANCE') OR (n2.n_name = 'GERMANY')\n  187500    150000  │ TABLE SCAN customer AS customer\n  216144    121280  TABLE SEEK orders AS orders\n",
+      "sql": "/* TPC-H Q07 */\nSELECT supp_nation,\n       cust_nation,\n       l_year,\n       SUM(volume) AS revenue\nFROM (SELECT n1.n_name                          AS supp_nation,\n             n2.n_name                          AS cust_nation,\n             EXTRACT(YEAR FROM l_shipdate)      AS l_year,\n             l_extendedprice * (1 - l_discount) AS volume\n      FROM tpch_sf1.lineitem\n      INNER JOIN tpch_sf1.orders\n          ON l_orderkey = o_orderkey\n      INNER JOIN tpch_sf1.supplier\n          ON l_suppkey = s_suppkey\n      INNER JOIN tpch_sf1.customer\n          ON o_custkey = c_custkey\n      INNER JOIN tpch_sf1.nation n1\n          ON s_nationkey = n1.n_nationkey\n      INNER JOIN tpch_sf1.nation n2\n          ON c_nationkey = n2.n_nationkey\n      WHERE ((n1.n_name = 'GERMANY' AND n2.n_name = 'FRANCE')\n          OR (n1.n_name = 'FRANCE' AND n2.n_name = 'GERMANY'))\n        AND l_shipdate BETWEEN '1995-01-01' AND '1996-12-31') AS shipping\nGROUP BY supp_nation,\n         cust_nation,\n         l_year\nORDER BY supp_nation,\n         cust_nation,\n         l_year\n\n\n",
+      "startTime": "2026-06-25T13:01:15.325672Z",
+      "status": "OK",
+      "timeMs": 1423.754
+    }
+  ],
+  "runtime": {
+    "avgMs": 1423.754,
+    "bestMs": 1423.754,
+    "maxMs": 1423.754,
+    "minMs": 1423.754,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "TPC-H Q07 Analysis",
+    "displayName": "TPCH-Q07",
+    "name": "PLAN-TPC-H-Q07",
+    "tags": [
+      "TPC-H"
+    ]
+  },
+  "version": "18.4"
+}

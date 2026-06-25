@@ -1,0 +1,110 @@
+{
+  "config": "M5 Macbook Pro",
+  "engine": "PostgreSQL",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 2
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 1
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 3
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 4,
+          ">16x": 2
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 2
+        }
+      },
+      "operatorRows": {
+        "aggregate": 6001278,
+        "distribute": 0,
+        "hash": 150099,
+        "join": 1500065,
+        "scan": 7651215,
+        "seek": 63,
+        "sort": 18
+      },
+      "plan": "Estimate    Actual  Operator\n 2000536         9  SORT o_totalprice, o_orderdate\n 2000536         9  AGGREGATE c_name, o_orderdate, o_totalprice, SUM(l_quantity) GROUP BY SORT c_custkey, o_orderkey\n 2000536        63  INNER JOIN LOOP ON l_orderkey = o_orderkey\n  195564         9  │└SORT c_custkey, o_orderkey\n   48891         2  │ INNER JOIN HASH ON o_custkey = c_custkey\n  250000    150000  │ │└TABLE SCAN customer AS customer\n   48891         2  │ INNER JOIN HASH ON o_orderkey = l_orderkey\n  606248        36  │ │└GROUP BY HASH l_orderkey\n 6001622   6001215  │ │ TABLE SCAN lineitem AS lineitem_1\n 1935484   1500000  │ TABLE SCAN orders AS orders\n     117        63  TABLE SEEK lineitem AS lineitem\n",
+      "sql": "/* TPC-H Q18 */\nSELECT c_name,\n       c_custkey,\n       o_orderkey,\n       o_orderdate,\n       o_totalprice,\n       SUM(l_quantity)\nFROM tpch_sf1.lineitem\nINNER JOIN tpch_sf1.orders\n    ON l_orderkey = o_orderkey\nINNER JOIN tpch_sf1.customer\n    ON o_custkey = c_custkey\nWHERE o_orderkey IN (SELECT l_orderkey\n                     FROM tpch_sf1.lineitem\n                     GROUP BY l_orderkey\n                     HAVING SUM(l_quantity) > 314)\nGROUP BY c_name,\n         c_custkey,\n         o_orderkey,\n         o_orderdate,\n         o_totalprice\nORDER BY o_totalprice DESC,\n         o_orderdate",
+      "startTime": "2026-06-25T13:01:21.658389Z",
+      "status": "OK",
+      "timeMs": 8230.677
+    }
+  ],
+  "runtime": {
+    "avgMs": 8230.677,
+    "bestMs": 8230.677,
+    "maxMs": 8230.677,
+    "minMs": 8230.677,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "TPC-H Q18 Analysis",
+    "displayName": "TPCH-Q18",
+    "name": "PLAN-TPC-H-Q18",
+    "tags": [
+      "TPC-H"
+    ]
+  },
+  "version": "18.4"
+}

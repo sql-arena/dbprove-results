@@ -1,0 +1,110 @@
+{
+  "config": "M5 Macbook Pro",
+  "engine": "PostgreSQL",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 2,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 2,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 5,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 10052,
+        "distribute": 0,
+        "hash": 12807,
+        "join": 21328,
+        "scan": 2225,
+        "seek": 16455,
+        "sort": 158
+      },
+      "plan": "Estimate    Actual  Operator\n     108       158  SORT s_name\n     108       158  RIGHT SEMI INNER JOIN HASH ON ps_suppkey = s_suppkey\n     400       376  │└INNER JOIN LOOP ON s_nationkey = n_nationkey\n       1         1  │ │└TABLE SCAN nation AS nation WHERE n_name = 'KENYA'\n     400       376  │ TABLE SEEK supplier AS supplier\n    2693      6028  INNER JOIN LOOP ON ps_partkey = p_partkey\n    2020      2224  │└TABLE SCAN part AS p_inner WHERE p_inner.p_name LIKE 'almond%'\n    2224      6027  LEFT SEMI JOIN LOOP ON (li_inner.l_partkey = ps_partkey) AND (li_inner.l_suppkey = ps_suppkey)\n    2224      6027  │└TABLE SEEK partsupp AS partsupp WHERE ps_availqty > (SubPlan 1)\n    8896      8896  AGGREGATE 0.5 * SUM(l_quantity)\n    8896     10052  TABLE SEEK lineitem AS li_inner WHERE (li_inner.l_shipdate >= '1993-01-01') AND (li_inner.l_shipdate < '1994-01-01')\n",
+      "sql": "/* TPC-H Q20 */\nSELECT s_name,\n       s_address\nFROM tpch_sf1.supplier\nINNER JOIN tpch_sf1.nation\n    ON s_nationkey = n_nationkey\nWHERE s_suppkey IN (SELECT ps_suppkey\n                    FROM tpch_sf1.partsupp\n                    WHERE ps_partkey IN (SELECT p_partkey\n                                         FROM tpch_sf1.part AS p_inner\n                                         WHERE p_name LIKE 'almond%')\n                      AND ps_availqty > (SELECT 0.5 * SUM(l_quantity) AS qty\n                                         FROM tpch_sf1.lineitem as li_inner\n                                         WHERE l_partkey = ps_partkey\n                                           AND l_suppkey = ps_suppkey\n                                           AND l_shipdate >= '1993-01-01'\n                                           AND l_shipdate < '1994-01-01'))\n  AND n_name = 'KENYA'\nORDER BY s_name\n\n",
+      "startTime": "2026-06-25T13:01:30.150066Z",
+      "status": "OK",
+      "timeMs": 920.266
+    }
+  ],
+  "runtime": {
+    "avgMs": 920.266,
+    "bestMs": 920.266,
+    "maxMs": 920.266,
+    "minMs": 920.266,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "TPC-H Q20 Analysis",
+    "displayName": "TPCH-Q20",
+    "name": "PLAN-TPC-H-Q20",
+    "tags": [
+      "TPC-H"
+    ]
+  },
+  "version": "18.4"
+}

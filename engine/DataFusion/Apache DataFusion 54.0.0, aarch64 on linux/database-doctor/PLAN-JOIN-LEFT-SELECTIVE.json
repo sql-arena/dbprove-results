@@ -1,0 +1,111 @@
+{
+  "config": "M5 Macbook Pro",
+  "engine": "DataFusion",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 1,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 2,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 2,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 41,
+        "distribute": 122891,
+        "hash": 31,
+        "join": 2314815,
+        "scan": 2437695,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE COUNT(l_partkey), COUNT(p_partkey)\n      30        10  DISTRIBUTE GATHER\n      30        10  AGGREGATE COUNT(l_partkey), COUNT(p_partkey)\n      30        31  PROJECT l_partkey, p_partkey\n      30        31  INNER JOIN HASH ON p_partkey = l_partkey\n       1         1  │└DISTRIBUTE GATHER\n       1         1  │ FILTER p_partkey = 1\n  200000    122880  │ DISTRIBUTE ROUND ROBIN\n  200000    122880  │ TABLE SCAN part WHERE p_partkey = 1\n 6001215   2314815  TABLE SCAN lineitem WHERE ((l_partkey >= 1) AND (l_partkey <= 1)) AND l_partkey IN 1\n",
+      "sql": "SELECT COUNT(l.l_partkey), COUNT(p.p_partkey)\nFROM tpch_sf1.lineitem AS l\nJOIN (\n  SELECT *\n  FROM tpch_sf1.part\n  WHERE p_partkey = 1\n) AS p\n  ON l.l_partkey = p.p_partkey;\n",
+      "startTime": "2026-06-25T11:41:41.465827Z",
+      "status": "OK",
+      "timeMs": 15.171
+    }
+  ],
+  "runtime": {
+    "avgMs": 15.171,
+    "bestMs": 15.171,
+    "maxMs": 15.171,
+    "minMs": 15.171,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "iceberg",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "LEFT JOIN with selective filter",
+    "displayName": "PLAN-JOIN-LEFT-SELECTIVE",
+    "name": "PLAN-JOIN-LEFT-SELECTIVE",
+    "tags": [
+      "PLAN-JOIN",
+      "join"
+    ]
+  },
+  "version": "Apache DataFusion 54.0.0, aarch64 on linux"
+}

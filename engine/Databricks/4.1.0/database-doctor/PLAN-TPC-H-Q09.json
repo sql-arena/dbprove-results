@@ -33,9 +33,9 @@
           "-2x": 0,
           "-4x": 0,
           "-8x": 0,
-          "<16x": 1,
+          "<16x": 0,
           "=": 0,
-          ">16x": 4
+          ">16x": 5
         },
         "join": {
           "+2x": 0,
@@ -74,24 +74,24 @@
       "operatorRows": {
         "aggregate": 327498,
         "distribute": 2321282,
-        "hash": 7302058,
-        "join": 3281444,
+        "hash": 3281444,
+        "join": 7302058,
         "scan": 8314398,
         "seek": 0,
         "sort": 175
       },
-      "plan": "Estimate    Actual  Operator\n       ∞       175  SORT profit.nation ASC NULLS FIRST, profit.o_year DESC NULLS LAST\n       ∞       175  AGGREGATE SUM(profit.amount) GROUP BY HASH profit.nation, profit.o_year\n       ∞       350  DISTRIBUTE HASH ON profit.nation, profit.o_year\n       ∞       350  AGGREGATE SUM(profit.amount) GROUP BY HASH profit.nation, profit.o_year\n       ∞    327148  INNER JOIN HASH ON sql - s_nationkey = sql - n_nationkey\n       ∞    327148  │└INNER JOIN HASH ON sql - l_suppkey = sql - s_suppkey\n       ∞    327148  │ │└INNER JOIN HASH ON sql - l_suppkey = sql - ps_suppkey\n       ∞    327148  │ │ │└INNER JOIN HASH ON sql - l_orderkey = sql - o_orderkey\n      0B    327148  │ │ │ │└INNER JOIN HASH ON sql - l_partkey = sql - p_partkey\n   10000   5993466  │ │ │ │ │└TABLE SCAN sql - lineitem\n      0B     10907  │ │ │ │ DISTRIBUTE GATHER\n      25     10907  │ │ │ │ TABLE SCAN sql - part WHERE contains(sql - p_name,'lace')\n       ∞   1500000  │ │ │ DISTRIBUTE HASH ON sql - o_orderkey\n  800000   1500000  │ │ │ TABLE SCAN sql - orders\n       ∞    800000  │ │ DISTRIBUTE HASH ON sql - ps_suppkey, sql - ps_partkey\n 1500000    800000  │ │ TABLE SCAN sql - partsupp\n       ∞     10000  │ DISTRIBUTE GATHER\n  200000     10000  │ TABLE SCAN sql - supplier\n       ∞        25  DISTRIBUTE GATHER\n 6000000        25  TABLE SCAN sql - nation\n",
+      "plan": "Estimate    Actual  Operator\n       ∞       175  SORT profit.nation ASC NULLS FIRST, profit.o_year DESC NULLS LAST\n       ∞       175  AGGREGATE SUM(profit.amount) GROUP BY HASH profit.nation, profit.o_year\n       ∞       350  DISTRIBUTE HASH ON profit.nation, profit.o_year\n       ∞       350  AGGREGATE SUM(profit.amount) GROUP BY HASH profit.nation, profit.o_year\n       ∞    327148  INNER JOIN HASH ON sql - s_nationkey = sql - n_nationkey\n       ∞        25  │└DISTRIBUTE GATHER\n 6000000        25  │ TABLE SCAN sql - nation\n       ∞    327148  INNER JOIN HASH ON sql - l_suppkey = sql - s_suppkey\n       ∞     10000  │└DISTRIBUTE GATHER\n  200000     10000  │ TABLE SCAN sql - supplier\n       ∞    327148  INNER JOIN HASH ON sql - l_suppkey = sql - ps_suppkey\n       ∞    800000  │└DISTRIBUTE HASH ON sql - ps_suppkey, sql - ps_partkey\n 1500000    800000  │ TABLE SCAN sql - partsupp\n       ∞    327148  INNER JOIN HASH ON sql - l_orderkey = sql - o_orderkey\n       ∞   1500000  │└DISTRIBUTE HASH ON sql - o_orderkey\n  800000   1500000  │ TABLE SCAN sql - orders\n      0B    327148  INNER JOIN HASH ON sql - l_partkey = sql - p_partkey\n      0B     10907  │└DISTRIBUTE GATHER\n      25     10907  │ TABLE SCAN sql - part WHERE contains(sql - p_name,'lace')\n   10000   5993466  TABLE SCAN sql - lineitem\n",
       "sql": "/* TPC-H Q09 */\nSELECT nation,\n       o_year,\n       SUM(amount) AS sum_profit\nFROM (SELECT n_name                                                          AS nation,\n             EXTRACT(YEAR FROM o_orderdate)                                  AS o_year,\n             l_extendedprice * (1 - l_discount) - ps_supplycost * l_quantity AS amount\n      FROM tpch_sf1.lineitem\n      INNER JOIN tpch_sf1.orders\n          ON l_orderkey = o_orderkey\n      INNER JOIN tpch_sf1.partsupp\n          ON l_suppkey = ps_suppkey\n          AND l_partkey = ps_partkey\n      INNER JOIN tpch_sf1.part\n          ON l_partkey = p_partkey\n      INNER JOIN tpch_sf1.supplier\n          ON l_suppkey = s_suppkey\n      INNER JOIN tpch_sf1.nation\n          ON s_nationkey = n_nationkey\n      WHERE p_name LIKE '%lace%') AS profit\nGROUP BY nation,\n         o_year\nORDER BY nation,\n         o_year DESC",
-      "startTime": "2026-06-24T13:59:21.964070Z",
+      "startTime": "2026-06-25T11:08:21.119885Z",
       "status": "OK",
-      "timeMs": 1012.249
+      "timeMs": 1234.323
     }
   ],
   "runtime": {
-    "avgMs": 1012.249,
-    "bestMs": 1012.249,
-    "maxMs": 1012.249,
-    "minMs": 1012.249,
+    "avgMs": 1234.323,
+    "bestMs": 1234.323,
+    "maxMs": 1234.323,
+    "minMs": 1234.323,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

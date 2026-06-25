@@ -27,15 +27,15 @@
           ">16x": 0
         },
         "hash": {
-          "+2x": 0,
-          "+4x": 0,
+          "+2x": 1,
+          "+4x": 1,
           "+8x": 0,
           "-2x": 0,
-          "-4x": 1,
-          "-8x": 1,
-          "<16x": 5,
-          "=": 3,
-          ">16x": 1
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 6,
+          "=": 0,
+          ">16x": 3
         },
         "join": {
           "+2x": 0,
@@ -44,20 +44,20 @@
           "-2x": 0,
           "-4x": 1,
           "-8x": 1,
-          "<16x": 6,
-          "=": 3,
+          "<16x": 7,
+          "=": 2,
           ">16x": 0
         },
         "scan": {
           "+2x": 0,
-          "+4x": 1,
+          "+4x": 0,
           "+8x": 1,
           "-2x": 1,
           "-4x": 0,
-          "-8x": 1,
-          "<16x": 2,
+          "-8x": 0,
+          "<16x": 3,
           "=": 2,
-          ">16x": 6
+          ">16x": 7
         },
         "sort": {
           "+2x": 0,
@@ -74,24 +74,24 @@
       "operatorRows": {
         "aggregate": 759,
         "distribute": 3201925,
-        "hash": 5071449,
-        "join": 5957584,
+        "hash": 3539413,
+        "join": 7489620,
         "scan": 10263446,
         "seek": 0,
         "sort": 0
       },
-      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(mi.info), MIN(mi_idx.info), MIN(n.name), MIN(t.title)\n       1         2  DISTRIBUTE GATHER\n       1         2  AGGREGATE MIN(mi.info), MIN(mi_idx.info), MIN(n.name), MIN(t.title)\n     875       757  INNER JOIN HASH ON cc.movie_id = mi_idx.movie_id\n     254       274  │└INNER JOIN HASH ON ci.person_id = n.id\n     254       384  │ │└INNER JOIN HASH ON cc.movie_id = ci.movie_id\n      18       432  │ │ │└INNER JOIN HASH ON cc.movie_id = t.id\n      18      4943  │ │ │ │└DISTRIBUTE GATHER\n      18      4943  │ │ │ │ INNER JOIN HASH ON cc.subject_id = cct1.id\n     875      4943  │ │ │ │ │└INNER JOIN HASH ON cc.status_id = cct2.id\n     875     12308  │ │ │ │ │ │└INNER JOIN HASH ON mi.movie_id = cc.movie_id\n     875     72258  │ │ │ │ │ │ │└DISTRIBUTE GATHER\n     281     72258  │ │ │ │ │ │ │ INNER JOIN HASH ON mi.info_type_id = it1.id\n 1380000     72258  │ │ │ │ │ │ │ │└TABLE SCAN sql - movie_info WHERE mi.info IN('Horror','Thriller')\n     281         1  │ │ │ │ │ │ │ DISTRIBUTE GATHER\n     113         1  │ │ │ │ │ │ │ TABLE SCAN sql - info_type WHERE it1.info = 'genres'\n 4520000    131138  │ │ │ │ │ │ TABLE SCAN sql - complete_cast WHERE cc.movie_id IS NOT NULL\n     875         1  │ │ │ │ │ DISTRIBUTE GATHER\n  134000         1  │ │ │ │ │ TABLE SCAN sql - comp_cast_type WHERE cct2.kind = 'complete+verified'\n      18         2  │ │ │ │ DISTRIBUTE GATHER\n36200000         2  │ │ │ │ TABLE SCAN sql - comp_cast_type WHERE cct1.kind IN('cast','crew')\n  135000   1179942  │ │ │ TABLE SCAN sql - title WHERE (t.production_year IS NOT NULL) AND (t.production_year > 2000L)\n     254   1244716  │ │ DISTRIBUTE GATHER\n       4   1244716  │ │ TABLE SCAN sql - cast_info WHERE ci.note IN('(writer)','(head writer)','(written by)','(story)','(story editor)')\n     254   1739579  │ DISTRIBUTE GATHER\n14800000   1739579  │ TABLE SCAN sql - name WHERE (n.gender IS NOT NULL) AND (n.gender = 'm')\n     875     63701  DISTRIBUTE GATHER\n      19     63701  INNER JOIN HASH ON mi_idx.info_type_id = it2.id\n      18    191657  │└INNER JOIN HASH ON mk.movie_id = mi_idx.movie_id\n      18     76714  │ │└DISTRIBUTE GATHER\n      12     76714  │ │ INNER JOIN HASH ON mk.keyword_id = k.id\n 2530000   4519852  │ │ │└TABLE SCAN sql - movie_keyword\n      12         7  │ │ DISTRIBUTE GATHER\n 4170000         7  │ │ TABLE SCAN sql - keyword WHERE k.keyword IN('murder','violence','blood','gore','death','female-nudity','hospital')\n     113   1375949  │ TABLE SCAN sql - movie_info_idx\n      19         1  DISTRIBUTE GATHER\n       4         1  TABLE SCAN sql - info_type WHERE it2.info = 'votes'\n",
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(mi.info), MIN(mi_idx.info), MIN(n.name), MIN(t.title)\n       1         2  DISTRIBUTE GATHER\n       1         2  AGGREGATE MIN(mi.info), MIN(mi_idx.info), MIN(n.name), MIN(t.title)\n     875       757  INNER JOIN HASH ON cc.movie_id = mi_idx.movie_id\n     875     63701  │└DISTRIBUTE GATHER\n     254     63701  │ INNER JOIN HASH ON mi_idx.info_type_id = it2.id\n     254         1  │ │└DISTRIBUTE GATHER\n  135000         1  │ │ TABLE SCAN sql - info_type WHERE it2.info = 'votes'\n      18    191657  │ INNER JOIN HASH ON mk.movie_id = mi_idx.movie_id\n      18     76714  │ │└DISTRIBUTE GATHER\n      18     76714  │ │ INNER JOIN HASH ON mk.keyword_id = k.id\n      18         7  │ │ │└DISTRIBUTE GATHER\n36200000         7  │ │ │ TABLE SCAN sql - keyword WHERE k.keyword IN('murder','violence','blood','gore','death','female-nudity','hospital')\n 2530000   4519852  │ │ TABLE SCAN sql - movie_keyword\n14800000   1375949  │ TABLE SCAN sql - movie_info_idx\n     254       274  INNER JOIN HASH ON ci.person_id = n.id\n     254   1739579  │└DISTRIBUTE GATHER\n     113   1739579  │ TABLE SCAN sql - name WHERE (n.gender IS NOT NULL) AND (n.gender = 'm')\n      19       384  INNER JOIN HASH ON cc.movie_id = ci.movie_id\n      19   1244716  │└DISTRIBUTE GATHER\n       4   1244716  │ TABLE SCAN sql - cast_info WHERE ci.note IN('(writer)','(head writer)','(written by)','(story)','(story editor)')\n      18       432  INNER JOIN HASH ON cc.movie_id = t.id\n      18      4943  │└DISTRIBUTE GATHER\n      12      4943  │ INNER JOIN HASH ON cc.subject_id = cct1.id\n      12         2  │ │└DISTRIBUTE GATHER\n 4170000         2  │ │ TABLE SCAN sql - comp_cast_type WHERE cct1.kind IN('cast','crew')\n     875      4943  │ INNER JOIN HASH ON cc.status_id = cct2.id\n     875         1  │ │└DISTRIBUTE GATHER\n  134000         1  │ │ TABLE SCAN sql - comp_cast_type WHERE cct2.kind = 'complete+verified'\n     875     12308  │ INNER JOIN HASH ON mi.movie_id = cc.movie_id\n     875     72258  │ │└DISTRIBUTE GATHER\n     281     72258  │ │ INNER JOIN HASH ON mi.info_type_id = it1.id\n     281         1  │ │ │└DISTRIBUTE GATHER\n     113         1  │ │ │ TABLE SCAN sql - info_type WHERE it1.info = 'genres'\n 1380000     72258  │ │ TABLE SCAN sql - movie_info WHERE mi.info IN('Horror','Thriller')\n 4520000    131138  │ TABLE SCAN sql - complete_cast WHERE cc.movie_id IS NOT NULL\n       4   1179942  TABLE SCAN sql - title WHERE (t.production_year IS NOT NULL) AND (t.production_year > 2000L)\n",
       "sql": "SELECT MIN(mi.info) AS movie_budget,\n       MIN(mi_idx.info) AS movie_votes,\n       MIN(n.name) AS writer,\n       MIN(t.title) AS complete_violent_movie\nFROM job.complete_cast AS cc,\n     job.comp_cast_type AS cct1,\n     job.comp_cast_type AS cct2,\n     job.cast_info AS ci,\n     job.info_type AS it1,\n     job.info_type AS it2,\n     job.keyword AS k,\n     job.movie_info AS mi,\n     job.movie_info_idx AS mi_idx,\n     job.movie_keyword AS mk,\n     job.name AS n,\n     job.title AS t\nWHERE cct1.kind IN ('cast',\n                    'crew')\n  AND cct2.kind ='complete+verified'\n  AND ci.note IN ('(writer)',\n                  '(head writer)',\n                  '(written by)',\n                  '(story)',\n                  '(story editor)')\n  AND it1.info = 'genres'\n  AND it2.info = 'votes'\n  AND k.keyword IN ('murder',\n                    'violence',\n                    'blood',\n                    'gore',\n                    'death',\n                    'female-nudity',\n                    'hospital')\n  AND mi.info IN ('Horror',\n                  'Thriller')\n  AND n.gender = 'm'\n  AND t.production_year > 2000\n  AND t.id = mi.movie_id\n  AND t.id = mi_idx.movie_id\n  AND t.id = ci.movie_id\n  AND t.id = mk.movie_id\n  AND t.id = cc.movie_id\n  AND ci.movie_id = mi.movie_id\n  AND ci.movie_id = mi_idx.movie_id\n  AND ci.movie_id = mk.movie_id\n  AND ci.movie_id = cc.movie_id\n  AND mi.movie_id = mi_idx.movie_id\n  AND mi.movie_id = mk.movie_id\n  AND mi.movie_id = cc.movie_id\n  AND mi_idx.movie_id = mk.movie_id\n  AND mi_idx.movie_id = cc.movie_id\n  AND mk.movie_id = cc.movie_id\n  AND n.id = ci.person_id\n  AND it1.id = mi.info_type_id\n  AND it2.id = mi_idx.info_type_id\n  AND k.id = mk.keyword_id\n  AND cct1.id = cc.subject_id\n  AND cct2.id = cc.status_id;\n",
-      "startTime": "2026-06-24T13:56:01.844327Z",
+      "startTime": "2026-06-25T11:05:44.515886Z",
       "status": "OK",
-      "timeMs": 3719.981
+      "timeMs": 1111.414
     }
   ],
   "runtime": {
-    "avgMs": 3719.981,
-    "bestMs": 3719.981,
-    "maxMs": 3719.981,
-    "minMs": 3719.981,
+    "avgMs": 1111.414,
+    "bestMs": 1111.414,
+    "maxMs": 1111.414,
+    "minMs": 1111.414,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

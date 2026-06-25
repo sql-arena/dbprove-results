@@ -1,0 +1,111 @@
+{
+  "config": "M5 Macbook Pro",
+  "engine": "PostgreSQL",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 2,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 4,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 500003,
+        "distribute": 0,
+        "hash": 500000,
+        "join": 1500000,
+        "scan": 1500003,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE COUNT(o_orderkey), COUNT(c_custkey)\n       3         3  AGGREGATE PARTIAL COUNT(o_orderkey), PARTIAL COUNT(c_custkey)\n  625000    500000  LEFT OUTER JOIN HASH ON o_custkey = c_custkey\n       3         3  │└TABLE SCAN customer AS customer WHERE c_custkey = 1\n 1875000   1500000  TABLE SCAN orders AS o\n",
+      "sql": "SELECT COUNT(o.o_orderkey), COUNT(c.c_custkey)\nFROM tpch_sf1.orders AS o\nLEFT JOIN (\n  SELECT *\n  FROM tpch_sf1.customer\n  WHERE c_custkey = 1\n) AS c\n  ON o.o_custkey = c.c_custkey;\n",
+      "startTime": "2026-06-25T11:34:56.789291Z",
+      "status": "OK",
+      "timeMs": 77.19
+    }
+  ],
+  "runtime": {
+    "avgMs": 77.19,
+    "bestMs": 77.19,
+    "maxMs": 77.19,
+    "minMs": 77.19,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "LEFT JOIN with selective filter",
+    "displayName": "PLAN-JOIN-LEFT-LEFT-SELECTIVE",
+    "name": "PLAN-JOIN-LEFT-LEFT-SELECTIVE",
+    "tags": [
+      "PLAN-JOIN",
+      "join"
+    ]
+  },
+  "version": "18.4"
+}

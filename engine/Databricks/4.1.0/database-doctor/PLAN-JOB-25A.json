@@ -28,14 +28,14 @@
         },
         "hash": {
           "+2x": 0,
-          "+4x": 1,
+          "+4x": 0,
           "+8x": 0,
           "-2x": 0,
           "-4x": 0,
           "-8x": 0,
-          "<16x": 7,
+          "<16x": 5,
           "=": 0,
-          ">16x": 0
+          ">16x": 3
         },
         "join": {
           "+2x": 0,
@@ -49,14 +49,14 @@
           ">16x": 0
         },
         "scan": {
-          "+2x": 0,
+          "+2x": 1,
           "+4x": 1,
-          "+8x": 1,
+          "+8x": 0,
           "-2x": 0,
           "-4x": 0,
           "-8x": 0,
-          "<16x": 1,
-          "=": 4,
+          "<16x": 2,
+          "=": 3,
           ">16x": 4
         },
         "sort": {
@@ -74,24 +74,24 @@
       "operatorRows": {
         "aggregate": 4408,
         "distribute": 148060,
-        "hash": 4709534,
-        "join": 7044735,
+        "hash": 276068,
+        "join": 11478201,
         "scan": 11423917,
         "seek": 0,
         "sort": 0
       },
-      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(mi.info), MIN(mi_idx.info), MIN(n.name), MIN(t.title)\n       1         1  DISTRIBUTE GATHER\n       1         1  AGGREGATE MIN(mi.info), MIN(mi_idx.info), MIN(n.name), MIN(t.title)\n     254      4407  INNER JOIN HASH ON ci.movie_id = mk.movie_id\n     254      4851  │└INNER JOIN HASH ON ci.person_id = n.id\n     254      8650  │ │└DISTRIBUTE GATHER\n      19      8650  │ │ INNER JOIN HASH ON mi.movie_id = ci.movie_id\n      19     16480  │ │ │└DISTRIBUTE GATHER\n      19     16480  │ │ │ INNER JOIN HASH ON mi_idx.info_type_id = it2.id\n       6     49440  │ │ │ │└INNER JOIN HASH ON mi.movie_id = mi_idx.movie_id\n       6     30413  │ │ │ │ │└DISTRIBUTE GATHER\n     222     30413  │ │ │ │ │ INNER JOIN HASH ON mi.movie_id = t.id\n     222     30413  │ │ │ │ │ │└DISTRIBUTE GATHER\n     211     30413  │ │ │ │ │ │ INNER JOIN HASH ON mi.info_type_id = it1.id\n  134000     30413  │ │ │ │ │ │ │└TABLE SCAN sql - movie_info WHERE mi.info = 'Horror'\n     211         1  │ │ │ │ │ │ DISTRIBUTE GATHER\n 2530000         1  │ │ │ │ │ │ TABLE SCAN sql - info_type WHERE it1.info = 'genres'\n 4520000   2520303  │ │ │ │ │ TABLE SCAN sql - title\n36200000   1375945  │ │ │ │ TABLE SCAN sql - movie_info_idx\n      19         1  │ │ │ DISTRIBUTE GATHER\n 4170000         1  │ │ │ TABLE SCAN sql - info_type WHERE it2.info = 'votes'\n 1380000   1241916  │ │ TABLE SCAN sql - cast_info WHERE ci.note IN('(writer)','(head writer)','(written by)','(story)','(story editor)')\n14800000   1735486  │ TABLE SCAN sql - name WHERE (n.gender IS NOT NULL) AND (n.gender = 'm')\n     254     62096  DISTRIBUTE GATHER\n     254     62096  INNER JOIN HASH ON mk.keyword_id = k.id\n     113   4519847  │└TABLE SCAN sql - movie_keyword\n     254         5  DISTRIBUTE GATHER\n     113         5  TABLE SCAN sql - keyword WHERE k.keyword IN('murder','blood','gore','death','female-nudity')\n",
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(mi.info), MIN(mi_idx.info), MIN(n.name), MIN(t.title)\n       1         1  DISTRIBUTE GATHER\n       1         1  AGGREGATE MIN(mi.info), MIN(mi_idx.info), MIN(n.name), MIN(t.title)\n     254      4407  INNER JOIN HASH ON ci.movie_id = mk.movie_id\n     254     62096  │└DISTRIBUTE GATHER\n     254     62096  │ INNER JOIN HASH ON mk.keyword_id = k.id\n     254         5  │ │└DISTRIBUTE GATHER\n 1380000         5  │ │ TABLE SCAN sql - keyword WHERE k.keyword IN('murder','blood','gore','death','female-nudity')\n14800000   4519847  │ TABLE SCAN sql - movie_keyword\n     254      4851  INNER JOIN HASH ON ci.person_id = n.id\n     254      8650  │└DISTRIBUTE GATHER\n      19      8650  │ INNER JOIN HASH ON mi.movie_id = ci.movie_id\n      19     16480  │ │└DISTRIBUTE GATHER\n      19     16480  │ │ INNER JOIN HASH ON mi_idx.info_type_id = it2.id\n      19         1  │ │ │└DISTRIBUTE GATHER\n 4170000         1  │ │ │ TABLE SCAN sql - info_type WHERE it2.info = 'votes'\n       6     49440  │ │ INNER JOIN HASH ON mi.movie_id = mi_idx.movie_id\n       6     30413  │ │ │└DISTRIBUTE GATHER\n     222     30413  │ │ │ INNER JOIN HASH ON mi.movie_id = t.id\n     222     30413  │ │ │ │└DISTRIBUTE GATHER\n     211     30413  │ │ │ │ INNER JOIN HASH ON mi.info_type_id = it1.id\n     211         1  │ │ │ │ │└DISTRIBUTE GATHER\n 2530000         1  │ │ │ │ │ TABLE SCAN sql - info_type WHERE it1.info = 'genres'\n  134000     30413  │ │ │ │ TABLE SCAN sql - movie_info WHERE mi.info = 'Horror'\n 4520000   2520303  │ │ │ TABLE SCAN sql - title\n36200000   1375945  │ │ TABLE SCAN sql - movie_info_idx\n     113   1241916  │ TABLE SCAN sql - cast_info WHERE ci.note IN('(writer)','(head writer)','(written by)','(story)','(story editor)')\n     113   1735486  TABLE SCAN sql - name WHERE (n.gender IS NOT NULL) AND (n.gender = 'm')\n",
       "sql": "SELECT MIN(mi.info) AS movie_budget,\n       MIN(mi_idx.info) AS movie_votes,\n       MIN(n.name) AS male_writer,\n       MIN(t.title) AS violent_movie_title\nFROM job.cast_info AS ci,\n     job.info_type AS it1,\n     job.info_type AS it2,\n     job.keyword AS k,\n     job.movie_info AS mi,\n     job.movie_info_idx AS mi_idx,\n     job.movie_keyword AS mk,\n     job.name AS n,\n     job.title AS t\nWHERE ci.note IN ('(writer)',\n                  '(head writer)',\n                  '(written by)',\n                  '(story)',\n                  '(story editor)')\n  AND it1.info = 'genres'\n  AND it2.info = 'votes'\n  AND k.keyword IN ('murder',\n                    'blood',\n                    'gore',\n                    'death',\n                    'female-nudity')\n  AND mi.info = 'Horror'\n  AND n.gender = 'm'\n  AND t.id = mi.movie_id\n  AND t.id = mi_idx.movie_id\n  AND t.id = ci.movie_id\n  AND t.id = mk.movie_id\n  AND ci.movie_id = mi.movie_id\n  AND ci.movie_id = mi_idx.movie_id\n  AND ci.movie_id = mk.movie_id\n  AND mi.movie_id = mi_idx.movie_id\n  AND mi.movie_id = mk.movie_id\n  AND mi_idx.movie_id = mk.movie_id\n  AND n.id = ci.person_id\n  AND it1.id = mi.info_type_id\n  AND it2.id = mi_idx.info_type_id\n  AND k.id = mk.keyword_id;\n",
-      "startTime": "2026-06-24T13:54:23.585974Z",
+      "startTime": "2026-06-25T11:04:39.071725Z",
       "status": "OK",
-      "timeMs": 2755.922
+      "timeMs": 997.358
     }
   ],
   "runtime": {
-    "avgMs": 2755.922,
-    "bestMs": 2755.922,
-    "maxMs": 2755.922,
-    "minMs": 2755.922,
+    "avgMs": 997.358,
+    "bestMs": 997.358,
+    "maxMs": 997.358,
+    "minMs": 997.358,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

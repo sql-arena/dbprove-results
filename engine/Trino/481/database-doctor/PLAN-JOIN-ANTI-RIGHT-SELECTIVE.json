@@ -1,0 +1,111 @@
+{
+  "config": "M5 Macbook Pro",
+  "engine": "Trino",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 2
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 3,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 8,
+        "distribute": 3,
+        "hash": 1,
+        "join": 1,
+        "scan": 1650000,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  PROJECT count AS _col0\n       1         1  AGGREGATE COUNT(count_3) AS count\n       -         1  DISTRIBUTE GATHER\n       -         1  AGGREGATE COUNT(c_custkey) AS count_3\n       -         0  LEFT ANTI JOIN HASH ON c_custkey = o_custkey\n       -         1  │└DISTRIBUTE HASH ON o_custkey\n       -         1  │ PROJECT true AS subquerytrue, o_custkey\n       -         1  │ GROUP BY HASH o_custkey\n       -         1  │ DISTRIBUTE HASH ON o_custkey\n       -         1  │ GROUP BY PARTIAL o_custkey\n 1500000         6  │ FILTER o_custkey = 1\n 1500000   1500000  │ TABLE SCAN orders\n  150000         1  FILTER c_custkey = 1\n  150000    150000  TABLE SCAN customer\n",
+      "sql": "SELECT COUNT(c.c_custkey)\nFROM (\n  SELECT *\n  FROM tpch_sf1.customer\n  WHERE c_custkey = 1\n) AS c\nWHERE NOT EXISTS (\n  SELECT 1\n  FROM tpch_sf1.orders AS o\n  WHERE o.o_custkey = c.c_custkey\n);\n",
+      "startTime": "2026-06-25T11:43:00.148662Z",
+      "status": "OK",
+      "timeMs": 128.242
+    }
+  ],
+  "runtime": {
+    "avgMs": 128.242,
+    "bestMs": 128.242,
+    "maxMs": 128.242,
+    "minMs": 128.242,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "iceberg",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "ANTI RIGHT with selective filter",
+    "displayName": "PLAN-JOIN-ANTI-RIGHT-SELECTIVE",
+    "name": "PLAN-JOIN-ANTI-RIGHT-SELECTIVE",
+    "tags": [
+      "PLAN-JOIN",
+      "join"
+    ]
+  },
+  "version": "481"
+}

@@ -1,0 +1,111 @@
+{
+  "config": "M5 Macbook Pro",
+  "engine": "ClickHouse",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 50004,
+        "distribute": 0,
+        "hash": 150000,
+        "join": 1500000,
+        "scan": 1650000,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       -         1  PROJECT a1\n       -         1  AGGREGATE COUNT(c_custkey_right) AS a1\n       -     50004  PROJECT c_custkey\n       -     50004  PROJECT c_custkey\n       -     50004  RIGHT ANTI JOIN HASH ON FILTER_28.o_custkey = PROJECTION_25.c_custkey\n       -    150000  │└PROJECT c_custkey AS c_custkey_right\n       -    150000  │ PROJECT c_custkey\n       -    150000  │ TABLE SCAN customer\n       -   1500000  FILTER (o_custkey = o_custkey) AS a4\n       -   1500000  TABLE SCAN orders\n",
+      "sql": "SELECT COUNT(c.c_custkey)\nFROM tpch_sf1.customer AS c\nWHERE NOT EXISTS (\n  SELECT 1\n  FROM tpch_sf1.orders AS o\n  WHERE o.o_custkey = c.c_custkey\n);\n",
+      "startTime": "2026-06-25T11:40:40.257024Z",
+      "status": "OK",
+      "timeMs": 16.169
+    }
+  ],
+  "runtime": {
+    "avgMs": 16.169,
+    "bestMs": 16.169,
+    "maxMs": 16.169,
+    "minMs": 16.169,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "ANTI RIGHT",
+    "displayName": "PLAN-JOIN-ANTI-RIGHT",
+    "name": "PLAN-JOIN-ANTI-RIGHT",
+    "tags": [
+      "PLAN-JOIN",
+      "join"
+    ]
+  },
+  "version": "26.1.12.23"
+}

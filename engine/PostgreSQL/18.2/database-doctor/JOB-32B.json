@@ -1,0 +1,110 @@
+{
+  "engine": "PostgreSQL",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 5,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 1,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 1,
+          "=": 5,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 4388,
+        "distribute": 0,
+        "hash": 96844,
+        "join": 96844,
+        "scan": 0,
+        "seek": 96845,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MINlink, MIN(title), MIN(title)\n      10      4388  INNER JOIN LOOP ON id = linked_movie_id\n      10      4388  │└INNER JOIN LOOP ON id = movie_id\n      10      4388  │ │└INNER JOIN LOOP ON id = link_type_id\n      10      4388  │ │ │└INNER JOIN LOOP ON movie_id = movie_id\n      34     41840  │ │ │ │└INNER JOIN LOOP ON keyword_id = id\n       1         1  │ │ │ │ │└TABLE SEEK keyword AS k\n     303     41840  │ │ │ │ TABLE SEEK movie_keyword AS mk\n  209200     41840  │ │ │ TABLE SEEK movie_link AS ml\n    4388      4388  │ │ TABLE SEEK link_type AS lt\n    4388      4388  │ TABLE SEEK title AS t1\n    4388      4388  TABLE SEEK title AS t2\n",
+      "sql": "SELECT MIN(lt.link) AS link_type,\n       MIN(t1.title) AS first_movie,\n       MIN(t2.title) AS second_movie\nFROM job.keyword AS k,\n     job.link_type AS lt,\n     job.movie_keyword AS mk,\n     job.movie_link AS ml,\n     job.title AS t1,\n     job.title AS t2\nWHERE k.keyword ='character-name-in-title'\n  AND mk.keyword_id = k.id\n  AND t1.id = mk.movie_id\n  AND ml.movie_id = t1.id\n  AND ml.linked_movie_id = t2.id\n  AND lt.id = ml.link_type_id\n  AND mk.movie_id = t1.id;\n",
+      "startTime": "2026-06-17T12:32:33.620215Z",
+      "status": "OK",
+      "timeMs": 163.108
+    }
+  ],
+  "runtime": {
+    "avgMs": 163.108,
+    "bestMs": 163.108,
+    "maxMs": 163.108,
+    "minMs": 163.108,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 32B Analysis",
+    "displayName": "JOB-32B",
+    "name": "JOB-32B",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "18.2"
+}

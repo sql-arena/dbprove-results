@@ -1,0 +1,111 @@
+{
+  "config": "M5 Macbook Pro",
+  "engine": "PostgreSQL",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 2,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 4,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 375002,
+        "distribute": 0,
+        "hash": 374998,
+        "join": 1500000,
+        "scan": 1500000,
+        "seek": 4,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE COUNT(o_orderkey)\n       4         4  AGGREGATE PARTIAL COUNT(o_orderkey)\n  483868    374998  LEFT ANTI JOIN HASH ON o_custkey = c_custkey\n       4         4  │└TABLE SEEK customer AS c\n 1935484   1500000  TABLE SCAN orders AS o\n",
+      "sql": "SELECT COUNT(o.o_orderkey)\nFROM tpch_sf1.orders AS o\nWHERE NOT EXISTS (\n  SELECT 1\n  FROM tpch_sf1.customer AS c\n  WHERE c.c_custkey = o.o_custkey\n    AND c.c_custkey = 1\n);\n",
+      "startTime": "2026-06-25T11:41:05.965415Z",
+      "status": "OK",
+      "timeMs": 32.712
+    }
+  ],
+  "runtime": {
+    "avgMs": 32.712,
+    "bestMs": 32.712,
+    "maxMs": 32.712,
+    "minMs": 32.712,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "ANTI LEFT with selective filter",
+    "displayName": "PLAN-JOIN-ANTI-LEFT-SELECTIVE",
+    "name": "PLAN-JOIN-ANTI-LEFT-SELECTIVE",
+    "tags": [
+      "PLAN-JOIN",
+      "join"
+    ]
+  },
+  "version": "14.23"
+}

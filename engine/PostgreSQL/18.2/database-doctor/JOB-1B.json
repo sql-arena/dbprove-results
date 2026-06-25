@@ -1,0 +1,110 @@
+{
+  "engine": "PostgreSQL",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 2,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 1,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 4
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 1,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 5,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 6,
+        "distribute": 0,
+        "hash": 107,
+        "join": 1380240,
+        "scan": 1380037,
+        "seek": 105,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(note), MIN(title), MIN(production_year)\n       3         3  AGGREGATE PARTIAL MIN(note), PARTIAL MIN(title), PARTIAL MIN(production_year)\n      69         3  INNER JOIN LOOP ON id = movie_id\n      81         1  │└INNER JOIN HASH ON company_type_id = id\n       4         1  │ │└TABLE SCAN company_type AS ct WHERE ct.kind = 'production companies'\n   43116        99  │ INNER JOIN LOOP ON movie_id = movie_id\n    5089         3  │ │└INNER JOIN HASH ON info_type_id = id\n       1         1  │ │ │└TABLE SCAN info_type AS it WHERE it.info = 'bottom 10 rank'\n 1725045   1380035  │ │ TABLE SCAN movie_info_idx AS mi_idx\n      30       100  │ TABLE SEEK movie_companies AS mc WHERE mc.note NOT  LIKE '%(as Metro-Goldwyn-Mayer Pictures)%'\n       5         5  TABLE SEEK title AS t WHERE (t.production_year >= 2005) AND (t.production_year <= 2010)\n",
+      "sql": "SELECT MIN(mc.note) AS production_note,\n       MIN(t.title) AS movie_title,\n       MIN(t.production_year) AS movie_year\nFROM job.company_type AS ct,\n     job.info_type AS it,\n     job.movie_companies AS mc,\n     job.movie_info_idx AS mi_idx,\n     job.title AS t\nWHERE ct.kind = 'production companies'\n  AND it.info = 'bottom 10 rank'\n  AND mc.note NOT LIKE '%(as Metro-Goldwyn-Mayer Pictures)%'\n  AND t.production_year BETWEEN 2005 AND 2010\n  AND ct.id = mc.company_type_id\n  AND t.id = mc.movie_id\n  AND t.id = mi_idx.movie_id\n  AND mc.movie_id = mi_idx.movie_id\n  AND it.id = mi_idx.info_type_id;\n",
+      "startTime": "2026-06-17T12:29:02.207091Z",
+      "status": "OK",
+      "timeMs": 36.083
+    }
+  ],
+  "runtime": {
+    "avgMs": 36.083,
+    "bestMs": 36.083,
+    "maxMs": 36.083,
+    "minMs": 36.083,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 1B Analysis",
+    "displayName": "JOB-1B",
+    "name": "JOB-1B",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "18.2"
+}

@@ -27,15 +27,15 @@
           ">16x": 0
         },
         "hash": {
-          "+2x": 1,
+          "+2x": 0,
           "+4x": 0,
           "+8x": 0,
           "-2x": 0,
           "-4x": 0,
           "-8x": 0,
-          "<16x": 9,
+          "<16x": 5,
           "=": 0,
-          ">16x": 0
+          ">16x": 5
         },
         "join": {
           "+2x": 0,
@@ -54,10 +54,10 @@
           "+8x": 0,
           "-2x": 0,
           "-4x": 1,
-          "-8x": 0,
+          "-8x": 1,
           "<16x": 1,
           "=": 4,
-          ">16x": 5
+          ">16x": 4
         },
         "sort": {
           "+2x": 0,
@@ -74,24 +74,24 @@
       "operatorRows": {
         "aggregate": 46282,
         "distribute": 899854,
-        "hash": 5253002,
-        "join": 6000482,
+        "hash": 1308677,
+        "join": 9944807,
         "scan": 10292558,
         "seek": 0,
         "sort": 0
       },
-      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(cn.name), MIN(mi_idx.info), MIN(t.title)\n       1         1  DISTRIBUTE GATHER\n       1         1  AGGREGATE MIN(cn.name), MIN(mi_idx.info), MIN(t.title)\n    1530     46281  INNER JOIN HASH ON mi.info_type_id = it1.id\n    1530     54578  │└INNER JOIN HASH ON mc.movie_id = mi.movie_id\n    1530     56448  │ │└INNER JOIN HASH ON mi_idx.info_type_id = it2.id\n    1530    167828  │ │ │└INNER JOIN HASH ON mc.movie_id = mi_idx.movie_id\n    1530     58583  │ │ │ │└DISTRIBUTE GATHER\n     492     58583  │ │ │ │ INNER JOIN HASH ON mc.company_id = cn.id\n     492     79885  │ │ │ │ │└DISTRIBUTE GATHER\n     476     79885  │ │ │ │ │ INNER JOIN HASH ON mc.company_type_id = ct.id\n     476     79885  │ │ │ │ │ │└INNER JOIN HASH ON mk.movie_id = mc.movie_id\n     476      8073  │ │ │ │ │ │ │└DISTRIBUTE GATHER\n     186      8073  │ │ │ │ │ │ │ INNER JOIN HASH ON t.kind_id = kt.id\n     186      9731  │ │ │ │ │ │ │ │└INNER JOIN HASH ON mk.movie_id = t.id\n     186     37091  │ │ │ │ │ │ │ │ │└DISTRIBUTE GATHER\n     176     37091  │ │ │ │ │ │ │ │ │ INNER JOIN HASH ON mk.keyword_id = k.id\n14800000   4519843  │ │ │ │ │ │ │ │ │ │└TABLE SCAN sql - movie_keyword\n     176         3  │ │ │ │ │ │ │ │ │ DISTRIBUTE GATHER\n     113         3  │ │ │ │ │ │ │ │ │ TABLE SCAN sql - keyword WHERE k.keyword IN('murder','murder-in-title','blood','violence')\n 1380000   1009646  │ │ │ │ │ │ │ │ TABLE SCAN sql - title WHERE (t.production_year IS NOT NULL) AND (t.production_year > 2005L)\n     186         2  │ │ │ │ │ │ │ DISTRIBUTE GATHER\n     113         2  │ │ │ │ │ │ │ TABLE SCAN sql - kind_type WHERE kt.kind IN('movie','episode')\n       4   2600943  │ │ │ │ │ │ TABLE SCAN sql - movie_companies\n     476         4  │ │ │ │ │ DISTRIBUTE GATHER\n  235000         4  │ │ │ │ │ TABLE SCAN sql - company_type\n 2610000    124204  │ │ │ │ TABLE SCAN sql - company_name WHERE (cn.country_code IS NOT NULL) AND ( NOT (cn.country_code = 'us'))\n 2530000   1321701  │ │ │ TABLE SCAN sql - movie_info_idx WHERE mi_idx.info < '8.5'\n    1530         1  │ │ DISTRIBUTE GATHER\n       7         1  │ │ TABLE SCAN sql - info_type WHERE it2.info = 'rating'\n    1530    716210  │ DISTRIBUTE GATHER\n  134000    716210  │ TABLE SCAN sql - movie_info WHERE mi.info IN('Sweden','Norway','Germany','Denmark','Swedish','Danish','Norwegian','German','USA','American')\n    1530         1  DISTRIBUTE GATHER\n 4520000         1  TABLE SCAN sql - info_type WHERE it1.info = 'countries'\n",
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(cn.name), MIN(mi_idx.info), MIN(t.title)\n       1         1  DISTRIBUTE GATHER\n       1         1  AGGREGATE MIN(cn.name), MIN(mi_idx.info), MIN(t.title)\n    1530     46281  INNER JOIN HASH ON mi.info_type_id = it1.id\n    1530         1  │└DISTRIBUTE GATHER\n 4520000         1  │ TABLE SCAN sql - info_type WHERE it1.info = 'countries'\n    1530     54578  INNER JOIN HASH ON mc.movie_id = mi.movie_id\n    1530    716210  │└DISTRIBUTE GATHER\n  134000    716210  │ TABLE SCAN sql - movie_info WHERE mi.info IN('Sweden','Norway','Germany','Denmark','Swedish','Danish','Norwegian','German','USA','American')\n    1530     56448  INNER JOIN HASH ON mi_idx.info_type_id = it2.id\n    1530         1  │└DISTRIBUTE GATHER\n       7         1  │ TABLE SCAN sql - info_type WHERE it2.info = 'rating'\n    1530    167828  INNER JOIN HASH ON mc.movie_id = mi_idx.movie_id\n    1530     58583  │└DISTRIBUTE GATHER\n     492     58583  │ INNER JOIN HASH ON mc.company_id = cn.id\n     492     79885  │ │└DISTRIBUTE GATHER\n     476     79885  │ │ INNER JOIN HASH ON mc.company_type_id = ct.id\n     476         4  │ │ │└DISTRIBUTE GATHER\n       4         4  │ │ │ TABLE SCAN sql - company_type\n     476     79885  │ │ INNER JOIN HASH ON mk.movie_id = mc.movie_id\n     476      8073  │ │ │└DISTRIBUTE GATHER\n     186      8073  │ │ │ INNER JOIN HASH ON t.kind_id = kt.id\n     186         2  │ │ │ │└DISTRIBUTE GATHER\n 1380000         2  │ │ │ │ TABLE SCAN sql - kind_type WHERE kt.kind IN('movie','episode')\n     186      9731  │ │ │ INNER JOIN HASH ON mk.movie_id = t.id\n     186     37091  │ │ │ │└DISTRIBUTE GATHER\n     176     37091  │ │ │ │ INNER JOIN HASH ON mk.keyword_id = k.id\n     176         3  │ │ │ │ │└DISTRIBUTE GATHER\n     113         3  │ │ │ │ │ TABLE SCAN sql - keyword WHERE k.keyword IN('murder','murder-in-title','blood','violence')\n14800000   4519843  │ │ │ │ TABLE SCAN sql - movie_keyword\n     113   1009646  │ │ │ TABLE SCAN sql - title WHERE (t.production_year IS NOT NULL) AND (t.production_year > 2005L)\n  235000   2600943  │ │ TABLE SCAN sql - movie_companies\n 2610000    124204  │ TABLE SCAN sql - company_name WHERE (cn.country_code IS NOT NULL) AND ( NOT (cn.country_code = 'us'))\n 2530000   1321701  TABLE SCAN sql - movie_info_idx WHERE mi_idx.info < '8.5'\n",
       "sql": "SELECT MIN(cn.name) AS movie_company,\n       MIN(mi_idx.info) AS rating,\n       MIN(t.title) AS western_violent_movie\nFROM job.company_name AS cn,\n     job.company_type AS ct,\n     job.info_type AS it1,\n     job.info_type AS it2,\n     job.keyword AS k,\n     job.kind_type AS kt,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.movie_info_idx AS mi_idx,\n     job.movie_keyword AS mk,\n     job.title AS t\nWHERE cn.country_code != '[us]'\n  AND it1.info = 'countries'\n  AND it2.info = 'rating'\n  AND k.keyword IN ('murder',\n                    'murder-in-title',\n                    'blood',\n                    'violence')\n  AND kt.kind IN ('movie',\n                  'episode')\n  AND mi.info IN ('Sweden',\n                  'Norway',\n                  'Germany',\n                  'Denmark',\n                  'Swedish',\n                  'Danish',\n                  'Norwegian',\n                  'German',\n                  'USA',\n                  'American')\n  AND mi_idx.info < '8.5'\n  AND t.production_year > 2005\n  AND kt.id = t.kind_id\n  AND t.id = mi.movie_id\n  AND t.id = mk.movie_id\n  AND t.id = mi_idx.movie_id\n  AND t.id = mc.movie_id\n  AND mk.movie_id = mi.movie_id\n  AND mk.movie_id = mi_idx.movie_id\n  AND mk.movie_id = mc.movie_id\n  AND mi.movie_id = mi_idx.movie_id\n  AND mi.movie_id = mc.movie_id\n  AND mc.movie_id = mi_idx.movie_id\n  AND k.id = mk.keyword_id\n  AND it1.id = mi.info_type_id\n  AND it2.id = mi_idx.info_type_id\n  AND ct.id = mc.company_type_id\n  AND cn.id = mc.company_id;\n",
-      "startTime": "2026-06-24T13:53:50.447679Z",
+      "startTime": "2026-06-25T11:04:18.854870Z",
       "status": "OK",
-      "timeMs": 3132.888
+      "timeMs": 1141.57
     }
   ],
   "runtime": {
-    "avgMs": 3132.888,
-    "bestMs": 3132.888,
-    "maxMs": 3132.888,
-    "minMs": 3132.888,
+    "avgMs": 1141.57,
+    "bestMs": 1141.57,
+    "maxMs": 1141.57,
+    "minMs": 1141.57,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

@@ -1,0 +1,111 @@
+{
+  "config": "M5 Macbook Pro",
+  "engine": "DataFusion",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 1,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 1,
+          "<16x": 0,
+          "=": 3,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 11,
+        "distribute": 11,
+        "hash": 1,
+        "join": 1500000,
+        "scan": 1622880,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE COUNT(c_custkey)\n       0        10  DISTRIBUTE GATHER\n       0        10  AGGREGATE COUNT(c_custkey)\n       1         1  LEFT SEMI JOIN HASH ON c_custkey = o_custkey\n       1         1  │└DISTRIBUTE GATHER\n       1         1  │ FILTER c_custkey = 1\n  150000    122880  │ TABLE SCAN customer WHERE c_custkey = 1\n 1500000   1500000  TABLE SCAN orders\n",
+      "sql": "SELECT COUNT(c.c_custkey)\nFROM (\n  SELECT *\n  FROM tpch_sf1.customer\n  WHERE c_custkey = 1\n) AS c\nWHERE EXISTS (\n  SELECT 1\n  FROM tpch_sf1.orders AS o\n  WHERE o.o_custkey = c.c_custkey\n);\n",
+      "startTime": "2026-06-25T11:41:42.052508Z",
+      "status": "OK",
+      "timeMs": 6.973
+    }
+  ],
+  "runtime": {
+    "avgMs": 6.973,
+    "bestMs": 6.973,
+    "maxMs": 6.973,
+    "minMs": 6.973,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "iceberg",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "SEMI RIGHT with selective filter",
+    "displayName": "PLAN-JOIN-SEMI-RIGHT-SELECTIVE",
+    "name": "PLAN-JOIN-SEMI-RIGHT-SELECTIVE",
+    "tags": [
+      "PLAN-JOIN",
+      "join"
+    ]
+  },
+  "version": "Apache DataFusion 54.0.0, aarch64 on linux"
+}

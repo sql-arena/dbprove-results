@@ -1,0 +1,305 @@
+{
+  "0": {
+    "children": [
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [],
+                "descriptor": {
+                  "sourceFragmentIds": "[1]"
+                },
+                "details": [],
+                "estimates": [],
+                "id": "399",
+                "name": "RemoteSource",
+                "outputs": [
+                  {
+                    "name": "count_4",
+                    "type": "bigint"
+                  },
+                  {
+                    "name": "count_5",
+                    "type": "bigint"
+                  }
+                ]
+              }
+            ],
+            "descriptor": {
+              "arguments": "[]",
+              "isReplicateNullsAndAny": "",
+              "partitioning": "SINGLE"
+            },
+            "details": [],
+            "estimates": [
+              {
+                "cpuCost": 0.0,
+                "memoryCost": 0.0,
+                "networkCost": 0.0,
+                "outputRowCount": "NaN",
+                "outputSizeInBytes": "NaN"
+              }
+            ],
+            "id": "393",
+            "name": "LocalExchange",
+            "outputs": [
+              {
+                "name": "count_4",
+                "type": "bigint"
+              },
+              {
+                "name": "count_5",
+                "type": "bigint"
+              }
+            ]
+          }
+        ],
+        "descriptor": {
+          "keys": "",
+          "type": "FINAL"
+        },
+        "details": [
+          "count := count(count_4)",
+          "count_3 := count(count_5)"
+        ],
+        "estimates": [
+          {
+            "cpuCost": "NaN",
+            "memoryCost": 18.0,
+            "networkCost": 0.0,
+            "outputRowCount": 1.0,
+            "outputSizeInBytes": 18.0
+          }
+        ],
+        "id": "10",
+        "name": "Aggregate",
+        "outputs": [
+          {
+            "name": "count",
+            "type": "bigint"
+          },
+          {
+            "name": "count_3",
+            "type": "bigint"
+          }
+        ]
+      }
+    ],
+    "descriptor": {
+      "columnNames": "[_col0, _col1]"
+    },
+    "details": [
+      "_col0 := count",
+      "_col1 := count_3"
+    ],
+    "estimates": [
+      {
+        "cpuCost": 0.0,
+        "memoryCost": 0.0,
+        "networkCost": 0.0,
+        "outputRowCount": 1.0,
+        "outputSizeInBytes": 18.0
+      }
+    ],
+    "id": "15",
+    "name": "Output",
+    "outputs": [
+      {
+        "name": "count",
+        "type": "bigint"
+      },
+      {
+        "name": "count_3",
+        "type": "bigint"
+      }
+    ]
+  },
+  "1": {
+    "children": [
+      {
+        "children": [
+          {
+            "children": [],
+            "descriptor": {
+              "sourceFragmentIds": "[2]"
+            },
+            "details": [],
+            "estimates": [],
+            "id": "284",
+            "name": "RemoteSource",
+            "outputs": [
+              {
+                "name": "o_orderkey",
+                "type": "integer"
+              },
+              {
+                "name": "o_custkey",
+                "type": "integer"
+              }
+            ]
+          },
+          {
+            "children": [
+              {
+                "children": [],
+                "descriptor": {
+                  "sourceFragmentIds": "[3]"
+                },
+                "details": [],
+                "estimates": [],
+                "id": "285",
+                "name": "RemoteSource",
+                "outputs": [
+                  {
+                    "name": "c_custkey",
+                    "type": "integer"
+                  }
+                ]
+              }
+            ],
+            "descriptor": {
+              "arguments": "[]",
+              "isReplicateNullsAndAny": "",
+              "partitioning": "SINGLE"
+            },
+            "details": [],
+            "estimates": [
+              {
+                "cpuCost": 0.0,
+                "memoryCost": 0.0,
+                "networkCost": 0.0,
+                "outputRowCount": 150000.0,
+                "outputSizeInBytes": 750000.0
+              }
+            ],
+            "id": "363",
+            "name": "LocalExchange",
+            "outputs": [
+              {
+                "name": "c_custkey",
+                "type": "integer"
+              }
+            ]
+          }
+        ],
+        "descriptor": {
+          "criteria": "(o_custkey = c_custkey)",
+          "distribution": "PARTITIONED"
+        },
+        "details": [
+          "Distribution: PARTITIONED",
+          "dynamicFilterAssignments = {c_custkey -> #df_315}"
+        ],
+        "estimates": [
+          {
+            "cpuCost": "NaN",
+            "memoryCost": 750000.0,
+            "networkCost": 0.0,
+            "outputRowCount": "NaN",
+            "outputSizeInBytes": "NaN"
+          }
+        ],
+        "id": "6",
+        "name": "RightJoin",
+        "outputs": [
+          {
+            "name": "o_orderkey",
+            "type": "integer"
+          },
+          {
+            "name": "c_custkey",
+            "type": "integer"
+          }
+        ]
+      }
+    ],
+    "descriptor": {
+      "keys": "",
+      "type": "PARTIAL"
+    },
+    "details": [
+      "count_4 := count(c_custkey)",
+      "count_5 := count(o_orderkey)"
+    ],
+    "estimates": [],
+    "id": "397",
+    "name": "Aggregate",
+    "outputs": [
+      {
+        "name": "count_4",
+        "type": "bigint"
+      },
+      {
+        "name": "count_5",
+        "type": "bigint"
+      }
+    ]
+  },
+  "2": {
+    "children": [],
+    "descriptor": {
+      "dynamicFilters": "{o_custkey = #df_315}",
+      "filterPredicate": "",
+      "table": "tpch:tpch_sf1.orders$data@3715565745780966114"
+    },
+    "details": [
+      "o_orderkey := 1:o_orderkey:integer",
+      "o_custkey := 2:o_custkey:integer"
+    ],
+    "estimates": [
+      {
+        "cpuCost": 15000000.0,
+        "memoryCost": 0.0,
+        "networkCost": 0.0,
+        "outputRowCount": 1500000.0,
+        "outputSizeInBytes": 15000000.0
+      },
+      {
+        "cpuCost": 15000000.0,
+        "memoryCost": 0.0,
+        "networkCost": 0.0,
+        "outputRowCount": 1500000.0,
+        "outputSizeInBytes": 15000000.0
+      }
+    ],
+    "id": "316",
+    "name": "ScanFilter",
+    "outputs": [
+      {
+        "name": "o_orderkey",
+        "type": "integer"
+      },
+      {
+        "name": "o_custkey",
+        "type": "integer"
+      }
+    ]
+  },
+  "3": {
+    "children": [],
+    "descriptor": {
+      "table": "tpch:tpch_sf1.customer$data@4630890657608799225"
+    },
+    "details": [
+      "c_custkey := 1:c_custkey:integer"
+    ],
+    "estimates": [
+      {
+        "cpuCost": 750000.0,
+        "memoryCost": 0.0,
+        "networkCost": 0.0,
+        "outputRowCount": 150000.0,
+        "outputSizeInBytes": 750000.0
+      }
+    ],
+    "id": "0",
+    "name": "TableScan",
+    "outputs": [
+      {
+        "name": "c_custkey",
+        "type": "integer"
+      }
+    ]
+  }
+}

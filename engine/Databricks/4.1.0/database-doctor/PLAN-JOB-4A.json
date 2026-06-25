@@ -30,12 +30,12 @@
           "+2x": 0,
           "+4x": 0,
           "+8x": 0,
-          "-2x": 1,
+          "-2x": 0,
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
           "=": 0,
-          ">16x": 3
+          ">16x": 4
         },
         "join": {
           "+2x": 0,
@@ -51,8 +51,8 @@
         "scan": {
           "+2x": 2,
           "+4x": 0,
-          "+8x": 1,
-          "-2x": 1,
+          "+8x": 0,
+          "-2x": 2,
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
@@ -74,24 +74,24 @@
       "operatorRows": {
         "aggregate": 741,
         "distribute": 1028138,
-        "hash": 4536165,
-        "join": 1487487,
+        "hash": 28877,
+        "join": 5994775,
         "scan": 5993663,
         "seek": 0,
         "sort": 0
       },
-      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(mi_idx.info), MIN(t.title)\n       1         1  DISTRIBUTE GATHER\n       1         1  AGGREGATE MIN(mi_idx.info), MIN(t.title)\n  456000       740  INNER JOIN HASH ON mi_idx.info_type_id = it.id\n 2280000      1143  │└INNER JOIN HASH ON mk.movie_id = mi_idx.movie_id\n 2280000      2235  │ │└DISTRIBUTE GATHER\n 2280000      2235  │ │ INNER JOIN HASH ON mk.movie_id = t.id\n 2280000     12951  │ │ │└DISTRIBUTE GATHER\n 3300000     12951  │ │ │ INNER JOIN HASH ON mk.keyword_id = k.id\n 1380000   4519836  │ │ │ │└TABLE SCAN sql - movie_keyword\n 3300000        30  │ │ │ DISTRIBUTE GATHER\n     113        30  │ │ │ TABLE SCAN sql - keyword WHERE contains(k.keyword,'sequel')\n 2280000   1012920  │ │ DISTRIBUTE HASH ON t.id\n 2530000   1012920  │ │ TABLE SCAN sql - title WHERE (t.production_year IS NOT NULL) AND (t.production_year > 2005L)\n 4520000    460876  │ TABLE SCAN sql - movie_info_idx WHERE mi_idx.info > '5.0'\n  456000         1  DISTRIBUTE GATHER\n  134000         1  TABLE SCAN sql - info_type WHERE it.info = 'rating'\n",
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(mi_idx.info), MIN(t.title)\n       1         1  DISTRIBUTE GATHER\n       1         1  AGGREGATE MIN(mi_idx.info), MIN(t.title)\n  456000       740  INNER JOIN HASH ON mi_idx.info_type_id = it.id\n  456000         1  │└DISTRIBUTE GATHER\n 4520000         1  │ TABLE SCAN sql - info_type WHERE it.info = 'rating'\n 2280000      1143  INNER JOIN HASH ON mk.movie_id = mi_idx.movie_id\n 2280000      2235  │└DISTRIBUTE GATHER\n 2280000      2235  │ INNER JOIN HASH ON mk.movie_id = t.id\n 2280000     12951  │ │└DISTRIBUTE GATHER\n 3300000     12951  │ │ INNER JOIN HASH ON mk.keyword_id = k.id\n 3300000        30  │ │ │└DISTRIBUTE GATHER\n     113        30  │ │ │ TABLE SCAN sql - keyword WHERE contains(k.keyword,'sequel')\n 1380000   4519836  │ │ TABLE SCAN sql - movie_keyword\n 2280000   1012920  │ DISTRIBUTE HASH ON t.id\n 2530000   1012920  │ TABLE SCAN sql - title WHERE (t.production_year IS NOT NULL) AND (t.production_year > 2005L)\n  134000    460876  TABLE SCAN sql - movie_info_idx WHERE mi_idx.info > '5.0'\n",
       "sql": "SELECT MIN(mi_idx.info) AS rating,\n       MIN(t.title) AS movie_title\nFROM job.info_type AS it,\n     job.keyword AS k,\n     job.movie_info_idx AS mi_idx,\n     job.movie_keyword AS mk,\n     job.title AS t\nWHERE it.info ='rating'\n  AND k.keyword LIKE '%sequel%'\n  AND mi_idx.info > '5.0'\n  AND t.production_year > 2005\n  AND t.id = mi_idx.movie_id\n  AND t.id = mk.movie_id\n  AND mk.movie_id = mi_idx.movie_id\n  AND k.id = mk.keyword_id\n  AND it.id = mi_idx.info_type_id;\n",
-      "startTime": "2026-06-24T13:57:09.713769Z",
+      "startTime": "2026-06-25T11:06:32.332204Z",
       "status": "OK",
-      "timeMs": 1738.658
+      "timeMs": 1216.91
     }
   ],
   "runtime": {
-    "avgMs": 1738.658,
-    "bestMs": 1738.658,
-    "maxMs": 1738.658,
-    "minMs": 1738.658,
+    "avgMs": 1216.91,
+    "bestMs": 1216.91,
+    "maxMs": 1216.91,
+    "minMs": 1216.91,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

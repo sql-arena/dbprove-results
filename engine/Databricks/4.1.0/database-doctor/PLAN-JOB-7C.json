@@ -29,13 +29,13 @@
         "hash": {
           "+2x": 2,
           "+4x": 0,
-          "+8x": 1,
+          "+8x": 0,
           "-2x": 0,
           "-4x": 1,
           "-8x": 1,
           "<16x": 0,
           "=": 1,
-          ">16x": 1
+          ">16x": 2
         },
         "join": {
           "+2x": 2,
@@ -74,24 +74,24 @@
       "operatorRows": {
         "aggregate": 152370,
         "distribute": 2364968,
-        "hash": 3393044,
-        "join": 38947246,
+        "hash": 3385297,
+        "join": 38954993,
         "scan": 39163628,
         "seek": 0,
         "sort": 0
       },
-      "plan": "Estimate    Actual  Operator\n       4         0  SEQUENCE\n       1         1  ├─AGGREGATE MIN(n.name), MIN(pi.info)\n       1         2  │ DISTRIBUTE GATHER\n       1         2  │ AGGREGATE MIN(n.name), MIN(pi.info)\n  206000     68185  │ INNER JOIN HASH ON an.person_id = n.id\n  206000    979503  │ │└DISTRIBUTE GATHER\n  130000    979503  │ │ INNER JOIN HASH ON ci.person_id = an.person_id\n  130000   1097209  │ │ │└DISTRIBUTE GATHER\n    7500   1097209  │ │ │ INNER JOIN HASH ON ml.linked_movie_id = ci.movie_id\n    7500     14194  │ │ │ │└DISTRIBUTE GATHER\n   84200     14194  │ │ │ │ INNER JOIN HASH ON ml.linked_movie_id = t.id\n   84200     21505  │ │ │ │ │└DISTRIBUTE GATHER\n   84200     21505  │ │ │ │ │ INNER JOIN HASH ON ml.link_type_id = lt.id\n 4170000     29252  │ │ │ │ │ │└TABLE SCAN sql - movie_link\n   84200         4  │ │ │ │ │ DISTRIBUTE GATHER\n       -         4  │ │ │ │ │ TABLE SCAN sql - link_type WHERE lt.link IN('references','referenced in','features','featured in')\n     113   1550851  │ │ │ │ TABLE SCAN sql - title WHERE (t.production_year IS NOT NULL) AND (t.production_year >= 1980L) AND (t.production_year <= 2010L)\n36200000  36228372  │ │ │ TABLE SCAN sql - cast_info\n      18    682875  │ │ TABLE SCAN sql - aka_name WHERE contains(an.name,'a') OR startswith(an.name,'A')\n  206000     13063  │ INNER JOIN HASH ON pi.person_id = n.id\n  206000     84183  │ │└DISTRIBUTE GATHER\n    7890     84183  │ │ INNER JOIN HASH ON pi.info_type_id = it.id\n  901000     84183  │ │ │└TABLE SCAN sql - person_info WHERE pi.note IS NOT NULL\n    7890         1  │ │ DISTRIBUTE GATHER\n 2960000         1  │ │ TABLE SCAN sql - info_type WHERE it.info = 'mini biography'\n  546000     14647  │ FILTER \n 2530000    503907  │ TABLE SCAN sql - name WHERE (n.name_pcode_cf IS NOT NULL) AND (n.name_pcode_cf >= 'A') AND (n.name_pcode_cf <= 'F') AND ((n.gender = 'm') OR ((n.gender = 'f') AND startswith(n.name,'A')))\n       4         0  └─FILTER \n  130000         1    DISTRIBUTE HASH\n  130000         1    AGGREGATE bloom_filter_agg(bloom_expr(pi.person_id,pi.person_id),84183L,1048576L)\n   30000     84183    DISTRIBUTE HASH\n   30000     84183    DISTRIBUTE HASH\n   30000     84183    TABLE SCAN sql - person_info WHERE pi.note IS NOT NULL\n",
+      "plan": "Estimate    Actual  Operator\n       4         0  SEQUENCE\n       1         1  ├─AGGREGATE MIN(n.name), MIN(pi.info)\n       1         2  │ DISTRIBUTE GATHER\n       1         2  │ AGGREGATE MIN(n.name), MIN(pi.info)\n  206000     68185  │ INNER JOIN HASH ON an.person_id = n.id\n  206000    979503  │ │└DISTRIBUTE GATHER\n  130000    979503  │ │ INNER JOIN HASH ON ci.person_id = an.person_id\n  130000   1097209  │ │ │└DISTRIBUTE GATHER\n    7500   1097209  │ │ │ INNER JOIN HASH ON ml.linked_movie_id = ci.movie_id\n    7500     14194  │ │ │ │└DISTRIBUTE GATHER\n   84200     14194  │ │ │ │ INNER JOIN HASH ON ml.linked_movie_id = t.id\n   84200     21505  │ │ │ │ │└DISTRIBUTE GATHER\n   84200     21505  │ │ │ │ │ INNER JOIN HASH ON ml.link_type_id = lt.id\n   84200         4  │ │ │ │ │ │└DISTRIBUTE GATHER\n       -         4  │ │ │ │ │ │ TABLE SCAN sql - link_type WHERE lt.link IN('references','referenced in','features','featured in')\n 4170000     29252  │ │ │ │ │ TABLE SCAN sql - movie_link\n     113   1550851  │ │ │ │ TABLE SCAN sql - title WHERE (t.production_year IS NOT NULL) AND (t.production_year >= 1980L) AND (t.production_year <= 2010L)\n36200000  36228372  │ │ │ TABLE SCAN sql - cast_info\n      18    682875  │ │ TABLE SCAN sql - aka_name WHERE contains(an.name,'a') OR startswith(an.name,'A')\n  206000     13063  │ INNER JOIN HASH ON pi.person_id = n.id\n  206000     84183  │ │└DISTRIBUTE GATHER\n    7890     84183  │ │ INNER JOIN HASH ON pi.info_type_id = it.id\n    7890         1  │ │ │└DISTRIBUTE GATHER\n 2960000         1  │ │ │ TABLE SCAN sql - info_type WHERE it.info = 'mini biography'\n  901000     84183  │ │ TABLE SCAN sql - person_info WHERE pi.note IS NOT NULL\n  546000     14647  │ FILTER \n 2530000    503907  │ TABLE SCAN sql - name WHERE (n.name_pcode_cf IS NOT NULL) AND (n.name_pcode_cf >= 'A') AND (n.name_pcode_cf <= 'F') AND ((n.gender = 'm') OR ((n.gender = 'f') AND startswith(n.name,'A')))\n       4         0  └─FILTER \n  130000         1    DISTRIBUTE HASH\n  130000         1    AGGREGATE bloom_filter_agg(bloom_expr(pi.person_id,pi.person_id),84183L,1048576L)\n   30000     84183    DISTRIBUTE HASH\n   30000     84183    DISTRIBUTE HASH\n   30000     84183    TABLE SCAN sql - person_info WHERE pi.note IS NOT NULL\n",
       "sql": "SELECT MIN(n.name) AS cast_member_name,\n       MIN(pi.info) AS cast_member_info\nFROM job.aka_name AS an,\n     job.cast_info AS ci,\n     job.info_type AS it,\n     job.link_type AS lt,\n     job.movie_link AS ml,\n     job.name AS n,\n     job.person_info AS pi,\n     job.title AS t\nWHERE an.name IS NOT NULL\n  AND (an.name LIKE '%a%'\n       OR an.name LIKE 'A%')\n  AND it.info ='mini biography'\n  AND lt.link IN ('references',\n                  'referenced in',\n                  'features',\n                  'featured in')\n  AND n.name_pcode_cf BETWEEN 'A' AND 'F'\n  AND (n.gender='m'\n       OR (n.gender = 'f'\n           AND n.name LIKE 'A%'))\n  AND pi.note IS NOT NULL\n  AND t.production_year BETWEEN 1980 AND 2010\n  AND n.id = an.person_id\n  AND n.id = pi.person_id\n  AND ci.person_id = n.id\n  AND t.id = ci.movie_id\n  AND ml.linked_movie_id = t.id\n  AND lt.id = ml.link_type_id\n  AND it.id = pi.info_type_id\n  AND pi.person_id = an.person_id\n  AND pi.person_id = ci.person_id\n  AND an.person_id = ci.person_id\n  AND ci.movie_id = ml.linked_movie_id;\n",
-      "startTime": "2026-06-24T13:58:06.785927Z",
+      "startTime": "2026-06-25T11:07:17.804680Z",
       "status": "OK",
-      "timeMs": 3349.814
+      "timeMs": 1121.937
     }
   ],
   "runtime": {
-    "avgMs": 3349.814,
-    "bestMs": 3349.814,
-    "maxMs": 3349.814,
-    "minMs": 3349.814,
+    "avgMs": 1121.937,
+    "bestMs": 1121.937,
+    "maxMs": 1121.937,
+    "minMs": 1121.937,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

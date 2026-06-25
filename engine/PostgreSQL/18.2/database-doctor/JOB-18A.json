@@ -1,0 +1,110 @@
+{
+  "engine": "PostgreSQL",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 2,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 3,
+          "<16x": 3,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 1,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 7,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 410,
+        "distribute": 0,
+        "hash": 7313874,
+        "join": 15456526,
+        "scan": 1380037,
+        "seek": 7146035,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(info), MIN(info), MIN(title)\n       1       410  INNER JOIN LOOP ON id = movie_id\n       3       410  │└INNER JOIN LOOP ON id = person_id\n   10677    107339  │ │└INNER JOIN LOOP ON movie_id = movie_id\n    1445     15143  │ │ │└INNER JOIN HASH ON info_type_id = id\n       1         1  │ │ │ │└TABLE SCAN info_type AS it1 WHERE it1.info = 'budget'\n  489690   6930333  │ │ │ INNER JOIN LOOP ON movie_id = movie_id\n    5089    153308  │ │ │ │└INNER JOIN HASH ON info_type_id = id\n       1         1  │ │ │ │ │└TABLE SCAN info_type AS it2 WHERE it2.info = 'votes'\n 1725045   1380035  │ │ │ │ TABLE SCAN movie_info_idx AS mi_idx\n19776775   6931069  │ │ │ TABLE SEEK movie_info AS mi\n   90862    107217  │ │ TABLE SEEK cast_info AS ci WHERE ci.note IN('(producer)','(executive producer)')\n  107339    107339  │ TABLE SEEK name AS n WHERE (n.name LIKE '%Tim%') AND (n.gender = 'm')\n     410       410  TABLE SEEK title AS t\n",
+      "sql": "SELECT MIN(mi.info) AS movie_budget,\n       MIN(mi_idx.info) AS movie_votes,\n       MIN(t.title) AS movie_title\nFROM job.cast_info AS ci,\n     job.info_type AS it1,\n     job.info_type AS it2,\n     job.movie_info AS mi,\n     job.movie_info_idx AS mi_idx,\n     job.name AS n,\n     job.title AS t\nWHERE ci.note IN ('(producer)',\n                  '(executive producer)')\n  AND it1.info = 'budget'\n  AND it2.info = 'votes'\n  AND n.gender = 'm'\n  AND n.name LIKE '%Tim%'\n  AND t.id = mi.movie_id\n  AND t.id = mi_idx.movie_id\n  AND t.id = ci.movie_id\n  AND ci.movie_id = mi.movie_id\n  AND ci.movie_id = mi_idx.movie_id\n  AND mi.movie_id = mi_idx.movie_id\n  AND n.id = ci.person_id\n  AND it1.id = mi.info_type_id\n  AND it2.id = mi_idx.info_type_id;\n",
+      "startTime": "2026-06-17T12:28:14.794494Z",
+      "status": "OK",
+      "timeMs": 17111.294
+    }
+  ],
+  "runtime": {
+    "avgMs": 17111.294,
+    "bestMs": 17111.294,
+    "maxMs": 17111.294,
+    "minMs": 17111.294,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 18A Analysis",
+    "displayName": "JOB-18A",
+    "name": "JOB-18A",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "18.2"
+}

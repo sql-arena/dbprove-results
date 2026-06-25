@@ -1,0 +1,111 @@
+{
+  "config": "M5 Macbook Pro",
+  "engine": "PostgreSQL",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 2,
+          ">16x": 1
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 1,
+        "distribute": 0,
+        "hash": 1,
+        "join": 1,
+        "scan": 0,
+        "seek": 2,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE COUNT(c_custkey)\n       1         1  LEFT ANTI JOIN LOOP ON o_custkey = 1 AND o_custkey = c_custkey AND (o_custkey = c_custkey)\n       1         1  │└TABLE SEEK customer AS customer\n      18         1  TABLE SEEK orders AS o\n",
+      "sql": "SELECT COUNT(c.c_custkey)\nFROM (\n  SELECT *\n  FROM tpch_sf1.customer\n  WHERE c_custkey = 1\n) AS c\nWHERE NOT EXISTS (\n  SELECT 1\n  FROM tpch_sf1.orders AS o\n  WHERE o.o_custkey = c.c_custkey\n);\n",
+      "startTime": "2026-06-25T11:41:06.278866Z",
+      "status": "OK",
+      "timeMs": 3.626
+    }
+  ],
+  "runtime": {
+    "avgMs": 3.626,
+    "bestMs": 3.626,
+    "maxMs": 3.626,
+    "minMs": 3.626,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "ANTI RIGHT with selective filter",
+    "displayName": "PLAN-JOIN-ANTI-RIGHT-SELECTIVE",
+    "name": "PLAN-JOIN-ANTI-RIGHT-SELECTIVE",
+    "tags": [
+      "PLAN-JOIN",
+      "join"
+    ]
+  },
+  "version": "14.23"
+}

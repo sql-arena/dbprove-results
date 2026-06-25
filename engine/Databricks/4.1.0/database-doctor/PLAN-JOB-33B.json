@@ -28,14 +28,14 @@
         },
         "hash": {
           "+2x": 0,
-          "+4x": 2,
+          "+4x": 1,
           "+8x": 1,
-          "-2x": 0,
+          "-2x": 3,
           "-4x": 0,
           "-8x": 0,
           "<16x": 1,
-          "=": 4,
-          ">16x": 5
+          "=": 1,
+          ">16x": 6
         },
         "join": {
           "+2x": 0,
@@ -55,9 +55,9 @@
           "-2x": 0,
           "-4x": 1,
           "-8x": 1,
-          "<16x": 3,
+          "<16x": 4,
           "=": 5,
-          ">16x": 5
+          ">16x": 4
         },
         "sort": {
           "+2x": 0,
@@ -74,24 +74,24 @@
       "operatorRows": {
         "aggregate": 5,
         "distribute": 1005655,
-        "hash": 4558402,
-        "join": 7066142,
+        "hash": 1170386,
+        "join": 10454158,
         "scan": 10324788,
         "seek": 0,
         "sort": 0
       },
-      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(cn1.name), MIN(cn2.name), MIN(mi_idx1.info), MIN(mi_idx2.info), MIN(t1.title), MIN(t2.title)\n       1         1  AGGREGATE MIN(cn1.name), MIN(cn2.name), MIN(mi_idx1.info), MIN(mi_idx2.info), MIN(t1.title), MIN(t2.title)\n   40600         4  INNER JOIN HASH ON t2.kind_id = kt2.id\n   40600         4  │└INNER JOIN HASH ON ml.linked_movie_id = t2.id\n   40600        10  │ │└INNER JOIN HASH ON ml.movie_id = t1.id\n   40600        10  │ │ │└DISTRIBUTE GATHER\n   38600        10  │ │ │ INNER JOIN HASH ON mc2.movie_id = mi_idx2.movie_id\n   38600      2517  │ │ │ │└DISTRIBUTE GATHER\n    4700      2517  │ │ │ │ INNER JOIN HASH ON mc2.company_id = cn2.id\n    4700      2517  │ │ │ │ │└DISTRIBUTE GATHER\n   37600      2517  │ │ │ │ │ INNER JOIN HASH ON ml.linked_movie_id = mc2.movie_id\n   37600       477  │ │ │ │ │ │└DISTRIBUTE GATHER\n   37600       477  │ │ │ │ │ │ INNER JOIN HASH ON ml.link_type_id = lt.id\n   12100     13204  │ │ │ │ │ │ │└INNER JOIN HASH ON mi_idx1.movie_id = ml.movie_id\n  276000     43631  │ │ │ │ │ │ │ │└INNER JOIN HASH ON mc1.movie_id = mi_idx1.movie_id\n  276000     56410  │ │ │ │ │ │ │ │ │└DISTRIBUTE GATHER\n  421000     56410  │ │ │ │ │ │ │ │ │ INNER JOIN HASH ON cn1.id = mc1.company_id\n  421000      2340  │ │ │ │ │ │ │ │ │ │└DISTRIBUTE GATHER\n       7      2340  │ │ │ │ │ │ │ │ │ │ TABLE SCAN sql - company_name WHERE (cn1.country_code IS NOT NULL) AND (cn1.country_code = 'nl')\n       7   2605259  │ │ │ │ │ │ │ │ │ TABLE SCAN sql - movie_companies\n  276000    458631  │ │ │ │ │ │ │ │ INNER JOIN HASH ON mi_idx1.info_type_id = it1.id\n 2530000   1376010  │ │ │ │ │ │ │ │ │└TABLE SCAN sql - movie_info_idx\n  276000         1  │ │ │ │ │ │ │ │ DISTRIBUTE GATHER\n 2530000         1  │ │ │ │ │ │ │ │ TABLE SCAN sql - info_type WHERE it1.info = 'rating'\n   12100     29997  │ │ │ │ │ │ │ DISTRIBUTE GATHER\n 1380000     29997  │ │ │ │ │ │ │ TABLE SCAN sql - movie_link\n   37600         2  │ │ │ │ │ │ DISTRIBUTE GATHER\n     113         2  │ │ │ │ │ │ TABLE SCAN sql - link_type WHERE contains(lt.link,'follow')\n  235000   2605050  │ │ │ │ │ TABLE SCAN sql - movie_companies\n   30000    230918  │ │ │ │ TABLE SCAN sql - company_name\n   12000     25427  │ │ │ INNER JOIN HASH ON mi_idx2.info_type_id = it2.id\n     113    669103  │ │ │ │└TABLE SCAN sql - movie_info_idx WHERE mi_idx2.info < '3.0'\n   12000    230918  │ │ │ DISTRIBUTE HASH\n 2610000    230918  │ │ │ DISTRIBUTE HASH\n 2610000    230918  │ │ │ TABLE SCAN sql - company_name\n   40600     90852  │ │ DISTRIBUTE HASH ON t1.id, t1.id, t1.id\n   12400     90852  │ │ INNER JOIN HASH ON t1.kind_id = kt1.id\n 1380000   2336059  │ │ │└TABLE SCAN sql - title\n   12400         1  │ │ DISTRIBUTE GATHER\n      18         1  │ │ TABLE SCAN sql - kind_type WHERE kt1.kind = 'tv series'\n   40600    119565  │ DISTRIBUTE GATHER\n 2610000    119565  │ TABLE SCAN sql - title WHERE (t2.production_year IS NOT NULL) AND (t2.production_year = 2007L)\n   40600    119565  DISTRIBUTE HASH\n  235000    119565  DISTRIBUTE HASH\n  235000    119565  TABLE SCAN sql - title WHERE (t2.production_year IS NOT NULL) AND (t2.production_year = 2007L)\n",
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(cn1.name), MIN(cn2.name), MIN(mi_idx1.info), MIN(mi_idx2.info), MIN(t1.title), MIN(t2.title)\n       1         1  AGGREGATE MIN(cn1.name), MIN(cn2.name), MIN(mi_idx1.info), MIN(mi_idx2.info), MIN(t1.title), MIN(t2.title)\n   40600         4  INNER JOIN HASH ON t2.kind_id = kt2.id\n   40600    119565  │└DISTRIBUTE HASH\n  235000    119565  │ DISTRIBUTE HASH\n  235000    119565  │ TABLE SCAN sql - title WHERE (t2.production_year IS NOT NULL) AND (t2.production_year = 2007L)\n   40600         4  INNER JOIN HASH ON ml.linked_movie_id = t2.id\n   40600    119565  │└DISTRIBUTE GATHER\n 2610000    119565  │ TABLE SCAN sql - title WHERE (t2.production_year IS NOT NULL) AND (t2.production_year = 2007L)\n   40600        10  INNER JOIN HASH ON ml.movie_id = t1.id\n   40600        10  │└DISTRIBUTE GATHER\n   38600        10  │ INNER JOIN HASH ON mc2.movie_id = mi_idx2.movie_id\n   38600      2517  │ │└DISTRIBUTE GATHER\n    4700      2517  │ │ INNER JOIN HASH ON mc2.company_id = cn2.id\n    4700      2517  │ │ │└DISTRIBUTE GATHER\n   37600      2517  │ │ │ INNER JOIN HASH ON ml.linked_movie_id = mc2.movie_id\n   37600       477  │ │ │ │└DISTRIBUTE GATHER\n   37600       477  │ │ │ │ INNER JOIN HASH ON ml.link_type_id = lt.id\n   37600         2  │ │ │ │ │└DISTRIBUTE GATHER\n 1380000         2  │ │ │ │ │ TABLE SCAN sql - link_type WHERE contains(lt.link,'follow')\n   12100     13204  │ │ │ │ INNER JOIN HASH ON mi_idx1.movie_id = ml.movie_id\n   12100     29997  │ │ │ │ │└DISTRIBUTE GATHER\n     113     29997  │ │ │ │ │ TABLE SCAN sql - movie_link\n  276000     43631  │ │ │ │ INNER JOIN HASH ON mc1.movie_id = mi_idx1.movie_id\n  276000     56410  │ │ │ │ │└DISTRIBUTE GATHER\n  421000     56410  │ │ │ │ │ INNER JOIN HASH ON cn1.id = mc1.company_id\n  421000      2340  │ │ │ │ │ │└DISTRIBUTE GATHER\n       7      2340  │ │ │ │ │ │ TABLE SCAN sql - company_name WHERE (cn1.country_code IS NOT NULL) AND (cn1.country_code = 'nl')\n       7   2605259  │ │ │ │ │ TABLE SCAN sql - movie_companies\n  276000    458631  │ │ │ │ INNER JOIN HASH ON mi_idx1.info_type_id = it1.id\n  276000         1  │ │ │ │ │└DISTRIBUTE GATHER\n 2530000         1  │ │ │ │ │ TABLE SCAN sql - info_type WHERE it1.info = 'rating'\n 2530000   1376010  │ │ │ │ TABLE SCAN sql - movie_info_idx\n  235000   2605050  │ │ │ TABLE SCAN sql - movie_companies\n   30000    230918  │ │ TABLE SCAN sql - company_name\n   12000     25427  │ INNER JOIN HASH ON mi_idx2.info_type_id = it2.id\n   12000    230918  │ │└DISTRIBUTE HASH\n 2610000    230918  │ │ DISTRIBUTE HASH\n 2610000    230918  │ │ TABLE SCAN sql - company_name\n     113    669103  │ TABLE SCAN sql - movie_info_idx WHERE mi_idx2.info < '3.0'\n   40600     90852  DISTRIBUTE HASH ON t1.id, t1.id, t1.id\n   12400     90852  INNER JOIN HASH ON t1.kind_id = kt1.id\n   12400         1  │└DISTRIBUTE GATHER\n      18         1  │ TABLE SCAN sql - kind_type WHERE kt1.kind = 'tv series'\n 1380000   2336059  TABLE SCAN sql - title\n",
       "sql": "SELECT MIN(cn1.name) AS first_company,\n       MIN(cn2.name) AS second_company,\n       MIN(mi_idx1.info) AS first_rating,\n       MIN(mi_idx2.info) AS second_rating,\n       MIN(t1.title) AS first_movie,\n       MIN(t2.title) AS second_movie\nFROM job.company_name AS cn1,\n     job.company_name AS cn2,\n     job.info_type AS it1,\n     job.info_type AS it2,\n     job.kind_type AS kt1,\n     job.kind_type AS kt2,\n     job.link_type AS lt,\n     job.movie_companies AS mc1,\n     job.movie_companies AS mc2,\n     job.movie_info_idx AS mi_idx1,\n     job.movie_info_idx AS mi_idx2,\n     job.movie_link AS ml,\n     job.title AS t1,\n     job.title AS t2\nWHERE cn1.country_code = '[nl]'\n  AND it1.info = 'rating'\n  AND it2.info = 'rating'\n  AND kt1.kind IN ('tv series')\n  AND kt2.kind IN ('tv series')\n  AND lt.link LIKE '%follow%'\n  AND mi_idx2.info < '3.0'\n  AND t2.production_year = 2007\n  AND lt.id = ml.link_type_id\n  AND t1.id = ml.movie_id\n  AND t2.id = ml.linked_movie_id\n  AND it1.id = mi_idx1.info_type_id\n  AND t1.id = mi_idx1.movie_id\n  AND kt1.id = t1.kind_id\n  AND cn1.id = mc1.company_id\n  AND t1.id = mc1.movie_id\n  AND ml.movie_id = mi_idx1.movie_id\n  AND ml.movie_id = mc1.movie_id\n  AND mi_idx1.movie_id = mc1.movie_id\n  AND it2.id = mi_idx2.info_type_id\n  AND t2.id = mi_idx2.movie_id\n  AND kt2.id = t2.kind_id\n  AND cn2.id = mc2.company_id\n  AND t2.id = mc2.movie_id\n  AND ml.linked_movie_id = mi_idx2.movie_id\n  AND ml.linked_movie_id = mc2.movie_id\n  AND mi_idx2.movie_id = mc2.movie_id;\n",
-      "startTime": "2026-06-24T13:56:48.605193Z",
+      "startTime": "2026-06-25T11:06:15.848459Z",
       "status": "OK",
-      "timeMs": 2601.59
+      "timeMs": 1187.43
     }
   ],
   "runtime": {
-    "avgMs": 2601.59,
-    "bestMs": 2601.59,
-    "maxMs": 2601.59,
-    "minMs": 2601.59,
+    "avgMs": 1187.43,
+    "bestMs": 1187.43,
+    "maxMs": 1187.43,
+    "minMs": 1187.43,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

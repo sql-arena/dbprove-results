@@ -1,0 +1,111 @@
+{
+  "config": "M5 Macbook Pro",
+  "engine": "DataFusion",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 1
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 3,
+          ">16x": 1
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 1500010,
+        "distribute": 11,
+        "hash": 1500000,
+        "join": 1500000,
+        "scan": 1622880,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE COUNT(o_orderkey), COUNT(c_custkey)\n 1500000        10  DISTRIBUTE GATHER\n 1500000        10  AGGREGATE COUNT(o_orderkey), COUNT(c_custkey)\n 1500000   1500000  PROJECT o_orderkey, c_custkey\n 1500000   1500000  FULL JOIN HASH ON c_custkey = o_custkey\n       1         1  │└DISTRIBUTE GATHER\n       1         1  │ FILTER c_custkey = 1\n  150000    122880  │ TABLE SCAN customer WHERE c_custkey = 1\n 1500000   1500000  TABLE SCAN orders\n",
+      "sql": "SELECT COUNT(o.o_orderkey), COUNT(c.c_custkey)\nFROM tpch_sf1.orders AS o\nFULL JOIN (\n  SELECT *\n  FROM tpch_sf1.customer\n  WHERE c_custkey = 1\n) AS c\n  ON o.o_custkey = c.c_custkey;\n",
+      "startTime": "2026-06-25T11:41:40.395647Z",
+      "status": "OK",
+      "timeMs": 22.528
+    }
+  ],
+  "runtime": {
+    "avgMs": 22.528,
+    "bestMs": 22.528,
+    "maxMs": 22.528,
+    "minMs": 22.528,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "iceberg",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "LEFT JOIN with selective filter",
+    "displayName": "PLAN-JOIN-FULL-LEFT-SELECTIVE",
+    "name": "PLAN-JOIN-FULL-LEFT-SELECTIVE",
+    "tags": [
+      "PLAN-JOIN",
+      "join"
+    ]
+  },
+  "version": "Apache DataFusion 54.0.0, aarch64 on linux"
+}

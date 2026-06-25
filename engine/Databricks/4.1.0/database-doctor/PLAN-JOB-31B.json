@@ -27,15 +27,15 @@
           ">16x": 0
         },
         "hash": {
-          "+2x": 0,
-          "+4x": 2,
-          "+8x": 0,
+          "+2x": 1,
+          "+4x": 1,
+          "+8x": 1,
           "-2x": 1,
           "-4x": 0,
           "-8x": 0,
           "<16x": 2,
           "=": 2,
-          ">16x": 3
+          ">16x": 2
         },
         "join": {
           "+2x": 0,
@@ -49,15 +49,15 @@
           ">16x": 4
         },
         "scan": {
-          "+2x": 1,
+          "+2x": 0,
           "+4x": 0,
           "+8x": 0,
-          "-2x": 2,
-          "-4x": 1,
+          "-2x": 1,
+          "-4x": 0,
           "-8x": 0,
-          "<16x": 1,
+          "<16x": 3,
           "=": 3,
-          ">16x": 5
+          ">16x": 6
         },
         "sort": {
           "+2x": 0,
@@ -74,24 +74,24 @@
       "operatorRows": {
         "aggregate": 86,
         "distribute": 3133738,
-        "hash": 4673487,
-        "join": 4328353,
+        "hash": 3283229,
+        "join": 5718611,
         "scan": 8702034,
         "seek": 0,
         "sort": 0
       },
-      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(mi.info), MIN(mi_idx.info), MIN(n.name), MIN(t.title)\n       1         2  DISTRIBUTE GATHER\n       1         2  AGGREGATE MIN(mi.info), MIN(mi_idx.info), MIN(n.name), MIN(t.title)\n    2230        84  INNER JOIN HASH ON mc.movie_id = ci.movie_id\n    2230       315  │└DISTRIBUTE GATHER\n    2230       315  │ INNER JOIN HASH ON mc.movie_id = mk.movie_id\n  936000       134  │ │└INNER JOIN HASH ON mi_idx.info_type_id = it2.id\n     207       406  │ │ │└INNER JOIN HASH ON mc.movie_id = mi_idx.movie_id\n     207       135  │ │ │ │└DISTRIBUTE GATHER\n      12       135  │ │ │ │ INNER JOIN HASH ON mc.company_id = cn.id\n 2530000      7591  │ │ │ │ │└TABLE SCAN sql - movie_companies WHERE (mc.note IS NOT NULL) AND contains(mc.note,'(Blu-ray)')\n      12        10  │ │ │ │ DISTRIBUTE GATHER\n 4170000        10  │ │ │ │ TABLE SCAN sql - company_name WHERE startswith(cn.name,'Lionsgate')\n  235000   1117892  │ │ │ TABLE SCAN sql - movie_info_idx\n  936000         1  │ │ DISTRIBUTE GATHER\n  134000         1  │ │ TABLE SCAN sql - info_type WHERE it2.info = 'votes'\n    2230     76714  │ DISTRIBUTE GATHER\n     207     76714  │ INNER JOIN HASH ON mk.keyword_id = k.id\n 1380000   4519852  │ │└TABLE SCAN sql - movie_keyword\n     207         7  │ DISTRIBUTE GATHER\n14800000         7  │ TABLE SCAN sql - keyword WHERE k.keyword IN('murder','violence','blood','gore','death','female-nudity','hospital')\n  582000        37  INNER JOIN HASH ON ci.person_id = n.id\n 2910000        41  │└INNER JOIN HASH ON mi.movie_id = ci.movie_id\n     281        45  │ │└INNER JOIN HASH ON mi.movie_id = t.id\n     281     72258  │ │ │└DISTRIBUTE GATHER\n      13     72258  │ │ │ INNER JOIN HASH ON mi.info_type_id = it1.id\n     113     72258  │ │ │ │└TABLE SCAN sql - movie_info WHERE mi.info IN('Horror','Thriller')\n      13         1  │ │ │ DISTRIBUTE GATHER\n36200000         1  │ │ │ TABLE SCAN sql - info_type WHERE it1.info = 'genres'\n     113       127  │ │ TABLE SCAN sql - title WHERE (t.production_year IS NOT NULL) AND (t.production_year > 2000L) AND ((contains(t.title,'Freddy') OR contains(t.title,'Jason')) OR startswith(t.title,'Saw'))\n 2910000   1244716  │ DISTRIBUTE GATHER\n 4520000   1244716  │ TABLE SCAN sql - cast_info WHERE ci.note IN('(writer)','(head writer)','(written by)','(story)','(story editor)')\n  582000   1739579  DISTRIBUTE GATHER\n 2610000   1739579  TABLE SCAN sql - name WHERE (n.gender IS NOT NULL) AND (n.gender = 'm')\n",
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(mi.info), MIN(mi_idx.info), MIN(n.name), MIN(t.title)\n       1         2  DISTRIBUTE GATHER\n       1         2  AGGREGATE MIN(mi.info), MIN(mi_idx.info), MIN(n.name), MIN(t.title)\n    2230        84  INNER JOIN HASH ON mc.movie_id = ci.movie_id\n    2230       315  │└DISTRIBUTE GATHER\n    2230       315  │ INNER JOIN HASH ON mc.movie_id = mk.movie_id\n    2230     76714  │ │└DISTRIBUTE GATHER\n     207     76714  │ │ INNER JOIN HASH ON mk.keyword_id = k.id\n     207         7  │ │ │└DISTRIBUTE GATHER\n14800000         7  │ │ │ TABLE SCAN sql - keyword WHERE k.keyword IN('murder','violence','blood','gore','death','female-nudity','hospital')\n  235000   4519852  │ │ TABLE SCAN sql - movie_keyword\n  936000       134  │ INNER JOIN HASH ON mi_idx.info_type_id = it2.id\n  936000         1  │ │└DISTRIBUTE GATHER\n  134000         1  │ │ TABLE SCAN sql - info_type WHERE it2.info = 'votes'\n     207       406  │ INNER JOIN HASH ON mc.movie_id = mi_idx.movie_id\n     207       135  │ │└DISTRIBUTE GATHER\n      12       135  │ │ INNER JOIN HASH ON mc.company_id = cn.id\n      12        10  │ │ │└DISTRIBUTE GATHER\n 4170000        10  │ │ │ TABLE SCAN sql - company_name WHERE startswith(cn.name,'Lionsgate')\n 2530000      7591  │ │ TABLE SCAN sql - movie_companies WHERE (mc.note IS NOT NULL) AND contains(mc.note,'(Blu-ray)')\n 1380000   1117892  │ TABLE SCAN sql - movie_info_idx\n  582000        37  INNER JOIN HASH ON ci.person_id = n.id\n  582000   1739579  │└DISTRIBUTE GATHER\n 2610000   1739579  │ TABLE SCAN sql - name WHERE (n.gender IS NOT NULL) AND (n.gender = 'm')\n 2910000        41  INNER JOIN HASH ON mi.movie_id = ci.movie_id\n 2910000   1244716  │└DISTRIBUTE GATHER\n     113   1244716  │ TABLE SCAN sql - cast_info WHERE ci.note IN('(writer)','(head writer)','(written by)','(story)','(story editor)')\n     281        45  INNER JOIN HASH ON mi.movie_id = t.id\n     281     72258  │└DISTRIBUTE GATHER\n      13     72258  │ INNER JOIN HASH ON mi.info_type_id = it1.id\n      13         1  │ │└DISTRIBUTE GATHER\n36200000         1  │ │ TABLE SCAN sql - info_type WHERE it1.info = 'genres'\n     113     72258  │ TABLE SCAN sql - movie_info WHERE mi.info IN('Horror','Thriller')\n 4520000       127  TABLE SCAN sql - title WHERE (t.production_year IS NOT NULL) AND (t.production_year > 2000L) AND ((contains(t.title,'Freddy') OR contains(t.title,'Jason')) OR startswith(t.title,'Saw'))\n",
       "sql": "SELECT MIN(mi.info) AS movie_budget,\n       MIN(mi_idx.info) AS movie_votes,\n       MIN(n.name) AS writer,\n       MIN(t.title) AS violent_liongate_movie\nFROM job.cast_info AS ci,\n     job.company_name AS cn,\n     job.info_type AS it1,\n     job.info_type AS it2,\n     job.keyword AS k,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.movie_info_idx AS mi_idx,\n     job.movie_keyword AS mk,\n     job.name AS n,\n     job.title AS t\nWHERE ci.note IN ('(writer)',\n                  '(head writer)',\n                  '(written by)',\n                  '(story)',\n                  '(story editor)')\n  AND cn.name LIKE 'Lionsgate%'\n  AND it1.info = 'genres'\n  AND it2.info = 'votes'\n  AND k.keyword IN ('murder',\n                    'violence',\n                    'blood',\n                    'gore',\n                    'death',\n                    'female-nudity',\n                    'hospital')\n  AND mc.note LIKE '%(Blu-ray)%'\n  AND mi.info IN ('Horror',\n                  'Thriller')\n  AND n.gender = 'm'\n  AND t.production_year > 2000\n  AND (t.title LIKE '%Freddy%'\n       OR t.title LIKE '%Jason%'\n       OR t.title LIKE 'Saw%')\n  AND t.id = mi.movie_id\n  AND t.id = mi_idx.movie_id\n  AND t.id = ci.movie_id\n  AND t.id = mk.movie_id\n  AND t.id = mc.movie_id\n  AND ci.movie_id = mi.movie_id\n  AND ci.movie_id = mi_idx.movie_id\n  AND ci.movie_id = mk.movie_id\n  AND ci.movie_id = mc.movie_id\n  AND mi.movie_id = mi_idx.movie_id\n  AND mi.movie_id = mk.movie_id\n  AND mi.movie_id = mc.movie_id\n  AND mi_idx.movie_id = mk.movie_id\n  AND mi_idx.movie_id = mc.movie_id\n  AND mk.movie_id = mc.movie_id\n  AND n.id = ci.person_id\n  AND it1.id = mi.info_type_id\n  AND it2.id = mi_idx.info_type_id\n  AND k.id = mk.keyword_id\n  AND cn.id = mc.company_id;\n",
-      "startTime": "2026-06-24T13:56:25.261683Z",
+      "startTime": "2026-06-25T11:05:58.249806Z",
       "status": "OK",
-      "timeMs": 3573.044
+      "timeMs": 1221.933
     }
   ],
   "runtime": {
-    "avgMs": 3573.044,
-    "bestMs": 3573.044,
-    "maxMs": 3573.044,
-    "minMs": 3573.044,
+    "avgMs": 1221.933,
+    "bestMs": 1221.933,
+    "maxMs": 1221.933,
+    "minMs": 1221.933,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

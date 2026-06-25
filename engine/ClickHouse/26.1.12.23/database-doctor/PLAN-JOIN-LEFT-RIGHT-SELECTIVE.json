@@ -1,0 +1,111 @@
+{
+  "config": "M5 Macbook Pro",
+  "engine": "ClickHouse",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 6,
+        "distribute": 0,
+        "hash": 1500000,
+        "join": 6,
+        "scan": 1650000,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       -         1  PROJECT a1, a2\n       -         1  AGGREGATE COUNT(c_custkey) AS a1, COUNT(a8) AS a2\n       -         6  PROJECT c_custkey, o_orderkey\n       -         6  PROJECT c_custkey, a8\n       -         6  LEFT OUTER JOIN HASH ON PROJECTION_117.c_custkey = PROJECTION_114.o_custkey\n       -   1500000  │└PROJECT o_custkey, o_orderkey AS a8, o_orderkey\n       -   1500000  │ PROJECT o_orderkey, o_custkey\n       -   1500000  │ TABLE SCAN orders\n       -         1  PROJECT c_custkey\n       -         1  PROJECT c_custkey\n       -         1  FILTER (c_custkey = 1) AS a5\n       -    150000  TABLE SCAN customer\n",
+      "sql": "SELECT COUNT(c.c_custkey), COUNT(o.o_orderkey)\nFROM (\n  SELECT *\n  FROM tpch_sf1.customer\n  WHERE c_custkey = 1\n) AS c\nLEFT JOIN tpch_sf1.orders AS o\n  ON c.c_custkey = o.o_custkey;\n",
+      "startTime": "2026-06-25T11:40:43.551182Z",
+      "status": "OK",
+      "timeMs": 20.384
+    }
+  ],
+  "runtime": {
+    "avgMs": 20.384,
+    "bestMs": 20.384,
+    "maxMs": 20.384,
+    "minMs": 20.384,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "RIGHT JOIN with selective filter",
+    "displayName": "PLAN-JOIN-LEFT-RIGHT-SELECTIVE",
+    "name": "PLAN-JOIN-LEFT-RIGHT-SELECTIVE",
+    "tags": [
+      "PLAN-JOIN",
+      "join"
+    ]
+  },
+  "version": "26.1.12.23"
+}

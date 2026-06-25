@@ -1,0 +1,111 @@
+{
+  "config": "M5 Macbook Pro",
+  "engine": "DuckDB",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 1,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 1,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 1500000,
+        "distribute": 0,
+        "hash": 1500000,
+        "join": 1500000,
+        "scan": 1500001,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       -         1  AGGREGATE COUNT(#0), COUNT(#1)\n 1500000   1500000  PROJECT o_orderkey, c_custkey\n 1500000   1500000  FULL JOIN HASH ON o_custkey = c_custkey\n       2         1  │└TABLE SCAN customer WHERE c_custkey = 1\n 1500000   1500000  TABLE SCAN orders\n",
+      "sql": "SELECT COUNT(o.o_orderkey), COUNT(c.c_custkey)\nFROM tpch_sf1.orders AS o\nFULL JOIN (\n  SELECT *\n  FROM tpch_sf1.customer\n  WHERE c_custkey = 1\n) AS c\n  ON o.o_custkey = c.c_custkey;\n",
+      "startTime": "2026-06-25T11:34:25.653460Z",
+      "status": "OK",
+      "timeMs": 3.023
+    }
+  ],
+  "runtime": {
+    "avgMs": 3.023,
+    "bestMs": 3.023,
+    "maxMs": 3.023,
+    "minMs": 3.023,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "LEFT JOIN with selective filter",
+    "displayName": "PLAN-JOIN-FULL-LEFT-SELECTIVE",
+    "name": "PLAN-JOIN-FULL-LEFT-SELECTIVE",
+    "tags": [
+      "PLAN-JOIN",
+      "join"
+    ]
+  },
+  "version": "1.5.0"
+}

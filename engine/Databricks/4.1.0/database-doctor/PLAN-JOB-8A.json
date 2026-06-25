@@ -27,13 +27,13 @@
           ">16x": 0
         },
         "hash": {
-          "+2x": 1,
+          "+2x": 0,
           "+4x": 1,
           "+8x": 0,
           "-2x": 0,
           "-4x": 1,
           "-8x": 0,
-          "<16x": 1,
+          "<16x": 2,
           "=": 0,
           ">16x": 2
         },
@@ -74,24 +74,24 @@
       "operatorRows": {
         "aggregate": 63,
         "distribute": 42428,
-        "hash": 70585,
-        "join": 3054294,
+        "hash": 77298,
+        "join": 3047581,
         "scan": 3054295,
         "seek": 0,
         "sort": 0
       },
-      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(an1.name), MIN(t.title)\n       1         1  DISTRIBUTE GATHER\n       1         1  AGGREGATE MIN(an1.name), MIN(t.title)\n     220        62  INNER JOIN HASH ON ci.person_id = an1.person_id\n     220        38  │└DISTRIBUTE GATHER\n      86        38  │ INNER JOIN HASH ON mc.company_id = cn.id\n      81        39  │ │└INNER JOIN HASH ON ci.movie_id = mc.movie_id\n      81       394  │ │ │└DISTRIBUTE GATHER\n  901000       394  │ │ │ INNER JOIN HASH ON ci.movie_id = t.id\n  901000       394  │ │ │ │└DISTRIBUTE GATHER\n      51       394  │ │ │ │ INNER JOIN HASH ON ci.person_id = n1.id\n      51     34848  │ │ │ │ │└DISTRIBUTE GATHER\n   12100     34848  │ │ │ │ │ INNER JOIN HASH ON ci.role_id = rt.id\n 2610000     34848  │ │ │ │ │ │└TABLE SCAN sql - cast_info WHERE (ci.note IS NOT NULL) AND (ci.note = '(voice: English version)')\n   12100         1  │ │ │ │ │ DISTRIBUTE GATHER\n  235000         1  │ │ │ │ │ TABLE SCAN sql - role_type WHERE rt.role = 'actress'\n 2530000      9844  │ │ │ │ TABLE SCAN sql - name WHERE contains(n1.name,'Yo') AND ( NOT contains(n1.name,'Yu'))\n      12   2475066  │ │ │ TABLE SCAN sql - title\n36200000     44232  │ │ TABLE SCAN sql - movie_companies WHERE (mc.note IS NOT NULL) AND contains(mc.note,'(Japan)') AND ( NOT contains(mc.note,'(USA)'))\n      86      6752  │ DISTRIBUTE GATHER\n 4170000      6752  │ TABLE SCAN sql - company_name WHERE (cn.country_code IS NOT NULL) AND (cn.country_code = 'jp')\n  901000    483552  TABLE SCAN sql - aka_name\n",
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(an1.name), MIN(t.title)\n       1         1  DISTRIBUTE GATHER\n       1         1  AGGREGATE MIN(an1.name), MIN(t.title)\n     220        62  INNER JOIN HASH ON ci.person_id = an1.person_id\n     220        38  │└DISTRIBUTE GATHER\n      86        38  │ INNER JOIN HASH ON mc.company_id = cn.id\n      86      6752  │ │└DISTRIBUTE GATHER\n 4170000      6752  │ │ TABLE SCAN sql - company_name WHERE (cn.country_code IS NOT NULL) AND (cn.country_code = 'jp')\n      81        39  │ INNER JOIN HASH ON ci.movie_id = mc.movie_id\n      81       394  │ │└DISTRIBUTE GATHER\n  901000       394  │ │ INNER JOIN HASH ON ci.movie_id = t.id\n  901000       394  │ │ │└DISTRIBUTE GATHER\n      51       394  │ │ │ INNER JOIN HASH ON ci.person_id = n1.id\n      51     34848  │ │ │ │└DISTRIBUTE GATHER\n   12100     34848  │ │ │ │ INNER JOIN HASH ON ci.role_id = rt.id\n   12100         1  │ │ │ │ │└DISTRIBUTE GATHER\n  235000         1  │ │ │ │ │ TABLE SCAN sql - role_type WHERE rt.role = 'actress'\n 2610000     34848  │ │ │ │ TABLE SCAN sql - cast_info WHERE (ci.note IS NOT NULL) AND (ci.note = '(voice: English version)')\n 2530000      9844  │ │ │ TABLE SCAN sql - name WHERE contains(n1.name,'Yo') AND ( NOT contains(n1.name,'Yu'))\n      12   2475066  │ │ TABLE SCAN sql - title\n36200000     44232  │ TABLE SCAN sql - movie_companies WHERE (mc.note IS NOT NULL) AND contains(mc.note,'(Japan)') AND ( NOT contains(mc.note,'(USA)'))\n  901000    483552  TABLE SCAN sql - aka_name\n",
       "sql": "SELECT MIN(an1.name) AS actress_pseudonym,\n       MIN(t.title) AS japanese_movie_dubbed\nFROM job.aka_name AS an1,\n     job.cast_info AS ci,\n     job.company_name AS cn,\n     job.movie_companies AS mc,\n     job.name AS n1,\n     job.role_type AS rt,\n     job.title AS t\nWHERE ci.note ='(voice: English version)'\n  AND cn.country_code ='[jp]'\n  AND mc.note LIKE '%(Japan)%'\n  AND mc.note NOT LIKE '%(USA)%'\n  AND n1.name LIKE '%Yo%'\n  AND n1.name NOT LIKE '%Yu%'\n  AND rt.role ='actress'\n  AND an1.person_id = n1.id\n  AND n1.id = ci.person_id\n  AND ci.movie_id = t.id\n  AND t.id = mc.movie_id\n  AND mc.company_id = cn.id\n  AND ci.role_id = rt.id\n  AND an1.person_id = ci.person_id\n  AND ci.movie_id = mc.movie_id;\n",
-      "startTime": "2026-06-24T13:58:12.280323Z",
+      "startTime": "2026-06-25T11:07:20.902461Z",
       "status": "OK",
-      "timeMs": 2034.735
+      "timeMs": 1099.981
     }
   ],
   "runtime": {
-    "avgMs": 2034.735,
-    "bestMs": 2034.735,
-    "maxMs": 2034.735,
-    "minMs": 2034.735,
+    "avgMs": 1099.981,
+    "bestMs": 1099.981,
+    "maxMs": 1099.981,
+    "minMs": 1099.981,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

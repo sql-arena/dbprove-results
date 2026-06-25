@@ -1,0 +1,110 @@
+{
+  "engine": "PostgreSQL",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 2,
+          "-8x": 0,
+          "<16x": 1,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 4,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 5,
+        "distribute": 0,
+        "hash": 26307,
+        "join": 26307,
+        "scan": 30,
+        "seek": 26307,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(title)\n       1         5  INNER JOIN LOOP ON movie_id = movie_id AND movie_id = id AND (movie_id = id)\n      68       405  │└INNER JOIN LOOP ON id = movie_id\n     438     12951  │ │└INNER JOIN LOOP ON keyword_id = id\n      13        30  │ │ │└TABLE SCAN keyword AS k WHERE k.keyword LIKE '%sequel%'\n    9090     12951  │ │ TABLE SEEK movie_keyword AS mk\n   12951     12951  │ TABLE SEEK title AS t WHERE t.production_year > 2010\n     405       405  TABLE SEEK movie_info AS mi WHERE mi.info = 'Bulgaria'\n",
+      "sql": "SELECT MIN(t.title) AS movie_title\nFROM job.keyword AS k,\n     job.movie_info AS mi,\n     job.movie_keyword AS mk,\n     job.title AS t\nWHERE k.keyword LIKE '%sequel%'\n  AND mi.info IN ('Bulgaria')\n  AND t.production_year > 2010\n  AND t.id = mi.movie_id\n  AND t.id = mk.movie_id\n  AND mk.movie_id = mi.movie_id\n  AND k.id = mk.keyword_id;\n",
+      "startTime": "2026-06-17T12:32:34.745422Z",
+      "status": "OK",
+      "timeMs": 38.9
+    }
+  ],
+  "runtime": {
+    "avgMs": 38.9,
+    "bestMs": 38.9,
+    "maxMs": 38.9,
+    "minMs": 38.9,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 3B Analysis",
+    "displayName": "JOB-3B",
+    "name": "JOB-3B",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "18.2"
+}

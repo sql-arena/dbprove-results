@@ -34,8 +34,8 @@
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
-          "=": 1,
-          ">16x": 1
+          "=": 0,
+          ">16x": 2
         },
         "join": {
           "+2x": 0,
@@ -74,24 +74,24 @@
       "operatorRows": {
         "aggregate": 1,
         "distribute": 83683,
-        "hash": 4603541,
-        "join": 2562117,
+        "hash": 125521,
+        "join": 7040137,
         "scan": 7040139,
         "seek": 0,
         "sort": 0
       },
-      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(t.title)\n       1         1  DISTRIBUTE GATHER\n       1         1  AGGREGATE MIN(t.title)\n     191         0  INNER JOIN HASH ON mc.company_id = cn.id\n   12700         0  │└INNER JOIN HASH ON mk.movie_id = mc.movie_id\n   12700     41840  │ │└DISTRIBUTE GATHER\n   12100     41840  │ │ INNER JOIN HASH ON mk.movie_id = t.id\n   12100     41840  │ │ │└DISTRIBUTE GATHER\n      71     41840  │ │ │ INNER JOIN HASH ON mk.keyword_id = k.id\n 4520000   4519861  │ │ │ │└TABLE SCAN sql - movie_keyword\n      71         1  │ │ │ DISTRIBUTE GATHER\n  134000         1  │ │ │ TABLE SCAN sql - keyword WHERE k.keyword = 'character-name-in-title'\n 2530000   2520276  │ │ TABLE SCAN sql - title\n  235000         0  │ TABLE SCAN sql - movie_companies\n     191         1  DISTRIBUTE GATHER\n 2610000         1  TABLE SCAN sql - company_name WHERE (cn.country_code IS NOT NULL) AND (cn.country_code = 'sm')\n",
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(t.title)\n       1         1  DISTRIBUTE GATHER\n       1         1  AGGREGATE MIN(t.title)\n     191         0  INNER JOIN HASH ON mc.company_id = cn.id\n     191         1  │└DISTRIBUTE GATHER\n  235000         1  │ TABLE SCAN sql - company_name WHERE (cn.country_code IS NOT NULL) AND (cn.country_code = 'sm')\n   12700         0  INNER JOIN HASH ON mk.movie_id = mc.movie_id\n   12700     41840  │└DISTRIBUTE GATHER\n   12100     41840  │ INNER JOIN HASH ON mk.movie_id = t.id\n   12100     41840  │ │└DISTRIBUTE GATHER\n      71     41840  │ │ INNER JOIN HASH ON mk.keyword_id = k.id\n      71         1  │ │ │└DISTRIBUTE GATHER\n  134000         1  │ │ │ TABLE SCAN sql - keyword WHERE k.keyword = 'character-name-in-title'\n 4520000   4519861  │ │ TABLE SCAN sql - movie_keyword\n 2530000   2520276  │ TABLE SCAN sql - title\n 2610000         0  TABLE SCAN sql - movie_companies\n",
       "sql": "SELECT MIN(t.title) AS movie_title\nFROM job.company_name AS cn,\n     job.keyword AS k,\n     job.movie_companies AS mc,\n     job.movie_keyword AS mk,\n     job.title AS t\nWHERE cn.country_code ='[sm]'\n  AND k.keyword ='character-name-in-title'\n  AND cn.id = mc.company_id\n  AND mc.movie_id = t.id\n  AND t.id = mk.movie_id\n  AND mk.keyword_id = k.id\n  AND mc.movie_id = mk.movie_id;\n",
-      "startTime": "2026-06-24T13:55:54.226503Z",
+      "startTime": "2026-06-25T11:05:38.005735Z",
       "status": "OK",
-      "timeMs": 1761.029
+      "timeMs": 1081.915
     }
   ],
   "runtime": {
-    "avgMs": 1761.029,
-    "bestMs": 1761.029,
-    "maxMs": 1761.029,
-    "minMs": 1761.029,
+    "avgMs": 1081.915,
+    "bestMs": 1081.915,
+    "maxMs": 1081.915,
+    "minMs": 1081.915,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

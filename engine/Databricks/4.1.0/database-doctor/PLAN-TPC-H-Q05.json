@@ -33,9 +33,9 @@
           "-2x": 0,
           "-4x": 0,
           "-8x": 0,
-          "<16x": 1,
+          "<16x": 0,
           "=": 0,
-          ">16x": 4
+          ">16x": 5
         },
         "join": {
           "+2x": 0,
@@ -74,24 +74,24 @@
       "operatorRows": {
         "aggregate": 7413,
         "distribute": 388673,
-        "hash": 7895241,
-        "join": 1908421,
+        "hash": 1908421,
+        "join": 7895241,
         "scan": 6382886,
         "seek": 0,
         "sort": 5
       },
-      "plan": "Estimate    Actual  Operator\n       6         5  SORT revenue DESC NULLS LAST\n       6         5  AGGREGATE SUM(sql - l_extendedprice * (1BD - sql - l_discount)) GROUP BY HASH sql - n_name\n       6        10  DISTRIBUTE HASH ON sql - n_name\n       6        10  AGGREGATE SUM(sql - l_extendedprice * (1BD - sql - l_discount)) GROUP BY HASH sql - n_name\n       ∞      7403  INNER JOIN HASH ON sql - n_regionkey = sql - r_regionkey\n       ∞     36582  │└INNER JOIN HASH ON sql - s_nationkey = sql - n_nationkey\n       ∞     36582  │ │└INNER JOIN HASH ON sql - c_nationkey = sql - s_nationkey\n       ∞    913927  │ │ │└INNER JOIN HASH ON sql - o_custkey = sql - c_custkey\n      9B    913927  │ │ │ │└INNER JOIN HASH ON sql - l_orderkey = sql - o_orderkey\n      25   5994223  │ │ │ │ │└TABLE SCAN sql - lineitem\n      9B    228637  │ │ │ │ DISTRIBUTE HASH ON sql - o_orderkey\n       5    228637  │ │ │ │ TABLE SCAN sql - orders WHERE (sql - o_orderdate >= DATE'1995-01-01') AND (sql - o_orderdate < DATE'1996-01-01')\n       ∞    150000  │ │ │ DISTRIBUTE GATHER\n   10000    150000  │ │ │ TABLE SCAN sql - customer\n       ∞     10000  │ │ DISTRIBUTE GATHER\n  150000     10000  │ │ TABLE SCAN sql - supplier\n       ∞        25  │ DISTRIBUTE GATHER\n 1500000        25  │ TABLE SCAN sql - nation\n       ∞         1  DISTRIBUTE GATHER\n 6000000         1  TABLE SCAN sql - region WHERE sql - r_name = 'EUROPE'\n",
+      "plan": "Estimate    Actual  Operator\n       6         5  SORT revenue DESC NULLS LAST\n       6         5  AGGREGATE SUM(sql - l_extendedprice * (1BD - sql - l_discount)) GROUP BY HASH sql - n_name\n       6        10  DISTRIBUTE HASH ON sql - n_name\n       6        10  AGGREGATE SUM(sql - l_extendedprice * (1BD - sql - l_discount)) GROUP BY HASH sql - n_name\n       ∞      7403  INNER JOIN HASH ON sql - n_regionkey = sql - r_regionkey\n       ∞         1  │└DISTRIBUTE GATHER\n 6000000         1  │ TABLE SCAN sql - region WHERE sql - r_name = 'EUROPE'\n       ∞     36582  INNER JOIN HASH ON sql - s_nationkey = sql - n_nationkey\n       ∞        25  │└DISTRIBUTE GATHER\n 1500000        25  │ TABLE SCAN sql - nation\n       ∞     36582  INNER JOIN HASH ON sql - c_nationkey = sql - s_nationkey\n       ∞     10000  │└DISTRIBUTE GATHER\n  150000     10000  │ TABLE SCAN sql - supplier\n       ∞    913927  INNER JOIN HASH ON sql - o_custkey = sql - c_custkey\n       ∞    150000  │└DISTRIBUTE GATHER\n   10000    150000  │ TABLE SCAN sql - customer\n      9B    913927  INNER JOIN HASH ON sql - l_orderkey = sql - o_orderkey\n      9B    228637  │└DISTRIBUTE HASH ON sql - o_orderkey\n       5    228637  │ TABLE SCAN sql - orders WHERE (sql - o_orderdate >= DATE'1995-01-01') AND (sql - o_orderdate < DATE'1996-01-01')\n      25   5994223  TABLE SCAN sql - lineitem\n",
       "sql": "/* TPC-H Q05 */\nSELECT n_name,\n       SUM(l_extendedprice * (1 - l_discount)) AS revenue\nFROM tpch_sf1.lineitem\nINNER JOIN tpch_sf1.orders\n    ON l_orderkey = o_orderkey\nINNER JOIN tpch_sf1.customer\n    ON o_custkey = c_custkey\nINNER JOIN tpch_sf1.supplier\n    ON l_suppkey = s_suppkey\nINNER JOIN tpch_sf1.nation\n    ON s_nationkey = n_nationkey\nINNER JOIN tpch_sf1.region\n    ON n_regionkey = r_regionkey\nWHERE r_name = 'EUROPE'\n  AND o_orderdate >= '1995-01-01'\n  AND o_orderdate < '1996-01-01'\n  AND s_nationkey = c_nationkey\nGROUP BY n_name\nORDER BY revenue DESC\n",
-      "startTime": "2026-06-24T13:59:09.787847Z",
+      "startTime": "2026-06-25T11:08:08.079617Z",
       "status": "OK",
-      "timeMs": 1077.586
+      "timeMs": 1105.536
     }
   ],
   "runtime": {
-    "avgMs": 1077.586,
-    "bestMs": 1077.586,
-    "maxMs": 1077.586,
-    "minMs": 1077.586,
+    "avgMs": 1105.536,
+    "bestMs": 1105.536,
+    "maxMs": 1105.536,
+    "minMs": 1105.536,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

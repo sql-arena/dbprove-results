@@ -80,18 +80,18 @@
         "seek": 0,
         "sort": 0
       },
-      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(t.title)\n       1         1  DISTRIBUTE GATHER\n       1         1  AGGREGATE MIN(t.title)\n     121         0  INNER JOIN HASH ON mc.company_type_id = ct.id\n     121         1  │└DISTRIBUTE GATHER\n       4         1  │ TABLE SCAN sql - company_type WHERE ct.kind = 'production companies'\n     115         0  INNER JOIN HASH ON mi.movie_id = mc.movie_id\n     115     48168  │└DISTRIBUTE GATHER\n     115     48168  │ INNER JOIN HASH ON mi.movie_id = t.id\n     115    153897  │ │└DISTRIBUTE GATHER\n  655000    153897  │ │ INNER JOIN HASH ON mi.info_type_id = it.id\n  655000    153897  │ │ │└DISTRIBUTE GATHER\n 2530000    153897  │ │ │ TABLE SCAN sql - movie_info WHERE mi.info IN('Sweden','Norway','Germany','Denmark','Swedish','Denish','Norwegian','German')\n     113         7  │ │ TABLE SCAN sql - info_type\n14800000   1009693  │ TABLE SCAN sql - title WHERE (t.production_year IS NOT NULL) AND (t.production_year > 2005L)\n 2610000         0  TABLE SCAN sql - movie_companies WHERE (mc.note IS NOT NULL) AND contains(mc.note,'(theatrical)') AND contains(mc.note,'(France)')\n",
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(t.title)\n       1         1  DISTRIBUTE GATHER\n       1         1  AGGREGATE MIN(t.title)\n     121         0  INNER JOIN HASH ON mc.company_type_id = ct.id\n     121         1  │└DISTRIBUTE GATHER\n       4         1  │ TABLE SCAN company_type WHERE ct.kind = 'production companies'\n     115         0  INNER JOIN HASH ON mi.movie_id = mc.movie_id\n     115     48168  │└DISTRIBUTE GATHER\n     115     48168  │ INNER JOIN HASH ON mi.movie_id = t.id\n     115    153897  │ │└DISTRIBUTE GATHER\n  655000    153897  │ │ INNER JOIN HASH ON mi.info_type_id = it.id\n  655000    153897  │ │ │└DISTRIBUTE GATHER\n 2530000    153897  │ │ │ TABLE SCAN movie_info WHERE mi.info IN('Sweden','Norway','Germany','Denmark','Swedish','Denish','Norwegian','German')\n     113         7  │ │ TABLE SCAN info_type\n14800000   1009693  │ TABLE SCAN title WHERE (t.production_year IS NOT NULL) AND (t.production_year > 2005L)\n 2610000         0  TABLE SCAN movie_companies WHERE (mc.note IS NOT NULL) AND contains(mc.note,'(theatrical)') AND contains(mc.note,'(France)')\n",
       "sql": "SELECT MIN(t.title) AS typical_european_movie\nFROM job.company_type AS ct,\n     job.info_type AS it,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.title AS t\nWHERE ct.kind = 'production companies'\n  AND mc.note LIKE '%(theatrical)%'\n  AND mc.note LIKE '%(France)%'\n  AND mi.info IN ('Sweden',\n                  'Norway',\n                  'Germany',\n                  'Denmark',\n                  'Swedish',\n                  'Denish',\n                  'Norwegian',\n                  'German')\n  AND t.production_year > 2005\n  AND t.id = mi.movie_id\n  AND t.id = mc.movie_id\n  AND mc.movie_id = mi.movie_id\n  AND ct.id = mc.company_type_id\n  AND it.id = mi.info_type_id;\n",
-      "startTime": "2026-06-25T13:43:59.541570Z",
+      "startTime": "2026-06-25T17:37:35.322835Z",
       "status": "OK",
-      "timeMs": 1320.08
+      "timeMs": 914.197
     }
   ],
   "runtime": {
-    "avgMs": 1320.08,
-    "bestMs": 1320.08,
-    "maxMs": 1320.08,
-    "minMs": 1320.08,
+    "avgMs": 914.197,
+    "bestMs": 914.197,
+    "maxMs": 914.197,
+    "minMs": 914.197,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

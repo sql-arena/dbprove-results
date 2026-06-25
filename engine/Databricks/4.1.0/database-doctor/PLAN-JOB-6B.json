@@ -80,18 +80,18 @@
         "seek": 0,
         "sort": 0
       },
-      "plan": "Estimate    Actual  Operator\n36200000         0  SEQUENCE\n       1         1  ├─AGGREGATE MIN(k.keyword), MIN(n.name), MIN(t.title)\n       1         1  │ DISTRIBUTE GATHER\n       1         1  │ AGGREGATE MIN(k.keyword), MIN(n.name), MIN(t.title)\n     317        12  │ INNER JOIN HASH ON mk.keyword_id = k.id\n     317         8  │ │└DISTRIBUTE GATHER\n36200000         8  │ │ TABLE SCAN sql - keyword WHERE k.keyword IN('superhero','sequel','second-part','marvel-comics','based-on-comic','tv-special','fight','violence')\n 4520000        12  │ INNER JOIN HASH ON ci.movie_id = mk.movie_id\n 4520000         3  │ │└DISTRIBUTE GATHER\n 1500000         3  │ │ INNER JOIN HASH ON ci.movie_id = t.id\n 1500000       438  │ │ │└DISTRIBUTE GATHER\n 4520000       438  │ │ │ TABLE SCAN sql - title WHERE (t.production_year IS NOT NULL) AND (t.production_year > 2014L)\n25700000         3  │ │ INNER JOIN HASH ON ci.person_id = n.id\n25700000         2  │ │ │└DISTRIBUTE HASH ON n.id\n  134000         2  │ │ │ TABLE SCAN sql - name WHERE n.name LIKE '%Downey%Robert%'\n 2920000    124345  │ │ FILTER \n       -   8119699  │ │ TABLE SCAN sql - cast_info\n 2530000    849824  │ TABLE SCAN sql - movie_keyword\n36200000         0  └─FILTER \n 4520000         1    DISTRIBUTE HASH\n 4520000         1    AGGREGATE bloom_filter_agg(bloom_expr(t.id,t.id),438L,4096L)\n 4520000       438    SELECT\n 4170000         8    DISTRIBUTE HASH\n 4170000         8    DISTRIBUTE HASH\n 4170000         8    TABLE SCAN sql - keyword WHERE k.keyword IN('superhero','sequel','second-part','marvel-comics','based-on-comic','tv-special','fight','violence')\n",
+      "plan": "Estimate    Actual  Operator\n36200000         0  SEQUENCE\n       1         1  ├─AGGREGATE MIN(k.keyword), MIN(n.name), MIN(t.title)\n       1         1  │ DISTRIBUTE GATHER\n       1         1  │ AGGREGATE MIN(k.keyword), MIN(n.name), MIN(t.title)\n     317        12  │ INNER JOIN HASH ON mk.keyword_id = k.id\n     317         8  │ │└DISTRIBUTE GATHER\n36200000         8  │ │ TABLE SCAN keyword WHERE k.keyword IN('superhero','sequel','second-part','marvel-comics','based-on-comic','tv-special','fight','violence')\n 4520000        12  │ INNER JOIN HASH ON ci.movie_id = mk.movie_id\n 4520000         3  │ │└DISTRIBUTE GATHER\n 1500000         3  │ │ INNER JOIN HASH ON ci.movie_id = t.id\n 1500000       438  │ │ │└DISTRIBUTE GATHER\n 4520000       438  │ │ │ TABLE SCAN title WHERE (t.production_year IS NOT NULL) AND (t.production_year > 2014L)\n25700000         3  │ │ INNER JOIN HASH ON ci.person_id = n.id\n25700000         2  │ │ │└DISTRIBUTE HASH ON n.id\n  134000         2  │ │ │ TABLE SCAN name WHERE n.name LIKE '%Downey%Robert%'\n 2920000    124345  │ │ FILTER \n       -   8119699  │ │ TABLE SCAN cast_info\n 2530000    849824  │ TABLE SCAN movie_keyword\n36200000         0  └─FILTER \n 4520000         1    DISTRIBUTE HASH\n 4520000         1    AGGREGATE bloom_filter_agg(bloom_expr(t.id,t.id),438L,4096L)\n 4520000       438    SELECT\n 4170000         8    DISTRIBUTE HASH\n 4170000         8    DISTRIBUTE HASH\n 4170000         8    TABLE SCAN keyword WHERE k.keyword IN('superhero','sequel','second-part','marvel-comics','based-on-comic','tv-special','fight','violence')\n",
       "sql": "SELECT MIN(k.keyword) AS movie_keyword,\n       MIN(n.name) AS actor_name,\n       MIN(t.title) AS hero_movie\nFROM job.cast_info AS ci,\n     job.keyword AS k,\n     job.movie_keyword AS mk,\n     job.name AS n,\n     job.title AS t\nWHERE k.keyword IN ('superhero',\n                    'sequel',\n                    'second-part',\n                    'marvel-comics',\n                    'based-on-comic',\n                    'tv-special',\n                    'fight',\n                    'violence')\n  AND n.name LIKE '%Downey%Robert%'\n  AND t.production_year > 2014\n  AND k.id = mk.keyword_id\n  AND t.id = mk.movie_id\n  AND t.id = ci.movie_id\n  AND ci.movie_id = mk.movie_id\n  AND n.id = ci.person_id;\n",
-      "startTime": "2026-06-25T13:44:12.983983Z",
+      "startTime": "2026-06-25T17:37:47.149148Z",
       "status": "OK",
-      "timeMs": 1074.314
+      "timeMs": 904.838
     }
   ],
   "runtime": {
-    "avgMs": 1074.314,
-    "bestMs": 1074.314,
-    "maxMs": 1074.314,
-    "minMs": 1074.314,
+    "avgMs": 904.838,
+    "bestMs": 904.838,
+    "maxMs": 904.838,
+    "minMs": 904.838,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

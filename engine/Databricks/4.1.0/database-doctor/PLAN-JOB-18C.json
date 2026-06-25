@@ -80,18 +80,18 @@
         "seek": 0,
         "sort": 0
       },
-      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(mi.info), MIN(mi_idx.info), MIN(t.title)\n       1         1  DISTRIBUTE GATHER\n       1         1  AGGREGATE MIN(mi.info), MIN(mi_idx.info), MIN(t.title)\n     254     28073  INNER JOIN HASH ON ci.person_id = n.id\n     254   1739579  │└DISTRIBUTE GATHER\n14800000   1739579  │ TABLE SCAN sql - name WHERE (n.gender IS NOT NULL) AND (n.gender = 'm')\n     254     54155  INNER JOIN HASH ON mi.movie_id = ci.movie_id\n     254   1244716  │└DISTRIBUTE GATHER\n     113   1244716  │ TABLE SCAN sql - cast_info WHERE ci.note IN('(writer)','(head writer)','(written by)','(story)','(story editor)')\n     113    102516  INNER JOIN HASH ON mi_idx.info_type_id = it2.id\n     113         1  │└DISTRIBUTE GATHER\n 1380000         1  │ TABLE SCAN sql - info_type WHERE it2.info = 'votes'\n     113    307657  INNER JOIN HASH ON mi.movie_id = mi_idx.movie_id\n     113    186594  │└DISTRIBUTE GATHER\n      36    186594  │ INNER JOIN HASH ON mi.movie_id = t.id\n      36    186594  │ │└DISTRIBUTE GATHER\n      34    186594  │ │ INNER JOIN HASH ON mi.info_type_id = it1.id\n      34         1  │ │ │└DISTRIBUTE GATHER\n 4170000         1  │ │ │ TABLE SCAN sql - info_type WHERE it1.info = 'genres'\n36200000    186594  │ │ TABLE SCAN sql - movie_info WHERE mi.info IN('Horror','Action','Sci-Fi','Thriller','Crime','War')\n     113   2520894  │ TABLE SCAN sql - title\n 2530000   1375982  TABLE SCAN sql - movie_info_idx\n",
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(mi.info), MIN(mi_idx.info), MIN(t.title)\n       1         1  DISTRIBUTE GATHER\n       1         1  AGGREGATE MIN(mi.info), MIN(mi_idx.info), MIN(t.title)\n     254     28073  INNER JOIN HASH ON ci.person_id = n.id\n     254   1739579  │└DISTRIBUTE GATHER\n14800000   1739579  │ TABLE SCAN name WHERE (n.gender IS NOT NULL) AND (n.gender = 'm')\n     254     54155  INNER JOIN HASH ON mi.movie_id = ci.movie_id\n     254   1244716  │└DISTRIBUTE GATHER\n     113   1244716  │ TABLE SCAN cast_info WHERE ci.note IN('(writer)','(head writer)','(written by)','(story)','(story editor)')\n     113    102516  INNER JOIN HASH ON mi_idx.info_type_id = it2.id\n     113         1  │└DISTRIBUTE GATHER\n 1380000         1  │ TABLE SCAN info_type WHERE it2.info = 'votes'\n     113    307657  INNER JOIN HASH ON mi.movie_id = mi_idx.movie_id\n     113    186594  │└DISTRIBUTE GATHER\n      36    186594  │ INNER JOIN HASH ON mi.movie_id = t.id\n      36    186594  │ │└DISTRIBUTE GATHER\n      34    186594  │ │ INNER JOIN HASH ON mi.info_type_id = it1.id\n      34         1  │ │ │└DISTRIBUTE GATHER\n 4170000         1  │ │ │ TABLE SCAN info_type WHERE it1.info = 'genres'\n36200000    186594  │ │ TABLE SCAN movie_info WHERE mi.info IN('Horror','Action','Sci-Fi','Thriller','Crime','War')\n     113   2520894  │ TABLE SCAN title\n 2530000   1375982  TABLE SCAN movie_info_idx\n",
       "sql": "SELECT MIN(mi.info) AS movie_budget,\n       MIN(mi_idx.info) AS movie_votes,\n       MIN(t.title) AS movie_title\nFROM job.cast_info AS ci,\n     job.info_type AS it1,\n     job.info_type AS it2,\n     job.movie_info AS mi,\n     job.movie_info_idx AS mi_idx,\n     job.name AS n,\n     job.title AS t\nWHERE ci.note IN ('(writer)',\n                  '(head writer)',\n                  '(written by)',\n                  '(story)',\n                  '(story editor)')\n  AND it1.info = 'genres'\n  AND it2.info = 'votes'\n  AND mi.info IN ('Horror',\n                  'Action',\n                  'Sci-Fi',\n                  'Thriller',\n                  'Crime',\n                  'War')\n  AND n.gender = 'm'\n  AND t.id = mi.movie_id\n  AND t.id = mi_idx.movie_id\n  AND t.id = ci.movie_id\n  AND ci.movie_id = mi.movie_id\n  AND ci.movie_id = mi_idx.movie_id\n  AND mi.movie_id = mi_idx.movie_id\n  AND n.id = ci.person_id\n  AND it1.id = mi.info_type_id\n  AND it2.id = mi_idx.info_type_id;\n",
-      "startTime": "2026-06-25T13:40:25.357590Z",
+      "startTime": "2026-06-25T17:33:46.226436Z",
       "status": "OK",
-      "timeMs": 1137.108
+      "timeMs": 34422.619
     }
   ],
   "runtime": {
-    "avgMs": 1137.108,
-    "bestMs": 1137.108,
-    "maxMs": 1137.108,
-    "minMs": 1137.108,
+    "avgMs": 34422.619,
+    "bestMs": 34422.619,
+    "maxMs": 34422.619,
+    "minMs": 34422.619,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

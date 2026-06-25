@@ -80,18 +80,18 @@
         "seek": 0,
         "sort": 0
       },
-      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(mc.note), MIN(t.title), MIN(t.production_year)\n       1         1  DISTRIBUTE GATHER\n       1         1  AGGREGATE MIN(mc.note), MIN(t.title), MIN(t.production_year)\n  401000         4  INNER JOIN HASH ON mi_idx.movie_id = mc.movie_id\n  401000         6  │└DISTRIBUTE GATHER\n  290000         6  │ INNER JOIN HASH ON mi_idx.movie_id = t.id\n  290000        10  │ │└DISTRIBUTE GATHER\n  401000        10  │ │ INNER JOIN HASH ON mi_idx.info_type_id = it.id\n  401000         1  │ │ │└DISTRIBUTE GATHER\n 2610000         1  │ │ │ TABLE SCAN sql - info_type WHERE it.info = 'bottom 10 rank'\n       4        10  │ │ TABLE SCAN sql - movie_info_idx\n  290000   1381453  │ DISTRIBUTE HASH ON t.id\n     113   1381453  │ TABLE SCAN sql - title WHERE (t.production_year IS NOT NULL) AND (t.production_year > 2000L)\n  276000     74275  INNER JOIN HASH ON ct.id = mc.company_type_id\n  276000         1  │└DISTRIBUTE GATHER\n 2530000         1  │ TABLE SCAN sql - company_type WHERE ct.kind = 'production companies'\n 1380000     74275  TABLE SCAN sql - movie_companies WHERE (mc.note IS NOT NULL) AND ( NOT contains(mc.note,'(as Metro-Goldwyn-Mayer Pictures)'))\n",
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(mc.note), MIN(t.title), MIN(t.production_year)\n       1         1  DISTRIBUTE GATHER\n       1         1  AGGREGATE MIN(mc.note), MIN(t.title), MIN(t.production_year)\n  401000         4  INNER JOIN HASH ON mi_idx.movie_id = mc.movie_id\n  401000         6  │└DISTRIBUTE GATHER\n  290000         6  │ INNER JOIN HASH ON mi_idx.movie_id = t.id\n  290000        10  │ │└DISTRIBUTE GATHER\n  401000        10  │ │ INNER JOIN HASH ON mi_idx.info_type_id = it.id\n  401000         1  │ │ │└DISTRIBUTE GATHER\n 2610000         1  │ │ │ TABLE SCAN info_type WHERE it.info = 'bottom 10 rank'\n       4        10  │ │ TABLE SCAN movie_info_idx\n  290000   1381453  │ DISTRIBUTE HASH ON t.id\n     113   1381453  │ TABLE SCAN title WHERE (t.production_year IS NOT NULL) AND (t.production_year > 2000L)\n  276000     74275  INNER JOIN HASH ON ct.id = mc.company_type_id\n  276000         1  │└DISTRIBUTE GATHER\n 2530000         1  │ TABLE SCAN company_type WHERE ct.kind = 'production companies'\n 1380000     74275  TABLE SCAN movie_companies WHERE (mc.note IS NOT NULL) AND ( NOT contains(mc.note,'(as Metro-Goldwyn-Mayer Pictures)'))\n",
       "sql": "SELECT MIN(mc.note) AS production_note,\n       MIN(t.title) AS movie_title,\n       MIN(t.production_year) AS movie_year\nFROM job.company_type AS ct,\n     job.info_type AS it,\n     job.movie_companies AS mc,\n     job.movie_info_idx AS mi_idx,\n     job.title AS t\nWHERE ct.kind = 'production companies'\n  AND it.info = 'bottom 10 rank'\n  AND mc.note NOT LIKE '%(as Metro-Goldwyn-Mayer Pictures)%'\n  AND t.production_year >2000\n  AND ct.id = mc.company_type_id\n  AND t.id = mc.movie_id\n  AND t.id = mi_idx.movie_id\n  AND mc.movie_id = mi_idx.movie_id\n  AND it.id = mi_idx.info_type_id;\n",
-      "startTime": "2026-06-25T13:40:53.607238Z",
+      "startTime": "2026-06-25T17:34:45.180274Z",
       "status": "OK",
-      "timeMs": 1044.842
+      "timeMs": 1039.595
     }
   ],
   "runtime": {
-    "avgMs": 1044.842,
-    "bestMs": 1044.842,
-    "maxMs": 1044.842,
-    "minMs": 1044.842,
+    "avgMs": 1039.595,
+    "bestMs": 1039.595,
+    "maxMs": 1039.595,
+    "minMs": 1039.595,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

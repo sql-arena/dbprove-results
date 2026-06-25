@@ -80,18 +80,18 @@
         "seek": 0,
         "sort": 0
       },
-      "plan": "Estimate    Actual  Operator\n       2         0  SEQUENCE\n       1         1  ├─AGGREGATE MIN(lt.link), MIN(t1.title), MIN(t2.title)\n       1         2  │ DISTRIBUTE GATHER\n       1         2  │ AGGREGATE MIN(lt.link), MIN(t1.title), MIN(t2.title)\n     352      4388  │ INNER JOIN HASH ON ml.linked_movie_id = t2.id\n     352      4388  │ │└DISTRIBUTE GATHER\n     334      4388  │ │ INNER JOIN HASH ON ml.link_type_id = lt.id\n     334        18  │ │ │└DISTRIBUTE GATHER\n 2530000        18  │ │ │ TABLE SCAN sql - link_type\n     334      4388  │ │ INNER JOIN HASH ON t1.id = ml.movie_id\n     334     29997  │ │ │└DISTRIBUTE GATHER\n   30000     29997  │ │ │ TABLE SCAN sql - movie_link\n      75     37169  │ │ INNER JOIN HASH ON mk.movie_id = t1.id\n      75     41840  │ │ │└DISTRIBUTE GATHER\n      71     41840  │ │ │ INNER JOIN HASH ON k.id = mk.keyword_id\n      71         1  │ │ │ │└DISTRIBUTE GATHER\n       -         1  │ │ │ │ TABLE SCAN sql - keyword WHERE k.keyword = 'character-name-in-title'\n 2530000   4519861  │ │ │ TABLE SCAN sql - movie_keyword\n      18   2334315  │ │ TABLE SCAN sql - title\n  134000     95158  │ FILTER \n  134000   2520141  │ TABLE SCAN sql - title\n       2         0  └─FILTER \n     334         1    DISTRIBUTE HASH\n     334         1    AGGREGATE bloom_filter_agg(bloom_expr(ml.linked_movie_id,ml.linked_movie_id),29997L,131072L)\n 4520000     29997    DISTRIBUTE HASH\n 4520000     29997    DISTRIBUTE HASH\n 4520000     29997    TABLE SCAN sql - movie_link\n",
+      "plan": "Estimate    Actual  Operator\n       2         0  SEQUENCE\n       1         1  ├─AGGREGATE MIN(lt.link), MIN(t1.title), MIN(t2.title)\n       1         2  │ DISTRIBUTE GATHER\n       1         2  │ AGGREGATE MIN(lt.link), MIN(t1.title), MIN(t2.title)\n     352      4388  │ INNER JOIN HASH ON ml.linked_movie_id = t2.id\n     352      4388  │ │└DISTRIBUTE GATHER\n     334      4388  │ │ INNER JOIN HASH ON ml.link_type_id = lt.id\n     334        18  │ │ │└DISTRIBUTE GATHER\n 2530000        18  │ │ │ TABLE SCAN link_type\n     334      4388  │ │ INNER JOIN HASH ON t1.id = ml.movie_id\n     334     29997  │ │ │└DISTRIBUTE GATHER\n   30000     29997  │ │ │ TABLE SCAN movie_link\n      75     37169  │ │ INNER JOIN HASH ON mk.movie_id = t1.id\n      75     41840  │ │ │└DISTRIBUTE GATHER\n      71     41840  │ │ │ INNER JOIN HASH ON k.id = mk.keyword_id\n      71         1  │ │ │ │└DISTRIBUTE GATHER\n       -         1  │ │ │ │ TABLE SCAN keyword WHERE k.keyword = 'character-name-in-title'\n 2530000   4519861  │ │ │ TABLE SCAN movie_keyword\n      18   2334315  │ │ TABLE SCAN title\n  134000     95158  │ FILTER \n  134000   2520141  │ TABLE SCAN title\n       2         0  └─FILTER \n     334         1    DISTRIBUTE HASH\n     334         1    AGGREGATE bloom_filter_agg(bloom_expr(ml.linked_movie_id,ml.linked_movie_id),29997L,131072L)\n 4520000     29997    DISTRIBUTE HASH\n 4520000     29997    DISTRIBUTE HASH\n 4520000     29997    TABLE SCAN movie_link\n",
       "sql": "SELECT MIN(lt.link) AS link_type,\n       MIN(t1.title) AS first_movie,\n       MIN(t2.title) AS second_movie\nFROM job.keyword AS k,\n     job.link_type AS lt,\n     job.movie_keyword AS mk,\n     job.movie_link AS ml,\n     job.title AS t1,\n     job.title AS t2\nWHERE k.keyword ='character-name-in-title'\n  AND mk.keyword_id = k.id\n  AND t1.id = mk.movie_id\n  AND ml.movie_id = t1.id\n  AND ml.linked_movie_id = t2.id\n  AND lt.id = ml.link_type_id\n  AND mk.movie_id = t1.id;\n",
-      "startTime": "2026-06-25T13:43:25.584168Z",
+      "startTime": "2026-06-25T17:37:05.623401Z",
       "status": "OK",
-      "timeMs": 1031.953
+      "timeMs": 1124.141
     }
   ],
   "runtime": {
-    "avgMs": 1031.953,
-    "bestMs": 1031.953,
-    "maxMs": 1031.953,
-    "minMs": 1031.953,
+    "avgMs": 1124.141,
+    "bestMs": 1124.141,
+    "maxMs": 1124.141,
+    "minMs": 1124.141,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

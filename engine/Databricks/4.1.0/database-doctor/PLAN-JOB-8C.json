@@ -80,18 +80,18 @@
         "seek": 0,
         "sort": 0
       },
-      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(a1.name), MIN(t.title)\n       1        19  DISTRIBUTE GATHER\n       1        19  AGGREGATE MIN(a1.name), MIN(t.title)\n  209000   2487611  INNER JOIN HASH ON ci.movie_id = mc.movie_id\n  209000   1153798  │└DISTRIBUTE GATHER\n 3290000   1153798  │ INNER JOIN HASH ON mc.movie_id = t.id\n 3290000   1153798  │ │└DISTRIBUTE GATHER\n   12700   1153798  │ │ INNER JOIN HASH ON mc.company_id = cn.id\n   12700     84843  │ │ │└DISTRIBUTE GATHER\n  235000     84843  │ │ │ TABLE SCAN sql - company_name WHERE (cn.country_code IS NOT NULL) AND (cn.country_code = 'us')\n      12   2606542  │ │ TABLE SCAN sql - movie_companies\n  901000   2522738  │ TABLE SCAN sql - title\n  901000   2343724  INNER JOIN HASH ON a1.person_id = ci.person_id\n  901000   2728943  │└DISTRIBUTE HASH ON ci.person_id\n   12100   2728943  │ INNER JOIN HASH ON ci.role_id = rt.id\n   12100         1  │ │└DISTRIBUTE GATHER\n 2530000         1  │ │ TABLE SCAN sql - role_type WHERE rt.role = 'writer'\n 2610000  11557556  │ TABLE SCAN sql - cast_info\n 3290000    901343  INNER JOIN HASH ON a1.person_id = n1.id\n 3290000    901343  │└DISTRIBUTE HASH ON a1.person_id\n 4170000    901343  │ TABLE SCAN sql - aka_name\n 3290000   4167491  DISTRIBUTE HASH ON n1.id\n36200000   4167491  TABLE SCAN sql - name\n",
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(a1.name), MIN(t.title)\n       1        19  DISTRIBUTE GATHER\n       1        19  AGGREGATE MIN(a1.name), MIN(t.title)\n  209000   2487611  INNER JOIN HASH ON ci.movie_id = mc.movie_id\n  209000   1153798  │└DISTRIBUTE GATHER\n 3290000   1153798  │ INNER JOIN HASH ON mc.movie_id = t.id\n 3290000   1153798  │ │└DISTRIBUTE GATHER\n   12700   1153798  │ │ INNER JOIN HASH ON mc.company_id = cn.id\n   12700     84843  │ │ │└DISTRIBUTE GATHER\n  235000     84843  │ │ │ TABLE SCAN company_name WHERE (cn.country_code IS NOT NULL) AND (cn.country_code = 'us')\n      12   2606542  │ │ TABLE SCAN movie_companies\n  901000   2522738  │ TABLE SCAN title\n  901000   2343724  INNER JOIN HASH ON a1.person_id = ci.person_id\n  901000   2728943  │└DISTRIBUTE HASH ON ci.person_id\n   12100   2728943  │ INNER JOIN HASH ON ci.role_id = rt.id\n   12100         1  │ │└DISTRIBUTE GATHER\n 2530000         1  │ │ TABLE SCAN role_type WHERE rt.role = 'writer'\n 2610000  11557556  │ TABLE SCAN cast_info\n 3290000    901343  INNER JOIN HASH ON a1.person_id = n1.id\n 3290000    901343  │└DISTRIBUTE HASH ON a1.person_id\n 4170000    901343  │ TABLE SCAN aka_name\n 3290000   4167491  DISTRIBUTE HASH ON n1.id\n36200000   4167491  TABLE SCAN name\n",
       "sql": "SELECT MIN(a1.name) AS writer_pseudo_name,\n       MIN(t.title) AS movie_title\nFROM job.aka_name AS a1,\n     job.cast_info AS ci,\n     job.company_name AS cn,\n     job.movie_companies AS mc,\n     job.name AS n1,\n     job.role_type AS rt,\n     job.title AS t\nWHERE cn.country_code ='[us]'\n  AND rt.role ='writer'\n  AND a1.person_id = n1.id\n  AND n1.id = ci.person_id\n  AND ci.movie_id = t.id\n  AND t.id = mc.movie_id\n  AND mc.company_id = cn.id\n  AND ci.role_id = rt.id\n  AND a1.person_id = ci.person_id\n  AND ci.movie_id = mc.movie_id;\n",
-      "startTime": "2026-06-25T13:44:46.492338Z",
+      "startTime": "2026-06-25T17:38:18.635448Z",
       "status": "OK",
-      "timeMs": 1158.695
+      "timeMs": 979.544
     }
   ],
   "runtime": {
-    "avgMs": 1158.695,
-    "bestMs": 1158.695,
-    "maxMs": 1158.695,
-    "minMs": 1158.695,
+    "avgMs": 979.544,
+    "bestMs": 979.544,
+    "maxMs": 979.544,
+    "minMs": 979.544,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

@@ -80,18 +80,18 @@
         "seek": 0,
         "sort": 0
       },
-      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(cn.name), MIN(mi_idx.info), MIN(t.title)\n       1         1  DISTRIBUTE GATHER\n       1         1  AGGREGATE MIN(cn.name), MIN(mi_idx.info), MIN(t.title)\n     190      4711  INNER JOIN HASH ON mi_idx.info_type_id = it2.id\n     190         1  │└DISTRIBUTE GATHER\n14800000         1  │ TABLE SCAN sql - info_type WHERE it2.info = 'rating'\n      61      9273  INNER JOIN HASH ON mc.movie_id = mi_idx.movie_id\n      61     43557  │└DISTRIBUTE GATHER\n      59     43557  │ INNER JOIN HASH ON mc.movie_id = t.id\n      59    131396  │ │└DISTRIBUTE GATHER\n      59    131396  │ │ INNER JOIN HASH ON mc.company_id = cn.id\n      59     84843  │ │ │└DISTRIBUTE GATHER\n       4     84843  │ │ │ TABLE SCAN sql - company_name WHERE (cn.country_code IS NOT NULL) AND (cn.country_code = 'us')\n      23    371234  │ │ INNER JOIN HASH ON mc.company_type_id = ct.id\n      23         1  │ │ │└DISTRIBUTE GATHER\n 1380000         1  │ │ │ TABLE SCAN sql - company_type WHERE ct.kind = 'production companies'\n  276000    371234  │ │ INNER JOIN HASH ON mi.movie_id = mc.movie_id\n  276000    325255  │ │ │└DISTRIBUTE GATHER\n  276000    325255  │ │ │ INNER JOIN HASH ON mi.info_type_id = it1.id\n  276000         1  │ │ │ │└DISTRIBUTE GATHER\n 2530000         1  │ │ │ │ TABLE SCAN sql - info_type WHERE it1.info = 'genres'\n     113    325255  │ │ │ TABLE SCAN sql - movie_info WHERE mi.info IN('Drama','Horror','Western','Family')\n  235000   1331250  │ │ TABLE SCAN sql - movie_companies\n 2610000   1039644  │ TABLE SCAN sql - title WHERE (t.production_year IS NOT NULL) AND (t.production_year >= 2000L) AND (t.production_year <= 2010L)\n     113    192137  TABLE SCAN sql - movie_info_idx WHERE mi_idx.info > '7.0'\n",
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(cn.name), MIN(mi_idx.info), MIN(t.title)\n       1         1  DISTRIBUTE GATHER\n       1         1  AGGREGATE MIN(cn.name), MIN(mi_idx.info), MIN(t.title)\n     190      4711  INNER JOIN HASH ON mi_idx.info_type_id = it2.id\n     190         1  │└DISTRIBUTE GATHER\n14800000         1  │ TABLE SCAN info_type WHERE it2.info = 'rating'\n      61      9273  INNER JOIN HASH ON mc.movie_id = mi_idx.movie_id\n      61     43557  │└DISTRIBUTE GATHER\n      59     43557  │ INNER JOIN HASH ON mc.movie_id = t.id\n      59    131396  │ │└DISTRIBUTE GATHER\n      59    131396  │ │ INNER JOIN HASH ON mc.company_id = cn.id\n      59     84843  │ │ │└DISTRIBUTE GATHER\n       4     84843  │ │ │ TABLE SCAN company_name WHERE (cn.country_code IS NOT NULL) AND (cn.country_code = 'us')\n      23    371234  │ │ INNER JOIN HASH ON mc.company_type_id = ct.id\n      23         1  │ │ │└DISTRIBUTE GATHER\n 1380000         1  │ │ │ TABLE SCAN company_type WHERE ct.kind = 'production companies'\n  276000    371234  │ │ INNER JOIN HASH ON mi.movie_id = mc.movie_id\n  276000    325255  │ │ │└DISTRIBUTE GATHER\n  276000    325255  │ │ │ INNER JOIN HASH ON mi.info_type_id = it1.id\n  276000         1  │ │ │ │└DISTRIBUTE GATHER\n 2530000         1  │ │ │ │ TABLE SCAN info_type WHERE it1.info = 'genres'\n     113    325255  │ │ │ TABLE SCAN movie_info WHERE mi.info IN('Drama','Horror','Western','Family')\n  235000   1331250  │ │ TABLE SCAN movie_companies\n 2610000   1039644  │ TABLE SCAN title WHERE (t.production_year IS NOT NULL) AND (t.production_year >= 2000L) AND (t.production_year <= 2010L)\n     113    192137  TABLE SCAN movie_info_idx WHERE mi_idx.info > '7.0'\n",
       "sql": "SELECT MIN(cn.name) AS movie_company,\n       MIN(mi_idx.info) AS rating,\n       MIN(t.title) AS mainstream_movie\nFROM job.company_name AS cn,\n     job.company_type AS ct,\n     job.info_type AS it1,\n     job.info_type AS it2,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.movie_info_idx AS mi_idx,\n     job.title AS t\nWHERE cn.country_code = '[us]'\n  AND ct.kind = 'production companies'\n  AND it1.info = 'genres'\n  AND it2.info = 'rating'\n  AND mi.info IN ('Drama',\n                  'Horror',\n                  'Western',\n                  'Family')\n  AND mi_idx.info > '7.0'\n  AND t.production_year BETWEEN 2000 AND 2010\n  AND t.id = mi.movie_id\n  AND t.id = mi_idx.movie_id\n  AND mi.info_type_id = it1.id\n  AND mi_idx.info_type_id = it2.id\n  AND t.id = mc.movie_id\n  AND ct.id = mc.company_type_id\n  AND cn.id = mc.company_id\n  AND mc.movie_id = mi.movie_id\n  AND mc.movie_id = mi_idx.movie_id\n  AND mi.movie_id = mi_idx.movie_id;\n",
-      "startTime": "2026-06-25T13:39:01.450135Z",
+      "startTime": "2026-06-25T17:32:25.971662Z",
       "status": "OK",
-      "timeMs": 1135.714
+      "timeMs": 1113.996
     }
   ],
   "runtime": {
-    "avgMs": 1135.714,
-    "bestMs": 1135.714,
-    "maxMs": 1135.714,
-    "minMs": 1135.714,
+    "avgMs": 1113.996,
+    "bestMs": 1113.996,
+    "maxMs": 1113.996,
+    "minMs": 1113.996,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

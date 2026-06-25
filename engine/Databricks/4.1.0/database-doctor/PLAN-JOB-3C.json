@@ -80,18 +80,18 @@
         "seek": 0,
         "sort": 0
       },
-      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(t.title)\n       1         2  DISTRIBUTE GATHER\n       1         2  AGGREGATE MIN(t.title)\n     511      7250  INNER JOIN HASH ON mk.movie_id = mi.movie_id\n     511    706674  │└DISTRIBUTE GATHER\n  134000    706674  │ TABLE SCAN sql - movie_info WHERE mi.info IN('Sweden','Norway','Germany','Denmark','Swedish','Denish','Norwegian','German','USA','American')\n 3300000      7874  INNER JOIN HASH ON mk.movie_id = t.id\n 3300000     12951  │└DISTRIBUTE GATHER\n 3300000     12951  │ INNER JOIN HASH ON k.id = mk.keyword_id\n 3300000        30  │ │└DISTRIBUTE GATHER\n14800000        30  │ │ TABLE SCAN sql - keyword WHERE contains(k.keyword,'sequel')\n 2530000   4519836  │ TABLE SCAN sql - movie_keyword\n 4520000   1743470  TABLE SCAN sql - title WHERE (t.production_year IS NOT NULL) AND (t.production_year > 1990L)\n",
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(t.title)\n       1         2  DISTRIBUTE GATHER\n       1         2  AGGREGATE MIN(t.title)\n     511      7250  INNER JOIN HASH ON mk.movie_id = mi.movie_id\n     511    706674  │└DISTRIBUTE GATHER\n  134000    706674  │ TABLE SCAN movie_info WHERE mi.info IN('Sweden','Norway','Germany','Denmark','Swedish','Denish','Norwegian','German','USA','American')\n 3300000      7874  INNER JOIN HASH ON mk.movie_id = t.id\n 3300000     12951  │└DISTRIBUTE GATHER\n 3300000     12951  │ INNER JOIN HASH ON k.id = mk.keyword_id\n 3300000        30  │ │└DISTRIBUTE GATHER\n14800000        30  │ │ TABLE SCAN keyword WHERE contains(k.keyword,'sequel')\n 2530000   4519836  │ TABLE SCAN movie_keyword\n 4520000   1743470  TABLE SCAN title WHERE (t.production_year IS NOT NULL) AND (t.production_year > 1990L)\n",
       "sql": "SELECT MIN(t.title) AS movie_title\nFROM job.keyword AS k,\n     job.movie_info AS mi,\n     job.movie_keyword AS mk,\n     job.title AS t\nWHERE k.keyword LIKE '%sequel%'\n  AND mi.info IN ('Sweden',\n                  'Norway',\n                  'Germany',\n                  'Denmark',\n                  'Swedish',\n                  'Denish',\n                  'Norwegian',\n                  'German',\n                  'USA',\n                  'American')\n  AND t.production_year > 1990\n  AND t.id = mi.movie_id\n  AND t.id = mk.movie_id\n  AND mk.movie_id = mi.movie_id\n  AND k.id = mk.keyword_id;\n",
-      "startTime": "2026-06-25T13:43:46.327860Z",
+      "startTime": "2026-06-25T17:37:23.340723Z",
       "status": "OK",
-      "timeMs": 1087.251
+      "timeMs": 791.217
     }
   ],
   "runtime": {
-    "avgMs": 1087.251,
-    "bestMs": 1087.251,
-    "maxMs": 1087.251,
-    "minMs": 1087.251,
+    "avgMs": 791.217,
+    "bestMs": 791.217,
+    "maxMs": 791.217,
+    "minMs": 791.217,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

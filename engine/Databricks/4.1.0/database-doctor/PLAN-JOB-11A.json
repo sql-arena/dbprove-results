@@ -27,15 +27,15 @@
           ">16x": 0
         },
         "hash": {
-          "+2x": 1,
+          "+2x": 0,
           "+4x": 0,
           "+8x": 0,
           "-2x": 0,
-          "-4x": 1,
+          "-4x": 0,
           "-8x": 0,
-          "<16x": 5,
+          "<16x": 4,
           "=": 0,
-          ">16x": 0
+          ">16x": 3
         },
         "join": {
           "+2x": 2,
@@ -49,15 +49,15 @@
           ">16x": 0
         },
         "scan": {
-          "+2x": 1,
-          "+4x": 2,
+          "+2x": 0,
+          "+4x": 1,
           "+8x": 0,
           "-2x": 1,
           "-4x": 0,
           "-8x": 0,
-          "<16x": 1,
+          "<16x": 2,
           "=": 2,
-          ">16x": 3
+          ">16x": 4
         },
         "sort": {
           "+2x": 0,
@@ -74,24 +74,24 @@
       "operatorRows": {
         "aggregate": 311,
         "distribute": 52733,
-        "hash": 4551940,
-        "join": 2192328,
+        "hash": 71333,
+        "join": 6672935,
         "scan": 6694668,
         "seek": 0,
         "sort": 0
       },
-      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(cn.name), MIN(lt.link), MIN(t.title)\n       1         1  DISTRIBUTE GATHER\n       1         1  AGGREGATE MIN(cn.name), MIN(lt.link), MIN(t.title)\n     886       310  INNER JOIN HASH ON ml.link_type_id = lt.id\n     886       330  │└INNER JOIN HASH ON mc.movie_id = ml.movie_id\n     199      1292  │ │└INNER JOIN HASH ON mc.company_id = cn.id\n     199      6646  │ │ │└DISTRIBUTE GATHER\n     192      6646  │ │ │ INNER JOIN HASH ON mc.company_type_id = ct.id\n     192      6646  │ │ │ │└INNER JOIN HASH ON mk.movie_id = mc.movie_id\n     192      5541  │ │ │ │ │└DISTRIBUTE GATHER\n      75      5541  │ │ │ │ │ INNER JOIN HASH ON mk.movie_id = t.id\n      75     10544  │ │ │ │ │ │└DISTRIBUTE GATHER\n      71     10544  │ │ │ │ │ │ INNER JOIN HASH ON mk.keyword_id = k.id\n   30000   4519836  │ │ │ │ │ │ │└TABLE SCAN sql - movie_keyword\n      71         1  │ │ │ │ │ │ DISTRIBUTE GATHER\n      18         1  │ │ │ │ │ │ TABLE SCAN sql - keyword WHERE k.keyword = 'sequel'\n  235000    906840  │ │ │ │ │ TABLE SCAN sql - title WHERE (t.production_year IS NOT NULL) AND (t.production_year >= 1950L) AND (t.production_year <= 2000L)\n 2610000   1190460  │ │ │ │ TABLE SCAN sql - movie_companies WHERE mc.note IS NULL\n     192         1  │ │ │ DISTRIBUTE GATHER\n       4         1  │ │ │ TABLE SCAN sql - company_type WHERE ct.kind = 'production companies'\n 2530000     47531  │ │ TABLE SCAN sql - company_name WHERE (cn.country_code IS NOT NULL) AND ( NOT (cn.country_code = 'pl')) AND (contains(cn.name,'Film') OR contains(cn.name,'Warner'))\n     886     29997  │ DISTRIBUTE GATHER\n  134000     29997  │ TABLE SCAN sql - movie_link\n     886         2  DISTRIBUTE GATHER\n 4520000         2  TABLE SCAN sql - link_type WHERE contains(lt.link,'follow')\n",
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(cn.name), MIN(lt.link), MIN(t.title)\n       1         1  DISTRIBUTE GATHER\n       1         1  AGGREGATE MIN(cn.name), MIN(lt.link), MIN(t.title)\n     886       310  INNER JOIN HASH ON ml.link_type_id = lt.id\n     886         2  │└DISTRIBUTE GATHER\n 4520000         2  │ TABLE SCAN sql - link_type WHERE contains(lt.link,'follow')\n     886       330  INNER JOIN HASH ON mc.movie_id = ml.movie_id\n     886     29997  │└DISTRIBUTE GATHER\n  134000     29997  │ TABLE SCAN sql - movie_link\n     199      1292  INNER JOIN HASH ON mc.company_id = cn.id\n     199      6646  │└DISTRIBUTE GATHER\n     192      6646  │ INNER JOIN HASH ON mc.company_type_id = ct.id\n     192         1  │ │└DISTRIBUTE GATHER\n 2610000         1  │ │ TABLE SCAN sql - company_type WHERE ct.kind = 'production companies'\n     192      6646  │ INNER JOIN HASH ON mk.movie_id = mc.movie_id\n     192      5541  │ │└DISTRIBUTE GATHER\n      75      5541  │ │ INNER JOIN HASH ON mk.movie_id = t.id\n      75     10544  │ │ │└DISTRIBUTE GATHER\n      71     10544  │ │ │ INNER JOIN HASH ON mk.keyword_id = k.id\n      71         1  │ │ │ │└DISTRIBUTE GATHER\n      18         1  │ │ │ │ TABLE SCAN sql - keyword WHERE k.keyword = 'sequel'\n   30000   4519836  │ │ │ TABLE SCAN sql - movie_keyword\n  235000    906840  │ │ TABLE SCAN sql - title WHERE (t.production_year IS NOT NULL) AND (t.production_year >= 1950L) AND (t.production_year <= 2000L)\n       4   1190460  │ TABLE SCAN sql - movie_companies WHERE mc.note IS NULL\n 2530000     47531  TABLE SCAN sql - company_name WHERE (cn.country_code IS NOT NULL) AND ( NOT (cn.country_code = 'pl')) AND (contains(cn.name,'Film') OR contains(cn.name,'Warner'))\n",
       "sql": "SELECT MIN(cn.name) AS from_company,\n       MIN(lt.link) AS movie_link_type,\n       MIN(t.title) AS non_polish_sequel_movie\nFROM job.company_name AS cn,\n     job.company_type AS ct,\n     job.keyword AS k,\n     job.link_type AS lt,\n     job.movie_companies AS mc,\n     job.movie_keyword AS mk,\n     job.movie_link AS ml,\n     job.title AS t\nWHERE cn.country_code !='[pl]'\n  AND (cn.name LIKE '%Film%'\n       OR cn.name LIKE '%Warner%')\n  AND ct.kind ='production companies'\n  AND k.keyword ='sequel'\n  AND lt.link LIKE '%follow%'\n  AND mc.note IS NULL\n  AND t.production_year BETWEEN 1950 AND 2000\n  AND lt.id = ml.link_type_id\n  AND ml.movie_id = t.id\n  AND t.id = mk.movie_id\n  AND mk.keyword_id = k.id\n  AND t.id = mc.movie_id\n  AND mc.company_type_id = ct.id\n  AND mc.company_id = cn.id\n  AND ml.movie_id = mk.movie_id\n  AND ml.movie_id = mc.movie_id\n  AND mk.movie_id = mc.movie_id;\n",
-      "startTime": "2026-06-24T13:49:34.979916Z",
+      "startTime": "2026-06-25T10:58:48.201209Z",
       "status": "OK",
-      "timeMs": 3760.696
+      "timeMs": 1093.616
     }
   ],
   "runtime": {
-    "avgMs": 3760.696,
-    "bestMs": 3760.696,
-    "maxMs": 3760.696,
-    "minMs": 3760.696,
+    "avgMs": 1093.616,
+    "bestMs": 1093.616,
+    "maxMs": 1093.616,
+    "minMs": 1093.616,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

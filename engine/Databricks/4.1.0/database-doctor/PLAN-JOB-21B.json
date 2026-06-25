@@ -28,14 +28,14 @@
         },
         "hash": {
           "+2x": 0,
-          "+4x": 1,
+          "+4x": 0,
           "+8x": 0,
-          "-2x": 0,
-          "-4x": 1,
+          "-2x": 1,
+          "-4x": 0,
           "-8x": 0,
-          "<16x": 5,
+          "<16x": 4,
           "=": 0,
-          ">16x": 1
+          ">16x": 3
         },
         "join": {
           "+2x": 0,
@@ -43,8 +43,8 @@
           "+8x": 0,
           "-2x": 0,
           "-4x": 0,
-          "-8x": 0,
-          "<16x": 5,
+          "-8x": 1,
+          "<16x": 4,
           "=": 0,
           ">16x": 2
         },
@@ -53,11 +53,11 @@
           "+4x": 1,
           "+8x": 0,
           "-2x": 0,
-          "-4x": 1,
+          "-4x": 0,
           "-8x": 0,
           "<16x": 2,
           "=": 2,
-          ">16x": 4
+          ">16x": 5
         },
         "sort": {
           "+2x": 0,
@@ -74,24 +74,24 @@
       "operatorRows": {
         "aggregate": 39,
         "distribute": 208565,
-        "hash": 6001260,
-        "join": 1364337,
+        "hash": 335388,
+        "join": 7030209,
         "scan": 6944663,
         "seek": 0,
         "sort": 0
       },
-      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(cn.name), MIN(lt.link), MIN(t.title)\n       1         1  DISTRIBUTE GATHER\n       1         1  AGGREGATE MIN(cn.name), MIN(lt.link), MIN(t.title)\n     886        38  INNER JOIN HASH ON ml.link_type_id = lt.id\n     886        38  │└INNER JOIN HASH ON mc.movie_id = ml.movie_id\n     886       144  │ │└INNER JOIN HASH ON mc.movie_id = mk.movie_id\n     199     47734  │ │ │└INNER JOIN HASH ON mc.company_id = cn.id\n     192    116246  │ │ │ │└INNER JOIN HASH ON mc.company_type_id = ct.id\n      75    116246  │ │ │ │ │└INNER JOIN HASH ON mc.movie_id = mi.movie_id\n  235000   1190472  │ │ │ │ │ │└TABLE SCAN sql - movie_companies WHERE mc.note IS NULL\n      75    116559  │ │ │ │ │ DISTRIBUTE GATHER\n      18    116559  │ │ │ │ │ TABLE SCAN sql - movie_info WHERE mi.info IN('Germany','German')\n     192         1  │ │ │ │ DISTRIBUTE GATHER\n   30000         1  │ │ │ │ TABLE SCAN sql - company_type WHERE ct.kind = 'production companies'\n     199     48302  │ │ │ DISTRIBUTE GATHER\n 2610000     48302  │ │ │ TABLE SCAN sql - company_name WHERE (cn.country_code IS NOT NULL) AND ( NOT (cn.country_code = 'pl')) AND (contains(cn.name,'Film') OR contains(cn.name,'Warner'))\n     886      3158  │ │ DISTRIBUTE GATHER\n     192      3158  │ │ INNER JOIN HASH ON mk.movie_id = t.id\n     192     10544  │ │ │└DISTRIBUTE GATHER\n      71     10544  │ │ │ INNER JOIN HASH ON mk.keyword_id = k.id\n       4   4519836  │ │ │ │└TABLE SCAN sql - movie_keyword\n      71         1  │ │ │ DISTRIBUTE GATHER\n14800000         1  │ │ │ TABLE SCAN sql - keyword WHERE k.keyword = 'sequel'\n 2530000   1039493  │ │ TABLE SCAN sql - title WHERE (t.production_year IS NOT NULL) AND (t.production_year >= 2000L) AND (t.production_year <= 2010L)\n     886     29997  │ DISTRIBUTE GATHER\n  134000     29997  │ TABLE SCAN sql - movie_link\n     886         2  DISTRIBUTE GATHER\n 4520000         2  TABLE SCAN sql - link_type WHERE contains(lt.link,'follow')\n",
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(cn.name), MIN(lt.link), MIN(t.title)\n       1         1  DISTRIBUTE GATHER\n       1         1  AGGREGATE MIN(cn.name), MIN(lt.link), MIN(t.title)\n     886        38  INNER JOIN HASH ON ml.link_type_id = lt.id\n     886         2  │└DISTRIBUTE GATHER\n 4520000         2  │ TABLE SCAN sql - link_type WHERE contains(lt.link,'follow')\n     886        38  INNER JOIN HASH ON mc.movie_id = ml.movie_id\n     886     29997  │└DISTRIBUTE GATHER\n  134000     29997  │ TABLE SCAN sql - movie_link\n     886       144  INNER JOIN HASH ON mc.movie_id = mk.movie_id\n     886      3158  │└DISTRIBUTE GATHER\n     199      3158  │ INNER JOIN HASH ON mk.movie_id = t.id\n     199     10544  │ │└DISTRIBUTE GATHER\n      75     10544  │ │ INNER JOIN HASH ON mk.keyword_id = k.id\n      75         1  │ │ │└DISTRIBUTE GATHER\n      18         1  │ │ │ TABLE SCAN sql - keyword WHERE k.keyword = 'sequel'\n       4   4519836  │ │ TABLE SCAN sql - movie_keyword\n 2530000   1039493  │ TABLE SCAN sql - title WHERE (t.production_year IS NOT NULL) AND (t.production_year >= 2000L) AND (t.production_year <= 2010L)\n     192     47734  INNER JOIN HASH ON mc.company_id = cn.id\n     192     48302  │└DISTRIBUTE GATHER\n 2610000     48302  │ TABLE SCAN sql - company_name WHERE (cn.country_code IS NOT NULL) AND ( NOT (cn.country_code = 'pl')) AND (contains(cn.name,'Film') OR contains(cn.name,'Warner'))\n     192    116246  INNER JOIN HASH ON mc.company_type_id = ct.id\n     192         1  │└DISTRIBUTE GATHER\n  235000         1  │ TABLE SCAN sql - company_type WHERE ct.kind = 'production companies'\n      71    116246  INNER JOIN HASH ON mc.movie_id = mi.movie_id\n      71    116559  │└DISTRIBUTE GATHER\n14800000    116559  │ TABLE SCAN sql - movie_info WHERE mi.info IN('Germany','German')\n   30000   1190472  TABLE SCAN sql - movie_companies WHERE mc.note IS NULL\n",
       "sql": "SELECT MIN(cn.name) AS company_name,\n       MIN(lt.link) AS link_type,\n       MIN(t.title) AS german_follow_up\nFROM job.company_name AS cn,\n     job.company_type AS ct,\n     job.keyword AS k,\n     job.link_type AS lt,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.movie_keyword AS mk,\n     job.movie_link AS ml,\n     job.title AS t\nWHERE cn.country_code !='[pl]'\n  AND (cn.name LIKE '%Film%'\n       OR cn.name LIKE '%Warner%')\n  AND ct.kind ='production companies'\n  AND k.keyword ='sequel'\n  AND lt.link LIKE '%follow%'\n  AND mc.note IS NULL\n  AND mi.info IN ('Germany',\n                  'German')\n  AND t.production_year BETWEEN 2000 AND 2010\n  AND lt.id = ml.link_type_id\n  AND ml.movie_id = t.id\n  AND t.id = mk.movie_id\n  AND mk.keyword_id = k.id\n  AND t.id = mc.movie_id\n  AND mc.company_type_id = ct.id\n  AND mc.company_id = cn.id\n  AND mi.movie_id = t.id\n  AND ml.movie_id = mk.movie_id\n  AND ml.movie_id = mc.movie_id\n  AND mk.movie_id = mc.movie_id\n  AND ml.movie_id = mi.movie_id\n  AND mk.movie_id = mi.movie_id\n  AND mc.movie_id = mi.movie_id;\n",
-      "startTime": "2026-06-24T13:53:23.659463Z",
+      "startTime": "2026-06-25T10:25:52.162683Z",
       "status": "OK",
-      "timeMs": 2622.064
+      "timeMs": 1149.046
     }
   ],
   "runtime": {
-    "avgMs": 2622.064,
-    "bestMs": 2622.064,
-    "maxMs": 2622.064,
-    "minMs": 2622.064,
+    "avgMs": 1149.046,
+    "bestMs": 1149.046,
+    "maxMs": 1149.046,
+    "minMs": 1149.046,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

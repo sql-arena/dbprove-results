@@ -1,0 +1,33 @@
+{
+  "config": "M5 Macbook Pro",
+  "engine": "Trino",
+  "queries": [
+    {
+      "sql": "SELECT SUM(CAST(c AS BIGINT)) AS sum_row_number,\n       COUNT(o_orderkey) AS count_o_orderkey,\n       COUNT(o_orderstatus) AS count_o_orderstatus,\n       COUNT(o_orderpriority) AS count_o_orderpriority,\n       COUNT(o_clerk) AS count_o_clerk,\n       COUNT(o_shippriority) AS count_o_shippriority\nFROM (\n  SELECT o_orderkey,\n         o_orderstatus,\n         o_orderpriority,\n         o_clerk,\n         o_shippriority,\n         ROW_NUMBER() OVER (PARTITION BY o_custkey ORDER BY join_key) AS c\n  FROM scale.orders_scale_12\n) sorted_orders",
+      "startTime": "2026-06-25T10:58:03.793223Z",
+      "status": "OK",
+      "timeMs": 3707.004
+    }
+  ],
+  "runtime": {
+    "avgMs": 3927.259,
+    "bestMs": 3707.004,
+    "maxMs": 4176.347,
+    "minMs": 3707.004,
+    "stdDevMs": 192.69
+  },
+  "storageVariant": "iceberg",
+  "theorem": {
+    "categories": [
+      "EE"
+    ],
+    "description": "Sort scale test with window ordering over orders scaled to 12x",
+    "displayName": "EE-SORT-SCALE-12",
+    "name": "EE-SORT-SCALE-12",
+    "tags": [
+      "SORT",
+      "scale"
+    ]
+  },
+  "version": "481"
+}

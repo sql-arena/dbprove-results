@@ -1,0 +1,33 @@
+{
+  "config": "M5 Macbook Pro",
+  "engine": "DataFusion",
+  "queries": [
+    {
+      "sql": "SELECT COUNT(*) AS join_row_count,\n       COUNT(l.l_orderkey) AS count_l_orderkey,\n       COUNT(l.lineitem_replica_id) AS count_lineitem_replica_id,\n       COUNT(l.l_linenumber) AS count_l_linenumber,\n       COUNT(o.o_orderkey) AS count_o_orderkey,\n       COUNT(o.orders_replica_id) AS count_orders_replica_id,\n       COUNT(o.o_custkey) AS count_o_custkey,\n       COUNT(o.o_orderstatus) AS count_o_orderstatus,\n       COUNT(o.o_totalprice) AS count_o_totalprice,\n       COUNT(o.o_orderdate) AS count_o_orderdate,\n       COUNT(o.o_orderpriority) AS count_o_orderpriority,\n       COUNT(o.o_clerk) AS count_o_clerk,\n       COUNT(o.o_shippriority) AS count_o_shippriority,\n       COUNT(o.o_comment) AS count_o_comment\nFROM scale.lineitem_25x l\nINNER JOIN scale.orders_scale_02 o\n  ON CAST(CAST(l.l_orderkey AS BIGINT) * 2 + CAST((l.l_suppkey % 2) AS BIGINT) AS BIGINT) = o.join_key",
+      "startTime": "2026-06-24T16:55:32.534266Z",
+      "status": "OK",
+      "timeMs": 1231.234
+    }
+  ],
+  "runtime": {
+    "avgMs": 1290.583,
+    "bestMs": 1231.234,
+    "maxMs": 1330.112,
+    "minMs": 1231.234,
+    "stdDevMs": 42.73
+  },
+  "storageVariant": "iceberg",
+  "theorem": {
+    "categories": [
+      "EE"
+    ],
+    "description": "Join scale test with lineitem fixed at 25x and orders scaled to 2x",
+    "displayName": "EE-JOIN-SCALE-02",
+    "name": "EE-JOIN-SCALE-02",
+    "tags": [
+      "JOIN",
+      "scale"
+    ]
+  },
+  "version": "Apache DataFusion 54.0.0, aarch64 on linux"
+}

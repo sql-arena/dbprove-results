@@ -27,15 +27,15 @@
           ">16x": 0
         },
         "hash": {
-          "+2x": 1,
+          "+2x": 0,
           "+4x": 0,
-          "+8x": 1,
+          "+8x": 0,
           "-2x": 0,
           "-4x": 0,
           "-8x": 0,
-          "<16x": 1,
+          "<16x": 2,
           "=": 0,
-          ">16x": 4
+          ">16x": 5
         },
         "join": {
           "+2x": 0,
@@ -56,8 +56,8 @@
           "-4x": 1,
           "-8x": 0,
           "<16x": 0,
-          "=": 2,
-          ">16x": 5
+          "=": 3,
+          ">16x": 4
         },
         "sort": {
           "+2x": 0,
@@ -74,24 +74,24 @@
       "operatorRows": {
         "aggregate": 2,
         "distribute": 726217,
-        "hash": 4539391,
-        "join": 804841,
+        "hash": 745752,
+        "join": 4598480,
         "scan": 5305144,
         "seek": 0,
         "sort": 0
       },
-      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(mi_idx.info), MIN(t.title)\n       1         1  DISTRIBUTE GATHER\n       1         1  AGGREGATE MIN(mi_idx.info), MIN(t.title)\n     349         1  INNER JOIN HASH ON mi.info_type_id = it1.id\n     349         1  │└INNER JOIN HASH ON mi_idx.movie_id = mi.movie_id\n     349         1  │ │└INNER JOIN HASH ON mi_idx.info_type_id = it2.id\n     349         1  │ │ │└INNER JOIN HASH ON mk.movie_id = mi_idx.movie_id\n     349        10  │ │ │ │└DISTRIBUTE GATHER\n     112        10  │ │ │ │ INNER JOIN HASH ON t.kind_id = kt.id\n     112        11  │ │ │ │ │└INNER JOIN HASH ON mk.movie_id = t.id\n     112     19528  │ │ │ │ │ │└DISTRIBUTE GATHER\n     106     19528  │ │ │ │ │ │ INNER JOIN HASH ON mk.keyword_id = k.id\n14800000   4519839  │ │ │ │ │ │ │└TABLE SCAN sql - movie_keyword\n     106         1  │ │ │ │ │ │ DISTRIBUTE GATHER\n     113         1  │ │ │ │ │ │ TABLE SCAN sql - keyword WHERE k.keyword IN('murder','murder-in-title')\n 1380000       129  │ │ │ │ │ TABLE SCAN sql - title WHERE (t.production_year IS NOT NULL) AND (t.production_year > 2010L) AND ((contains(t.title,'murder') OR contains(t.title,'Murder')) OR contains(t.title,'Mord'))\n     112         1  │ │ │ │ DISTRIBUTE GATHER\n     113         1  │ │ │ │ TABLE SCAN sql - kind_type WHERE kt.kind = 'movie'\n 2530000     78498  │ │ │ TABLE SCAN sql - movie_info_idx WHERE mi_idx.info > '6.0'\n     349         1  │ │ DISTRIBUTE GATHER\n       7         1  │ │ TABLE SCAN sql - info_type WHERE it2.info = 'rating'\n     349    706674  │ DISTRIBUTE GATHER\n  134000    706674  │ TABLE SCAN sql - movie_info WHERE mi.info IN('Sweden','Norway','Germany','Denmark','Swedish','Denish','Norwegian','German','USA','American')\n     349         1  DISTRIBUTE GATHER\n 4520000         1  TABLE SCAN sql - info_type WHERE it1.info = 'countries'\n",
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(mi_idx.info), MIN(t.title)\n       1         1  DISTRIBUTE GATHER\n       1         1  AGGREGATE MIN(mi_idx.info), MIN(t.title)\n     349         1  INNER JOIN HASH ON mi.info_type_id = it1.id\n     349         1  │└DISTRIBUTE GATHER\n 4520000         1  │ TABLE SCAN sql - info_type WHERE it1.info = 'countries'\n     349         1  INNER JOIN HASH ON mi_idx.movie_id = mi.movie_id\n     349    706674  │└DISTRIBUTE GATHER\n  134000    706674  │ TABLE SCAN sql - movie_info WHERE mi.info IN('Sweden','Norway','Germany','Denmark','Swedish','Denish','Norwegian','German','USA','American')\n     349         1  INNER JOIN HASH ON mi_idx.info_type_id = it2.id\n     349         1  │└DISTRIBUTE GATHER\n       7         1  │ TABLE SCAN sql - info_type WHERE it2.info = 'rating'\n     349         1  INNER JOIN HASH ON mk.movie_id = mi_idx.movie_id\n     349        10  │└DISTRIBUTE GATHER\n     112        10  │ INNER JOIN HASH ON t.kind_id = kt.id\n     112         1  │ │└DISTRIBUTE GATHER\n 1380000         1  │ │ TABLE SCAN sql - kind_type WHERE kt.kind = 'movie'\n     112        11  │ INNER JOIN HASH ON mk.movie_id = t.id\n     112     19528  │ │└DISTRIBUTE GATHER\n     106     19528  │ │ INNER JOIN HASH ON mk.keyword_id = k.id\n     106         1  │ │ │└DISTRIBUTE GATHER\n     113         1  │ │ │ TABLE SCAN sql - keyword WHERE k.keyword IN('murder','murder-in-title')\n14800000   4519839  │ │ TABLE SCAN sql - movie_keyword\n     113       129  │ TABLE SCAN sql - title WHERE (t.production_year IS NOT NULL) AND (t.production_year > 2010L) AND ((contains(t.title,'murder') OR contains(t.title,'Murder')) OR contains(t.title,'Mord'))\n 2530000     78498  TABLE SCAN sql - movie_info_idx WHERE mi_idx.info > '6.0'\n",
       "sql": "SELECT MIN(mi_idx.info) AS rating,\n       MIN(t.title) AS western_dark_production\nFROM job.info_type AS it1,\n     job.info_type AS it2,\n     job.keyword AS k,\n     job.kind_type AS kt,\n     job.movie_info AS mi,\n     job.movie_info_idx AS mi_idx,\n     job.movie_keyword AS mk,\n     job.title AS t\nWHERE it1.info = 'countries'\n  AND it2.info = 'rating'\n  AND k.keyword IN ('murder',\n                    'murder-in-title')\n  AND kt.kind = 'movie'\n  AND mi.info IN ('Sweden',\n                  'Norway',\n                  'Germany',\n                  'Denmark',\n                  'Swedish',\n                  'Denish',\n                  'Norwegian',\n                  'German',\n                  'USA',\n                  'American')\n  AND mi_idx.info > '6.0'\n  AND t.production_year > 2010\n  AND (t.title LIKE '%murder%'\n       OR t.title LIKE '%Murder%'\n       OR t.title LIKE '%Mord%')\n  AND kt.id = t.kind_id\n  AND t.id = mi.movie_id\n  AND t.id = mk.movie_id\n  AND t.id = mi_idx.movie_id\n  AND mk.movie_id = mi.movie_id\n  AND mk.movie_id = mi_idx.movie_id\n  AND mi.movie_id = mi_idx.movie_id\n  AND k.id = mk.keyword_id\n  AND it1.id = mi.info_type_id\n  AND it2.id = mi_idx.info_type_id;\n",
-      "startTime": "2026-06-24T13:50:34.551107Z",
+      "startTime": "2026-06-25T10:59:27.777430Z",
       "status": "OK",
-      "timeMs": 2254.099
+      "timeMs": 1131.298
     }
   ],
   "runtime": {
-    "avgMs": 2254.099,
-    "bestMs": 2254.099,
-    "maxMs": 2254.099,
-    "minMs": 2254.099,
+    "avgMs": 1131.298,
+    "bestMs": 1131.298,
+    "maxMs": 1131.298,
+    "minMs": 1131.298,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

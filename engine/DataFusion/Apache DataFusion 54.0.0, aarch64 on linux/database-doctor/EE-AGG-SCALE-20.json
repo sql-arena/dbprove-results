@@ -1,0 +1,33 @@
+{
+  "config": "M5 Macbook Pro",
+  "engine": "DataFusion",
+  "queries": [
+    {
+      "sql": "SELECT COUNT(*) AS agg_group_count,\n       SUM(CAST(group_rows AS BIGINT)) AS sum_group_rows,\n       SUM(sum_o_custkey) AS sum_o_custkey,\n       COUNT(o_orderkey) AS count_o_orderkey,\n       COUNT(orders_replica_id) AS count_orders_replica_id,\n       COUNT(o_orderstatus) AS count_o_orderstatus,\n       COUNT(o_orderpriority) AS count_o_orderpriority,\n       COUNT(o_clerk) AS count_o_clerk,\n       COUNT(o_shippriority) AS count_o_shippriority\nFROM (\n  SELECT o_orderkey,\n         orders_replica_id,\n         o_orderstatus,\n         o_orderpriority,\n         o_clerk,\n         o_shippriority,\n         COUNT(*) AS group_rows,\n         SUM(CAST(o_custkey AS BIGINT)) AS sum_o_custkey\n  FROM scale.orders_scale_20\n  GROUP BY o_orderkey,\n           orders_replica_id,\n           o_orderstatus,\n           o_orderpriority,\n           o_clerk,\n           o_shippriority\n) grouped_orders",
+      "startTime": "2026-06-24T16:55:15.150938Z",
+      "status": "OK",
+      "timeMs": 3975.763
+    }
+  ],
+  "runtime": {
+    "avgMs": 4577.148,
+    "bestMs": 3975.763,
+    "maxMs": 4993.248,
+    "minMs": 3975.763,
+    "stdDevMs": 435.559
+  },
+  "storageVariant": "iceberg",
+  "theorem": {
+    "categories": [
+      "EE"
+    ],
+    "description": "Aggregation scale test with grouped orders scaled to 20x",
+    "displayName": "EE-AGG-SCALE-20",
+    "name": "EE-AGG-SCALE-20",
+    "tags": [
+      "AGG",
+      "scale"
+    ]
+  },
+  "version": "Apache DataFusion 54.0.0, aarch64 on linux"
+}

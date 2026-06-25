@@ -82,16 +82,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  SEQUENCE\n    7750      1225  ├─SORT v DESC NULLS LAST\n    7750      2450  │ DISTRIBUTE HASH ON v\n    7750      2450  │ FILTER \n     385     57030  │ AGGREGATE SUM(sql - ps_supplycost * CAST(sql - ps_availqty AS DECIMAL(20,0))) GROUP BY HASH sql - ps_partkey\n     385     28515  │ DISTRIBUTE HASH ON sql - ps_partkey\n     385     28515  │ AGGREGATE SUM(sql - ps_supplycost * CAST(sql - ps_availqty AS DECIMAL(20,0))) GROUP BY HASH sql - ps_partkey\n     385     30160  │ INNER JOIN HASH ON sql - s_suppkey = sql - ps_suppkey\n     385       377  │ │└DISTRIBUTE GATHER\n   32200       377  │ │ INNER JOIN HASH ON sql - s_nationkey = sql - n_nationkey\n   32200         1  │ │ │└DISTRIBUTE GATHER\n      25         1  │ │ │ TABLE SCAN sql - nation WHERE sql - n_name = 'JAPAN'\n   10000      6063  │ │ TABLE SCAN sql - supplier\n  800000    796046  │ TABLE SCAN sql - partsupp\n       1         1  └─AGGREGATE SUM(sql - ps_supplycost * CAST(sql - ps_availqty AS DECIMAL(20,0)))\n       1         1    DISTRIBUTE GATHER\n       1         1    AGGREGATE SUM(sql - ps_supplycost * CAST(sql - ps_availqty AS DECIMAL(20,0)))\n   32200     30160    INNER JOIN HASH ON sql - s_suppkey = sql - ps_suppkey\n   32200      6063    │└DISTRIBUTE HASH\n      25      6063    │ DISTRIBUTE HASH\n      25      6063    │ TABLE SCAN sql - supplier\n   10000    796046    TABLE SCAN sql - partsupp\n",
       "sql": "/* TPC-H Q11 */\nSELECT ps_partkey,\n       SUM(ps_supplycost * ps_availqty) AS v\nFROM tpch_sf1.partsupp\nINNER JOIN tpch_sf1.supplier\n    ON ps_suppkey = s_suppkey\nINNER JOIN tpch_sf1.nation\n    ON s_nationkey = n_nationkey\nWHERE n_name = 'JAPAN'\nGROUP BY ps_partkey\nHAVING SUM(ps_supplycost * ps_availqty)\n           > (SELECT SUM(ps_supplycost * ps_availqty) * 0.0001\n              FROM tpch_sf1.partsupp\n              INNER JOIN tpch_sf1.supplier\n                  ON ps_suppkey = s_suppkey\n              INNER JOIN tpch_sf1.nation\n                  ON s_nationkey = n_nationkey\n              WHERE n_name = 'JAPAN')\nORDER BY v DESC\n",
-      "startTime": "2026-06-25T11:08:30.003524Z",
+      "startTime": "2026-06-25T13:49:41.398770Z",
       "status": "OK",
-      "timeMs": 1149.736
+      "timeMs": 2355.58
     }
   ],
   "runtime": {
-    "avgMs": 1149.736,
-    "bestMs": 1149.736,
-    "maxMs": 1149.736,
-    "minMs": 1149.736,
+    "avgMs": 2355.58,
+    "bestMs": 2355.58,
+    "maxMs": 2355.58,
+    "minMs": 2355.58,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

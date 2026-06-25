@@ -82,16 +82,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(mc.note), MIN(t.title), MIN(t.production_year)\n       1         1  DISTRIBUTE GATHER\n       1         1  AGGREGATE MIN(mc.note), MIN(t.title), MIN(t.production_year)\n  281000         3  INNER JOIN HASH ON mi_idx.movie_id = mc.movie_id\n  281000        12  │└DISTRIBUTE GATHER\n  276000        12  │ INNER JOIN HASH ON mi_idx.movie_id = t.id\n  276000       250  │ │└DISTRIBUTE GATHER\n  281000       250  │ │ INNER JOIN HASH ON mi_idx.info_type_id = it.id\n  281000         1  │ │ │└DISTRIBUTE GATHER\n 2610000         1  │ │ │ TABLE SCAN sql - info_type WHERE it.info = 'top 250 rank'\n       4       250  │ │ TABLE SCAN sql - movie_info_idx\n  276000    391666  │ DISTRIBUTE HASH ON t.id\n     113    391666  │ TABLE SCAN sql - title WHERE (t.production_year IS NOT NULL) AND (t.production_year > 2010L)\n  276000      9583  INNER JOIN HASH ON ct.id = mc.company_type_id\n  276000         1  │└DISTRIBUTE GATHER\n 2530000         1  │ TABLE SCAN sql - company_type WHERE ct.kind = 'production companies'\n 1380000      9583  TABLE SCAN sql - movie_companies WHERE (mc.note IS NOT NULL) AND ( NOT contains(mc.note,'(as Metro-Goldwyn-Mayer Pictures)')) AND contains(mc.note,'(co-production)')\n",
       "sql": "SELECT MIN(mc.note) AS production_note,\n       MIN(t.title) AS movie_title,\n       MIN(t.production_year) AS movie_year\nFROM job.company_type AS ct,\n     job.info_type AS it,\n     job.movie_companies AS mc,\n     job.movie_info_idx AS mi_idx,\n     job.title AS t\nWHERE ct.kind = 'production companies'\n  AND it.info = 'top 250 rank'\n  AND mc.note NOT LIKE '%(as Metro-Goldwyn-Mayer Pictures)%'\n  AND (mc.note LIKE '%(co-production)%')\n  AND t.production_year >2010\n  AND ct.id = mc.company_type_id\n  AND t.id = mc.movie_id\n  AND t.id = mi_idx.movie_id\n  AND mc.movie_id = mi_idx.movie_id\n  AND it.id = mi_idx.info_type_id;\n",
-      "startTime": "2026-06-25T10:25:27.428081Z",
+      "startTime": "2026-06-25T13:40:50.282780Z",
       "status": "OK",
-      "timeMs": 1789.797
+      "timeMs": 1160.762
     }
   ],
   "runtime": {
-    "avgMs": 1789.797,
-    "bestMs": 1789.797,
-    "maxMs": 1789.797,
-    "minMs": 1789.797,
+    "avgMs": 1160.762,
+    "bestMs": 1160.762,
+    "maxMs": 1160.762,
+    "minMs": 1160.762,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

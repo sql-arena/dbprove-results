@@ -82,16 +82,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(chn.name), MIN(t.title)\n       1         0  DISTRIBUTE GATHER\n       1         0  AGGREGATE MIN(chn.name), MIN(t.title)\n  209000         ∞  DISTRIBUTE GATHER\n  209000         ∞  INNER JOIN HASH ON ci.role_id = rt.id\n  209000         ∞  │└DISTRIBUTE GATHER\n 2610000         ∞  │ TABLE SCAN sql - role_type WHERE rt.role = 'actor'\n  209000         ∞  INNER JOIN HASH ON mc.movie_id = ci.movie_id\n  209000         ∞  │└DISTRIBUTE GATHER\n  209000         ∞  │ INNER JOIN HASH ON mc.movie_id = t.id\n  209000         ∞  │ │└DISTRIBUTE GATHER\n   12700         ∞  │ │ INNER JOIN HASH ON mc.company_type_id = ct.id\n   12700         ∞  │ │ │└DISTRIBUTE GATHER\n 2530000         ∞  │ │ │ TABLE SCAN sql - company_type\n   12100         ∞  │ │ INNER JOIN HASH ON mc.company_id = cn.id\n   12100         ∞  │ │ │└DISTRIBUTE GATHER\n      12         ∞  │ │ │ TABLE SCAN sql - company_name WHERE (cn.country_code IS NOT NULL) AND (cn.country_code = 'ru')\n36200000         ∞  │ │ TABLE SCAN sql - movie_companies\n       4         ∞  │ TABLE SCAN sql - title WHERE (t.production_year IS NOT NULL) AND (t.production_year > 2010L)\n  235000         ∞  TABLE SCAN sql - cast_info WHERE (ci.note IS NOT NULL) AND (ci.person_role_id IS NOT NULL) AND contains(ci.note,'(producer)')\n",
       "sql": "SELECT MIN(chn.name) AS character,\n       MIN(t.title) AS russian_mov_with_actor_producer\nFROM job.char_name AS chn,\n     job.cast_info AS ci,\n     job.company_name AS cn,\n     job.company_type AS ct,\n     job.movie_companies AS mc,\n     job.role_type AS rt,\n     job.title AS t\nWHERE ci.note LIKE '%(producer)%'\n  AND cn.country_code = '[ru]'\n  AND rt.role = 'actor'\n  AND t.production_year > 2010\n  AND t.id = mc.movie_id\n  AND t.id = ci.movie_id\n  AND ci.movie_id = mc.movie_id\n  AND chn.id = ci.person_role_id\n  AND rt.id = ci.role_id\n  AND cn.id = mc.company_id\n  AND ct.id = mc.company_type_id;\n",
-      "startTime": "2026-06-25T10:58:41.674043Z",
+      "startTime": "2026-06-25T13:38:33.021103Z",
       "status": "OK",
-      "timeMs": 1189.151
+      "timeMs": 1265.818
     }
   ],
   "runtime": {
-    "avgMs": 1189.151,
-    "bestMs": 1189.151,
-    "maxMs": 1189.151,
-    "minMs": 1189.151,
+    "avgMs": 1265.818,
+    "bestMs": 1265.818,
+    "maxMs": 1265.818,
+    "minMs": 1265.818,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

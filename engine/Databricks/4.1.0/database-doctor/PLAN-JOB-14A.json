@@ -82,16 +82,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(mi_idx.info), MIN(t.title)\n       1         1  DISTRIBUTE GATHER\n       1         1  AGGREGATE MIN(mi_idx.info), MIN(t.title)\n     579       761  INNER JOIN HASH ON mi.movie_id = mk.movie_id\n     579     37091  │└DISTRIBUTE GATHER\n     579     37091  │ INNER JOIN HASH ON mk.keyword_id = k.id\n     579         3  │ │└DISTRIBUTE GATHER\n       7         3  │ │ TABLE SCAN sql - keyword WHERE k.keyword IN('murder','murder-in-title','blood','violence')\n 4520000   4519843  │ TABLE SCAN sql - movie_keyword\n     579      8746  INNER JOIN HASH ON mi_idx.info_type_id = it2.id\n     579         1  │└DISTRIBUTE GATHER\n 2530000         1  │ TABLE SCAN sql - info_type WHERE it2.info = 'rating'\n     579     25839  INNER JOIN HASH ON mi.movie_id = mi_idx.movie_id\n     579     55882  │└DISTRIBUTE GATHER\n     186     55882  │ INNER JOIN HASH ON t.kind_id = kt.id\n     186         1  │ │└DISTRIBUTE GATHER\n 1380000         1  │ │ TABLE SCAN sql - kind_type WHERE kt.kind = 'movie'\n     186     89788  │ INNER JOIN HASH ON mi.movie_id = t.id\n     186    614251  │ │└DISTRIBUTE GATHER\n     176    614251  │ │ INNER JOIN HASH ON it1.id = mi.info_type_id\n     176         1  │ │ │└DISTRIBUTE GATHER\n     113         1  │ │ │ TABLE SCAN sql - info_type WHERE it1.info = 'countries'\n14800000    626978  │ │ TABLE SCAN sql - movie_info WHERE mi.info IN('Sweden','Norway','Germany','Denmark','Swedish','Denish','Norwegian','German','USA','American')\n     113    375531  │ TABLE SCAN sql - title WHERE (t.production_year IS NOT NULL) AND (t.production_year > 2010L)\n  134000    815170  TABLE SCAN sql - movie_info_idx WHERE mi_idx.info < '8.5'\n",
       "sql": "SELECT MIN(mi_idx.info) AS rating,\n       MIN(t.title) AS northern_dark_movie\nFROM job.info_type AS it1,\n     job.info_type AS it2,\n     job.keyword AS k,\n     job.kind_type AS kt,\n     job.movie_info AS mi,\n     job.movie_info_idx AS mi_idx,\n     job.movie_keyword AS mk,\n     job.title AS t\nWHERE it1.info = 'countries'\n  AND it2.info = 'rating'\n  AND k.keyword IN ('murder',\n                    'murder-in-title',\n                    'blood',\n                    'violence')\n  AND kt.kind = 'movie'\n  AND mi.info IN ('Sweden',\n                  'Norway',\n                  'Germany',\n                  'Denmark',\n                  'Swedish',\n                  'Denish',\n                  'Norwegian',\n                  'German',\n                  'USA',\n                  'American')\n  AND mi_idx.info < '8.5'\n  AND t.production_year > 2010\n  AND kt.id = t.kind_id\n  AND t.id = mi.movie_id\n  AND t.id = mk.movie_id\n  AND t.id = mi_idx.movie_id\n  AND mk.movie_id = mi.movie_id\n  AND mk.movie_id = mi_idx.movie_id\n  AND mi.movie_id = mi_idx.movie_id\n  AND k.id = mk.keyword_id\n  AND it1.id = mi.info_type_id\n  AND it2.id = mi_idx.info_type_id;\n",
-      "startTime": "2026-06-25T10:59:24.644997Z",
+      "startTime": "2026-06-25T13:39:19.716021Z",
       "status": "OK",
-      "timeMs": 1075.914
+      "timeMs": 1107.327
     }
   ],
   "runtime": {
-    "avgMs": 1075.914,
-    "bestMs": 1075.914,
-    "maxMs": 1075.914,
-    "minMs": 1075.914,
+    "avgMs": 1107.327,
+    "bestMs": 1107.327,
+    "maxMs": 1107.327,
+    "minMs": 1107.327,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

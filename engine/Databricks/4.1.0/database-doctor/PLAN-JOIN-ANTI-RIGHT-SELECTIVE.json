@@ -1,0 +1,111 @@
+{
+  "config": "M5 Macbook Pro",
+  "engine": "Databricks",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 2,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 2,
+          ">16x": 1
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 1,
+        "distribute": 1,
+        "hash": 0,
+        "join": 0,
+        "scan": 1,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  SELECT\n       1         1  AGGREGATE COUNT(1)\n       1         0  DISTRIBUTE GATHER\n       1         0  AGGREGATE COUNT(1)\n      16         1  DISTRIBUTE GATHER\n      16         1  LIMIT 16\n  150000         1  TABLE SCAN sql - orders WHERE o.o_custkey = 1L\n",
+      "sql": "SELECT COUNT(c.c_custkey)\nFROM (\n  SELECT *\n  FROM tpch_sf1.customer\n  WHERE c_custkey = 1\n) AS c\nWHERE NOT EXISTS (\n  SELECT 1\n  FROM tpch_sf1.orders AS o\n  WHERE o.o_custkey = c.c_custkey\n);\n",
+      "startTime": "2026-06-25T13:46:03.686707Z",
+      "status": "OK",
+      "timeMs": 1401.36
+    }
+  ],
+  "runtime": {
+    "avgMs": 1401.36,
+    "bestMs": 1401.36,
+    "maxMs": 1401.36,
+    "minMs": 1401.36,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "ANTI RIGHT with selective filter",
+    "displayName": "PLAN-JOIN-ANTI-RIGHT-SELECTIVE",
+    "name": "PLAN-JOIN-ANTI-RIGHT-SELECTIVE",
+    "tags": [
+      "PLAN-JOIN",
+      "join"
+    ]
+  },
+  "version": "4.1.0"
+}

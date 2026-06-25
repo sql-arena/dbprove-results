@@ -82,16 +82,16 @@
       },
       "plan": "Estimate    Actual  Operator\n      0B     18282  SORT supplier_cnt DESC NULLS LAST, sql - p_brand ASC NULLS FIRST, sql - p_type ASC NULLS FIRST, sql - p_size ASC NULLS FIRST\n      0B     18282  AGGREGATE COUNT(DISTINCT sql - ps_suppkey) GROUP BY HASH sql - p_brand, sql - p_type, sql - p_size\n      0B     35216  DISTRIBUTE HASH ON sql - p_brand, sql - p_type, sql - p_size\n  800000     35216  AGGREGATE COUNT(DISTINCT sql - ps_suppkey) GROUP BY HASH sql - p_brand, sql - p_type, sql - p_size\n  800000    119013  GROUP BY HASH sql - p_brand, sql - p_type, sql - p_size, sql - ps_suppkey\n  800000    119021  DISTRIBUTE HASH ON sql - p_brand, sql - p_type, sql - p_size, sql - ps_suppkey\n  800000    119021  GROUP BY HASH sql - p_brand, sql - p_type, sql - p_size, sql - ps_suppkey\n      0B    119043  INNER JOIN HASH ON sql - ps_partkey = sql - p_partkey\n      0B     29775  │└DISTRIBUTE GATHER\n  800000     29775  │ TABLE SCAN sql - part WHERE ( NOT (sql - p_brand = 'Brand#42')) AND (sql - p_size IN(3,7,11,29,31,37,41,49)) AND ( NOT startswith(sql - p_type,'STANDARD ANODIZED'))\n  800000    796154  LEFT ANTI JOIN HASH ON sql - ps_suppkey = sql - s_suppkey\n  800000         4  │└DISTRIBUTE GATHER\n  200000         4  │ TABLE SCAN sql - supplier WHERE sql - s_comment LIKE '%Customer%Complaints%'\n   10000    796472  TABLE SCAN sql - partsupp\n",
       "sql": "/* TPC-H Q16 */\nSELECT p_brand,\n       p_type,\n       p_size,\n       COUNT(DISTINCT ps_suppkey) AS supplier_cnt\nFROM tpch_sf1.partsupp\nINNER JOIN tpch_sf1.part\n    ON ps_partkey = p_partkey\n\nWHERE p_brand <> 'Brand#42'\n  AND p_type NOT LIKE 'STANDARD ANODIZED%'\n  AND p_size IN (3, 7, 11, 29, 31, 37, 41, 49)\n  AND ps_suppkey NOT IN (SELECT s_suppkey\n                         FROM tpch_sf1.supplier\n                         WHERE s_comment LIKE '%Customer%Complaints%')\nGROUP BY p_brand,\n         p_type,\n         p_size\nORDER BY supplier_cnt DESC,\n         p_brand,\n         p_type,\n         p_size",
-      "startTime": "2026-06-25T11:08:45.487645Z",
+      "startTime": "2026-06-25T13:50:01.969271Z",
       "status": "OK",
-      "timeMs": 1627.952
+      "timeMs": 2541.19
     }
   ],
   "runtime": {
-    "avgMs": 1627.952,
-    "bestMs": 1627.952,
-    "maxMs": 1627.952,
-    "minMs": 1627.952,
+    "avgMs": 2541.19,
+    "bestMs": 2541.19,
+    "maxMs": 2541.19,
+    "minMs": 2541.19,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

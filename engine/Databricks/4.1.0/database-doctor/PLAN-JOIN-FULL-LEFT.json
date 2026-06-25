@@ -1,0 +1,111 @@
+{
+  "config": "M5 Macbook Pro",
+  "engine": "Databricks",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 1,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 1,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 1,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 2,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 1550016,
+        "distribute": 1650012,
+        "hash": 1550004,
+        "join": 1550004,
+        "scan": 1650000,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE COUNT(o.o_orderkey), COUNT(c.c_custkey)\n       1        12  DISTRIBUTE GATHER\n       1        12  AGGREGATE COUNT(o.o_orderkey), COUNT(c.c_custkey)\n 1500000   1550004  FULL JOIN HASH ON o.o_custkey = c.c_custkey\n 1500000    150000  │└DISTRIBUTE HASH ON c.c_custkey\n 1500000    150000  │ TABLE SCAN sql - customer\n 1500000   1500000  DISTRIBUTE HASH ON o.o_custkey\n  150000   1500000  TABLE SCAN sql - orders\n",
+      "sql": "SELECT COUNT(o.o_orderkey), COUNT(c.c_custkey)\nFROM tpch_sf1.orders AS o\nFULL JOIN tpch_sf1.customer AS c\n  ON o.o_custkey = c.c_custkey;\n",
+      "startTime": "2026-06-25T13:46:16.356414Z",
+      "status": "OK",
+      "timeMs": 1662.575
+    }
+  ],
+  "runtime": {
+    "avgMs": 1662.575,
+    "bestMs": 1662.575,
+    "maxMs": 1662.575,
+    "minMs": 1662.575,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "LEFT JOIN",
+    "displayName": "PLAN-JOIN-FULL-LEFT",
+    "name": "PLAN-JOIN-FULL-LEFT",
+    "tags": [
+      "PLAN-JOIN",
+      "join"
+    ]
+  },
+  "version": "4.1.0"
+}

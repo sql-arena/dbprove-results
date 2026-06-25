@@ -82,16 +82,16 @@
       },
       "plan": "Estimate    Actual  Operator\n  150000         1  SEQUENCE\n  150000         7  ├─SORT custsale.cntrycode ASC NULLS FIRST\n       1        14  │ DISTRIBUTE HASH ON custsale.cntrycode\n       1        14  │ AGGREGATE COUNT(1), SUM(custsale.c_acctbal) GROUP BY HASH custsale.cntrycode\n       1         7  │ DISTRIBUTE HASH ON custsale.cntrycode\n       1         7  │ AGGREGATE COUNT(1), SUM(custsale.c_acctbal) GROUP BY HASH custsale.cntrycode\n  150000      6321  │ LEFT ANTI JOIN HASH ON sql - c_custkey = sql - o_custkey\n  150000   1500000  │ │└DISTRIBUTE HASH ON sql - o_custkey\n  150000   1500000  │ │ TABLE SCAN sql - orders\n 1500000     18975  │ TABLE SCAN sql - customer WHERE ephemeralsubstring(sql - c_phone,1,2) IN('10','17','19','23','22','31','27')\n  150000         1  └─AGGREGATE AVG(sql - c_acctbal)\n  150000         1    DISTRIBUTE GATHER\n  150000         1    AGGREGATE AVG(sql - c_acctbal)\n  150000     38137    TABLE SCAN sql - customer WHERE (sql - c_acctbal > 0.00BD) AND (ephemeralsubstring(sql - c_phone,1,2) IN('10','17','19','23','22','31','27'))\n",
       "sql": "/* TPC-H Q22 */\nSELECT cntrycode,\n       COUNT(*)       AS numcust,\n       SUM(c_acctbal) AS totacctbal\nFROM (SELECT LEFT(c_phone,2) AS cntrycode,\n             c_acctbal\n      FROM tpch_sf1.customer\n      WHERE LEFT(c_phone,2) IN\n            ('10', '17', '19', '23', '22', '31', '27')\n        AND c_acctbal > (SELECT AVG(c_acctbal)\n                         FROM tpch_sf1.customer\n                         WHERE c_acctbal > 0.00\n                           AND LEFT(c_phone,2) IN\n                               ('10', '17', '19', '23', '22', '31', '27'))\n        AND NOT EXISTS (SELECT *\n                        FROM tpch_sf1.orders\n                        WHERE o_custkey = c_custkey)) AS custsale\nGROUP BY cntrycode\nORDER BY cntrycode\n\n\n",
-      "startTime": "2026-06-25T11:09:04.145034Z",
+      "startTime": "2026-06-25T13:50:27.470498Z",
       "status": "OK",
-      "timeMs": 1158.562
+      "timeMs": 1623.326
     }
   ],
   "runtime": {
-    "avgMs": 1158.562,
-    "bestMs": 1158.562,
-    "maxMs": 1158.562,
-    "minMs": 1158.562,
+    "avgMs": 1623.326,
+    "bestMs": 1623.326,
+    "maxMs": 1623.326,
+    "minMs": 1623.326,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

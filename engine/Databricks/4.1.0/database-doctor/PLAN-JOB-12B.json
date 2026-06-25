@@ -82,16 +82,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(mi.info), MIN(t.title)\n       1         4  DISTRIBUTE GATHER\n       1         4  AGGREGATE MIN(mi.info), MIN(t.title)\n  119000        10  INNER JOIN HASH ON mc.movie_id = mi.movie_id\n  119000        10  │└DISTRIBUTE GATHER\n  237000        10  │ INNER JOIN HASH ON mc.movie_id = mi_idx.movie_id\n  237000   1153798  │ │└DISTRIBUTE GATHER\n   12100   1153798  │ │ INNER JOIN HASH ON mc.company_type_id = ct.id\n   12100         2  │ │ │└DISTRIBUTE GATHER\n 1380000         2  │ │ │ TABLE SCAN sql - company_type WHERE ct.kind IN('production companies','distributors')\n  842000   1153798  │ │ INNER JOIN HASH ON cn.id = mc.company_id\n  842000     84843  │ │ │└DISTRIBUTE GATHER\n     113     84843  │ │ │ TABLE SCAN sql - company_name WHERE (cn.country_code IS NOT NULL) AND (cn.country_code = 'us')\n     113   2606542  │ │ TABLE SCAN sql - movie_companies\n   37600         2  │ INNER JOIN HASH ON mi_idx.movie_id = t.id\n   37600        10  │ │└DISTRIBUTE GATHER\n  842000        10  │ │ INNER JOIN HASH ON mi_idx.info_type_id = it2.id\n  842000         1  │ │ │└DISTRIBUTE GATHER\n14800000         1  │ │ │ TABLE SCAN sql - info_type WHERE it2.info = 'bottom 10 rank'\n  235000        10  │ │ TABLE SCAN sql - movie_info_idx\n 2530000      1020  │ TABLE SCAN sql - title WHERE (t.production_year IS NOT NULL) AND (t.production_year > 2000L) AND (startswith(t.title,'Birdemic') OR contains(t.title,'Movie'))\n   37600     78020  INNER JOIN HASH ON mi.info_type_id = it1.id\n   37600         1  │└DISTRIBUTE GATHER\n       4         1  │ TABLE SCAN sql - info_type WHERE it1.info = 'budget'\n 2610000    977916  TABLE SCAN sql - movie_info\n",
       "sql": "SELECT MIN(mi.info) AS budget,\n       MIN(t.title) AS unsuccsessful_movie\nFROM job.company_name AS cn,\n     job.company_type AS ct,\n     job.info_type AS it1,\n     job.info_type AS it2,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.movie_info_idx AS mi_idx,\n     job.title AS t\nWHERE cn.country_code ='[us]'\n  AND ct.kind IS NOT NULL\n  AND (ct.kind ='production companies'\n       OR ct.kind = 'distributors')\n  AND it1.info ='budget'\n  AND it2.info ='bottom 10 rank'\n  AND t.production_year >2000\n  AND (t.title LIKE 'Birdemic%'\n       OR t.title LIKE '%Movie%')\n  AND t.id = mi.movie_id\n  AND t.id = mi_idx.movie_id\n  AND mi.info_type_id = it1.id\n  AND mi_idx.info_type_id = it2.id\n  AND t.id = mc.movie_id\n  AND ct.id = mc.company_type_id\n  AND cn.id = mc.company_id\n  AND mc.movie_id = mi.movie_id\n  AND mc.movie_id = mi_idx.movie_id\n  AND mi.movie_id = mi_idx.movie_id;\n",
-      "startTime": "2026-06-25T10:59:04.618965Z",
+      "startTime": "2026-06-25T13:38:57.647002Z",
       "status": "OK",
-      "timeMs": 1027.298
+      "timeMs": 1086.174
     }
   ],
   "runtime": {
-    "avgMs": 1027.298,
-    "bestMs": 1027.298,
-    "maxMs": 1027.298,
-    "minMs": 1027.298,
+    "avgMs": 1086.174,
+    "bestMs": 1086.174,
+    "maxMs": 1086.174,
+    "minMs": 1086.174,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

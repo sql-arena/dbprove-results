@@ -82,16 +82,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       ∞         9  SORT sql - o_totalprice DESC NULLS LAST, sql - o_orderdate ASC NULLS FIRST\n       ∞        18  DISTRIBUTE HASH ON sql - o_totalprice, sql - o_orderdate\n       ∞        18  AGGREGATE SUM(sql - l_quantity) GROUP BY HASH sql - c_name, sql - c_custkey, sql - o_orderkey, sql - o_orderdate, sql - o_totalprice\n       ∞        18  INNER JOIN HASH ON sql - o_custkey = sql - c_custkey\n       ∞    150000  │└DISTRIBUTE GATHER\n 6000000    150000  │ TABLE SCAN sql - customer\n       ∞        18  AGGREGATE SUM(sql - l_quantity) GROUP BY HASH sql - o_custkey, sql - o_orderkey, sql - o_orderdate, sql - o_totalprice\n      9B        18  INNER JOIN HASH ON sql - l_orderkey = sql - o_orderkey\n      9B   1500001  │└DISTRIBUTE HASH ON sql - l_orderkey\n      9B   1500001  │ AGGREGATE SUM(sql - l_quantity) GROUP BY HASH sql - l_orderkey\n 1500000   6001215  │ TABLE SCAN sql - lineitem\n 1500000        18  LEFT SEMI JOIN HASH ON sql - o_orderkey = sql - l_orderkey\n 1500000         9  │└DISTRIBUTE GATHER\n 6000000         9  │ FILTER \n 6000000   1500000  │ AGGREGATE SUM(sql - l_quantity) GROUP BY HASH sql - l_orderkey\n 6000000   1500001  │ DISTRIBUTE HASH ON sql - l_orderkey\n 6000000   1500001  │ AGGREGATE SUM(sql - l_quantity) GROUP BY HASH sql - l_orderkey\n  150000   6001215  │ TABLE SCAN sql - lineitem\n 1500000   1500000  DISTRIBUTE HASH ON sql - o_orderkey\n 6000000   1500000  TABLE SCAN sql - orders\n",
       "sql": "/* TPC-H Q18 */\nSELECT c_name,\n       c_custkey,\n       o_orderkey,\n       o_orderdate,\n       o_totalprice,\n       SUM(l_quantity)\nFROM tpch_sf1.lineitem\nINNER JOIN tpch_sf1.orders\n    ON l_orderkey = o_orderkey\nINNER JOIN tpch_sf1.customer\n    ON o_custkey = c_custkey\nWHERE o_orderkey IN (SELECT l_orderkey\n                     FROM tpch_sf1.lineitem\n                     GROUP BY l_orderkey\n                     HAVING SUM(l_quantity) > 314)\nGROUP BY c_name,\n         c_custkey,\n         o_orderkey,\n         o_orderdate,\n         o_totalprice\nORDER BY o_totalprice DESC,\n         o_orderdate",
-      "startTime": "2026-06-25T11:08:52.025627Z",
+      "startTime": "2026-06-25T13:50:10.813651Z",
       "status": "OK",
-      "timeMs": 1044.522
+      "timeMs": 2283.11
     }
   ],
   "runtime": {
-    "avgMs": 1044.522,
-    "bestMs": 1044.522,
-    "maxMs": 1044.522,
-    "minMs": 1044.522,
+    "avgMs": 2283.11,
+    "bestMs": 2283.11,
+    "maxMs": 2283.11,
+    "minMs": 2283.11,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

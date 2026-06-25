@@ -82,16 +82,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(k.keyword), MIN(n.name), MIN(t.title)\n       1         1  DISTRIBUTE GATHER\n       1         1  AGGREGATE MIN(k.keyword), MIN(n.name), MIN(t.title)\n     398        88  INNER JOIN HASH ON mk.keyword_id = k.id\n     398         8  │└DISTRIBUTE GATHER\n36200000         8  │ TABLE SCAN sql - keyword WHERE k.keyword IN('superhero','sequel','second-part','marvel-comics','based-on-comic','tv-special','fight','violence')\n 5690000      5190  INNER JOIN HASH ON ci.movie_id = mk.movie_id\n 5690000       306  │└DISTRIBUTE GATHER\n 5690000       306  │ INNER JOIN HASH ON ci.movie_id = t.id\n 5690000   1381453  │ │└DISTRIBUTE GATHER\n 2530000   1381453  │ │ TABLE SCAN sql - title WHERE (t.production_year IS NOT NULL) AND (t.production_year > 2000L)\n25700000       307  │ INNER JOIN HASH ON ci.person_id = n.id\n25700000         2  │ │└DISTRIBUTE HASH ON n.id\n  134000         2  │ │ TABLE SCAN sql - name WHERE n.name LIKE '%Downey%Robert%'\n 4520000  16732272  │ TABLE SCAN sql - cast_info\n 4170000   4298651  TABLE SCAN sql - movie_keyword\n",
       "sql": "SELECT MIN(k.keyword) AS movie_keyword,\n       MIN(n.name) AS actor_name,\n       MIN(t.title) AS hero_movie\nFROM job.cast_info AS ci,\n     job.keyword AS k,\n     job.movie_keyword AS mk,\n     job.name AS n,\n     job.title AS t\nWHERE k.keyword IN ('superhero',\n                    'sequel',\n                    'second-part',\n                    'marvel-comics',\n                    'based-on-comic',\n                    'tv-special',\n                    'fight',\n                    'violence')\n  AND n.name LIKE '%Downey%Robert%'\n  AND t.production_year > 2000\n  AND k.id = mk.keyword_id\n  AND t.id = mk.movie_id\n  AND t.id = ci.movie_id\n  AND ci.movie_id = mk.movie_id\n  AND n.id = ci.person_id;\n",
-      "startTime": "2026-06-25T11:07:01.317295Z",
+      "startTime": "2026-06-25T13:44:19.597017Z",
       "status": "OK",
-      "timeMs": 1226.393
+      "timeMs": 1031.98
     }
   ],
   "runtime": {
-    "avgMs": 1226.393,
-    "bestMs": 1226.393,
-    "maxMs": 1226.393,
-    "minMs": 1226.393,
+    "avgMs": 1031.98,
+    "bestMs": 1031.98,
+    "maxMs": 1031.98,
+    "minMs": 1031.98,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

@@ -82,16 +82,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(an.name), MIN(chn.name), MIN(n.name), MIN(t.title)\n       1         1  DISTRIBUTE GATHER\n       1         1  AGGREGATE MIN(an.name), MIN(chn.name), MIN(n.name), MIN(t.title)\n     608      8144  INNER JOIN HASH ON ci.movie_id = mc.movie_id\n     608      7726  │└DISTRIBUTE GATHER\n     150      7726  │ INNER JOIN HASH ON ci.person_id = an.person_id\n     150      5686  │ │└DISTRIBUTE GATHER\n     142      5686  │ │ INNER JOIN HASH ON ci.movie_id = t.id\n     142      5686  │ │ │└DISTRIBUTE GATHER\n     142      5686  │ │ │ INNER JOIN HASH ON ci.person_role_id = chn.id\n     142      5686  │ │ │ │└DISTRIBUTE GATHER\n     142      5686  │ │ │ │ INNER JOIN HASH ON ci.role_id = rt.id\n     142         1  │ │ │ │ │└DISTRIBUTE GATHER\n  901000         1  │ │ │ │ │ TABLE SCAN sql - role_type WHERE rt.role = 'actress'\n   12100      5686  │ │ │ │ INNER JOIN HASH ON ci.person_id = n.id\n   12100    801259  │ │ │ │ │└DISTRIBUTE GATHER\n  235000    801259  │ │ │ │ │ TABLE SCAN sql - cast_info WHERE (ci.note IN('(voice)','(voice: Japanese version)','(voice) (uncredited)','(voice: English version)')) AND (ci.person_role_id IS NOT NULL)\n 2610000     49644  │ │ │ │ TABLE SCAN sql - name WHERE (n.gender IS NOT NULL) AND (n.gender = 'f') AND contains(n.name,'An')\n 2530000   3132165  │ │ │ TABLE SCAN sql - char_name\n 3140000   2520139  │ │ TABLE SCAN sql - title\n 4170000    893159  │ TABLE SCAN sql - aka_name\n     238   1147575  INNER JOIN HASH ON mc.company_id = cn.id\n     238     84843  │└DISTRIBUTE GATHER\n      12     84843  │ TABLE SCAN sql - company_name WHERE (cn.country_code IS NOT NULL) AND (cn.country_code = 'us')\n36200000   2596845  TABLE SCAN sql - movie_companies\n",
       "sql": "SELECT MIN(an.name) AS alternative_name,\n       MIN(chn.name) AS voiced_character_name,\n       MIN(n.name) AS voicing_actress,\n       MIN(t.title) AS american_movie\nFROM job.aka_name AS an,\n     job.char_name AS chn,\n     job.cast_info AS ci,\n     job.company_name AS cn,\n     job.movie_companies AS mc,\n     job.name AS n,\n     job.role_type AS rt,\n     job.title AS t\nWHERE ci.note IN ('(voice)',\n                  '(voice: Japanese version)',\n                  '(voice) (uncredited)',\n                  '(voice: English version)')\n  AND cn.country_code ='[us]'\n  AND n.gender ='f'\n  AND n.name LIKE '%An%'\n  AND rt.role ='actress'\n  AND ci.movie_id = t.id\n  AND t.id = mc.movie_id\n  AND ci.movie_id = mc.movie_id\n  AND mc.company_id = cn.id\n  AND ci.role_id = rt.id\n  AND n.id = ci.person_id\n  AND chn.id = ci.person_role_id\n  AND an.person_id = n.id\n  AND an.person_id = ci.person_id;\n",
-      "startTime": "2026-06-25T11:07:40.272500Z",
+      "startTime": "2026-06-25T13:44:59.584182Z",
       "status": "OK",
-      "timeMs": 1219.382
+      "timeMs": 1109.085
     }
   ],
   "runtime": {
-    "avgMs": 1219.382,
-    "bestMs": 1219.382,
-    "maxMs": 1219.382,
-    "minMs": 1219.382,
+    "avgMs": 1109.085,
+    "bestMs": 1109.085,
+    "maxMs": 1109.085,
+    "minMs": 1109.085,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

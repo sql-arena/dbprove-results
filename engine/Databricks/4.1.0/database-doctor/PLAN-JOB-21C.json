@@ -82,16 +82,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(cn.name), MIN(lt.link), MIN(t.title)\n       1         1  DISTRIBUTE GATHER\n       1         1  AGGREGATE MIN(cn.name), MIN(lt.link), MIN(t.title)\n     886      1874  INNER JOIN HASH ON mk.movie_id = mc.movie_id\n     886       199  │└DISTRIBUTE GATHER\n     886       199  │ INNER JOIN HASH ON ml.link_type_id = lt.id\n     886         2  │ │└DISTRIBUTE GATHER\n 4520000         2  │ │ TABLE SCAN sql - link_type WHERE contains(lt.link,'follow')\n     199       248  │ INNER JOIN HASH ON mk.movie_id = ml.movie_id\n     199      8370  │ │└DISTRIBUTE GATHER\n      75      8370  │ │ INNER JOIN HASH ON mk.movie_id = t.id\n      75     10544  │ │ │└DISTRIBUTE GATHER\n      71     10544  │ │ │ INNER JOIN HASH ON mk.keyword_id = k.id\n      71         1  │ │ │ │└DISTRIBUTE GATHER\n14800000         1  │ │ │ │ TABLE SCAN sql - keyword WHERE k.keyword = 'sequel'\n      18   4519836  │ │ │ TABLE SCAN sql - movie_keyword\n  235000   1894760  │ │ TABLE SCAN sql - title WHERE (t.production_year IS NOT NULL) AND (t.production_year >= 1950L) AND (t.production_year <= 2010L)\n  134000     25911  │ TABLE SCAN sql - movie_link\n     886    158021  INNER JOIN HASH ON mc.company_id = cn.id\n     886     48302  │└DISTRIBUTE GATHER\n 2530000     48302  │ TABLE SCAN sql - company_name WHERE (cn.country_code IS NOT NULL) AND ( NOT (cn.country_code = 'pl')) AND (contains(cn.name,'Film') OR contains(cn.name,'Warner'))\n     192    788965  INNER JOIN HASH ON mc.company_type_id = ct.id\n     192         1  │└DISTRIBUTE GATHER\n 2610000         1  │ TABLE SCAN sql - company_type WHERE ct.kind = 'production companies'\n     192    788965  INNER JOIN HASH ON mc.movie_id = mi.movie_id\n     192    936223  │└DISTRIBUTE GATHER\n   30000    936223  │ TABLE SCAN sql - movie_info WHERE mi.info IN('Sweden','Norway','Germany','Denmark','Swedish','Denish','Norwegian','German','English')\n       4   1190608  TABLE SCAN sql - movie_companies WHERE mc.note IS NULL\n",
       "sql": "SELECT MIN(cn.name) AS company_name,\n       MIN(lt.link) AS link_type,\n       MIN(t.title) AS western_follow_up\nFROM job.company_name AS cn,\n     job.company_type AS ct,\n     job.keyword AS k,\n     job.link_type AS lt,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.movie_keyword AS mk,\n     job.movie_link AS ml,\n     job.title AS t\nWHERE cn.country_code !='[pl]'\n  AND (cn.name LIKE '%Film%'\n       OR cn.name LIKE '%Warner%')\n  AND ct.kind ='production companies'\n  AND k.keyword ='sequel'\n  AND lt.link LIKE '%follow%'\n  AND mc.note IS NULL\n  AND mi.info IN ('Sweden',\n                  'Norway',\n                  'Germany',\n                  'Denmark',\n                  'Swedish',\n                  'Denish',\n                  'Norwegian',\n                  'German',\n                  'English')\n  AND t.production_year BETWEEN 1950 AND 2010\n  AND lt.id = ml.link_type_id\n  AND ml.movie_id = t.id\n  AND t.id = mk.movie_id\n  AND mk.keyword_id = k.id\n  AND t.id = mc.movie_id\n  AND mc.company_type_id = ct.id\n  AND mc.company_id = cn.id\n  AND mi.movie_id = t.id\n  AND ml.movie_id = mk.movie_id\n  AND ml.movie_id = mc.movie_id\n  AND mk.movie_id = mc.movie_id\n  AND ml.movie_id = mi.movie_id\n  AND mk.movie_id = mi.movie_id\n  AND mc.movie_id = mi.movie_id;\n",
-      "startTime": "2026-06-25T10:25:55.604823Z",
+      "startTime": "2026-06-25T13:41:14.634539Z",
       "status": "OK",
-      "timeMs": 1159.589
+      "timeMs": 1082.197
     }
   ],
   "runtime": {
-    "avgMs": 1159.589,
-    "bestMs": 1159.589,
-    "maxMs": 1159.589,
-    "minMs": 1159.589,
+    "avgMs": 1082.197,
+    "bestMs": 1082.197,
+    "maxMs": 1082.197,
+    "minMs": 1082.197,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

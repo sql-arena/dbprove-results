@@ -80,18 +80,18 @@
         "seek": 0,
         "sort": 42
       },
-      "plan": "Estimate    Actual  Operator\n  147000        42  SORT custdist DESC NULLS LAST, c_orders.c_count DESC NULLS LAST\n  147000        42  AGGREGATE COUNT(1) GROUP BY HASH c_orders.c_count\n  147000       460  DISTRIBUTE HASH ON c_orders.c_count\n  147000       460  AGGREGATE COUNT(1) GROUP BY HASH c_orders.c_count\n  147000    150000  AGGREGATE COUNT(sql - o_orderkey) GROUP BY HASH sql - c_custkey\n      0B   1549963  LEFT OUTER JOIN HASH ON sql - c_custkey = sql - o_custkey\n      0B    150000  │└DISTRIBUTE HASH ON sql - c_custkey\n  150000    150000  │ TABLE SCAN sql - customer\n      0B   1499959  DISTRIBUTE HASH ON sql - o_custkey\n 1500000   1499959  TABLE SCAN sql - orders WHERE  NOT sql - o_comment LIKE ' % special % requests % '\n",
+      "plan": "Estimate    Actual  Operator\n  147000        42  SORT custdist DESC NULLS LAST, c_orders.c_count DESC NULLS LAST\n  147000        42  AGGREGATE COUNT(1) GROUP BY HASH c_orders.c_count\n  147000       460  DISTRIBUTE HASH ON c_orders.c_count\n  147000       460  AGGREGATE COUNT(1) GROUP BY HASH c_orders.c_count\n  147000    150000  AGGREGATE COUNT(sql - o_orderkey) GROUP BY HASH sql - c_custkey\n      0B   1549963  LEFT OUTER JOIN HASH ON sql - c_custkey = sql - o_custkey\n      0B   1499959  │└DISTRIBUTE HASH ON sql - o_custkey\n 1500000   1499959  │ TABLE SCAN sql - orders WHERE  NOT sql - o_comment LIKE ' % special % requests % '\n      0B    150000  DISTRIBUTE HASH ON sql - c_custkey\n  150000    150000  TABLE SCAN sql - customer\n",
       "sql": "/* TPC-H Q13 */\nSELECT\n  c_count,\n  COUNT(*) AS custdist\nFROM\n  (\n    SELECT\n      c_custkey,\n      COUNT(o_orderkey)\n    FROM\n      tpch_sf1.customer\n      LEFT OUTER JOIN tpch_sf1.orders ON c_custkey = o_custkey\n      AND o_comment NOT LIKE ' % special % requests % '\n    GROUP BY\n      c_custkey\n  ) AS c_orders (c_custkey, c_count)\nGROUP BY\n  c_count\nORDER BY\n  custdist DESC,\n  c_count DESC\n;",
-      "startTime": "2026-06-25T11:08:36.310744Z",
+      "startTime": "2026-06-25T13:49:49.760949Z",
       "status": "OK",
-      "timeMs": 1087.596
+      "timeMs": 2473.039
     }
   ],
   "runtime": {
-    "avgMs": 1087.596,
-    "bestMs": 1087.596,
-    "maxMs": 1087.596,
-    "minMs": 1087.596,
+    "avgMs": 2473.039,
+    "bestMs": 2473.039,
+    "maxMs": 2473.039,
+    "minMs": 2473.039,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

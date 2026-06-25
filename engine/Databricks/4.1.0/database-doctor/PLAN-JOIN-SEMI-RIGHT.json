@@ -1,0 +1,111 @@
+{
+  "config": "M5 Macbook Pro",
+  "engine": "Databricks",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 1,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 1,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 1,
+          "-2x": 0,
+          "-4x": 1,
+          "-8x": 1,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 100001,
+        "distribute": 1650005,
+        "hash": 1500000,
+        "join": 150000,
+        "scan": 1650000,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE COUNT(1)\n       1         5  DISTRIBUTE GATHER\n       1         5  AGGREGATE COUNT(1)\n  102000     99996  LEFT SEMI JOIN HASH ON c.c_custkey = o.o_custkey\n  102000   1500000  │└DISTRIBUTE HASH ON o.o_custkey\n  150000   1500000  │ TABLE SCAN sql - orders\n  102000    150000  DISTRIBUTE HASH ON c.c_custkey\n 1500000    150000  TABLE SCAN sql - customer\n",
+      "sql": "SELECT COUNT(c.c_custkey)\nFROM tpch_sf1.customer AS c\nWHERE EXISTS (\n  SELECT 1\n  FROM tpch_sf1.orders AS o\n  WHERE o.o_custkey = c.c_custkey\n);\n",
+      "startTime": "2026-06-25T13:48:28.118654Z",
+      "status": "OK",
+      "timeMs": 1417.023
+    }
+  ],
+  "runtime": {
+    "avgMs": 1417.023,
+    "bestMs": 1417.023,
+    "maxMs": 1417.023,
+    "minMs": 1417.023,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "SEMI RIGHT",
+    "displayName": "PLAN-JOIN-SEMI-RIGHT",
+    "name": "PLAN-JOIN-SEMI-RIGHT",
+    "tags": [
+      "PLAN-JOIN",
+      "join"
+    ]
+  },
+  "version": "4.1.0"
+}

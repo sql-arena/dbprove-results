@@ -82,16 +82,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(an.name), MIN(t.title)\n       1         1  DISTRIBUTE GATHER\n       1         1  AGGREGATE MIN(an.name), MIN(t.title)\n     218         6  INNER JOIN HASH ON ci.person_id = an.person_id\n     218         4  │└DISTRIBUTE GATHER\n     137         4  │ INNER JOIN HASH ON ci.movie_id = mc.movie_id\n     137       394  │ │└DISTRIBUTE GATHER\n     137       394  │ │ INNER JOIN HASH ON ci.person_id = n.id\n     137     34848  │ │ │└DISTRIBUTE GATHER\n   44300     34848  │ │ │ INNER JOIN HASH ON ci.role_id = rt.id\n   44300         1  │ │ │ │└DISTRIBUTE GATHER\n  901000         1  │ │ │ │ TABLE SCAN sql - role_type WHERE rt.role = 'actress'\n 4170000     34848  │ │ │ TABLE SCAN sql - cast_info WHERE (ci.note IS NOT NULL) AND (ci.note = '(voice: English version)')\n 2530000      9844  │ │ TABLE SCAN sql - name WHERE contains(n.name,'Yo') AND ( NOT contains(n.name,'Yu'))\n     137         4  │ INNER JOIN HASH ON mc.company_id = cn.id\n     137      6752  │ │└DISTRIBUTE GATHER\n  235000      6752  │ │ TABLE SCAN sql - company_name WHERE (cn.country_code IS NOT NULL) AND (cn.country_code = 'jp')\n   12100         4  │ INNER JOIN HASH ON mc.movie_id = t.id\n   12100         7  │ │└DISTRIBUTE GATHER\n      12         7  │ │ TABLE SCAN sql - title WHERE (t.production_year IS NOT NULL) AND (t.production_year >= 2006L) AND (t.production_year <= 2007L) AND (startswith(t.title,'One Piece') OR startswith(t.title,'Dragon Ball Z'))\n36200000      2514  │ TABLE SCAN sql - movie_companies WHERE (mc.note IS NOT NULL) AND contains(mc.note,'(Japan)') AND ( NOT contains(mc.note,'(USA)')) AND (contains(mc.note,'(2006)') OR contains(mc.note,'(2007)'))\n 2610000    200930  TABLE SCAN sql - aka_name\n",
       "sql": "SELECT MIN(an.name) AS acress_pseudonym,\n       MIN(t.title) AS japanese_anime_movie\nFROM job.aka_name AS an,\n     job.cast_info AS ci,\n     job.company_name AS cn,\n     job.movie_companies AS mc,\n     job.name AS n,\n     job.role_type AS rt,\n     job.title AS t\nWHERE ci.note ='(voice: English version)'\n  AND cn.country_code ='[jp]'\n  AND mc.note LIKE '%(Japan)%'\n  AND mc.note NOT LIKE '%(USA)%'\n  AND (mc.note LIKE '%(2006)%'\n       OR mc.note LIKE '%(2007)%')\n  AND n.name LIKE '%Yo%'\n  AND n.name NOT LIKE '%Yu%'\n  AND rt.role ='actress'\n  AND t.production_year BETWEEN 2006 AND 2007\n  AND (t.title LIKE 'One Piece%'\n       OR t.title LIKE 'Dragon Ball Z%')\n  AND an.person_id = n.id\n  AND n.id = ci.person_id\n  AND ci.movie_id = t.id\n  AND t.id = mc.movie_id\n  AND mc.company_id = cn.id\n  AND ci.role_id = rt.id\n  AND an.person_id = ci.person_id\n  AND ci.movie_id = mc.movie_id;\n",
-      "startTime": "2026-06-25T11:07:24.096909Z",
+      "startTime": "2026-06-25T13:44:43.277487Z",
       "status": "OK",
-      "timeMs": 1040.102
+      "timeMs": 1050.737
     }
   ],
   "runtime": {
-    "avgMs": 1040.102,
-    "bestMs": 1040.102,
-    "maxMs": 1040.102,
-    "minMs": 1040.102,
+    "avgMs": 1050.737,
+    "bestMs": 1050.737,
+    "maxMs": 1050.737,
+    "minMs": 1050.737,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

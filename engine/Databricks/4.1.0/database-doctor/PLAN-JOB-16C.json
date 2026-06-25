@@ -82,16 +82,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(an.name), MIN(t.title)\n       1         1  DISTRIBUTE GATHER\n       1         1  AGGREGATE MIN(an.name), MIN(t.title)\n    5200    319932  INNER JOIN HASH ON ci.person_id = an.person_id\n    5200    221609  │└DISTRIBUTE GATHER\n    3280    221609  │ INNER JOIN HASH ON ci.person_id = n.id\n    3280    221609  │ │└DISTRIBUTE GATHER\n    3280    221609  │ │ INNER JOIN HASH ON mc.movie_id = ci.movie_id\n    3280      8538  │ │ │└DISTRIBUTE GATHER\n     199      8538  │ │ │ INNER JOIN HASH ON mc.company_id = cn.id\n     199     11406  │ │ │ │└DISTRIBUTE GATHER\n     192     11406  │ │ │ │ INNER JOIN HASH ON mk.movie_id = mc.movie_id\n     192      6926  │ │ │ │ │└DISTRIBUTE GATHER\n      75      6926  │ │ │ │ │ INNER JOIN HASH ON mk.movie_id = t.id\n      75     41840  │ │ │ │ │ │└DISTRIBUTE GATHER\n      71     41840  │ │ │ │ │ │ INNER JOIN HASH ON mk.keyword_id = k.id\n      71         1  │ │ │ │ │ │ │└DISTRIBUTE GATHER\n  901000         1  │ │ │ │ │ │ │ TABLE SCAN sql - keyword WHERE k.keyword = 'character-name-in-title'\n 4170000   4519861  │ │ │ │ │ │ TABLE SCAN sql - movie_keyword\n36200000    943646  │ │ │ │ │ TABLE SCAN sql - title WHERE (t.episode_nr IS NOT NULL) AND (t.episode_nr < 100L)\n  235000   2605043  │ │ │ │ TABLE SCAN sql - movie_companies\n 2610000     83360  │ │ │ TABLE SCAN sql - company_name WHERE (cn.country_code IS NOT NULL) AND (cn.country_code = 'us')\n 2530000  36228057  │ │ TABLE SCAN sql - cast_info\n  134000   4159342  │ TABLE SCAN sql - name\n 4520000    897371  TABLE SCAN sql - aka_name\n",
       "sql": "SELECT MIN(an.name) AS cool_actor_pseudonym,\n       MIN(t.title) AS series_named_after_char\nFROM job.aka_name AS an,\n     job.cast_info AS ci,\n     job.company_name AS cn,\n     job.keyword AS k,\n     job.movie_companies AS mc,\n     job.movie_keyword AS mk,\n     job.name AS n,\n     job.title AS t\nWHERE cn.country_code ='[us]'\n  AND k.keyword ='character-name-in-title'\n  AND t.episode_nr < 100\n  AND an.person_id = n.id\n  AND n.id = ci.person_id\n  AND ci.movie_id = t.id\n  AND t.id = mk.movie_id\n  AND mk.keyword_id = k.id\n  AND t.id = mc.movie_id\n  AND mc.company_id = cn.id\n  AND an.person_id = ci.person_id\n  AND ci.movie_id = mc.movie_id\n  AND ci.movie_id = mk.movie_id\n  AND mc.movie_id = mk.movie_id;\n",
-      "startTime": "2026-06-25T10:59:53.772812Z",
+      "startTime": "2026-06-25T13:39:51.816612Z",
       "status": "OK",
-      "timeMs": 1045.142
+      "timeMs": 1023.718
     }
   ],
   "runtime": {
-    "avgMs": 1045.142,
-    "bestMs": 1045.142,
-    "maxMs": 1045.142,
-    "minMs": 1045.142,
+    "avgMs": 1023.718,
+    "bestMs": 1023.718,
+    "maxMs": 1023.718,
+    "minMs": 1023.718,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

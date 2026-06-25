@@ -82,16 +82,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(aka_t.title), MIN(t.title)\n       1         1  DISTRIBUTE GATHER\n       1         1  AGGREGATE MIN(aka_t.title), MIN(t.title)\n  249000     11347  INNER JOIN HASH ON aka_t.movie_id = mk.movie_id\n  249000       875  │└DISTRIBUTE GATHER\n  119000       875  │ INNER JOIN HASH ON mc.movie_id = aka_t.movie_id\n  119000      9874  │ │└DISTRIBUTE GATHER\n   12100      9874  │ │ INNER JOIN HASH ON mc.company_id = cn.id\n   12100     84843  │ │ │└DISTRIBUTE GATHER\n  235000     84843  │ │ │ TABLE SCAN sql - company_name WHERE (cn.country_code IS NOT NULL) AND (cn.country_code = 'us')\n  514000     14400  │ │ INNER JOIN HASH ON mc.company_type_id = ct.id\n  514000         4  │ │ │└DISTRIBUTE GATHER\n 2530000         4  │ │ │ TABLE SCAN sql - company_type\n  514000     14400  │ │ INNER JOIN HASH ON mi.movie_id = mc.movie_id\n  514000     10679  │ │ │└DISTRIBUTE GATHER\n  201000     10679  │ │ │ INNER JOIN HASH ON mi.info_type_id = it1.id\n  201000         1  │ │ │ │└DISTRIBUTE GATHER\n  361000         1  │ │ │ │ TABLE SCAN sql - info_type WHERE it1.info = 'release dates'\n  134000     10679  │ │ │ TABLE SCAN sql - movie_info WHERE (mi.note IS NOT NULL) AND contains(mi.note,'internet')\n 4520000   2605043  │ │ TABLE SCAN sql - movie_companies\n   12700    140974  │ INNER JOIN HASH ON aka_t.movie_id = t.id\n   12700    361379  │ │└DISTRIBUTE HASH ON aka_t.movie_id\n 2610000    361379  │ │ TABLE SCAN sql - aka_title WHERE aka_t.movie_id IS NOT NULL\n   12700   1749032  │ DISTRIBUTE HASH ON t.id\n       4   1749032  │ TABLE SCAN sql - title WHERE (t.production_year IS NOT NULL) AND (t.production_year > 1990L)\n  114000   4515739  INNER JOIN HASH ON mk.keyword_id = k.id\n  114000    134170  │└DISTRIBUTE GATHER\n     113    134170  │ TABLE SCAN sql - keyword\n14800000   4515739  TABLE SCAN sql - movie_keyword\n",
       "sql": "SELECT MIN(aka_t.title) AS aka_title,\n       MIN(t.title) AS internet_movie_title\nFROM job.aka_title AS aka_t,\n     job.company_name AS cn,\n     job.company_type AS ct,\n     job.info_type AS it1,\n     job.keyword AS k,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.movie_keyword AS mk,\n     job.title AS t\nWHERE cn.country_code = '[us]'\n  AND it1.info = 'release dates'\n  AND mi.note LIKE '%internet%'\n  AND t.production_year > 1990\n  AND t.id = aka_t.movie_id\n  AND t.id = mi.movie_id\n  AND t.id = mk.movie_id\n  AND t.id = mc.movie_id\n  AND mk.movie_id = mi.movie_id\n  AND mk.movie_id = mc.movie_id\n  AND mk.movie_id = aka_t.movie_id\n  AND mi.movie_id = mc.movie_id\n  AND mi.movie_id = aka_t.movie_id\n  AND mc.movie_id = aka_t.movie_id\n  AND k.id = mk.keyword_id\n  AND it1.id = mi.info_type_id\n  AND cn.id = mc.company_id\n  AND ct.id = mc.company_type_id;\n",
-      "startTime": "2026-06-25T10:59:44.029300Z",
+      "startTime": "2026-06-25T13:39:41.080574Z",
       "status": "OK",
-      "timeMs": 1200.403
+      "timeMs": 1308.015
     }
   ],
   "runtime": {
-    "avgMs": 1200.403,
-    "bestMs": 1200.403,
-    "maxMs": 1200.403,
-    "minMs": 1200.403,
+    "avgMs": 1308.015,
+    "bestMs": 1308.015,
+    "maxMs": 1308.015,
+    "minMs": 1308.015,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

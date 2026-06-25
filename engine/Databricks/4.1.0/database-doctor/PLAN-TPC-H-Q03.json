@@ -82,16 +82,16 @@
       },
       "plan": "Estimate    Actual  Operator\n    270T     11281  DISTRIBUTE GATHER\n    270T     11281  AGGREGATE SUM(sql - l_extendedprice * (1BD - sql - l_discount)) GROUP BY HASH sql - l_orderkey, sql - o_orderdate, sql - o_shippriority\n    270T     11281  INNER JOIN HASH ON sql - l_orderkey = sql - o_orderkey\n    270T    145216  │└DISTRIBUTE HASH ON sql - o_orderkey\n      0B    145216  │ INNER JOIN HASH ON sql - o_custkey = sql - c_custkey\n      0B     29949  │ │└DISTRIBUTE GATHER\n  150000     29949  │ │ TABLE SCAN sql - customer WHERE sql - c_mktsegment = 'MACHINERY'\n 6000000    725773  │ TABLE SCAN sql - orders WHERE sql - o_orderdate < DATE'1995-03-15'\n    270T    829958  DISTRIBUTE HASH ON sql - l_orderkey\n    270T    829958  AGGREGATE SUM(sql - l_extendedprice * (1BD - sql - l_discount)) GROUP BY HASH sql - l_orderkey\n 1500000   3241776  TABLE SCAN sql - lineitem WHERE sql - l_shipdate > DATE'1995-03-15'\n",
       "sql": "/* TPC-H Q03 */\nSELECT l_orderkey,\n       SUM(l_extendedprice * (1 - l_discount)) AS revenue,\n       o_orderdate,\n       o_shippriority\nFROM tpch_sf1.lineitem\nINNER JOIN tpch_sf1.orders\n    ON l_orderkey = o_orderkey\nINNER JOIN tpch_sf1.customer\n    ON o_custkey = c_custkey\nWHERE c_mktsegment = 'MACHINERY'\n  AND o_orderdate < '1995-03-15'\n  AND l_shipdate > '1995-03-15'\nGROUP BY l_orderkey,\n         o_orderdate,\n         o_shippriority\nORDER BY revenue DESC,\n         o_orderdate\nLIMIT 10\n",
-      "startTime": "2026-06-25T11:08:01.753648Z",
+      "startTime": "2026-06-25T13:49:04.898080Z",
       "status": "OK",
-      "timeMs": 1057.657
+      "timeMs": 2858.527
     }
   ],
   "runtime": {
-    "avgMs": 1057.657,
-    "bestMs": 1057.657,
-    "maxMs": 1057.657,
-    "minMs": 1057.657,
+    "avgMs": 2858.527,
+    "bestMs": 2858.527,
+    "maxMs": 2858.527,
+    "minMs": 2858.527,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

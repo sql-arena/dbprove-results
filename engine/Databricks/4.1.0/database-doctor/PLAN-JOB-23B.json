@@ -82,16 +82,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(kt.kind), MIN(t.title)\n       1         1  DISTRIBUTE GATHER\n       1         1  AGGREGATE MIN(kt.kind), MIN(t.title)\n    4540        16  INNER JOIN HASH ON cc.movie_id = mi.movie_id\n    4540      1771  │└DISTRIBUTE GATHER\n     698      1771  │ INNER JOIN HASH ON mi.info_type_id = it1.id\n     698         1  │ │└DISTRIBUTE GATHER\n  135000         1  │ │ TABLE SCAN sql - info_type WHERE it1.info = 'release dates'\n 4520000      1771  │ TABLE SCAN sql - movie_info WHERE (mi.note IS NOT NULL) AND contains(mi.note,'internet') AND mi.info LIKE 'USA:% 200%'\n     721       315  INNER JOIN HASH ON mc.company_id = cn.id\n     721     84843  │└DISTRIBUTE GATHER\n  134000     84843  │ TABLE SCAN sql - company_name WHERE (cn.country_code IS NOT NULL) AND (cn.country_code = 'us')\n     698      1180  INNER JOIN HASH ON mc.company_type_id = ct.id\n     698         4  │└DISTRIBUTE GATHER\n       4         4  │ TABLE SCAN sql - company_type\n     273      1180  INNER JOIN HASH ON cc.movie_id = mc.movie_id\n     273        60  │└DISTRIBUTE GATHER\n     273        60  │ INNER JOIN HASH ON t.kind_id = kt.id\n     273         1  │ │└DISTRIBUTE GATHER\n       7         1  │ │ TABLE SCAN sql - kind_type WHERE kt.kind = 'movie'\n     259        61  │ INNER JOIN HASH ON cc.movie_id = t.id\n     259       318  │ │└DISTRIBUTE GATHER\n     259       318  │ │ INNER JOIN HASH ON cc.status_id = cct1.id\n     259         1  │ │ │└DISTRIBUTE GATHER\n  235000         1  │ │ │ TABLE SCAN sql - comp_cast_type WHERE cct1.kind = 'complete+verified'\n     176       617  │ │ INNER JOIN HASH ON mk.movie_id = cc.movie_id\n     176      1133  │ │ │└DISTRIBUTE GATHER\n  168000      1133  │ │ │ INNER JOIN HASH ON mk.keyword_id = k.id\n  168000         4  │ │ │ │└DISTRIBUTE GATHER\n     113         4  │ │ │ │ TABLE SCAN sql - keyword WHERE k.keyword IN('nerd','loner','alienation','dignity')\n14800000   4519835  │ │ │ TABLE SCAN sql - movie_keyword\n       4    131002  │ │ TABLE SCAN sql - complete_cast WHERE cc.movie_id IS NOT NULL\n 2610000    414012  │ TABLE SCAN sql - title WHERE (t.production_year IS NOT NULL) AND (t.production_year > 2000L)\n 2530000   2183152  TABLE SCAN sql - movie_companies\n",
       "sql": "SELECT MIN(kt.kind) AS movie_kind,\n       MIN(t.title) AS complete_nerdy_internet_movie\nFROM job.complete_cast AS cc,\n     job.comp_cast_type AS cct1,\n     job.company_name AS cn,\n     job.company_type AS ct,\n     job.info_type AS it1,\n     job.keyword AS k,\n     job.kind_type AS kt,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.movie_keyword AS mk,\n     job.title AS t\nWHERE cct1.kind = 'complete+verified'\n  AND cn.country_code = '[us]'\n  AND it1.info = 'release dates'\n  AND k.keyword IN ('nerd',\n                    'loner',\n                    'alienation',\n                    'dignity')\n  AND kt.kind IN ('movie')\n  AND mi.note LIKE '%internet%'\n  AND mi.info LIKE 'USA:% 200%'\n  AND t.production_year > 2000\n  AND kt.id = t.kind_id\n  AND t.id = mi.movie_id\n  AND t.id = mk.movie_id\n  AND t.id = mc.movie_id\n  AND t.id = cc.movie_id\n  AND mk.movie_id = mi.movie_id\n  AND mk.movie_id = mc.movie_id\n  AND mk.movie_id = cc.movie_id\n  AND mi.movie_id = mc.movie_id\n  AND mi.movie_id = cc.movie_id\n  AND mc.movie_id = cc.movie_id\n  AND k.id = mk.keyword_id\n  AND it1.id = mi.info_type_id\n  AND cn.id = mc.company_id\n  AND ct.id = mc.company_type_id\n  AND cct1.id = cc.status_id;\n",
-      "startTime": "2026-06-25T11:04:25.359045Z",
+      "startTime": "2026-06-25T13:41:36.601915Z",
       "status": "OK",
-      "timeMs": 1289.215
+      "timeMs": 1421.366
     }
   ],
   "runtime": {
-    "avgMs": 1289.215,
-    "bestMs": 1289.215,
-    "maxMs": 1289.215,
-    "minMs": 1289.215,
+    "avgMs": 1421.366,
+    "bestMs": 1421.366,
+    "maxMs": 1421.366,
+    "minMs": 1421.366,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

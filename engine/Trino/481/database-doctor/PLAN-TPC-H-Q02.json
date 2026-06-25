@@ -1,4 +1,5 @@
 {
+  "config": "M5 Macbook Pro",
   "engine": "Trino",
   "queries": [
     {
@@ -81,16 +82,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       -       495  PROJECT s_acctbal, s_name, n_name, ps_partkey AS p_partkey, p_mfgr, s_address, s_phone, s_comment\n       -       495  SORT s_acctbal, n_name, s_name, ps_partkey\n       -       495  FILTER ps_supplycost = COALESCE(min,min_45)\n       -       689  CROSS JOIN LOOP\n       -       689  │└LEFT OUTER JOIN HASH ON ps_partkey = ps_partkey_12\n       -    117422  │ │└AGGREGATE MIN(min_46) AS min GROUP BY HASH ps_partkey_12\n       -    117422  │ │ DISTRIBUTE HASH ON ps_partkey_12\n       -    117422  │ │ AGGREGATE MIN(ps_supplycost_15) AS min_46 GROUP BY PARTIAL ps_partkey_12\n       -    158960  │ │ FILTER non_null\n       -    158960  │ │ PROJECT ps_supplycost_15, ps_partkey_12, true AS non_null\n       -    158960  │ │ INNER JOIN HASH ON n_regionkey_32 = r_regionkey_37\n       -         1  │ │ │└DISTRIBUTE GATHER\n       5         1  │ │ │ PROJECT r_regionkey AS r_regionkey_37\n       5         1  │ │ │ FILTER r_name = 'EUROPE'\n       5         5  │ │ │ TABLE SCAN region\n       -    800000  │ │ INNER JOIN HASH ON s_nationkey_23 = n_nationkey_30\n      25        25  │ │ │└DISTRIBUTE GATHER\n      25        25  │ │ │ PROJECT n_nationkey AS n_nationkey_30, n_regionkey AS n_regionkey_32\n      25        25  │ │ │ TABLE SCAN nation\n       -    800000  │ │ INNER JOIN HASH ON ps_suppkey_13 = s_suppkey_20\n   10000     10000  │ │ │└DISTRIBUTE GATHER\n   10000     10000  │ │ │ PROJECT s_suppkey AS s_suppkey_20, s_nationkey AS s_nationkey_23\n   10000     10000  │ │ │ TABLE SCAN supplier\n  800000    800000  │ │ PROJECT ps_partkey AS ps_partkey_12, ps_suppkey AS ps_suppkey_13, ps_supplycost AS ps_supplycost_15\n  800000    800000  │ │ TABLE SCAN partsupp\n       -       689  │ INNER JOIN HASH ON n_regionkey = r_regionkey\n       -         1  │ │└DISTRIBUTE GATHER\n       5         1  │ │ FILTER r_name = 'EUROPE'\n       5         5  │ │ TABLE SCAN region\n       -      3212  │ INNER JOIN HASH ON s_nationkey = n_nationkey\n      25        25  │ │└DISTRIBUTE GATHER\n      25        25  │ │ TABLE SCAN nation\n       -      3212  │ INNER JOIN HASH ON ps_suppkey = s_suppkey\n   10000     10000  │ │└DISTRIBUTE GATHER\n   10000     10000  │ │ TABLE SCAN supplier\n       -      3212  │ INNER JOIN HASH ON ps_partkey = p_partkey\n       -       803  │ │└DISTRIBUTE GATHER\n  200000       803  │ │ FILTER (p_size = 25) AND (p_type LIKE '%BRASS')\n  200000    200000  │ │ TABLE SCAN part\n  800000    800000  │ TABLE SCAN partsupp\n       1         1  DISTRIBUTE GATHER\n       1         1  AGGREGATE MIN(null_value) AS min_45\n       -         0  FILTER null_44\n       1         1  PROJECT 0.0 AS null_value, false AS null_44\n       1         1  SELECT\n",
       "sql": "/* TPC-H Q02 */\nSELECT s_acctbal,\n       s_name,\n       n_name,\n       p_partkey,\n       p_mfgr,\n       s_address,\n       s_phone,\n       s_comment\nFROM tpch_sf1.partsupp\nINNER JOIN tpch_sf1.part\n    ON ps_partkey = p_partkey\nINNER JOIN tpch_sf1.supplier\n    ON ps_suppkey = s_suppkey\nINNER JOIN tpch_sf1.nation\n    ON s_nationkey = n_nationkey\nINNER JOIN tpch_sf1.region\n    ON n_regionkey = r_regionkey\nWHERE p_size = 25\n  AND p_type LIKE '%BRASS'\n  AND r_name = 'EUROPE'\n  AND ps_supplycost = (SELECT MIN(ps_supplycost) AS min_cost\n                       FROM tpch_sf1.partsupp AS ps_min\n                       INNER JOIN tpch_sf1.supplier AS s_min\n                           ON ps_suppkey = s_suppkey\n                       INNER JOIN tpch_sf1.nation AS n_min\n                           ON s_nationkey = n_nationkey\n                       INNER JOIN tpch_sf1.region AS r_min\n                           ON n_regionkey = r_regionkey\n                       WHERE ps_partkey = p_partkey\n                         AND r_name = 'EUROPE')\nORDER BY s_acctbal DESC,\n         n_name,\n         s_name,\n         p_partkey\n\n\n",
-      "startTime": "2026-06-23T11:48:11.076855Z",
+      "startTime": "2026-06-25T16:26:25.221610Z",
       "status": "OK",
-      "timeMs": 456.79
+      "timeMs": 1360.813
     }
   ],
   "runtime": {
-    "avgMs": 456.79,
-    "bestMs": 456.79,
-    "maxMs": 456.79,
-    "minMs": 456.79,
+    "avgMs": 1360.813,
+    "bestMs": 1360.813,
+    "maxMs": 1360.813,
+    "minMs": 1360.813,
     "stdDevMs": 0.0
   },
   "storageVariant": "iceberg",

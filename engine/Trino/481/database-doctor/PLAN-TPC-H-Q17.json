@@ -1,4 +1,5 @@
 {
+  "config": "M5 Macbook Pro",
   "engine": "Trino",
   "queries": [
     {
@@ -81,16 +82,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  PROJECT expr_22 AS avg_yearly\n       1         1  PROJECT sum / 7.0 AS expr_22\n       1         1  DISTRIBUTE ROUND ROBIN\n       1         1  AGGREGATE SUM(sum_26) AS sum\n       -         1  DISTRIBUTE GATHER\n       -         1  AGGREGATE SUM(l_extendedprice) AS sum_26\n       -       537  FILTER CAST(l_quantity AS decimal(16,3)) < (COALESCE(avg,avg_25) * 0.2)\n       -      6029  CROSS JOIN LOOP\n       -      6029  │└LEFT OUTER JOIN HASH ON l_partkey = l_partkey_4\n       -    200000  │ │└DISTRIBUTE HASH ON l_partkey_4\n       -    200000  │ │ AGGREGATE AVG(avg_27) AS avg GROUP BY HASH l_partkey_4\n 6001215    200000  │ │ DISTRIBUTE HASH ON l_partkey_4\n 6001215    200000  │ │ AGGREGATE AVG(l_quantity_7) AS avg_27 GROUP BY PARTIAL l_partkey_4\n       -   6001215  │ │ FILTER non_null\n 6001215   6001215  │ │ PROJECT l_quantity AS l_quantity_7, l_partkey AS l_partkey_4, true AS non_null\n 6001215   6001215  │ │ TABLE SCAN lineitem\n       -      6029  │ INNER JOIN HASH ON l_partkey = p_partkey\n       -       198  │ │└DISTRIBUTE GATHER\n  200000       198  │ │ FILTER (p_brand = 'Brand#13') AND (p_container = 'MED CAN')\n  200000    200000  │ │ TABLE SCAN part\n 6001215   6001215  │ TABLE SCAN lineitem\n       1         1  DISTRIBUTE GATHER\n       1         1  AGGREGATE AVG(null_value) AS avg_25\n       -         0  FILTER null_24\n       1         1  PROJECT 0.0 AS null_value, false AS null_24\n       1         1  SELECT\n",
       "sql": "/* TPC-H Q17 */\nSELECT SUM(l_extendedprice) / 7.0 AS avg_yearly\nFROM tpch_sf1.lineitem\nINNER JOIN tpch_sf1.part\n    ON l_partkey = p_partkey\nWHERE p_brand = 'Brand#13'\n  AND p_container = 'MED CAN'\n  AND l_quantity < (SELECT 0.2 * AVG(l_quantity) AS l_avg\n                    FROM tpch_sf1.lineitem li\n                    WHERE l_partkey = p_partkey)",
-      "startTime": "2026-06-23T11:49:08.759220Z",
+      "startTime": "2026-06-25T16:28:04.168428Z",
       "status": "OK",
-      "timeMs": 348.879
+      "timeMs": 588.506
     }
   ],
   "runtime": {
-    "avgMs": 348.879,
-    "bestMs": 348.879,
-    "maxMs": 348.879,
-    "minMs": 348.879,
+    "avgMs": 588.506,
+    "bestMs": 588.506,
+    "maxMs": 588.506,
+    "minMs": 588.506,
     "stdDevMs": 0.0
   },
   "storageVariant": "iceberg",

@@ -1,4 +1,5 @@
 {
+  "config": "M5 Macbook Pro",
   "engine": "Trino",
   "queries": [
     {
@@ -81,16 +82,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       -         9  PROJECT c_name, o_custkey AS c_custkey, l_orderkey AS o_orderkey, o_orderdate, o_totalprice, sum_27 AS _col5\n       -         9  SORT o_totalprice, o_orderdate\n       -         9  AGGREGATE SUM(sum_29) AS sum_27 GROUP BY HASH c_name, o_custkey, l_orderkey, o_orderdate, o_totalprice\n       -         9  DISTRIBUTE HASH ON c_name, o_custkey, l_orderkey, o_orderdate, o_totalprice\n       -         9  AGGREGATE SUM(l_quantity) AS sum_29 GROUP BY PARTIAL c_name, o_custkey, l_orderkey, o_orderdate, o_totalprice\n       -        63  INNER JOIN HASH ON l_orderkey = l_orderkey_6\n       -         9  │└DISTRIBUTE HASH ON l_orderkey_6\n       -         9  │ FILTER sum > 314.00\n       -   1500000  │ AGGREGATE SUM(sum_30) AS sum GROUP BY HASH l_orderkey_6\n 6001215   1500000  │ DISTRIBUTE HASH ON l_orderkey_6\n 6001215   1500000  │ AGGREGATE SUM(l_quantity_10) AS sum_30 GROUP BY PARTIAL l_orderkey_6\n 6001215   6001215  │ PROJECT l_orderkey AS l_orderkey_6, l_quantity AS l_quantity_10\n 6001215   6001215  │ TABLE SCAN lineitem\n       -   6001215  INNER JOIN HASH ON o_custkey = c_custkey\n  150000    150000  │└DISTRIBUTE GATHER\n  150000    150000  │ TABLE SCAN customer\n       -   6001215  INNER JOIN HASH ON l_orderkey = o_orderkey\n 1500000   1500000  │└DISTRIBUTE HASH ON o_orderkey\n 1500000   1500000  │ TABLE SCAN orders\n 6001215   6001215  TABLE SCAN lineitem\n",
       "sql": "/* TPC-H Q18 */\nSELECT c_name,\n       c_custkey,\n       o_orderkey,\n       o_orderdate,\n       o_totalprice,\n       SUM(l_quantity)\nFROM tpch_sf1.lineitem\nINNER JOIN tpch_sf1.orders\n    ON l_orderkey = o_orderkey\nINNER JOIN tpch_sf1.customer\n    ON o_custkey = c_custkey\nWHERE o_orderkey IN (SELECT l_orderkey\n                     FROM tpch_sf1.lineitem\n                     GROUP BY l_orderkey\n                     HAVING SUM(l_quantity) > 314)\nGROUP BY c_name,\n         c_custkey,\n         o_orderkey,\n         o_orderdate,\n         o_totalprice\nORDER BY o_totalprice DESC,\n         o_orderdate",
-      "startTime": "2026-06-23T11:49:10.799673Z",
+      "startTime": "2026-06-25T16:28:07.258313Z",
       "status": "OK",
-      "timeMs": 726.065
+      "timeMs": 1071.689
     }
   ],
   "runtime": {
-    "avgMs": 726.065,
-    "bestMs": 726.065,
-    "maxMs": 726.065,
-    "minMs": 726.065,
+    "avgMs": 1071.689,
+    "bestMs": 1071.689,
+    "maxMs": 1071.689,
+    "minMs": 1071.689,
     "stdDevMs": 0.0
   },
   "storageVariant": "iceberg",

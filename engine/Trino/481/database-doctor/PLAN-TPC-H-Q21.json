@@ -1,4 +1,5 @@
 {
+  "config": "M5 Macbook Pro",
   "engine": "Trino",
   "queries": [
     {
@@ -81,16 +82,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       -       396  PROJECT s_name, count AS numwait\n       -       396  SORT count, s_name\n       -       396  AGGREGATE COUNT(count_54) AS count GROUP BY HASH s_name\n       -       396  DISTRIBUTE HASH ON s_name\n       -       396  AGGREGATE COUNT(*) AS count_54 GROUP BY PARTIAL s_name\n       -      3935  FILTER  NOT (COALESCE(aggrbool,false))\n       -     70401  AGGREGATE BOOL_OR(subquerytrue_49) AS aggrbool GROUP BY HASH l_orderkey, l_suppkey, l_commitdate, l_receiptdate, o_orderstatus, s_name, n_name, exists_value, unique_value\n       -    188106  LEFT OUTER JOIN HASH ON (l_orderkey = l_orderkey_29) AND (l_suppkey_31 <> l_suppkey)\n 3040568   3793296  │└DISTRIBUTE HASH ON l_orderkey_29\n 3040568   3793296  │ PROJECT true AS subquerytrue_49, l_orderkey_29, l_suppkey_31\n 6001215   3793296  │ PROJECT l_orderkey AS l_orderkey_29, l_suppkey AS l_suppkey_31\n 6001215   3793296  │ FILTER l_receiptdate > l_commitdate\n 6001215   6001215  │ TABLE SCAN lineitem\n       -     70401  PROJECT l_orderkey, l_suppkey, l_commitdate, l_receiptdate, o_orderstatus, s_name, n_name, exists_value, row_number() OVER() AS unique_value\n       -     70401  PROJECT l_orderkey, l_suppkey, l_commitdate, l_receiptdate, o_orderstatus, s_name, n_name, true AS exists_value\n       -     70401  GROUP BY HASH l_orderkey, l_suppkey, l_commitdate, l_receiptdate, o_orderstatus, s_name, n_name, unique_53\n       -    291808  INNER JOIN HASH ON (l_orderkey = l_orderkey_9) AND (l_suppkey_11 <> l_suppkey)\n 6001215   6001215  │└DISTRIBUTE HASH ON l_orderkey_9\n 6001215   6001215  │ PROJECT l_orderkey AS l_orderkey_9, l_suppkey AS l_suppkey_11\n 6001215   6001215  │ TABLE SCAN lineitem\n       -     73048  PROJECT l_orderkey, l_suppkey, l_commitdate, l_receiptdate, o_orderstatus, s_name, n_name, row_number() OVER() AS unique_53\n       -     73048  INNER JOIN HASH ON s_nationkey = n_nationkey\n       -         1  │└DISTRIBUTE GATHER\n      25         1  │ FILTER n_name = 'GERMANY'\n      25        25  │ TABLE SCAN nation\n       -   1828911  INNER JOIN HASH ON l_suppkey = s_suppkey\n   10000     10000  │└DISTRIBUTE GATHER\n   10000     10000  │ TABLE SCAN supplier\n       -   1828911  INNER JOIN HASH ON l_orderkey = o_orderkey\n 1350000    729413  │└DISTRIBUTE HASH ON o_orderkey\n 1500000    729413  │ FILTER o_orderstatus = 'F'\n 1500000   1500000  │ TABLE SCAN orders\n 6001215   3793296  FILTER l_receiptdate > l_commitdate\n 6001215   6001215  TABLE SCAN lineitem\n",
       "sql": "/* TPC-H Q21 */\nSELECT s_name, COUNT(*) AS numwait\nFROM tpch_sf1.lineitem l1\nINNER JOIN tpch_sf1.orders\n    ON l1.l_orderkey = o_orderkey\nINNER JOIN tpch_sf1.supplier\n    ON l1.l_suppkey = s_suppkey\nINNER JOIN tpch_sf1.nation\n    ON s_nationkey = n_nationkey\nWHERE o_orderstatus = 'F'\n  AND l1.l_receiptdate > l1.l_commitdate\n  AND EXISTS (SELECT 1\n              FROM tpch_sf1.lineitem l2\n              WHERE l2.l_orderkey = l1.l_orderkey\n                AND l2.l_suppkey <> l1.l_suppkey)\n  AND NOT EXISTS (SELECT 1\n                  FROM tpch_sf1.lineitem l3\n                  WHERE l3.l_orderkey = l1.l_orderkey\n                    AND l3.l_suppkey <> l1.l_suppkey\n                    AND l3.l_receiptdate\n                      > l3.l_commitdate)\n  AND n_name = 'GERMANY'\nGROUP BY s_name\nORDER BY numwait DESC,\n         s_name\n",
-      "startTime": "2026-06-23T11:49:23.038208Z",
+      "startTime": "2026-06-25T16:28:31.711422Z",
       "status": "OK",
-      "timeMs": 1634.483
+      "timeMs": 1780.37
     }
   ],
   "runtime": {
-    "avgMs": 1634.483,
-    "bestMs": 1634.483,
-    "maxMs": 1634.483,
-    "minMs": 1634.483,
+    "avgMs": 1780.37,
+    "bestMs": 1780.37,
+    "maxMs": 1780.37,
+    "minMs": 1780.37,
     "stdDevMs": 0.0
   },
   "storageVariant": "iceberg",

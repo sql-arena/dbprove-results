@@ -1,4 +1,5 @@
 {
+  "config": "M5 Macbook Pro",
   "engine": "Trino",
   "queries": [
     {
@@ -81,16 +82,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       -      1225  PROJECT ps_partkey, sum AS v\n       -      1225  SORT sum\n       -      1225  FILTER CAST(sum AS decimal(38,6)) > expr_33\n       -     28515  CROSS JOIN LOOP\n       -     28515  │└AGGREGATE SUM(sum_34) AS sum GROUP BY HASH ps_partkey\n       -     28515  │ DISTRIBUTE HASH ON ps_partkey\n       -     28515  │ AGGREGATE SUM(expr) AS sum_34 GROUP BY PARTIAL ps_partkey\n       -     30160  │ PROJECT ps_supplycost * CAST(ps_availqty AS decimal(10,0)) AS expr, ps_partkey\n       -     30160  │ INNER JOIN HASH ON s_nationkey = n_nationkey\n       -         1  │ │└DISTRIBUTE GATHER\n      25         1  │ │ FILTER n_name = 'JAPAN'\n      25        25  │ │ TABLE SCAN nation\n       -    800000  │ INNER JOIN HASH ON ps_suppkey = s_suppkey\n   10000     10000  │ │└DISTRIBUTE GATHER\n   10000     10000  │ │ TABLE SCAN supplier\n  800000    800000  │ TABLE SCAN partsupp\n       1         1  DISTRIBUTE GATHER\n       1         1  PROJECT sum_32 * 0.0001 AS expr_33\n       1         1  DISTRIBUTE ROUND ROBIN\n       1         1  AGGREGATE SUM(sum_35) AS sum_32\n       -         1  DISTRIBUTE GATHER\n       -         1  AGGREGATE SUM(expr_31) AS sum_35\n       -     30160  PROJECT ps_supplycost_9 * CAST(ps_availqty_8 AS decimal(10,0)) AS expr_31\n       -     30160  INNER JOIN HASH ON s_nationkey_17 = n_nationkey_24\n       -         1  │└DISTRIBUTE GATHER\n      25         1  │ PROJECT n_nationkey AS n_nationkey_24\n      25         1  │ FILTER n_name = 'JAPAN'\n      25        25  │ TABLE SCAN nation\n       -    800000  INNER JOIN HASH ON ps_suppkey_7 = s_suppkey_14\n   10000     10000  │└DISTRIBUTE GATHER\n   10000     10000  │ PROJECT s_suppkey AS s_suppkey_14, s_nationkey AS s_nationkey_17\n   10000     10000  │ TABLE SCAN supplier\n  800000    800000  PROJECT ps_suppkey AS ps_suppkey_7, ps_availqty AS ps_availqty_8, ps_supplycost AS ps_supplycost_9\n  800000    800000  TABLE SCAN partsupp\n",
       "sql": "/* TPC-H Q11 */\nSELECT ps_partkey,\n       SUM(ps_supplycost * ps_availqty) AS v\nFROM tpch_sf1.partsupp\nINNER JOIN tpch_sf1.supplier\n    ON ps_suppkey = s_suppkey\nINNER JOIN tpch_sf1.nation\n    ON s_nationkey = n_nationkey\nWHERE n_name = 'JAPAN'\nGROUP BY ps_partkey\nHAVING SUM(ps_supplycost * ps_availqty)\n           > (SELECT SUM(ps_supplycost * ps_availqty) * 0.0001\n              FROM tpch_sf1.partsupp\n              INNER JOIN tpch_sf1.supplier\n                  ON ps_suppkey = s_suppkey\n              INNER JOIN tpch_sf1.nation\n                  ON s_nationkey = n_nationkey\n              WHERE n_name = 'JAPAN')\nORDER BY v DESC\n",
-      "startTime": "2026-06-23T11:48:56.587810Z",
+      "startTime": "2026-06-25T16:27:41.400274Z",
       "status": "OK",
-      "timeMs": 191.047
+      "timeMs": 292.382
     }
   ],
   "runtime": {
-    "avgMs": 191.047,
-    "bestMs": 191.047,
-    "maxMs": 191.047,
-    "minMs": 191.047,
+    "avgMs": 292.382,
+    "bestMs": 292.382,
+    "maxMs": 292.382,
+    "minMs": 292.382,
     "stdDevMs": 0.0
   },
   "storageVariant": "iceberg",

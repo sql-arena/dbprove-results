@@ -1,4 +1,5 @@
 {
+  "config": "M5 Macbook Pro",
   "engine": "Trino",
   "queries": [
     {
@@ -81,16 +82,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       -         2  PROJECT expr_gid AS o_year, expr_28 AS mkt_share\n       -         2  SORT expr_gid\n       -         2  PROJECT expr_gid, sum / sum_27 AS expr_28\n       -         2  AGGREGATE SUM(sum_29) AS sum, SUM(sum_30) AS sum_27 GROUP BY HASH expr_gid\n       -         2  DISTRIBUTE HASH ON expr_gid\n       -         2  AGGREGATE SUM(expr_26) AS sum_29, SUM(expr_25) AS sum_30 GROUP BY PARTIAL expr_gid\n       -      2647  PROJECT expr_25, CASE WHEN (n_name_19 = 'FRANCE') THEN expr_25 ELSE 0.0000 END AS expr_26, EXTRACT(YEAR FROM o_orderdate) AS expr_gid\n       -      2647  PROJECT n_name_19, l_extendedprice * (1 - l_discount) AS expr_25, o_orderdate\n       -      2647  INNER JOIN HASH ON s_nationkey = n_nationkey_18\n      25        25  │└DISTRIBUTE GATHER\n      25        25  │ PROJECT n_nationkey AS n_nationkey_18, n_name AS n_name_19\n      25        25  │ TABLE SCAN nation\n       -      2647  INNER JOIN HASH ON n_regionkey = r_regionkey\n       -         1  │└DISTRIBUTE GATHER\n       5         1  │ FILTER r_name = 'EUROPE'\n       5         5  │ TABLE SCAN region\n       -     12905  INNER JOIN HASH ON c_nationkey = n_nationkey\n      25        25  │└DISTRIBUTE GATHER\n      25        25  │ TABLE SCAN nation\n       -     12905  INNER JOIN HASH ON o_custkey = c_custkey\n  150000    150000  │└DISTRIBUTE GATHER\n  150000    150000  │ TABLE SCAN customer\n       -     12905  INNER JOIN HASH ON l_suppkey = s_suppkey\n   10000     10000  │└DISTRIBUTE GATHER\n   10000     10000  │ TABLE SCAN supplier\n       -     12905  INNER JOIN HASH ON l_partkey = p_partkey\n       -      1403  │└DISTRIBUTE GATHER\n  200000      1403  │ FILTER p_type = 'SMALL POLISHED NICKEL'\n  200000    200000  │ TABLE SCAN part\n       -   1829418  INNER JOIN HASH ON l_orderkey = o_orderkey\n  455301    457263  │└DISTRIBUTE HASH ON o_orderkey\n 1500000    457263  │ FILTER o_orderdate BETWEEN '1995-01-01' AND '1996-12-31'\n 1500000   1500000  │ TABLE SCAN orders\n 6001215   6001215  TABLE SCAN lineitem\n",
       "sql": "/* TPC-H Q08 */\nSELECT o_year,\n       SUM(CASE\n               WHEN nation = 'FRANCE'\n                   THEN volume\n               ELSE 0\n           END) / SUM(volume) AS mkt_share\nFROM (SELECT EXTRACT(YEAR FROM o_orderdate)     AS o_year,\n             l_extendedprice * (1 - l_discount) AS volume,\n             n2.n_name                          AS nation\n      FROM tpch_sf1.lineitem\n      INNER JOIN tpch_sf1.orders\n          ON o_orderkey = l_orderkey\n      INNER JOIN tpch_sf1.part\n          ON l_partkey = p_partkey\n      INNER JOIN tpch_sf1.supplier\n          ON l_suppkey = s_suppkey\n      INNER JOIN tpch_sf1.customer\n          ON o_custkey = c_custkey\n      INNER JOIN tpch_sf1.nation n1\n          ON c_nationkey = n1.n_nationkey\n      INNER JOIN tpch_sf1.region\n          ON n1.n_regionkey = r_regionkey\n      INNER JOIN tpch_sf1.nation n2\n          ON s_nationkey = n2.n_nationkey\n      WHERE r_name = 'EUROPE'\n        AND o_orderdate BETWEEN '1995-01-01' AND '1996-12-31'\n        AND p_type = 'SMALL POLISHED NICKEL') AS all_nations\nGROUP BY o_year\nORDER BY o_year",
-      "startTime": "2026-06-23T11:48:36.806727Z",
+      "startTime": "2026-06-25T16:27:13.008490Z",
       "status": "OK",
-      "timeMs": 571.021
+      "timeMs": 827.997
     }
   ],
   "runtime": {
-    "avgMs": 571.021,
-    "bestMs": 571.021,
-    "maxMs": 571.021,
-    "minMs": 571.021,
+    "avgMs": 827.997,
+    "bestMs": 827.997,
+    "maxMs": 827.997,
+    "minMs": 827.997,
     "stdDevMs": 0.0
   },
   "storageVariant": "iceberg",

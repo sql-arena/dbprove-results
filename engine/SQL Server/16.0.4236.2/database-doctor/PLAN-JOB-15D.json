@@ -52,11 +52,11 @@
           "+2x": 0,
           "+4x": 0,
           "+8x": 0,
-          "-2x": 1,
+          "-2x": 2,
           "-4x": 0,
           "-8x": 1,
-          "<16x": 8,
-          "=": 2,
+          "<16x": 6,
+          "=": 3,
           ">16x": 0
         },
         "sort": {
@@ -74,24 +74,24 @@
       "operatorRows": {
         "aggregate": 11590,
         "distribute": 0,
-        "hash": 52668,
-        "join": 7168275,
+        "hash": 52651,
+        "join": 42585,
         "scan": 11242,
-        "seek": 7156603,
+        "seek": 27912,
         "sort": 0
       },
-      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(partialagg1040) AS Expr1018, MIN(partialagg1041) AS Expr1019\n       5        10  AGGREGATE MIN(title as title) AS partialagg1040, MIN(title as title) AS partialagg1041\n   11955     11580  INNER JOIN HASH ON mc.movie_id = t.id\n    3139      6398  │└INNER JOIN HASH ON mk.movie_id = t.id\n     148       588  │ │└INNER JOIN HASH ON mi.info_type_id = it1.id\n       1         1  │ │ │└FILTER info as info = 'release dates'\n     113       113  │ │ │ INNER JOIN LOOP ON Bmk1006 = Bmk1006\n       1       113  │ │ │ │└TABLE SEEK info_type AS it1\n     113       113  │ │ │ TABLE SEEK info_type AS it1\n     103       588  │ │ INNER JOIN HASH ON id as id = movie_id as movie_id\n      72     10671  │ │ │└INNER JOIN LOOP ON Bmk1016 = Bmk1016\n       0     10688  │ │ │ │└TABLE SEEK title AS t WHERE production_year as production_year > 1990\n     104     10688  │ │ │ PROJECT BmkToPage Bmk1016 AS Expr1864\n     104     10688  │ │ │ INNER JOIN LOOP ON mi.movie_id = t.id\n       1     10688  │ │ │ │└TABLE SEEK title AS t\n     104     10688  │ │ │ TABLE SCAN movie_info AS mi WHERE note as note LIKE '%internet%' AND BLOOM(info_type_id as info_type_id)\n      36       554  │ │ TABLE SCAN aka_title AS aka_t WHERE BLOOM(movie_id as movie_id)\n    4523   4523930  │ TABLE SEEK movie_keyword AS mk WHERE BLOOM(movie_id as movie_id)\n      93       400  FILTER country_code as country_code = 'us'\n     260       971  INNER JOIN LOOP ON Bmk1002 = Bmk1002\n       1       971  │└TABLE SEEK company_name AS cn\n     260       971  INNER JOIN LOOP ON mc.company_id = cn.id\n       1       971  │└TABLE SEEK company_name AS cn\n     260   2609129  TABLE SEEK movie_companies AS mc WHERE BLOOM(movie_id as movie_id)\n",
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(partialagg1040) AS Expr1018, MIN(partialagg1041) AS Expr1019\n       5        10  AGGREGATE MIN(title as title) AS partialagg1040, MIN(title as title) AS partialagg1041\n   11955     11580  INNER JOIN HASH ON mc.movie_id = t.id\n    3139      6398  │└INNER JOIN HASH ON mk.movie_id = t.id\n     148       588  │ │└INNER JOIN HASH ON mi.info_type_id = it1.id\n       1         1  │ │ │└FILTER info as info = 'release dates'\n     113       113  │ │ │ INNER JOIN LOOP ON Bmk1006 = Bmk1006\n       1       113  │ │ │ │└TABLE SEEK info_type AS it1\n     113       113  │ │ │ TABLE SEEK info_type AS it1\n     103       588  │ │ INNER JOIN HASH ON id as id = movie_id as movie_id\n      72     10671  │ │ │└INNER JOIN LOOP ON Bmk1016 = Bmk1016\n       0     10671  │ │ │ │└TABLE SEEK title AS t WHERE production_year as production_year > 1990\n     104     10688  │ │ │ PROJECT BmkToPage Bmk1016 AS Expr1864\n     104     10688  │ │ │ INNER JOIN LOOP ON mi.movie_id = t.id\n       1     10688  │ │ │ │└TABLE SEEK title AS t\n     104     10688  │ │ │ TABLE SCAN movie_info AS mi WHERE note as note LIKE '%internet%' AND BLOOM(info_type_id as info_type_id)\n      36       554  │ │ TABLE SCAN aka_title AS aka_t WHERE BLOOM(movie_id as movie_id)\n    4523      3414  │ TABLE SEEK movie_keyword AS mk WHERE BLOOM(movie_id as movie_id)\n      93       400  FILTER country_code as country_code = 'us'\n     260       971  INNER JOIN LOOP ON Bmk1002 = Bmk1002\n       1       971  │└TABLE SEEK company_name AS cn\n     260       971  INNER JOIN LOOP ON mc.company_id = cn.id\n       1       971  │└TABLE SEEK company_name AS cn\n     260       971  TABLE SEEK movie_companies AS mc WHERE BLOOM(movie_id as movie_id)\n",
       "sql": "SELECT MIN(aka_t.title) AS aka_title,\n       MIN(t.title) AS internet_movie_title\nFROM job.aka_title AS aka_t,\n     job.company_name AS cn,\n     job.company_type AS ct,\n     job.info_type AS it1,\n     job.keyword AS k,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.movie_keyword AS mk,\n     job.title AS t\nWHERE cn.country_code = '[us]'\n  AND it1.info = 'release dates'\n  AND mi.note LIKE '%internet%'\n  AND t.production_year > 1990\n  AND t.id = aka_t.movie_id\n  AND t.id = mi.movie_id\n  AND t.id = mk.movie_id\n  AND t.id = mc.movie_id\n  AND mk.movie_id = mi.movie_id\n  AND mk.movie_id = mc.movie_id\n  AND mk.movie_id = aka_t.movie_id\n  AND mi.movie_id = mc.movie_id\n  AND mi.movie_id = aka_t.movie_id\n  AND mc.movie_id = aka_t.movie_id\n  AND k.id = mk.keyword_id\n  AND it1.id = mi.info_type_id\n  AND cn.id = mc.company_id\n  AND ct.id = mc.company_type_id;\n",
-      "startTime": "2026-06-25T16:14:07.472916Z",
+      "startTime": "2026-06-25T16:59:05.641693Z",
       "status": "OK",
-      "timeMs": 1280.795
+      "timeMs": 2029.348
     }
   ],
   "runtime": {
-    "avgMs": 1280.795,
-    "bestMs": 1280.795,
-    "maxMs": 1280.795,
-    "minMs": 1280.795,
+    "avgMs": 2029.348,
+    "bestMs": 2029.348,
+    "maxMs": 2029.348,
+    "minMs": 2029.348,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

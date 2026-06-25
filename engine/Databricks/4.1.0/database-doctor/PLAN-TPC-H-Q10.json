@@ -80,18 +80,18 @@
         "seek": 0,
         "sort": 38182
       },
-      "plan": "Estimate    Actual  Operator\n       ∞     38182  SORT revenue DESC NULLS LAST\n       ∞     76364  DISTRIBUTE HASH ON revenue\n       ∞     76364  AGGREGATE SUM(sql - l_extendedprice * (1BD - sql - l_discount)) GROUP BY HASH sql - c_custkey, sql - c_name, sql - c_acctbal, sql - c_phone, sql - n_name, sql - c_address, sql - c_comment\n       ∞    230100  INNER JOIN HASH ON sql - c_nationkey = sql - n_nationkey\n       ∞        25  │└DISTRIBUTE GATHER\n 6000000        25  │ TABLE SCAN sql - nation\n       ∞    230100  INNER JOIN HASH ON sql - o_custkey = sql - c_custkey\n       ∞    115050  │└DISTRIBUTE HASH ON sql - o_custkey\n      9B    115050  │ INNER JOIN HASH ON sql - l_orderkey = sql - o_orderkey\n      9B     57474  │ │└DISTRIBUTE HASH ON sql - o_orderkey\n      25     57474  │ │ TABLE SCAN sql - orders WHERE (sql - o_orderdate >= DATE'1994-06-01') AND (sql - o_orderdate < DATE'1994-09-01')\n  150000   1476955  │ TABLE SCAN sql - lineitem WHERE sql - l_returnflag = 'R'\n       ∞    150000  DISTRIBUTE HASH ON sql - c_custkey\n 1500000    150000  TABLE SCAN sql - customer\n",
+      "plan": "Estimate    Actual  Operator\n       ∞     38182  SORT revenue DESC NULLS LAST\n       ∞     76364  DISTRIBUTE HASH ON revenue\n       ∞     76364  AGGREGATE SUM(l_extendedprice * (1BD - l_discount)) GROUP BY HASH c_custkey, c_name, c_acctbal, c_phone, n_name, c_address, c_comment\n       ∞    230100  INNER JOIN HASH ON c_nationkey = n_nationkey\n       ∞        25  │└DISTRIBUTE GATHER\n 6000000        25  │ TABLE SCAN nation\n       ∞    230100  INNER JOIN HASH ON o_custkey = c_custkey\n       ∞    115050  │└DISTRIBUTE HASH ON o_custkey\n      9B    115050  │ INNER JOIN HASH ON l_orderkey = o_orderkey\n      9B     57474  │ │└DISTRIBUTE HASH ON o_orderkey\n      25     57474  │ │ TABLE SCAN orders WHERE (o_orderdate >= DATE'1994-06-01') AND (o_orderdate < DATE'1994-09-01')\n  150000   1476955  │ TABLE SCAN lineitem WHERE l_returnflag = 'R'\n       ∞    150000  DISTRIBUTE HASH ON c_custkey\n 1500000    150000  TABLE SCAN customer\n",
       "sql": "/* TPC-H Q10 */\nSELECT c_custkey,\n       c_name,\n       SUM(l_extendedprice * (1 - l_discount)) AS revenue,\n       c_acctbal,\n       n_name,\n       c_address,\n       c_phone,\n       c_comment\nFROM tpch_sf1.lineitem\nINNER JOIN tpch_sf1.orders\n    ON l_orderkey = o_orderkey\nINNER JOIN tpch_sf1.customer\n    ON o_custkey = c_custkey\nINNER JOIN tpch_sf1.nation\n    ON c_nationkey = n_nationkey\nWHERE o_orderdate >= '1994-06-01'\n  AND o_orderdate < '1994-09-01'\n  AND l_returnflag = 'R'\nGROUP BY c_custkey,\n         c_name,\n         c_acctbal,\n         c_phone,\n         n_name,\n         c_address,\n         c_comment\nORDER BY revenue DESC",
-      "startTime": "2026-06-25T13:49:34.997678Z",
+      "startTime": "2026-06-25T17:02:02.388005Z",
       "status": "OK",
-      "timeMs": 4201.916
+      "timeMs": 2612.669
     }
   ],
   "runtime": {
-    "avgMs": 4201.916,
-    "bestMs": 4201.916,
-    "maxMs": 4201.916,
-    "minMs": 4201.916,
+    "avgMs": 2612.669,
+    "bestMs": 2612.669,
+    "maxMs": 2612.669,
+    "minMs": 2612.669,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

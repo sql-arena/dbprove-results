@@ -75,23 +75,23 @@
         "aggregate": 14899,
         "distribute": 0,
         "hash": 184268,
-        "join": 4643389,
+        "join": 138325,
         "scan": 457,
-        "seek": 4613557,
+        "seek": 108447,
         "sort": 44714
       },
-      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(name as name) AS Expr1016, MIN(note as note) AS Expr1017, MIN(title as title) AS Expr1018\n      74     14899  INNER JOIN LOOP ON Bmk1014 = Bmk1014\n       0     14899  │└TABLE SEEK title AS t WHERE production_year as production_year > 1950\n      77     14899  SORT Expr1048\n      77     14899  PROJECT BmkToPage Bmk1014 AS Expr1048\n      77     14899  INNER JOIN LOOP ON mc.movie_id = t.id\n       1     14899  │└TABLE SEEK title AS t\n      77     14899  SORT movie_id\n      77     14899  FILTER country_code as country_code <> 'pl'\n      87     14916  INNER JOIN LOOP ON Bmk1000 = Bmk1000\n       1     14916  │└TABLE SEEK company_name AS cn\n      87     14916  INNER JOIN LOOP ON mc.company_id = cn.id\n       1     14916  │└TABLE SEEK company_name AS cn\n      87     14916  SORT company_id\n      87     14916  INNER JOIN HASH ON mc.company_type_id = ct.id\n       3         3  │└FILTER kind as kind <> 'production companies'\n       4         4  │ TABLE SCAN company_type AS ct\n     116     14916  INNER JOIN HASH ON mc.movie_id = ml.movie_id\n      22      1460  │└INNER JOIN HASH ON ml.movie_id = mk.movie_id\n     266     47403  │ │└INNER JOIN HASH ON mk.keyword_id = k.id\n       3         3  │ │ │└TABLE SCAN keyword AS k WHERE keyword as keyword = 'based-on-novel' OR keyword as keyword = 'revenge' OR keyword as keyword = 'sequel'\n     452   4523930  │ │ TABLE SEEK movie_keyword AS mk WHERE BLOOM(keyword_id as keyword_id)\n      29     29997  │ TABLE SEEK movie_link AS ml WHERE BLOOM(movie_id as movie_id)\n      13       450  TABLE SCAN movie_companies AS mc WHERE note as note IS NOT NULL AND BLOOM(movie_id as movie_id) AND BLOOM(company_type_id as company_type_id)\n",
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(name as name) AS Expr1016, MIN(note as note) AS Expr1017, MIN(title as title) AS Expr1018\n      74     14899  INNER JOIN LOOP ON Bmk1014 = Bmk1014\n       0     14899  │└TABLE SEEK title AS t WHERE production_year as production_year > 1950\n      77     14899  SORT Expr1048\n      77     14899  PROJECT BmkToPage Bmk1014 AS Expr1048\n      77     14899  INNER JOIN LOOP ON mc.movie_id = t.id\n       1     14899  │└TABLE SEEK title AS t\n      77     14899  SORT movie_id\n      77     14899  FILTER country_code as country_code <> 'pl'\n      87     14916  INNER JOIN LOOP ON Bmk1000 = Bmk1000\n       1     14916  │└TABLE SEEK company_name AS cn\n      87     14916  INNER JOIN LOOP ON mc.company_id = cn.id\n       1     14916  │└TABLE SEEK company_name AS cn\n      87     14916  SORT company_id\n      87     14916  INNER JOIN HASH ON mc.company_type_id = ct.id\n       3         3  │└FILTER kind as kind <> 'production companies'\n       4         4  │ TABLE SCAN company_type AS ct\n     116     14916  INNER JOIN HASH ON mc.movie_id = ml.movie_id\n      22      1460  │└INNER JOIN HASH ON ml.movie_id = mk.movie_id\n     266     47403  │ │└INNER JOIN HASH ON mk.keyword_id = k.id\n       3         3  │ │ │└TABLE SCAN keyword AS k WHERE keyword as keyword = 'based-on-novel' OR keyword as keyword = 'revenge' OR keyword as keyword = 'sequel'\n     452     47403  │ │ TABLE SEEK movie_keyword AS mk WHERE BLOOM(keyword_id as keyword_id)\n      29      1414  │ TABLE SEEK movie_link AS ml WHERE BLOOM(movie_id as movie_id)\n      13       450  TABLE SCAN movie_companies AS mc WHERE note as note IS NOT NULL AND BLOOM(movie_id as movie_id) AND BLOOM(company_type_id as company_type_id)\n",
       "sql": "SELECT MIN(cn.name) AS from_company,\n       MIN(mc.note) AS production_note,\n       MIN(t.title) AS movie_based_on_book\nFROM job.company_name AS cn,\n     job.company_type AS ct,\n     job.keyword AS k,\n     job.link_type AS lt,\n     job.movie_companies AS mc,\n     job.movie_keyword AS mk,\n     job.movie_link AS ml,\n     job.title AS t\nWHERE cn.country_code !='[pl]'\n  AND ct.kind != 'production companies'\n  AND ct.kind IS NOT NULL\n  AND k.keyword IN ('sequel',\n                    'revenge',\n                    'based-on-novel')\n  AND mc.note IS NOT NULL\n  AND t.production_year > 1950\n  AND lt.id = ml.link_type_id\n  AND ml.movie_id = t.id\n  AND t.id = mk.movie_id\n  AND mk.keyword_id = k.id\n  AND t.id = mc.movie_id\n  AND mc.company_type_id = ct.id\n  AND mc.company_id = cn.id\n  AND ml.movie_id = mk.movie_id\n  AND ml.movie_id = mc.movie_id\n  AND mk.movie_id = mc.movie_id;\n",
-      "startTime": "2026-06-25T16:13:22.016229Z",
+      "startTime": "2026-06-25T16:58:38.028422Z",
       "status": "OK",
-      "timeMs": 355.251
+      "timeMs": 262.977
     }
   ],
   "runtime": {
-    "avgMs": 355.251,
-    "bestMs": 355.251,
-    "maxMs": 355.251,
-    "minMs": 355.251,
+    "avgMs": 262.977,
+    "bestMs": 262.977,
+    "maxMs": 262.977,
+    "minMs": 262.977,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

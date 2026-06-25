@@ -80,18 +80,18 @@
         "seek": 0,
         "sort": 0
       },
-      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE SUM(CASE WHEN startswith(sql - p_type,'PROMO') THEN (sql - l_extendedprice * (1BD - sql - l_discount)) ELSE 0.0000BD END), SUM(sql - l_extendedprice * (1BD - sql - l_discount))\n       1         2  DISTRIBUTE GATHER\n       1         2  AGGREGATE SUM(CASE WHEN startswith(sql - p_type,'PROMO') THEN (sql - l_extendedprice * (1BD - sql - l_discount)) ELSE 0.0000BD END), SUM(sql - l_extendedprice * (1BD - sql - l_discount))\n      1B     71636  INNER JOIN HASH ON sql - l_partkey = sql - p_partkey\n      1B    200000  │└DISTRIBUTE GATHER\n 6000000    200000  │ TABLE SCAN sql - part\n  200000     71636  TABLE SCAN sql - lineitem WHERE (sql - l_shipdate >= DATE'1996-02-01') AND (sql - l_shipdate < DATE'1996-03-01')\n",
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE SUM(CASE WHEN startswith(p_type,'PROMO') THEN (l_extendedprice * (1BD - l_discount)) ELSE 0.0000BD END), SUM(l_extendedprice * (1BD - l_discount))\n       1         2  DISTRIBUTE GATHER\n       1         2  AGGREGATE SUM(CASE WHEN startswith(p_type,'PROMO') THEN (l_extendedprice * (1BD - l_discount)) ELSE 0.0000BD END), SUM(l_extendedprice * (1BD - l_discount))\n      1B     71636  INNER JOIN HASH ON l_partkey = p_partkey\n      1B    200000  │└DISTRIBUTE GATHER\n 6000000    200000  │ TABLE SCAN part\n  200000     71636  TABLE SCAN lineitem WHERE (l_shipdate >= DATE'1996-02-01') AND (l_shipdate < DATE'1996-03-01')\n",
       "sql": "/* TPC-H Q14 */\nSELECT 100.00 * SUM(CASE\n                        WHEN p_type LIKE 'PROMO%'\n                            THEN l_extendedprice * (1 - l_discount)\n                        ELSE 0\n    END) / SUM(l_extendedprice * (1 - l_discount)) AS promo_revenue\nFROM tpch_sf1.lineitem\nINNER JOIN tpch_sf1.part\n    ON l_partkey = p_partkey\nWHERE l_shipdate >= '1996-02-01'\n  AND l_shipdate < '1996-03-01'",
-      "startTime": "2026-06-25T13:49:54.257180Z",
+      "startTime": "2026-06-25T17:02:16.959676Z",
       "status": "OK",
-      "timeMs": 1436.079
+      "timeMs": 1139.549
     }
   ],
   "runtime": {
-    "avgMs": 1436.079,
-    "bestMs": 1436.079,
-    "maxMs": 1436.079,
-    "minMs": 1436.079,
+    "avgMs": 1139.549,
+    "bestMs": 1139.549,
+    "maxMs": 1139.549,
+    "minMs": 1139.549,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

@@ -80,18 +80,18 @@
         "seek": 0,
         "sort": 5
       },
-      "plan": "Estimate    Actual  Operator\n 1500000         0  SEQUENCE\n 1500000         5  ├─SORT sql - o_orderpriority ASC NULLS FIRST\n 1500000         5  │ AGGREGATE COUNT(1) GROUP BY HASH sql - o_orderpriority\n 1500000     51276  │ LEFT SEMI JOIN HASH ON sql - o_orderkey = sql - l_orderkey\n 1500000    198120  │ │└DISTRIBUTE HASH ON sql - l_orderkey\n 6000000    198120  │ │ FILTER \n       -   3793296  │ │ TABLE SCAN sql - lineitem WHERE sql - l_commitdate < sql - l_receiptdate\n 1500000     55935  │ DISTRIBUTE HASH ON sql - o_orderkey\n 1500000     55935  │ TABLE SCAN sql - orders WHERE (sql - o_orderdate >= DATE'1995-02-01') AND (sql - o_orderdate < DATE'1995-05-01')\n 1500000         0  └─FILTER \n 1500000         1    DISTRIBUTE HASH\n 1500000         1    AGGREGATE bloom_filter_agg(bloom_expr(sql - o_orderkey,sql - o_orderkey),55935L,524288L)\n 6000000     55935    DISTRIBUTE HASH\n 6000000     55935    DISTRIBUTE HASH\n 6000000     55935    TABLE SCAN sql - orders WHERE (sql - o_orderdate >= DATE'1995-02-01') AND (sql - o_orderdate < DATE'1995-05-01')\n",
+      "plan": "Estimate    Actual  Operator\n 1500000         0  SEQUENCE\n 1500000         5  ├─SORT o_orderpriority ASC NULLS FIRST\n 1500000         5  │ AGGREGATE COUNT(1) GROUP BY HASH o_orderpriority\n 1500000     51276  │ LEFT SEMI JOIN HASH ON o_orderkey = l_orderkey\n 1500000    198120  │ │└DISTRIBUTE HASH ON l_orderkey\n 6000000    198120  │ │ FILTER \n       -   3793296  │ │ TABLE SCAN lineitem WHERE l_commitdate < l_receiptdate\n 1500000     55935  │ DISTRIBUTE HASH ON o_orderkey\n 1500000     55935  │ TABLE SCAN orders WHERE (o_orderdate >= DATE'1995-02-01') AND (o_orderdate < DATE'1995-05-01')\n 1500000         0  └─FILTER \n 1500000         1    DISTRIBUTE HASH\n 1500000         1    AGGREGATE bloom_filter_agg(bloom_expr(o_orderkey,o_orderkey),55935L,524288L)\n 6000000     55935    DISTRIBUTE HASH\n 6000000     55935    DISTRIBUTE HASH\n 6000000     55935    TABLE SCAN orders WHERE (o_orderdate >= DATE'1995-02-01') AND (o_orderdate < DATE'1995-05-01')\n",
       "sql": "/* TPC-H Q04 */\nSELECT o_orderpriority,\n       COUNT(*) AS order_count\nFROM tpch_sf1.orders\nWHERE o_orderdate >= '1995-02-01'\n  AND o_orderdate < '1995-05-01'\n  AND EXISTS (SELECT *\n              FROM tpch_sf1.lineitem\n              WHERE l_orderkey = o_orderkey\n                AND l_commitdate < l_receiptdate)\nGROUP BY o_orderpriority\nORDER BY o_orderpriority\n",
-      "startTime": "2026-06-25T13:49:09.815150Z",
+      "startTime": "2026-06-25T17:01:42.762569Z",
       "status": "OK",
-      "timeMs": 1999.656
+      "timeMs": 1024.727
     }
   ],
   "runtime": {
-    "avgMs": 1999.656,
-    "bestMs": 1999.656,
-    "maxMs": 1999.656,
-    "minMs": 1999.656,
+    "avgMs": 1024.727,
+    "bestMs": 1024.727,
+    "maxMs": 1024.727,
+    "minMs": 1024.727,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

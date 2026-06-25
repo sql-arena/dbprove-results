@@ -53,9 +53,9 @@
           "+4x": 0,
           "+8x": 0,
           "-2x": 0,
-          "-4x": 0,
-          "-8x": 0,
-          "<16x": 8,
+          "-4x": 1,
+          "-8x": 1,
+          "<16x": 6,
           "=": 2,
           ">16x": 0
         },
@@ -74,24 +74,24 @@
       "operatorRows": {
         "aggregate": 328,
         "distribute": 0,
-        "hash": 4961,
-        "join": 4888262,
+        "hash": 4947,
+        "join": 3259,
         "scan": 2577,
-        "seek": 4886926,
+        "seek": 1738,
         "sort": 0
       },
-      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(info as info) AS Expr1018, MIN(title as title) AS Expr1019\n      33       328  INNER JOIN HASH ON mk.movie_id = t.id\n       1        57  │└INNER JOIN LOOP ON Bmk1016 = Bmk1016\n       0        71  │ │└TABLE SEEK title AS t WHERE production_year as production_year > 2000\n       2        71  │ PROJECT BmkToPage Bmk1016 AS Expr1343\n       2        71  │ INNER JOIN LOOP ON mi.movie_id = t.id\n       1        71  │ │└TABLE SEEK title AS t\n       2        71  │ INNER JOIN HASH ON movie_id as movie_id = movie_id as movie_id\n       2       668  │ │└INNER JOIN HASH ON mi.info_type_id = it1.id\n       1         1  │ │ │└FILTER info as info = 'release dates'\n     113       113  │ │ │ TABLE SCAN info_type AS it1\n       1       668  │ │ INNER JOIN HASH ON mc.movie_id = mi.movie_id\n      16      1773  │ │ │└TABLE SCAN movie_info AS mi WHERE note as note LIKE '%internet%' AND info as info LIKE 'USA:% 200%' AND BLOOM(info_type_id as info_type_id)\n       2       661  │ │ FILTER country_code as country_code = 'us'\n       5       691  │ │ INNER JOIN LOOP ON Bmk1002 = Bmk1002\n       1       691  │ │ │└TABLE SEEK company_name AS cn\n       5       691  │ │ INNER JOIN LOOP ON mc.company_id = cn.id\n       1       691  │ │ │└TABLE SEEK company_name AS cn\n       5       691  │ │ TABLE SCAN movie_companies AS mc WHERE note as note LIKE '%(200%)%' AND note as note LIKE '%(worldwide)%' AND BLOOM(movie_id as movie_id)\n       3    361472  │ TABLE SEEK aka_title AS aka_t WHERE BLOOM(movie_id as movie_id)\n      45   4523930  TABLE SEEK movie_keyword AS mk WHERE BLOOM(movie_id as movie_id)\n",
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(info as info) AS Expr1018, MIN(title as title) AS Expr1019\n      33       328  INNER JOIN HASH ON mk.movie_id = t.id\n       1        57  │└INNER JOIN LOOP ON Bmk1016 = Bmk1016\n       0        57  │ │└TABLE SEEK title AS t WHERE production_year as production_year > 2000\n       2        71  │ PROJECT BmkToPage Bmk1016 AS Expr1343\n       2        71  │ INNER JOIN LOOP ON mi.movie_id = t.id\n       1        71  │ │└TABLE SEEK title AS t\n       2        71  │ INNER JOIN HASH ON movie_id as movie_id = movie_id as movie_id\n       2       668  │ │└INNER JOIN HASH ON mi.info_type_id = it1.id\n       1         1  │ │ │└FILTER info as info = 'release dates'\n     113       113  │ │ │ TABLE SCAN info_type AS it1\n       1       668  │ │ INNER JOIN HASH ON mc.movie_id = mi.movie_id\n      16      1773  │ │ │└TABLE SCAN movie_info AS mi WHERE note as note LIKE '%internet%' AND info as info LIKE 'USA:% 200%' AND BLOOM(info_type_id as info_type_id)\n       2       661  │ │ FILTER country_code as country_code = 'us'\n       5       691  │ │ INNER JOIN LOOP ON Bmk1002 = Bmk1002\n       1       691  │ │ │└TABLE SEEK company_name AS cn\n       5       691  │ │ INNER JOIN LOOP ON mc.company_id = cn.id\n       1       691  │ │ │└TABLE SEEK company_name AS cn\n       5       691  │ │ TABLE SCAN movie_companies AS mc WHERE note as note LIKE '%(200%)%' AND note as note LIKE '%(worldwide)%' AND BLOOM(movie_id as movie_id)\n       3        46  │ TABLE SEEK aka_title AS aka_t WHERE BLOOM(movie_id as movie_id)\n      45       182  TABLE SEEK movie_keyword AS mk WHERE BLOOM(movie_id as movie_id)\n",
       "sql": "SELECT MIN(mi.info) AS release_date,\n       MIN(t.title) AS internet_movie\nFROM job.aka_title AS aka_t,\n     job.company_name AS cn,\n     job.company_type AS ct,\n     job.info_type AS it1,\n     job.keyword AS k,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.movie_keyword AS mk,\n     job.title AS t\nWHERE cn.country_code = '[us]'\n  AND it1.info = 'release dates'\n  AND mc.note LIKE '%(200%)%'\n  AND mc.note LIKE '%(worldwide)%'\n  AND mi.note LIKE '%internet%'\n  AND mi.info LIKE 'USA:% 200%'\n  AND t.production_year > 2000\n  AND t.id = aka_t.movie_id\n  AND t.id = mi.movie_id\n  AND t.id = mk.movie_id\n  AND t.id = mc.movie_id\n  AND mk.movie_id = mi.movie_id\n  AND mk.movie_id = mc.movie_id\n  AND mk.movie_id = aka_t.movie_id\n  AND mi.movie_id = mc.movie_id\n  AND mi.movie_id = aka_t.movie_id\n  AND mc.movie_id = aka_t.movie_id\n  AND k.id = mk.keyword_id\n  AND it1.id = mi.info_type_id\n  AND cn.id = mc.company_id\n  AND ct.id = mc.company_type_id;\n",
-      "startTime": "2026-06-25T16:14:03.516813Z",
+      "startTime": "2026-06-25T16:59:02.777613Z",
       "status": "OK",
-      "timeMs": 2264.13
+      "timeMs": 1443.172
     }
   ],
   "runtime": {
-    "avgMs": 2264.13,
-    "bestMs": 2264.13,
-    "maxMs": 2264.13,
-    "minMs": 2264.13,
+    "avgMs": 1443.172,
+    "bestMs": 1443.172,
+    "maxMs": 1443.172,
+    "minMs": 1443.172,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

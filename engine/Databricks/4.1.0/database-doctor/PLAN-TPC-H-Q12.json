@@ -80,18 +80,18 @@
         "seek": 0,
         "sort": 2
       },
-      "plan": "Estimate    Actual  Operator\n      9B         2  SORT sql - l_shipmode ASC NULLS FIRST\n      9B         2  AGGREGATE SUM(CASE WHEN (sql - o_orderpriority IN('1-URGENT','2-HIGH')) THEN 1 ELSE 0 END), SUM(CASE WHEN ( NOT (sql - o_orderpriority IN('1-URGENT','2-HIGH'))) THEN 1 ELSE 0 END) GROUP BY HASH sql - l_shipmode\n      9B        24  DISTRIBUTE HASH ON sql - l_shipmode\n      9B        24  AGGREGATE SUM(CASE WHEN (sql - o_orderpriority IN('1-URGENT','2-HIGH')) THEN 1 ELSE 0 END), SUM(CASE WHEN ( NOT (sql - o_orderpriority IN('1-URGENT','2-HIGH'))) THEN 1 ELSE 0 END) GROUP BY HASH sql - l_shipmode\n      9B     30837  INNER JOIN HASH ON sql - l_orderkey = sql - o_orderkey\n      9B     30837  │└DISTRIBUTE HASH ON sql - l_orderkey\n 1500000     30837  │ TABLE SCAN sql - lineitem WHERE (sql - l_shipmode IN('AIR','TRUCK')) AND (sql - l_receiptdate >= DATE'1994-01-01') AND (sql - l_receiptdate < DATE'1995-01-01') AND (sql - l_commitdate < sql - l_receiptdate) AND (sql - l_shipdate < sql - l_commitdate)\n      9B   1500000  DISTRIBUTE HASH ON sql - o_orderkey\n 6000000   1500000  TABLE SCAN sql - orders\n",
+      "plan": "Estimate    Actual  Operator\n      9B         2  SORT l_shipmode ASC NULLS FIRST\n      9B         2  AGGREGATE SUM(CASE WHEN (o_orderpriority IN('1-URGENT','2-HIGH')) THEN 1 ELSE 0 END), SUM(CASE WHEN ( NOT (o_orderpriority IN('1-URGENT','2-HIGH'))) THEN 1 ELSE 0 END) GROUP BY HASH l_shipmode\n      9B        24  DISTRIBUTE HASH ON l_shipmode\n      9B        24  AGGREGATE SUM(CASE WHEN (o_orderpriority IN('1-URGENT','2-HIGH')) THEN 1 ELSE 0 END), SUM(CASE WHEN ( NOT (o_orderpriority IN('1-URGENT','2-HIGH'))) THEN 1 ELSE 0 END) GROUP BY HASH l_shipmode\n      9B     30837  INNER JOIN HASH ON l_orderkey = o_orderkey\n      9B     30837  │└DISTRIBUTE HASH ON l_orderkey\n 1500000     30837  │ TABLE SCAN lineitem WHERE (l_shipmode IN('AIR','TRUCK')) AND (l_receiptdate >= DATE'1994-01-01') AND (l_receiptdate < DATE'1995-01-01') AND (l_commitdate < l_receiptdate) AND (l_shipdate < l_commitdate)\n      9B   1500000  DISTRIBUTE HASH ON o_orderkey\n 6000000   1500000  TABLE SCAN orders\n",
       "sql": "/* TPC-H Q12 */\nSELECT l_shipmode,\n       SUM(CASE\n               WHEN o_orderpriority = '1-URGENT'\n                   OR o_orderpriority = '2-HIGH'\n                   THEN 1\n               ELSE 0\n           END) AS high_line_count,\n       SUM(CASE\n               WHEN o_orderpriority <> '1-URGENT'\n                   AND o_orderpriority <> '2-HIGH'\n                   THEN 1\n               ELSE 0\n           END) AS low_line_count\nFROM tpch_sf1.lineitem\nINNER JOIN tpch_sf1.orders\n    ON o_orderkey = l_orderkey\nWHERE l_shipmode IN ('AIR', 'TRUCK')\n  AND l_commitdate < l_receiptdate\n  AND l_shipdate < l_commitdate\n  AND l_receiptdate >= '1994-01-01'\n  AND l_receiptdate < '1995-01-01'\nGROUP BY l_shipmode\nORDER BY l_shipmode\n\n\n",
-      "startTime": "2026-06-25T13:49:45.966294Z",
+      "startTime": "2026-06-25T17:02:11.211665Z",
       "status": "OK",
-      "timeMs": 1837.713
+      "timeMs": 895.3
     }
   ],
   "runtime": {
-    "avgMs": 1837.713,
-    "bestMs": 1837.713,
-    "maxMs": 1837.713,
-    "minMs": 1837.713,
+    "avgMs": 895.3,
+    "bestMs": 895.3,
+    "maxMs": 895.3,
+    "minMs": 895.3,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

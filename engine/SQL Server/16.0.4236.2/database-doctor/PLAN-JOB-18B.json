@@ -54,8 +54,8 @@
           "+8x": 1,
           "-2x": 0,
           "-4x": 0,
-          "-8x": 0,
-          "<16x": 6,
+          "-8x": 1,
+          "<16x": 5,
           "=": 3,
           ">16x": 1
         },
@@ -74,24 +74,24 @@
       "operatorRows": {
         "aggregate": 11,
         "distribute": 0,
-        "hash": 154302,
+        "hash": 154297,
         "join": 85840,
         "scan": 76864,
-        "seek": 9054,
+        "seek": 9049,
         "sort": 0
       },
-      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(info as info) AS Expr1014, MIN(info as info) AS Expr1015, MIN(title as title) AS Expr1016\n       2        11  INNER JOIN LOOP ON Bmk1012 = Bmk1012\n       0        16  │└TABLE SEEK title AS t WHERE production_year as production_year >= 2008 AND production_year as production_year <= 2014\n       9        16  PROJECT BmkToPage Bmk1012 AS Expr1064\n       9        16  INNER JOIN LOOP ON mi_idx.movie_id = t.id\n       1        16  │└TABLE SEEK title AS t\n       9        16  FILTER gender as gender = 'f'\n      42       412  INNER JOIN LOOP ON Bmk1010 = Bmk1010\n       1       412  │└TABLE SEEK name AS n\n      42       412  PROJECT BmkToPage Bmk1010 AS Expr1062\n      42       412  INNER JOIN LOOP ON ci.person_id = n.id\n       1       412  │└TABLE SEEK name AS n\n      42       412  INNER JOIN HASH ON ci.movie_id = mi_idx.movie_id\n      42       732  │└FILTER info as info = 'rating'\n     213      4099  │ INNER JOIN LOOP ON Bmk1004 = Bmk1004\n       1      4099  │ │└TABLE SEEK info_type AS it2\n     213      4099  │ INNER JOIN LOOP ON mi_idx.info_type_id = it2.id\n       1      4099  │ │└TABLE SEEK info_type AS it2\n     213      4099  │ INNER JOIN HASH ON mi_idx.movie_id = mi.movie_id\n     999     72258  │ │└INNER JOIN HASH ON mi.info_type_id = it1.id\n       1         1  │ │ │└FILTER info as info = 'genres'\n     113       113  │ │ │ TABLE SCAN info_type AS it1\n   69976     72258  │ │ TABLE SCAN movie_info AS mi WHERE (PROBE(Bitmap1058,info_type_id as info_type_id,N'IN ROW')) AND (note as note IS NULL AND (info as info = 'Horror' OR info as info = 'Thriller'))\n   53720      4116  │ TABLE SCAN movie_info_idx AS mi_idx WHERE (PROBE(Bitmap1059,movie_id as movie_id,N'IN ROW')) AND (info as info > '8.0')\n  995705       377  TABLE SCAN cast_info AS ci WHERE (PROBE(Bitmap1060,movie_id as movie_id,N'IN ROW')) AND (note as note = '(head writer)' OR note as note = '(story editor)' OR note as note = '(story)' OR note as note = '(writer)' OR note as note = '(written by)')\n",
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(info as info) AS Expr1014, MIN(info as info) AS Expr1015, MIN(title as title) AS Expr1016\n       2        11  INNER JOIN LOOP ON Bmk1012 = Bmk1012\n       0        11  │└TABLE SEEK title AS t WHERE production_year as production_year >= 2008 AND production_year as production_year <= 2014\n       9        16  PROJECT BmkToPage Bmk1012 AS Expr1064\n       9        16  INNER JOIN LOOP ON mi_idx.movie_id = t.id\n       1        16  │└TABLE SEEK title AS t\n       9        16  FILTER gender as gender = 'f'\n      42       412  INNER JOIN LOOP ON Bmk1010 = Bmk1010\n       1       412  │└TABLE SEEK name AS n\n      42       412  PROJECT BmkToPage Bmk1010 AS Expr1062\n      42       412  INNER JOIN LOOP ON ci.person_id = n.id\n       1       412  │└TABLE SEEK name AS n\n      42       412  INNER JOIN HASH ON ci.movie_id = mi_idx.movie_id\n      42       732  │└FILTER info as info = 'rating'\n     213      4099  │ INNER JOIN LOOP ON Bmk1004 = Bmk1004\n       1      4099  │ │└TABLE SEEK info_type AS it2\n     213      4099  │ INNER JOIN LOOP ON mi_idx.info_type_id = it2.id\n       1      4099  │ │└TABLE SEEK info_type AS it2\n     213      4099  │ INNER JOIN HASH ON mi_idx.movie_id = mi.movie_id\n     999     72258  │ │└INNER JOIN HASH ON mi.info_type_id = it1.id\n       1         1  │ │ │└FILTER info as info = 'genres'\n     113       113  │ │ │ TABLE SCAN info_type AS it1\n   69976     72258  │ │ TABLE SCAN movie_info AS mi WHERE (PROBE(Bitmap1058,info_type_id as info_type_id,N'IN ROW')) AND (note as note IS NULL AND (info as info = 'Horror' OR info as info = 'Thriller'))\n   53720      4116  │ TABLE SCAN movie_info_idx AS mi_idx WHERE (PROBE(Bitmap1059,movie_id as movie_id,N'IN ROW')) AND (info as info > '8.0')\n  995705       377  TABLE SCAN cast_info AS ci WHERE (PROBE(Bitmap1060,movie_id as movie_id,N'IN ROW')) AND (note as note = '(head writer)' OR note as note = '(story editor)' OR note as note = '(story)' OR note as note = '(writer)' OR note as note = '(written by)')\n",
       "sql": "SELECT MIN(mi.info) AS movie_budget,\n       MIN(mi_idx.info) AS movie_votes,\n       MIN(t.title) AS movie_title\nFROM job.cast_info AS ci,\n     job.info_type AS it1,\n     job.info_type AS it2,\n     job.movie_info AS mi,\n     job.movie_info_idx AS mi_idx,\n     job.name AS n,\n     job.title AS t\nWHERE ci.note IN ('(writer)',\n                  '(head writer)',\n                  '(written by)',\n                  '(story)',\n                  '(story editor)')\n  AND it1.info = 'genres'\n  AND it2.info = 'rating'\n  AND mi.info IN ('Horror',\n                  'Thriller')\n  AND mi.note IS NULL\n  AND mi_idx.info > '8.0'\n  AND n.gender IS NOT NULL\n  AND n.gender = 'f'\n  AND t.production_year BETWEEN 2008 AND 2014\n  AND t.id = mi.movie_id\n  AND t.id = mi_idx.movie_id\n  AND t.id = ci.movie_id\n  AND ci.movie_id = mi.movie_id\n  AND ci.movie_id = mi_idx.movie_id\n  AND mi.movie_id = mi_idx.movie_id\n  AND n.id = ci.person_id\n  AND it1.id = mi.info_type_id\n  AND it2.id = mi_idx.info_type_id;\n",
-      "startTime": "2026-06-25T16:15:10.929707Z",
+      "startTime": "2026-06-25T17:00:00.191984Z",
       "status": "OK",
-      "timeMs": 1602.742
+      "timeMs": 1649.917
     }
   ],
   "runtime": {
-    "avgMs": 1602.742,
-    "bestMs": 1602.742,
-    "maxMs": 1602.742,
-    "minMs": 1602.742,
+    "avgMs": 1649.917,
+    "bestMs": 1649.917,
+    "maxMs": 1649.917,
+    "minMs": 1649.917,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

@@ -74,24 +74,24 @@
       "operatorRows": {
         "aggregate": 16,
         "distribute": 0,
-        "hash": 1766,
+        "hash": 1736,
         "join": 1943,
         "scan": 64,
-        "seek": 1766,
+        "seek": 1736,
         "sort": 0
       },
-      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(name as name) AS Expr1016, MIN(title as title) AS Expr1017\n       1        16  INNER JOIN LOOP ON Bmk1014 = Bmk1014\n       0        46  │└TABLE SEEK title AS t WHERE production_year as production_year >= 1980 AND production_year as production_year <= 1984\n       3        46  PROJECT BmkToPage Bmk1014 AS Expr1077\n       3        46  INNER JOIN LOOP ON ml.linked_movie_id = t.id\n       1        46  │└TABLE SEEK title AS t\n       3        46  FILTER link as link = 'features'\n      59       176  INNER JOIN LOOP ON Bmk1006 = Bmk1006\n       1       176  │└TABLE SEEK link_type AS lt\n      59       176  INNER JOIN LOOP ON ml.link_type_id = lt.id\n       1       176  │└TABLE SEEK link_type AS lt\n       3       176  INNER JOIN LOOP ON Bmk1008 = Bmk1008\n       1       176  │└TABLE SEEK movie_link AS ml\n      59       176  INNER JOIN LOOP ON ci.movie_id = ml.linked_movie_id\n       1       176  │└TABLE SEEK movie_link AS ml\n    1832       353  INNER JOIN LOOP ON Bmk1002 = Bmk1002\n       1       353  │└TABLE SEEK cast_info AS ci\n    1832       353  PROJECT BmkToPage Bmk1002 AS Expr1073\n    1832       353  INNER JOIN LOOP ON pi.person_id = ci.person_id\n     557       353  │└TABLE SEEK cast_info AS ci\n       3         3  FILTER name as name LIKE '%a%'\n       4         4  INNER JOIN LOOP ON Bmk1000 = Bmk1000\n       1         4  │└TABLE SEEK aka_name AS an\n       4         4  INNER JOIN LOOP ON pi.person_id = an.person_id\n       4         4  │└TABLE SEEK aka_name AS an\n       1         3  FILTER name_pcode_cf as name_pcode_cf LIKE 'D%' AND gender as gender = 'm'\n       1        64  INNER JOIN LOOP ON Bmk1010 = Bmk1010\n       1        64  │└TABLE SEEK name AS n\n       1        64  PROJECT BmkToPage Bmk1010 AS Expr1072\n       1        64  INNER JOIN LOOP ON pi.person_id = n.id\n       1        64  │└TABLE SEEK name AS n\n       1        64  FILTER info as info = 'mini biography'\n      32        64  INNER JOIN LOOP ON Bmk1004 = Bmk1004\n       1        64  │└TABLE SEEK info_type AS it\n      32        64  INNER JOIN LOOP ON pi.info_type_id = it.id\n       1        64  │└TABLE SEEK info_type AS it\n      32        64  TABLE SCAN person_info AS pi WHERE note as note = 'Volker Boehm'\n",
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(name as name) AS Expr1016, MIN(title as title) AS Expr1017\n       1        16  INNER JOIN LOOP ON Bmk1014 = Bmk1014\n       0        16  │└TABLE SEEK title AS t WHERE production_year as production_year >= 1980 AND production_year as production_year <= 1984\n       3        46  PROJECT BmkToPage Bmk1014 AS Expr1077\n       3        46  INNER JOIN LOOP ON ml.linked_movie_id = t.id\n       1        46  │└TABLE SEEK title AS t\n       3        46  FILTER link as link = 'features'\n      59       176  INNER JOIN LOOP ON Bmk1006 = Bmk1006\n       1       176  │└TABLE SEEK link_type AS lt\n      59       176  INNER JOIN LOOP ON ml.link_type_id = lt.id\n       1       176  │└TABLE SEEK link_type AS lt\n       3       176  INNER JOIN LOOP ON Bmk1008 = Bmk1008\n       1       176  │└TABLE SEEK movie_link AS ml\n      59       176  INNER JOIN LOOP ON ci.movie_id = ml.linked_movie_id\n       1       176  │└TABLE SEEK movie_link AS ml\n    1832       353  INNER JOIN LOOP ON Bmk1002 = Bmk1002\n       1       353  │└TABLE SEEK cast_info AS ci\n    1832       353  PROJECT BmkToPage Bmk1002 AS Expr1073\n    1832       353  INNER JOIN LOOP ON pi.person_id = ci.person_id\n     557       353  │└TABLE SEEK cast_info AS ci\n       3         3  FILTER name as name LIKE '%a%'\n       4         4  INNER JOIN LOOP ON Bmk1000 = Bmk1000\n       1         4  │└TABLE SEEK aka_name AS an\n       4         4  INNER JOIN LOOP ON pi.person_id = an.person_id\n       4         4  │└TABLE SEEK aka_name AS an\n       1         3  FILTER name_pcode_cf as name_pcode_cf LIKE 'D%' AND gender as gender = 'm'\n       1        64  INNER JOIN LOOP ON Bmk1010 = Bmk1010\n       1        64  │└TABLE SEEK name AS n\n       1        64  PROJECT BmkToPage Bmk1010 AS Expr1072\n       1        64  INNER JOIN LOOP ON pi.person_id = n.id\n       1        64  │└TABLE SEEK name AS n\n       1        64  FILTER info as info = 'mini biography'\n      32        64  INNER JOIN LOOP ON Bmk1004 = Bmk1004\n       1        64  │└TABLE SEEK info_type AS it\n      32        64  INNER JOIN LOOP ON pi.info_type_id = it.id\n       1        64  │└TABLE SEEK info_type AS it\n      32        64  TABLE SCAN person_info AS pi WHERE note as note = 'Volker Boehm'\n",
       "sql": "SELECT MIN(n.name) AS of_person,\n       MIN(t.title) AS biography_movie\nFROM job.aka_name AS an,\n     job.cast_info AS ci,\n     job.info_type AS it,\n     job.link_type AS lt,\n     job.movie_link AS ml,\n     job.name AS n,\n     job.person_info AS pi,\n     job.title AS t\nWHERE an.name LIKE '%a%'\n  AND it.info ='mini biography'\n  AND lt.link ='features'\n  AND n.name_pcode_cf LIKE 'D%'\n  AND n.gender='m'\n  AND pi.note ='Volker Boehm'\n  AND t.production_year BETWEEN 1980 AND 1984\n  AND n.id = an.person_id\n  AND n.id = pi.person_id\n  AND ci.person_id = n.id\n  AND t.id = ci.movie_id\n  AND ml.linked_movie_id = t.id\n  AND lt.id = ml.link_type_id\n  AND it.id = pi.info_type_id\n  AND pi.person_id = an.person_id\n  AND pi.person_id = ci.person_id\n  AND an.person_id = ci.person_id\n  AND ci.movie_id = ml.linked_movie_id;\n",
-      "startTime": "2026-06-25T16:19:31.095594Z",
+      "startTime": "2026-06-25T17:02:28.892449Z",
       "status": "OK",
-      "timeMs": 316.627
+      "timeMs": 397.219
     }
   ],
   "runtime": {
-    "avgMs": 316.627,
-    "bestMs": 316.627,
-    "maxMs": 316.627,
-    "minMs": 316.627,
+    "avgMs": 397.219,
+    "bestMs": 397.219,
+    "maxMs": 397.219,
+    "minMs": 397.219,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

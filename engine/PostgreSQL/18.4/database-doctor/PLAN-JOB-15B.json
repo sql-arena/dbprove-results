@@ -82,16 +82,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(info), MIN(title)\n       9        37  INNER JOIN LOOP ON movie_id = id\n       3       151  │└INNER JOIN LOOP ON id = keyword_id\n       3       151  │ │└INNER JOIN LOOP ON movie_id = id\n       1        74  │ │ │└INNER JOIN LOOP ON id = info_type_id\n       1        74  │ │ │ │└INNER JOIN LOOP ON movie_id = id\n       1       254  │ │ │ │ │└INNER JOIN LOOP ON id = movie_id\n       1       278  │ │ │ │ │ │└INNER JOIN LOOP ON id = company_type_id AND (id = company_type_id)\n       1       278  │ │ │ │ │ │ │└INNER JOIN LOOP ON company_id = id\n       1         1  │ │ │ │ │ │ │ │└TABLE SEEK company_name AS cn WHERE cn.country_code = 'us'\n       1       278  │ │ │ │ │ │ │ TABLE SEEK movie_companies AS mc WHERE (mc.note LIKE '%(200%)%') AND (mc.note LIKE '%(worldwide)%')\n       4         1  │ │ │ │ │ │ TABLE SCAN company_type AS ct\n     278       278  │ │ │ │ │ TABLE SEEK title AS t WHERE (t.production_year >= 2005) AND (t.production_year <= 2010)\n     254       254  │ │ │ │ TABLE SEEK movie_info AS mi WHERE (mi.note LIKE '%internet%') AND (mi.info LIKE 'USA:% 200%')\n      74        74  │ │ │ TABLE SEEK info_type AS it1 WHERE it1.info = 'release dates'\n    3330       150  │ │ TABLE SEEK movie_keyword AS mk\n     151       151  │ TABLE SEEK keyword AS k\n     453       151  TABLE SEEK aka_title AS aka_t\n",
       "sql": "SELECT MIN(mi.info) AS release_date,\n       MIN(t.title) AS youtube_movie\nFROM job.aka_title AS aka_t,\n     job.company_name AS cn,\n     job.company_type AS ct,\n     job.info_type AS it1,\n     job.keyword AS k,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.movie_keyword AS mk,\n     job.title AS t\nWHERE cn.country_code = '[us]'\n  AND cn.name = 'YouTube'\n  AND it1.info = 'release dates'\n  AND mc.note LIKE '%(200%)%'\n  AND mc.note LIKE '%(worldwide)%'\n  AND mi.note LIKE '%internet%'\n  AND mi.info LIKE 'USA:% 200%'\n  AND t.production_year BETWEEN 2005 AND 2010\n  AND t.id = aka_t.movie_id\n  AND t.id = mi.movie_id\n  AND t.id = mk.movie_id\n  AND t.id = mc.movie_id\n  AND mk.movie_id = mi.movie_id\n  AND mk.movie_id = mc.movie_id\n  AND mk.movie_id = aka_t.movie_id\n  AND mi.movie_id = mc.movie_id\n  AND mi.movie_id = aka_t.movie_id\n  AND mc.movie_id = aka_t.movie_id\n  AND k.id = mk.keyword_id\n  AND it1.id = mi.info_type_id\n  AND cn.id = mc.company_id\n  AND ct.id = mc.company_type_id;\n",
-      "startTime": "2026-06-25T12:48:45.540053Z",
+      "startTime": "2026-06-25T15:22:46.207408Z",
       "status": "OK",
-      "timeMs": 46.7
+      "timeMs": 131.437
     }
   ],
   "runtime": {
-    "avgMs": 46.7,
-    "bestMs": 46.7,
-    "maxMs": 46.7,
-    "minMs": 46.7,
+    "avgMs": 131.437,
+    "bestMs": 131.437,
+    "maxMs": 131.437,
+    "minMs": 131.437,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

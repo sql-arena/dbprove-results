@@ -82,16 +82,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(name), MIN(title)\n       1        15  INNER JOIN LOOP ON id = person_id AND person_id = id AND (person_id = id)\n       1        36  │└INNER JOIN LOOP ON id = info_type_id\n       1        36  │ │└INNER JOIN LOOP ON movie_id = movie_id AND movie_id = id AND (movie_id = id)\n       1        36  │ │ │└INNER JOIN LOOP ON id = company_id\n       1        36  │ │ │ │└INNER JOIN LOOP ON id = person_role_id\n       5        36  │ │ │ │ │└INNER JOIN LOOP ON id = role_id\n       5       275  │ │ │ │ │ │└INNER JOIN LOOP ON person_id = person_id\n       5       100  │ │ │ │ │ │ │└INNER JOIN LOOP ON movie_id = movie_id AND movie_id = id AND (movie_id = id)\n       5         5  │ │ │ │ │ │ │ │└INNER JOIN LOOP ON movie_id = id\n      30         7  │ │ │ │ │ │ │ │ │└TABLE SEEK title AS t WHERE t.title LIKE '%Kung%Fu%Panda%'\n       7         7  │ │ │ │ │ │ │ │ TABLE SEEK movie_companies AS mc WHERE (mc.note LIKE '%(200%)%') AND ((mc.note LIKE '%(USA)%') OR (mc.note LIKE '%(worldwide)%'))\n       4       100  │ │ │ │ │ │ │ TABLE SEEK cast_info AS ci WHERE ci.note = '(voice)'\n     200       275  │ │ │ │ │ │ TABLE SEEK aka_name AS an\n       4         4  │ │ │ │ │ TABLE SEEK role_type AS rt WHERE rt.role = 'actress'\n      36        36  │ │ │ │ TABLE SEEK char_name AS chn\n      36        36  │ │ │ TABLE SEEK company_name AS cn WHERE cn.country_code = 'us'\n      36        36  │ │ TABLE SEEK movie_info AS mi WHERE (mi.info LIKE 'Japan:%2007%') OR (mi.info LIKE 'USA:%2008%')\n      36        36  │ TABLE SEEK info_type AS it WHERE it.info = 'release dates'\n      36        36  TABLE SEEK name AS n WHERE (n.name LIKE '%Angel%') AND (n.gender = 'f')\n",
       "sql": "SELECT MIN(n.name) AS voicing_actress,\n       MIN(t.title) AS kung_fu_panda\nFROM job.aka_name AS an,\n     job.char_name AS chn,\n     job.cast_info AS ci,\n     job.company_name AS cn,\n     job.info_type AS it,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.name AS n,\n     job.role_type AS rt,\n     job.title AS t\nWHERE ci.note = '(voice)'\n  AND cn.country_code ='[us]'\n  AND it.info = 'release dates'\n  AND mc.note LIKE '%(200%)%'\n  AND (mc.note LIKE '%(USA)%'\n       OR mc.note LIKE '%(worldwide)%')\n  AND mi.info IS NOT NULL\n  AND (mi.info LIKE 'Japan:%2007%'\n       OR mi.info LIKE 'USA:%2008%')\n  AND n.gender ='f'\n  AND n.name LIKE '%Angel%'\n  AND rt.role ='actress'\n  AND t.production_year BETWEEN 2007 AND 2008\n  AND t.title LIKE '%Kung%Fu%Panda%'\n  AND t.id = mi.movie_id\n  AND t.id = mc.movie_id\n  AND t.id = ci.movie_id\n  AND mc.movie_id = ci.movie_id\n  AND mc.movie_id = mi.movie_id\n  AND mi.movie_id = ci.movie_id\n  AND cn.id = mc.company_id\n  AND it.id = mi.info_type_id\n  AND n.id = ci.person_id\n  AND rt.id = ci.role_id\n  AND n.id = an.person_id\n  AND ci.person_id = an.person_id\n  AND chn.id = ci.person_role_id;\n",
-      "startTime": "2026-06-25T12:52:51.666355Z",
+      "startTime": "2026-06-25T15:29:27.717687Z",
       "status": "OK",
-      "timeMs": 886.542
+      "timeMs": 994.709
     }
   ],
   "runtime": {
-    "avgMs": 886.542,
-    "bestMs": 886.542,
-    "maxMs": 886.542,
-    "minMs": 886.542,
+    "avgMs": 994.709,
+    "bestMs": 994.709,
+    "maxMs": 994.709,
+    "minMs": 994.709,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

@@ -82,16 +82,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(info), MIN(info), MIN(name), MIN(title)\n       1      2825  INNER JOIN LOOP ON id = company_id\n       1    589677  │└INNER JOIN LOOP ON id = person_id\n       1    589677  │ │└INNER JOIN LOOP ON movie_id = id\n       1     42900  │ │ │└INNER JOIN LOOP ON id = movie_id AND movie_id = id AND (movie_id = id)\n       1     42900  │ │ │ │└INNER JOIN LOOP ON movie_id = movie_id AND movie_id = movie_id AND (movie_id = movie_id)\n       1     63386  │ │ │ │ │└INNER JOIN LOOP ON id = info_type_id\n       3     67732  │ │ │ │ │ │└INNER JOIN LOOP ON movie_id = movie_id AND movie_id = movie_id AND (movie_id = movie_id)\n       6     63701  │ │ │ │ │ │ │└INNER JOIN HASH ON info_type_id = id\n       1         1  │ │ │ │ │ │ │ │└TABLE SEEK info_type AS it2\n     686    191689  │ │ │ │ │ │ │ INNER JOIN LOOP ON movie_id = movie_id\n     236     76714  │ │ │ │ │ │ │ │└INNER JOIN LOOP ON keyword_id = id\n       7         7  │ │ │ │ │ │ │ │ │└TABLE SEEK keyword AS k\n    2135     76713  │ │ │ │ │ │ │ │ TABLE SEEK movie_keyword AS mk\n  230142    191785  │ │ │ │ │ │ │ TABLE SEEK movie_info_idx AS mi_idx\n   63701     67523  │ │ │ │ │ │ TABLE SEEK movie_info AS mi WHERE mi.info IN('Horror','Action','Sci-Fi','Thriller','Crime','War')\n   67732     67732  │ │ │ │ │ TABLE SEEK info_type AS it1 WHERE it1.info = 'genres'\n   63386     63386  │ │ │ │ TABLE SEEK cast_info AS ci WHERE ci.note IN('(writer)','(head writer)','(written by)','(story)','(story editor)')\n   42900     42900  │ │ │ TABLE SEEK title AS t\n  214500    589875  │ │ TABLE SEEK movie_companies AS mc\n  589677    589677  │ TABLE SEEK name AS n\n  589677    589677  TABLE SEEK company_name AS cn WHERE cn.name LIKE 'Lionsgate%'\n",
       "sql": "SELECT MIN(mi.info) AS movie_budget,\n       MIN(mi_idx.info) AS movie_votes,\n       MIN(n.name) AS writer,\n       MIN(t.title) AS violent_liongate_movie\nFROM job.cast_info AS ci,\n     job.company_name AS cn,\n     job.info_type AS it1,\n     job.info_type AS it2,\n     job.keyword AS k,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.movie_info_idx AS mi_idx,\n     job.movie_keyword AS mk,\n     job.name AS n,\n     job.title AS t\nWHERE ci.note IN ('(writer)',\n                  '(head writer)',\n                  '(written by)',\n                  '(story)',\n                  '(story editor)')\n  AND cn.name LIKE 'Lionsgate%'\n  AND it1.info = 'genres'\n  AND it2.info = 'votes'\n  AND k.keyword IN ('murder',\n                    'violence',\n                    'blood',\n                    'gore',\n                    'death',\n                    'female-nudity',\n                    'hospital')\n  AND mi.info IN ('Horror',\n                  'Action',\n                  'Sci-Fi',\n                  'Thriller',\n                  'Crime',\n                  'War')\n  AND t.id = mi.movie_id\n  AND t.id = mi_idx.movie_id\n  AND t.id = ci.movie_id\n  AND t.id = mk.movie_id\n  AND t.id = mc.movie_id\n  AND ci.movie_id = mi.movie_id\n  AND ci.movie_id = mi_idx.movie_id\n  AND ci.movie_id = mk.movie_id\n  AND ci.movie_id = mc.movie_id\n  AND mi.movie_id = mi_idx.movie_id\n  AND mi.movie_id = mk.movie_id\n  AND mi.movie_id = mc.movie_id\n  AND mi_idx.movie_id = mk.movie_id\n  AND mi_idx.movie_id = mc.movie_id\n  AND mk.movie_id = mc.movie_id\n  AND n.id = ci.person_id\n  AND it1.id = mi.info_type_id\n  AND it2.id = mi_idx.info_type_id\n  AND k.id = mk.keyword_id\n  AND cn.id = mc.company_id;\n",
-      "startTime": "2026-06-25T12:58:44.832074Z",
+      "startTime": "2026-06-25T15:34:06.469845Z",
       "status": "OK",
-      "timeMs": 4181.578
+      "timeMs": 47079.188
     }
   ],
   "runtime": {
-    "avgMs": 4181.578,
-    "bestMs": 4181.578,
-    "maxMs": 4181.578,
-    "minMs": 4181.578,
+    "avgMs": 47079.188,
+    "bestMs": 47079.188,
+    "maxMs": 47079.188,
+    "minMs": 47079.188,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

@@ -82,16 +82,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(name), MIN(info), MIN(title)\n       1       397  INNER JOIN LOOP ON id = company_id\n       1       708  │└INNER JOIN LOOP ON info = 'genres' AND id = company_type_id AND (id = company_type_id)\n       1         1  │ │└TABLE SCAN company_type AS ct WHERE ct.kind = 'production companies'\n       2      1934  │ INNER JOIN LOOP ON movie_id = id\n       1       557  │ │└INNER JOIN LOOP ON info = 'rating' AND id = info_type_id AND (id = info_type_id)\n       1         1  │ │ │└TABLE SEEK info_type AS it1\n      49       557  │ │ INNER JOIN LOOP ON movie_id = id\n      79      4047  │ │ │└INNER JOIN LOOP ON id = movie_id\n     459     15849  │ │ │ │└INNER JOIN LOOP ON info_type_id = id\n       1         1  │ │ │ │ │└TABLE SEEK info_type AS it2\n   12961     15849  │ │ │ │ TABLE SEEK movie_info_idx AS mi_idx WHERE mi_idx.info > '8.0'\n   15849     15849  │ │ │ TABLE SEEK title AS t WHERE (t.production_year >= 2005) AND (t.production_year <= 2008)\n    4047      4047  │ │ TABLE SEEK movie_info AS mi WHERE mi.info IN('Drama','Horror')\n    2785      1932  │ TABLE SEEK movie_companies AS mc\n     708       708  TABLE SEEK company_name AS cn WHERE cn.country_code = 'us'\n",
       "sql": "SELECT MIN(cn.name) AS movie_company,\n       MIN(mi_idx.info) AS rating,\n       MIN(t.title) AS drama_horror_movie\nFROM job.company_name AS cn,\n     job.company_type AS ct,\n     job.info_type AS it1,\n     job.info_type AS it2,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.movie_info_idx AS mi_idx,\n     job.title AS t\nWHERE cn.country_code = '[us]'\n  AND ct.kind = 'production companies'\n  AND it1.info = 'genres'\n  AND it2.info = 'rating'\n  AND mi.info IN ('Drama',\n                  'Horror')\n  AND mi_idx.info > '8.0'\n  AND t.production_year BETWEEN 2005 AND 2008\n  AND t.id = mi.movie_id\n  AND t.id = mi_idx.movie_id\n  AND mi.info_type_id = it1.id\n  AND mi_idx.info_type_id = it2.id\n  AND t.id = mc.movie_id\n  AND ct.id = mc.company_type_id\n  AND cn.id = mc.company_id\n  AND mc.movie_id = mi.movie_id\n  AND mc.movie_id = mi_idx.movie_id\n  AND mi.movie_id = mi_idx.movie_id;\n",
-      "startTime": "2026-06-25T12:48:27.744051Z",
+      "startTime": "2026-06-25T15:22:13.639231Z",
       "status": "OK",
-      "timeMs": 4061.636
+      "timeMs": 6493.073
     }
   ],
   "runtime": {
-    "avgMs": 4061.636,
-    "bestMs": 4061.636,
-    "maxMs": 4061.636,
-    "minMs": 4061.636,
+    "avgMs": 6493.073,
+    "bestMs": 6493.073,
+    "maxMs": 6493.073,
+    "minMs": 6493.073,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

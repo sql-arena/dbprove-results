@@ -1,0 +1,111 @@
+{
+  "config": "M5 Macbook Pro",
+  "engine": "SQL Server",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 1,
+          "=": 0,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 3,
+          "=": 2,
+          ">16x": 1
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 5,
+          "=": 3,
+          ">16x": 1
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 88,
+        "distribute": 0,
+        "hash": 3200416,
+        "join": 1636597,
+        "scan": 10,
+        "seek": 1636111,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(keyword as keyword) AS Expr1010, MIN(name as name) AS Expr1011, MIN(title as title) AS Expr1012\n      35        88  INNER JOIN LOOP ON Bmk1008 = Bmk1008\n       0       112  │└TABLE SEEK title AS t WHERE production_year as production_year > 2000\n      65       112  PROJECT BmkToPage Bmk1008 AS Expr1041\n      65       112  INNER JOIN LOOP ON mk.movie_id = t.id\n       1       112  │└TABLE SEEK title AS t\n      65       112  INNER JOIN HASH ON Bmk1000 = Bmk1000\n   28255   1564305  │└INNER JOIN LOOP ON mk.movie_id = ci.movie_id\n      38   1564305  │ │└TABLE SEEK cast_info AS ci\n     725     35548  │ INNER JOIN LOOP ON Bmk1004 = Bmk1004\n       1     35548  │ │└TABLE SEEK movie_keyword AS mk\n     725     35548  │ INNER JOIN LOOP ON k.id = mk.keyword_id\n      90     35548  │ │└TABLE SEEK movie_keyword AS mk\n       8         8  │ TABLE SCAN keyword AS k WHERE keyword as keyword = 'based-on-comic' OR keyword as keyword = 'fight' OR keyword as keyword = 'marvel-comics' OR keyword as keyword = 'second-part' OR keyword as keyword = 'sequel' OR keyword as keyword = 'superhero' OR keyword as keyword = 'tv-special' OR keyword as keyword = 'violence'\n   83517       486  INNER JOIN LOOP ON n.id = ci.person_id\n     572       486  │└TABLE SEEK cast_info AS ci\n     145         2  TABLE SCAN name AS n WHERE name as name LIKE '%Downey%Robert%'\n",
+      "sql": "SELECT MIN(k.keyword) AS movie_keyword,\n       MIN(n.name) AS actor_name,\n       MIN(t.title) AS hero_movie\nFROM job.cast_info AS ci,\n     job.keyword AS k,\n     job.movie_keyword AS mk,\n     job.name AS n,\n     job.title AS t\nWHERE k.keyword IN ('superhero',\n                    'sequel',\n                    'second-part',\n                    'marvel-comics',\n                    'based-on-comic',\n                    'tv-special',\n                    'fight',\n                    'violence')\n  AND n.name LIKE '%Downey%Robert%'\n  AND t.production_year > 2000\n  AND k.id = mk.keyword_id\n  AND t.id = mk.movie_id\n  AND t.id = ci.movie_id\n  AND ci.movie_id = mk.movie_id\n  AND n.id = ci.person_id;\n",
+      "startTime": "2026-06-25T16:19:07.698334Z",
+      "status": "OK",
+      "timeMs": 6924.354
+    }
+  ],
+  "runtime": {
+    "avgMs": 6924.354,
+    "bestMs": 6924.354,
+    "maxMs": 6924.354,
+    "minMs": 6924.354,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 6D Analysis",
+    "displayName": "JOB-6D",
+    "name": "PLAN-JOB-6D",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "16.0.4236.2"
+}

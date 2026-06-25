@@ -1,4 +1,5 @@
 {
+  "config": "M5 Macbook Pro",
   "engine": "SQL Server",
   "queries": [
     {
@@ -81,16 +82,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(name as name) AS Expr1020, MIN(title as title) AS Expr1021\n      61      5406  INNER JOIN HASH ON cc.subject_id = cct1.id\n       1         1  │└FILTER kind as kind = 'cast'\n       4         4  │ INNER JOIN LOOP ON Bmk1002 = Bmk1002\n       1         4  │ │└TABLE SEEK comp_cast_type AS cct1\n       4         4  │ TABLE SEEK comp_cast_type AS cct1\n     122      5406  INNER JOIN HASH ON cc.status_id = cct2.id\n       2         2  │└FILTER kind as kind LIKE '%complete%'\n       4         4  │ INNER JOIN LOOP ON Bmk1004 = Bmk1004\n       1         4  │ │└TABLE SEEK comp_cast_type AS cct2\n       4         4  │ TABLE SEEK comp_cast_type AS cct2\n     122      5406  INNER JOIN HASH ON mk.keyword_id = k.id\n      10        10  │└TABLE SCAN keyword AS k WHERE keyword as keyword = 'based-on-comic' OR keyword as keyword = 'claw' OR keyword as keyword = 'fight' OR keyword as keyword = 'laser' OR keyword as keyword = 'magnet' OR keyword as keyword = 'marvel-comics' OR keyword as keyword = 'superhero' OR keyword as keyword = 'tv-special' OR keyword as keyword = 'violence' OR keyword as keyword = 'web'\n      62      5406  INNER JOIN HASH ON id as id = movie_id as movie_id\n  135086    135086  │└TABLE SEEK complete_cast AS cc WHERE BLOOM(subject_id as subject_id)\n      43     11235  INNER JOIN LOOP ON Bmk1016 = Bmk1016\n       1     11235  │└TABLE SEEK name AS n\n      43     11235  PROJECT BmkToPage Bmk1016 AS Expr1698\n      43     11235  INNER JOIN LOOP ON ci.person_id = n.id\n       1     11235  │└TABLE SEEK name AS n\n      43     11235  FILTER name as name LIKE '%man%' OR name as name LIKE '%Man%'\n     734    175101  INNER JOIN LOOP ON Bmk1006 = Bmk1006\n       1    175101  │└TABLE SEEK char_name AS chn\n     734    175101  PROJECT BmkToPage Bmk1006 AS Expr1695\n     734    175101  INNER JOIN LOOP ON ci.person_role_id = chn.id\n       1    175101  │└TABLE SEEK char_name AS chn\n    1468    406258  INNER JOIN HASH ON t.kind_id = kt.id\n       1         1  │└FILTER kind as kind = 'movie'\n       7         7  │ INNER JOIN LOOP ON Bmk1012 = Bmk1012\n       1         7  │ │└TABLE SEEK kind_type AS kt\n       7         7  │ TABLE SEEK kind_type AS kt\n     880    406258  INNER JOIN HASH ON ci.movie_id = t.id\n      24      5032  │└FILTER production_year as production_year > 2000\n      45     13935  │ INNER JOIN LOOP ON Bmk1018 = Bmk1018\n       1     13935  │ │└TABLE SEEK title AS t WHERE BLOOM(kind_id as kind_id)\n     452     24091  │ PROJECT BmkToPage Bmk1018 AS Expr1692\n     452     24091  │ INNER JOIN LOOP ON mk.movie_id = t.id\n       1     24091  │ │└TABLE SEEK title AS t\n     452   4523930  │ TABLE SEEK movie_keyword AS mk WHERE BLOOM(keyword_id as keyword_id)\n       3  36244344  TABLE SEEK cast_info AS ci WHERE BLOOM(movie_id as movie_id)\n",
       "sql": "SELECT MIN(n.name) AS cast_member,\n       MIN(t.title) AS complete_dynamic_hero_movie\nFROM job.complete_cast AS cc,\n     job.comp_cast_type AS cct1,\n     job.comp_cast_type AS cct2,\n     job.char_name AS chn,\n     job.cast_info AS ci,\n     job.keyword AS k,\n     job.kind_type AS kt,\n     job.movie_keyword AS mk,\n     job.name AS n,\n     job.title AS t\nWHERE cct1.kind = 'cast'\n  AND cct2.kind LIKE '%complete%'\n  AND chn.name IS NOT NULL\n  AND (chn.name LIKE '%man%'\n       OR chn.name LIKE '%Man%')\n  AND k.keyword IN ('superhero',\n                    'marvel-comics',\n                    'based-on-comic',\n                    'tv-special',\n                    'fight',\n                    'violence',\n                    'magnet',\n                    'web',\n                    'claw',\n                    'laser')\n  AND kt.kind = 'movie'\n  AND t.production_year > 2000\n  AND kt.id = t.kind_id\n  AND t.id = mk.movie_id\n  AND t.id = ci.movie_id\n  AND t.id = cc.movie_id\n  AND mk.movie_id = ci.movie_id\n  AND mk.movie_id = cc.movie_id\n  AND ci.movie_id = cc.movie_id\n  AND chn.id = ci.person_role_id\n  AND n.id = ci.person_id\n  AND k.id = mk.keyword_id\n  AND cct1.id = cc.subject_id\n  AND cct2.id = cc.status_id;\n",
-      "startTime": "2026-06-23T08:19:57.251571Z",
+      "startTime": "2026-06-25T16:16:08.314897Z",
       "status": "OK",
-      "timeMs": 1040.192
+      "timeMs": 2171.057
     }
   ],
   "runtime": {
-    "avgMs": 1040.192,
-    "bestMs": 1040.192,
-    "maxMs": 1040.192,
-    "minMs": 1040.192,
+    "avgMs": 2171.057,
+    "bestMs": 2171.057,
+    "maxMs": 2171.057,
+    "minMs": 2171.057,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

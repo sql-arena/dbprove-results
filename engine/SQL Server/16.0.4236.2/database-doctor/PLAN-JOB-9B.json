@@ -1,0 +1,111 @@
+{
+  "config": "M5 Macbook Pro",
+  "engine": "SQL Server",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 2,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 1,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 2,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 2,
+          "+8x": 3,
+          "-2x": 1,
+          "-4x": 4,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 1
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 1,
+          "-8x": 2,
+          "<16x": 7,
+          "=": 5,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 2,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 49,
+        "distribute": 0,
+        "hash": 433821,
+        "join": 283203,
+        "scan": 285186,
+        "seek": 53256,
+        "sort": 52894
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(partialagg1044) AS Expr1016, MIN(partialagg1045) AS Expr1017, MIN(partialagg1046) AS Expr1018, MIN(partialagg1047) AS Expr1019\n       5         7  AGGREGATE MIN(name as name) AS partialagg1044, MIN(name as name) AS partialagg1045, MIN(name as name) AS partialagg1046, MIN(title as title) AS partialagg1047\n     475        42  INNER JOIN LOOP ON Bmk1002 = Bmk1002\n       1        42  │└TABLE SEEK char_name AS chn\n     475        42  PROJECT BmkToPage Bmk1002 AS Expr1846\n     475        42  INNER JOIN LOOP ON ci.person_role_id = chn.id\n       1        42  │└TABLE SEEK char_name AS chn\n    1057        42  INNER JOIN LOOP ON Bmk1000 = Bmk1000\n       1        42  │└TABLE SEEK aka_name AS an\n     389        42  INNER JOIN LOOP ON n.id = an.person_id\n       4        42  │└TABLE SEEK aka_name AS an\n     248        32  INNER JOIN LOOP ON Bmk1014 = Bmk1014\n       0        85  │└TABLE SEEK title AS t WHERE production_year as production_year >= 2007 AND production_year as production_year <= 2010\n     452        85  PROJECT BmkToPage Bmk1014 AS Expr1841\n     452        85  INNER JOIN LOOP ON mc.movie_id = t.id\n       1        85  │└TABLE SEEK title AS t\n     452        85  FILTER name as name LIKE '%Angel%' AND gender as gender = 'f'\n    5195     26447  INNER JOIN LOOP ON Bmk1010 = Bmk1010\n       1     26447  │└TABLE SEEK name AS n\n    5195     26447  SORT Expr1050\n    5195     26447  PROJECT BmkToPage Bmk1010 AS Expr1050\n    5195     26447  INNER JOIN LOOP ON ci.person_id = n.id\n       1     26447  │└TABLE SEEK name AS n\n    5195     26447  SORT person_id\n    5195     26447  INNER JOIN HASH ON ci.role_id = rt.id\n       1         1  │└FILTER role as role = 'actress'\n      12        12  │ INNER JOIN LOOP ON Bmk1012 = Bmk1012\n       1        12  │ │└TABLE SEEK role_type AS rt\n      12        12  │ TABLE SEEK role_type AS rt\n    5715     26447  INNER JOIN HASH ON ci.movie_id = mc.movie_id\n   72076    177065  │└INNER JOIN HASH ON mc.company_id = cn.id\n   84576     84843  │ │└TABLE SCAN company_name AS cn WHERE country_code as country_code = 'us'\n  200411    177065  │ TABLE SCAN movie_companies AS mc WHERE note as note LIKE '%(200%)%' AND (note as note LIKE '%(USA)%' OR note as note LIKE '%(worldwide)%') AND BLOOM(company_id as company_id)\n    5715     23278  TABLE SCAN cast_info AS ci WHERE (BLOOM(movie_id as movie_id,N'IN ROW')) AND (note as note = '(voice)' AND BLOOM(role_id as role_id))\n",
+      "sql": "SELECT MIN(an.name) AS alternative_name,\n       MIN(chn.name) AS voiced_character,\n       MIN(n.name) AS voicing_actress,\n       MIN(t.title) AS american_movie\nFROM job.aka_name AS an,\n     job.char_name AS chn,\n     job.cast_info AS ci,\n     job.company_name AS cn,\n     job.movie_companies AS mc,\n     job.name AS n,\n     job.role_type AS rt,\n     job.title AS t\nWHERE ci.note = '(voice)'\n  AND cn.country_code ='[us]'\n  AND mc.note LIKE '%(200%)%'\n  AND (mc.note LIKE '%(USA)%'\n       OR mc.note LIKE '%(worldwide)%')\n  AND n.gender ='f'\n  AND n.name LIKE '%Angel%'\n  AND rt.role ='actress'\n  AND t.production_year BETWEEN 2007 AND 2010\n  AND ci.movie_id = t.id\n  AND t.id = mc.movie_id\n  AND ci.movie_id = mc.movie_id\n  AND mc.company_id = cn.id\n  AND ci.role_id = rt.id\n  AND n.id = ci.person_id\n  AND chn.id = ci.person_role_id\n  AND an.person_id = n.id\n  AND an.person_id = ci.person_id;\n",
+      "startTime": "2026-06-25T16:19:57.140602Z",
+      "status": "OK",
+      "timeMs": 1889.495
+    }
+  ],
+  "runtime": {
+    "avgMs": 1889.495,
+    "bestMs": 1889.495,
+    "maxMs": 1889.495,
+    "minMs": 1889.495,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 9B Analysis",
+    "displayName": "JOB-9B",
+    "name": "PLAN-JOB-9B",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "16.0.4236.2"
+}

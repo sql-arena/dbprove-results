@@ -82,16 +82,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(info), MIN(info), MIN(title)\n       1        11  INNER JOIN LOOP ON id = person_id\n       1       268  │└INNER JOIN LOOP ON movie_id = id\n       1       358  │ │└INNER JOIN LOOP ON info = 'rating' AND id = info_type_id AND (id = info_type_id)\n       1         1  │ │ │└TABLE SEEK info_type AS it1\n      20       358  │ │ INNER JOIN LOOP ON movie_id = id\n     142      6152  │ │ │└INNER JOIN LOOP ON id = movie_id\n     459     15849  │ │ │ │└INNER JOIN LOOP ON info_type_id = id\n       1         1  │ │ │ │ │└TABLE SEEK info_type AS it2\n   12961     15849  │ │ │ │ TABLE SEEK movie_info_idx AS mi_idx WHERE mi_idx.info > '8.0'\n   15849     15849  │ │ │ TABLE SEEK title AS t WHERE (t.production_year >= 2008) AND (t.production_year <= 2014)\n    6152      6152  │ │ TABLE SEEK movie_info AS mi WHERE (mi.note IS NULL) AND (mi.info IN('Horror','Thriller'))\n     358       358  │ TABLE SEEK cast_info AS ci WHERE ci.note IN('(writer)','(head writer)','(written by)','(story)','(story editor)')\n     268       268  TABLE SEEK name AS n WHERE (n.gender IS NOT NULL) AND (n.gender = 'f')\n",
       "sql": "SELECT MIN(mi.info) AS movie_budget,\n       MIN(mi_idx.info) AS movie_votes,\n       MIN(t.title) AS movie_title\nFROM job.cast_info AS ci,\n     job.info_type AS it1,\n     job.info_type AS it2,\n     job.movie_info AS mi,\n     job.movie_info_idx AS mi_idx,\n     job.name AS n,\n     job.title AS t\nWHERE ci.note IN ('(writer)',\n                  '(head writer)',\n                  '(written by)',\n                  '(story)',\n                  '(story editor)')\n  AND it1.info = 'genres'\n  AND it2.info = 'rating'\n  AND mi.info IN ('Horror',\n                  'Thriller')\n  AND mi.note IS NULL\n  AND mi_idx.info > '8.0'\n  AND n.gender IS NOT NULL\n  AND n.gender = 'f'\n  AND t.production_year BETWEEN 2008 AND 2014\n  AND t.id = mi.movie_id\n  AND t.id = mi_idx.movie_id\n  AND t.id = ci.movie_id\n  AND ci.movie_id = mi.movie_id\n  AND ci.movie_id = mi_idx.movie_id\n  AND mi.movie_id = mi_idx.movie_id\n  AND n.id = ci.person_id\n  AND it1.id = mi.info_type_id\n  AND it2.id = mi_idx.info_type_id;\n",
-      "startTime": "2026-06-25T12:51:56.854524Z",
+      "startTime": "2026-06-25T15:28:13.583681Z",
       "status": "OK",
-      "timeMs": 5748.237
+      "timeMs": 7851.434
     }
   ],
   "runtime": {
-    "avgMs": 5748.237,
-    "bestMs": 5748.237,
-    "maxMs": 5748.237,
-    "minMs": 5748.237,
+    "avgMs": 7851.434,
+    "bestMs": 7851.434,
+    "maxMs": 7851.434,
+    "minMs": 7851.434,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

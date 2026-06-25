@@ -1,0 +1,111 @@
+{
+  "config": "M5 Macbook Pro",
+  "engine": "SQL Server",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 1,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 2,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 1,
+          "-8x": 1,
+          "<16x": 1,
+          "=": 2,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 3,
+          "-8x": 3,
+          "<16x": 3,
+          "=": 1,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 3,
+          "<16x": 6,
+          "=": 3,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 2,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 70840,
+        "distribute": 0,
+        "hash": 826295,
+        "join": 37010688,
+        "scan": 156342,
+        "seek": 36653051,
+        "sort": 228264
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(partialagg1041) AS Expr1016, MIN(partialagg1042) AS Expr1017\n       5        10  AGGREGATE MIN(name as name) AS partialagg1041, MIN(info as info) AS partialagg1042\n    7249     70830  INNER JOIN LOOP ON Bmk1014 = Bmk1014\n       0    114132  │└TABLE SEEK title AS t WHERE production_year as production_year >= 1980 AND production_year as production_year <= 2010\n   11817    114132  SORT Expr1044\n   11817    114132  PROJECT BmkToPage Bmk1014 AS Expr1044\n   11817    114132  INNER JOIN LOOP ON ci.movie_id = t.id\n       1    114132  │└TABLE SEEK title AS t\n   11817    114132  SORT movie_id\n   11817    114132  INNER JOIN HASH ON ml.link_type_id = lt.id\n       4         4  │└FILTER link as link = 'featured in' OR link as link = 'features' OR link as link = 'referenced in' OR link as link = 'references'\n      18        18  │ INNER JOIN LOOP ON Bmk1006 = Bmk1006\n       1        18  │ │└TABLE SEEK link_type AS lt\n      18        18  │ TABLE SEEK link_type AS lt\n    4727    114132  INNER JOIN HASH ON ci.movie_id = ml.linked_movie_id\n    2999     29997  │└TABLE SEEK movie_link AS ml WHERE BLOOM(link_type_id as link_type_id)\n    1466     50973  INNER JOIN HASH ON ci.person_id = pi.person_id\n    2633     13010  │└FILTER (gender as gender = 'm' OR gender as gender = 'f' AND name as name LIKE 'A%') AND name_pcode_cf as name_pcode_cf >= 'A' AND name_pcode_cf as name_pcode_cf <= 'F'\n   14360     75205  │ INNER JOIN LOOP ON Bmk1010 = Bmk1010\n       1     75205  │ │└TABLE SEEK name AS n\n   14360     75205  │ PROJECT BmkToPage Bmk1010 AS Expr2276\n   14360     75205  │ INNER JOIN LOOP ON pi.person_id = n.id\n       1     75205  │ │└TABLE SEEK name AS n\n   14360     75205  │ INNER JOIN HASH ON an.person_id = pi.person_id\n    4365     84183  │ │└INNER JOIN HASH ON pi.info_type_id = it.id\n       1         1  │ │ │└FILTER info as info = 'mini biography'\n     113       113  │ │ │ TABLE SCAN info_type AS it\n    9604     84183  │ │ TABLE SCAN person_info AS pi WHERE note as note IS NOT NULL AND BLOOM(info_type_id as info_type_id)\n    6978     72046  │ TABLE SCAN aka_name AS an WHERE (name as name LIKE '%a%' OR name as name LIKE 'A%') AND BLOOM(person_id as person_id)\n     362  36244344  TABLE SEEK cast_info AS ci WHERE BLOOM(movie_id as movie_id) AND BLOOM(person_id as person_id)\n",
+      "sql": "SELECT MIN(n.name) AS cast_member_name,\n       MIN(pi.info) AS cast_member_info\nFROM job.aka_name AS an,\n     job.cast_info AS ci,\n     job.info_type AS it,\n     job.link_type AS lt,\n     job.movie_link AS ml,\n     job.name AS n,\n     job.person_info AS pi,\n     job.title AS t\nWHERE an.name IS NOT NULL\n  AND (an.name LIKE '%a%'\n       OR an.name LIKE 'A%')\n  AND it.info ='mini biography'\n  AND lt.link IN ('references',\n                  'referenced in',\n                  'features',\n                  'featured in')\n  AND n.name_pcode_cf BETWEEN 'A' AND 'F'\n  AND (n.gender='m'\n       OR (n.gender = 'f'\n           AND n.name LIKE 'A%'))\n  AND pi.note IS NOT NULL\n  AND t.production_year BETWEEN 1980 AND 2010\n  AND n.id = an.person_id\n  AND n.id = pi.person_id\n  AND ci.person_id = n.id\n  AND t.id = ci.movie_id\n  AND ml.linked_movie_id = t.id\n  AND lt.id = ml.link_type_id\n  AND it.id = pi.info_type_id\n  AND pi.person_id = an.person_id\n  AND pi.person_id = ci.person_id\n  AND an.person_id = ci.person_id\n  AND ci.movie_id = ml.linked_movie_id;\n",
+      "startTime": "2026-06-25T16:19:31.828994Z",
+      "status": "OK",
+      "timeMs": 3628.834
+    }
+  ],
+  "runtime": {
+    "avgMs": 3628.834,
+    "bestMs": 3628.834,
+    "maxMs": 3628.834,
+    "minMs": 3628.834,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 7C Analysis",
+    "displayName": "JOB-7C",
+    "name": "PLAN-JOB-7C",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "16.0.4236.2"
+}

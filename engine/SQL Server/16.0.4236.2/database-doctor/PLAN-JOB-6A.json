@@ -1,0 +1,111 @@
+{
+  "config": "M5 Macbook Pro",
+  "engine": "SQL Server",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 1,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 3,
+          "+8x": 0,
+          "-2x": 4,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 1,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 3,
+          "<16x": 4,
+          "=": 2,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 6,
+        "distribute": 0,
+        "hash": 4952,
+        "join": 4952,
+        "scan": 1,
+        "seek": 4952,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(keyword as keyword) AS Expr1010, MIN(name as name) AS Expr1011, MIN(title as title) AS Expr1012\n       1         6  FILTER name as name LIKE '%Downey%Robert%'\n     541      1224  INNER JOIN LOOP ON Bmk1006 = Bmk1006\n       1      1224  │└TABLE SEEK name AS n\n     541      1224  PROJECT BmkToPage Bmk1006 AS Expr1039\n     541      1224  INNER JOIN LOOP ON ci.person_id = n.id\n       1      1224  │└TABLE SEEK name AS n\n     541      1224  INNER JOIN LOOP ON Bmk1000 = Bmk1000\n       1      1224  │└TABLE SEEK cast_info AS ci\n     541      1224  PROJECT BmkToPage Bmk1000 AS Expr1036\n     541      1224  INNER JOIN LOOP ON t.id = ci.movie_id\n      38      1224  │└TABLE SEEK cast_info AS ci\n      13        11  INNER JOIN LOOP ON Bmk1008 = Bmk1008\n       0        14  │└TABLE SEEK title AS t WHERE production_year as production_year > 2010\n      90        14  PROJECT BmkToPage Bmk1008 AS Expr1034\n      90        14  INNER JOIN LOOP ON mk.movie_id = t.id\n       1        14  │└TABLE SEEK title AS t\n      90        14  INNER JOIN LOOP ON Bmk1004 = Bmk1004\n       1        14  │└TABLE SEEK movie_keyword AS mk\n      90        14  INNER JOIN LOOP ON k.id = mk.keyword_id\n      90        14  │└TABLE SEEK movie_keyword AS mk\n       1         1  TABLE SCAN keyword AS k WHERE keyword as keyword = 'marvel-cinematic-universe'\n",
+      "sql": "SELECT MIN(k.keyword) AS movie_keyword,\n       MIN(n.name) AS actor_name,\n       MIN(t.title) AS marvel_movie\nFROM job.cast_info AS ci,\n     job.keyword AS k,\n     job.movie_keyword AS mk,\n     job.name AS n,\n     job.title AS t\nWHERE k.keyword = 'marvel-cinematic-universe'\n  AND n.name LIKE '%Downey%Robert%'\n  AND t.production_year > 2010\n  AND k.id = mk.keyword_id\n  AND t.id = mk.movie_id\n  AND t.id = ci.movie_id\n  AND ci.movie_id = mk.movie_id\n  AND n.id = ci.person_id;\n",
+      "startTime": "2026-06-25T16:19:06.648531Z",
+      "status": "OK",
+      "timeMs": 289.592
+    }
+  ],
+  "runtime": {
+    "avgMs": 289.592,
+    "bestMs": 289.592,
+    "maxMs": 289.592,
+    "minMs": 289.592,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 6A Analysis",
+    "displayName": "JOB-6A",
+    "name": "PLAN-JOB-6A",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "16.0.4236.2"
+}

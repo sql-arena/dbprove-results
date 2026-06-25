@@ -1,0 +1,111 @@
+{
+  "config": "M5 Macbook Pro",
+  "engine": "SQL Server",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 7,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 1,
+          "=": 0,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 21,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 21,
+          "=": 2,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 477,
+        "distribute": 0,
+        "hash": 49040,
+        "join": 68702,
+        "scan": 1,
+        "seek": 68493,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(name as name) AS Expr1024, MIN(link as link) AS Expr1025, MIN(title as title) AS Expr1026\n       1       477  FILTER (name as name LIKE '%Film%' OR name as name LIKE '%Warner%') AND country_code as country_code <> 'pl'\n       2      1106  INNER JOIN LOOP ON Bmk1006 = Bmk1006\n       1      1106  │└TABLE SEEK company_name AS cn\n       2      1106  INNER JOIN LOOP ON mc.company_id = cn.id\n       1      1106  │└TABLE SEEK company_name AS cn\n       2      1106  FILTER kind as kind = 'production companies'\n       4      1163  INNER JOIN LOOP ON Bmk1008 = Bmk1008\n       1      1163  │└TABLE SEEK company_type AS ct\n       4      1163  INNER JOIN LOOP ON mc.company_type_id = ct.id\n       1      1163  │└TABLE SEEK company_type AS ct\n       4      1163  FILTER note as note IS NULL\n       9      1372  INNER JOIN LOOP ON Bmk1014 = Bmk1014\n       1      1372  │└TABLE SEEK movie_companies AS mc\n       9      1372  PROJECT BmkToPage Bmk1014 AS Expr1094\n       9      1372  INNER JOIN LOOP ON t.id = mc.movie_id\n       9      1372  │└TABLE SEEK movie_companies AS mc\n       1       154  INNER JOIN LOOP ON Bmk1022 = Bmk1022\n       1       154  │└TABLE SEEK title AS t WHERE production_year as production_year >= 1950 AND production_year as production_year <= 2000\n       1       154  PROJECT BmkToPage Bmk1022 AS Expr1093\n       1       154  INNER JOIN LOOP ON ml.movie_id = t.id\n       1       154  │└TABLE SEEK title AS t\n       1       154  FILTER kind as kind = 'cast' OR kind as kind = 'crew'\n       1       154  INNER JOIN LOOP ON Bmk1002 = Bmk1002\n       1       154  │└TABLE SEEK comp_cast_type AS cct1\n       1       154  INNER JOIN LOOP ON cc.subject_id = cct1.id\n       1       154  │└TABLE SEEK comp_cast_type AS cct1\n       1       154  FILTER kind as kind = 'complete'\n       1       211  INNER JOIN LOOP ON Bmk1004 = Bmk1004\n       1       211  │└TABLE SEEK comp_cast_type AS cct2\n       1       211  INNER JOIN LOOP ON cc.status_id = cct2.id\n       1       211  │└TABLE SEEK comp_cast_type AS cct2\n       1       211  INNER JOIN LOOP ON Bmk1000 = Bmk1000\n       1       211  │└TABLE SEEK complete_cast AS cc\n       1       211  INNER JOIN LOOP ON ml.movie_id = cc.movie_id\n       1       211  │└TABLE SEEK complete_cast AS cc\n       1       420  FILTER info as info = 'German' OR info as info = 'Germany' OR info as info = 'Sweden' OR info as info = 'Swedish'\n      52      4082  INNER JOIN LOOP ON Bmk1016 = Bmk1016\n       1      4082  │└TABLE SEEK movie_info AS mi\n      52      4082  PROJECT BmkToPage Bmk1016 AS Expr1091\n      52      4082  INNER JOIN LOOP ON ml.movie_id = mi.movie_id\n      52      4082  │└TABLE SEEK movie_info AS mi\n       1       199  FILTER link as link LIKE '%follow%'\n       7       251  INNER JOIN LOOP ON Bmk1012 = Bmk1012\n       1       251  │└TABLE SEEK link_type AS lt\n       7       251  INNER JOIN LOOP ON ml.link_type_id = lt.id\n       1       251  │└TABLE SEEK link_type AS lt\n       7       251  INNER JOIN HASH ON ml.movie_id = mk.movie_id\n      90     10544  │└INNER JOIN LOOP ON Bmk1018 = Bmk1018\n       1     10544  │ │└TABLE SEEK movie_keyword AS mk\n      90     10544  │ INNER JOIN LOOP ON k.id = mk.keyword_id\n      90     10544  │ │└TABLE SEEK movie_keyword AS mk\n       1         1  │ TABLE SCAN keyword AS k WHERE keyword as keyword = 'sequel'\n       2     29997  TABLE SEEK movie_link AS ml WHERE BLOOM(movie_id as movie_id)\n",
+      "sql": "SELECT MIN(cn.name) AS producing_company,\n       MIN(lt.link) AS link_type,\n       MIN(t.title) AS complete_western_sequel\nFROM job.complete_cast AS cc,\n     job.comp_cast_type AS cct1,\n     job.comp_cast_type AS cct2,\n     job.company_name AS cn,\n     job.company_type AS ct,\n     job.keyword AS k,\n     job.link_type AS lt,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.movie_keyword AS mk,\n     job.movie_link AS ml,\n     job.title AS t\nWHERE cct1.kind IN ('cast',\n                    'crew')\n  AND cct2.kind = 'complete'\n  AND cn.country_code !='[pl]'\n  AND (cn.name LIKE '%Film%'\n       OR cn.name LIKE '%Warner%')\n  AND ct.kind ='production companies'\n  AND k.keyword ='sequel'\n  AND lt.link LIKE '%follow%'\n  AND mc.note IS NULL\n  AND mi.info IN ('Sweden',\n                  'Germany',\n                  'Swedish',\n                  'German')\n  AND t.production_year BETWEEN 1950 AND 2000\n  AND lt.id = ml.link_type_id\n  AND ml.movie_id = t.id\n  AND t.id = mk.movie_id\n  AND mk.keyword_id = k.id\n  AND t.id = mc.movie_id\n  AND mc.company_type_id = ct.id\n  AND mc.company_id = cn.id\n  AND mi.movie_id = t.id\n  AND t.id = cc.movie_id\n  AND cct1.id = cc.subject_id\n  AND cct2.id = cc.status_id\n  AND ml.movie_id = mk.movie_id\n  AND ml.movie_id = mc.movie_id\n  AND mk.movie_id = mc.movie_id\n  AND ml.movie_id = mi.movie_id\n  AND mk.movie_id = mi.movie_id\n  AND mc.movie_id = mi.movie_id\n  AND ml.movie_id = cc.movie_id\n  AND mk.movie_id = cc.movie_id\n  AND mc.movie_id = cc.movie_id\n  AND mi.movie_id = cc.movie_id;\n",
+      "startTime": "2026-06-25T16:17:02.815802Z",
+      "status": "OK",
+      "timeMs": 135.654
+    }
+  ],
+  "runtime": {
+    "avgMs": 135.654,
+    "bestMs": 135.654,
+    "maxMs": 135.654,
+    "minMs": 135.654,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 27A Analysis",
+    "displayName": "JOB-27A",
+    "name": "PLAN-JOB-27A",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "16.0.4236.2"
+}

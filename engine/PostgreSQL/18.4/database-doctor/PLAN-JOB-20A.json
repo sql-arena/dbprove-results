@@ -82,16 +82,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(title)\n       1        33  INNER JOIN LOOP ON id = person_id\n       1        33  │└INNER JOIN LOOP ON id = person_role_id\n      13    532809  │ │└INNER JOIN LOOP ON movie_id = id\n       3      6016  │ │ │└INNER JOIN LOOP ON keyword IN('superhero','sequel','second-part','marvel-comics','based-on-comic','tv-special','fight','violence') AND id = status_id AND (id = status_id)\n       1         2  │ │ │ │└TABLE SCAN comp_cast_type AS cct2 WHERE cct2.kind LIKE '%complete%'\n      24     12032  │ │ │ INNER JOIN LOOP ON keyword IN('superhero','sequel','second-part','marvel-comics','based-on-comic','tv-special','fight','violence') AND id = subject_id AND (id = subject_id)\n       1         1  │ │ │ │└TABLE SCAN comp_cast_type AS cct1 WHERE cct1.kind = 'cast'\n      94     16742  │ │ │ INNER JOIN LOOP ON movie_id = id\n      70     31988  │ │ │ │└INNER JOIN LOOP ON keyword IN('superhero','sequel','second-part','marvel-comics','based-on-comic','tv-special','fight','violence') AND id = kind_id AND (id = kind_id)\n       1         1  │ │ │ │ │└TABLE SCAN kind_type AS kt WHERE kt.kind = 'movie'\n     488     63214  │ │ │ │ INNER JOIN LOOP ON id = movie_id\n     540     71096  │ │ │ │ │└INNER JOIN LOOP ON keyword_id = id\n      16        16  │ │ │ │ │ │└TABLE SEEK keyword AS k\n    4880     71096  │ │ │ │ │ TABLE SEEK movie_keyword AS mk\n   71096     71096  │ │ │ │ TABLE SEEK title AS t WHERE t.production_year > 1950\n   63976     31988  │ │ │ TABLE SEEK complete_cast AS cc\n  234624    532837  │ │ TABLE SEEK cast_info AS ci\n  532809    532809  │ TABLE SEEK char_name AS chn WHERE (chn.name NOT  LIKE '%Sherlock%') AND ((chn.name LIKE '%Tony%Stark%') OR (chn.name LIKE '%Iron%Man%'))\n      33        33  TABLE SEEK name AS n\n",
       "sql": "SELECT MIN(t.title) AS complete_downey_ironman_movie\nFROM job.complete_cast AS cc,\n     job.comp_cast_type AS cct1,\n     job.comp_cast_type AS cct2,\n     job.char_name AS chn,\n     job.cast_info AS ci,\n     job.keyword AS k,\n     job.kind_type AS kt,\n     job.movie_keyword AS mk,\n     job.name AS n,\n     job.title AS t\nWHERE cct1.kind = 'cast'\n  AND cct2.kind LIKE '%complete%'\n  AND chn.name NOT LIKE '%Sherlock%'\n  AND (chn.name LIKE '%Tony%Stark%'\n       OR chn.name LIKE '%Iron%Man%')\n  AND k.keyword IN ('superhero',\n                    'sequel',\n                    'second-part',\n                    'marvel-comics',\n                    'based-on-comic',\n                    'tv-special',\n                    'fight',\n                    'violence')\n  AND kt.kind = 'movie'\n  AND t.production_year > 1950\n  AND kt.id = t.kind_id\n  AND t.id = mk.movie_id\n  AND t.id = ci.movie_id\n  AND t.id = cc.movie_id\n  AND mk.movie_id = ci.movie_id\n  AND mk.movie_id = cc.movie_id\n  AND ci.movie_id = cc.movie_id\n  AND chn.id = ci.person_role_id\n  AND n.id = ci.person_id\n  AND k.id = mk.keyword_id\n  AND cct1.id = cc.subject_id\n  AND cct2.id = cc.status_id;\n",
-      "startTime": "2026-06-25T12:53:05.119197Z",
+      "startTime": "2026-06-25T15:29:44.942725Z",
       "status": "OK",
-      "timeMs": 32267.408
+      "timeMs": 33148.918
     }
   ],
   "runtime": {
-    "avgMs": 32267.408,
-    "bestMs": 32267.408,
-    "maxMs": 32267.408,
-    "minMs": 32267.408,
+    "avgMs": 33148.918,
+    "bestMs": 33148.918,
+    "maxMs": 33148.918,
+    "minMs": 33148.918,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

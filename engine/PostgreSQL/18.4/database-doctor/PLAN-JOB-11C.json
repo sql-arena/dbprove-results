@@ -82,16 +82,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(name), MIN(note), MIN(title)\n       1      6946  INNER JOIN LOOP ON id = link_type_id\n       1      6946  │└INNER JOIN LOOP ON movie_id = id\n       1      4137  │ │└INNER JOIN LOOP ON id = movie_id\n       1      4726  │ │ │└INNER JOIN LOOP ON id = company_type_id AND (id = company_type_id)\n       1      4921  │ │ │ │└INNER JOIN HASH ON company_id = id\n      42        89  │ │ │ │ │└TABLE SEEK company_name AS cn WHERE (cn.country_code <> 'pl') AND ((cn.name LIKE '20th Century Fox%') OR (cn.name LIKE 'Twentieth Century Fox%'))\n     265    169414  │ │ │ │ INNER JOIN LOOP ON movie_id = movie_id\n     101     47403  │ │ │ │ │└INNER JOIN LOOP ON keyword_id = id\n       3         3  │ │ │ │ │ │└TABLE SEEK keyword AS k\n     915     47403  │ │ │ │ │ TABLE SEEK movie_keyword AS mk\n  142209    169228  │ │ │ │ TABLE SEEK movie_companies AS mc WHERE mc.note IS NOT NULL\n       3         1  │ │ │ TABLE SCAN company_type AS ct WHERE ct.kind <> 'production companies'\n    4726      4726  │ │ TABLE SEEK title AS t WHERE t.production_year > 1950\n   20685      6950  │ TABLE SEEK movie_link AS ml\n    6946      6946  TABLE SEEK link_type AS lt\n",
       "sql": "SELECT MIN(cn.name) AS from_company,\n       MIN(mc.note) AS production_note,\n       MIN(t.title) AS movie_based_on_book\nFROM job.company_name AS cn,\n     job.company_type AS ct,\n     job.keyword AS k,\n     job.link_type AS lt,\n     job.movie_companies AS mc,\n     job.movie_keyword AS mk,\n     job.movie_link AS ml,\n     job.title AS t\nWHERE cn.country_code !='[pl]'\n  AND (cn.name LIKE '20th Century Fox%'\n       OR cn.name LIKE 'Twentieth Century Fox%')\n  AND ct.kind != 'production companies'\n  AND ct.kind IS NOT NULL\n  AND k.keyword IN ('sequel',\n                    'revenge',\n                    'based-on-novel')\n  AND mc.note IS NOT NULL\n  AND t.production_year > 1950\n  AND lt.id = ml.link_type_id\n  AND ml.movie_id = t.id\n  AND t.id = mk.movie_id\n  AND mk.keyword_id = k.id\n  AND t.id = mc.movie_id\n  AND mc.company_type_id = ct.id\n  AND mc.company_id = cn.id\n  AND ml.movie_id = mk.movie_id\n  AND ml.movie_id = mc.movie_id\n  AND mk.movie_id = mc.movie_id;\n",
-      "startTime": "2026-06-25T12:48:26.668127Z",
+      "startTime": "2026-06-25T15:22:11.894457Z",
       "status": "OK",
-      "timeMs": 886.12
+      "timeMs": 1524.494
     }
   ],
   "runtime": {
-    "avgMs": 886.12,
-    "bestMs": 886.12,
-    "maxMs": 886.12,
-    "minMs": 886.12,
+    "avgMs": 1524.494,
+    "bestMs": 1524.494,
+    "maxMs": 1524.494,
+    "minMs": 1524.494,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

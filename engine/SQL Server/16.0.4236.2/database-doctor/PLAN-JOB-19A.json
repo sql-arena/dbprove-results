@@ -1,4 +1,5 @@
 {
+  "config": "M5 Macbook Pro",
   "engine": "SQL Server",
   "queries": [
     {
@@ -81,16 +82,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(name as name) AS Expr1020, MIN(title as title) AS Expr1021\n      83       204  INNER JOIN LOOP ON ci.person_role_id = chn.id\n       1       204  │└TABLE SEEK char_name AS chn\n     166       213  INNER JOIN HASH ON an.person_id = n.id\n      30       208  │└INNER JOIN LOOP ON Bmk1018 = Bmk1018\n       0       362  │ │└TABLE SEEK title AS t WHERE production_year as production_year >= 2005 AND production_year as production_year <= 2009\n     137       362  │ SORT Expr1096\n     137       362  │ PROJECT BmkToPage Bmk1018 AS Expr1096\n     137       362  │ INNER JOIN LOOP ON mi.movie_id = t.id\n       1       362  │ │└TABLE SEEK title AS t\n     137       362  │ FILTER country_code as country_code = 'us'\n     380       394  │ INNER JOIN LOOP ON Bmk1006 = Bmk1006\n       1       394  │ │└TABLE SEEK company_name AS cn\n     380       394  │ INNER JOIN LOOP ON mc.company_id = cn.id\n       1       394  │ │└TABLE SEEK company_name AS cn\n     380       394  │ INNER JOIN HASH ON mc.movie_id = mi.movie_id\n     228       473  │ │└FILTER name as name LIKE '%Ang%' AND gender as gender = 'f'\n     530    147233  │ │ INNER JOIN LOOP ON Bmk1014 = Bmk1014\n       1    147233  │ │ │└TABLE SEEK name AS n\n     530    147233  │ │ PROJECT BmkToPage Bmk1014 AS Expr1113\n     530    147233  │ │ INNER JOIN LOOP ON ci.person_id = n.id\n       1    147233  │ │ │└TABLE SEEK name AS n\n     530    147233  │ │ INNER JOIN HASH ON ci.role_id = rt.id\n       1         1  │ │ │└FILTER role as role = 'actress'\n      12        12  │ │ │ TABLE SCAN role_type AS rt\n    5831    409723  │ │ INNER JOIN HASH ON ci.movie_id = mi.movie_id\n    6800    451039  │ │ │└INNER JOIN HASH ON mi.info_type_id = it.id\n       1         1  │ │ │ │└FILTER info as info = 'release dates'\n     113       113  │ │ │ │ TABLE SCAN info_type AS it\n  476040    451039  │ │ │ TABLE SCAN movie_info AS mi WHERE (PROBE(Bitmap1110,info_type_id as info_type_id,N'IN ROW')) AND (info as info LIKE 'Japan:%200%' OR info as info LIKE 'USA:%200%')\n    5831    462341  │ │ TABLE SCAN cast_info AS ci WHERE (BLOOM(movie_id as movie_id,N'IN ROW')) AND (note as note = '(voice)' OR note as note = '(voice) (uncredited)' OR note as note = '(voice: English version)' OR note as note = '(voice: Japanese version)')\n  419570       167  │ TABLE SCAN movie_companies AS mc WHERE (PROBE(Bitmap1115,movie_id as movie_id,N'IN ROW')) AND ((note as note LIKE '%(USA)%' OR note as note LIKE '%(worldwide)%') AND note as note IS NOT NULL)\n  901343    901343  TABLE SCAN aka_name AS an WHERE PROBE(Bitmap1120,person_id as person_id,N'IN ROW')\n",
       "sql": "SELECT MIN(n.name) AS voicing_actress,\n       MIN(t.title) AS voiced_movie\nFROM job.aka_name AS an,\n     job.char_name AS chn,\n     job.cast_info AS ci,\n     job.company_name AS cn,\n     job.info_type AS it,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.name AS n,\n     job.role_type AS rt,\n     job.title AS t\nWHERE ci.note IN ('(voice)',\n                  '(voice: Japanese version)',\n                  '(voice) (uncredited)',\n                  '(voice: English version)')\n  AND cn.country_code ='[us]'\n  AND it.info = 'release dates'\n  AND mc.note IS NOT NULL\n  AND (mc.note LIKE '%(USA)%'\n       OR mc.note LIKE '%(worldwide)%')\n  AND mi.info IS NOT NULL\n  AND (mi.info LIKE 'Japan:%200%'\n       OR mi.info LIKE 'USA:%200%')\n  AND n.gender ='f'\n  AND n.name LIKE '%Ang%'\n  AND rt.role ='actress'\n  AND t.production_year BETWEEN 2005 AND 2009\n  AND t.id = mi.movie_id\n  AND t.id = mc.movie_id\n  AND t.id = ci.movie_id\n  AND mc.movie_id = ci.movie_id\n  AND mc.movie_id = mi.movie_id\n  AND mi.movie_id = ci.movie_id\n  AND cn.id = mc.company_id\n  AND it.id = mi.info_type_id\n  AND n.id = ci.person_id\n  AND rt.id = ci.role_id\n  AND n.id = an.person_id\n  AND ci.person_id = an.person_id\n  AND chn.id = ci.person_role_id;\n",
-      "startTime": "2026-06-23T08:18:47.721616Z",
+      "startTime": "2026-06-25T16:15:28.514662Z",
       "status": "OK",
-      "timeMs": 3233.412
+      "timeMs": 6469.96
     }
   ],
   "runtime": {
-    "avgMs": 3233.412,
-    "bestMs": 3233.412,
-    "maxMs": 3233.412,
-    "minMs": 3233.412,
+    "avgMs": 6469.96,
+    "bestMs": 6469.96,
+    "maxMs": 6469.96,
+    "minMs": 6469.96,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

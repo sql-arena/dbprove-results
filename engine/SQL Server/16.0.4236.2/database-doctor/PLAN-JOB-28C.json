@@ -1,0 +1,111 @@
+{
+  "config": "M5 Macbook Pro",
+  "engine": "SQL Server",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 7,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 1,
+          "=": 1,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 1,
+          "-8x": 0,
+          "<16x": 22,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 1,
+          "-8x": 0,
+          "<16x": 20,
+          "=": 4,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 8373,
+        "distribute": 0,
+        "hash": 6003780,
+        "join": 5259552,
+        "scan": 5,
+        "seek": 3910275,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(name as name) AS Expr1028, MIN(info as info) AS Expr1029, MIN(title as title) AS Expr1030\n       1      8373  FILTER info as info = 'rating'\n      12     24803  INNER JOIN LOOP ON Bmk1012 = Bmk1012\n       1     24803  │└TABLE SEEK info_type AS it2\n      12     24803  INNER JOIN LOOP ON mi_idx.info_type_id = it2.id\n       1     24803  │└TABLE SEEK info_type AS it2\n      12     24803  FILTER info as info < '8.5'\n      12     25736  INNER JOIN LOOP ON Bmk1022 = Bmk1022\n       1     25736  │└TABLE SEEK movie_info_idx AS mi_idx\n      12     25736  INNER JOIN LOOP ON t.id = mi_idx.movie_id\n      12     25736  │└TABLE SEEK movie_info_idx AS mi_idx\n       1      8493  FILTER kind as kind = 'episode' OR kind as kind = 'movie'\n       1      8788  INNER JOIN LOOP ON Bmk1016 = Bmk1016\n       1      8788  │└TABLE SEEK kind_type AS kt\n       1      8788  INNER JOIN LOOP ON t.kind_id = kt.id\n       1      8788  │└TABLE SEEK kind_type AS kt\n       1      8788  INNER JOIN LOOP ON Bmk1026 = Bmk1026\n       0     22323  │└TABLE SEEK title AS t WHERE production_year as production_year > 2005\n       3     22323  PROJECT BmkToPage Bmk1026 AS Expr1455\n       3     22323  INNER JOIN LOOP ON mk.movie_id = t.id\n       1     22323  │└TABLE SEEK title AS t\n       3     22323  FILTER country_code as country_code <> 'us'\n       5     23613  INNER JOIN LOOP ON Bmk1006 = Bmk1006\n       1     23613  │└TABLE SEEK company_name AS cn\n       5     23613  INNER JOIN LOOP ON mc.company_id = cn.id\n       1     23613  │└TABLE SEEK company_name AS cn\n       5     23613  FILTER  NOT note as note LIKE '%(USA)%' AND note as note LIKE '%(200%)%'\n      49     65101  INNER JOIN LOOP ON Bmk1018 = Bmk1018\n       1     65101  │└TABLE SEEK movie_companies AS mc\n      49     65101  PROJECT BmkToPage Bmk1018 AS Expr1453\n      49     65101  INNER JOIN LOOP ON mk.movie_id = mc.movie_id\n       9     65101  │└TABLE SEEK movie_companies AS mc\n       4      5024  FILTER kind as kind = 'cast'\n       9      7969  INNER JOIN LOOP ON Bmk1002 = Bmk1002\n       1      7969  │└TABLE SEEK comp_cast_type AS cct1\n       9      7969  INNER JOIN LOOP ON cc.subject_id = cct1.id\n       1      7969  │└TABLE SEEK comp_cast_type AS cct1\n       9      7969  INNER JOIN HASH ON cc.status_id = cct2.id\n       1         1  │└TABLE SCAN comp_cast_type AS cct2 WHERE kind as kind = 'complete'\n      19      7969  INNER JOIN LOOP ON Bmk1000 = Bmk1000\n       1      7969  │└TABLE SEEK complete_cast AS cc WHERE BLOOM(status_id as status_id)\n      19     16264  INNER JOIN LOOP ON mk.movie_id = cc.movie_id\n       1     16264  │└TABLE SEEK complete_cast AS cc\n      13     23916  FILTER info as info = 'American' OR info as info = 'Danish' OR info as info = 'Denmark' OR info as info = 'German' OR info as info = 'Germany' OR info as info = 'Norway' OR info as info = 'Norwegian' OR info as info = 'Sweden' OR info as info = 'Swedish' OR info as info = 'USA'\n     286     44297  INNER JOIN LOOP ON Bmk1020 = Bmk1020\n       1     44297  │└TABLE SEEK movie_info AS mi\n     286     44297  PROJECT BmkToPage Bmk1020 AS Expr1451\n     286     44297  INNER JOIN HASH ON Bmk1020 = Bmk1020\n   20079   2085536  │└INNER JOIN LOOP ON mk.movie_id = mi.movie_id\n      55   2085536  │ │└TABLE SEEK movie_info AS mi\n     362     37091  │ INNER JOIN LOOP ON Bmk1024 = Bmk1024\n       1     37091  │ │└TABLE SEEK movie_keyword AS mk\n     362     37091  │ INNER JOIN LOOP ON k.id = mk.keyword_id\n      90     37091  │ │└TABLE SEEK movie_keyword AS mk\n       4         3  │ TABLE SCAN keyword AS k WHERE keyword as keyword = 'blood' OR keyword as keyword = 'murder' OR keyword as keyword = 'murder-in-title' OR keyword as keyword = 'violence'\n  211939   1325361  INNER JOIN LOOP ON it1.id = mi.info_type_id\n  211939   1325361  │└TABLE SEEK movie_info AS mi\n       1         1  TABLE SCAN info_type AS it1 WHERE info as info = 'countries'\n",
+      "sql": "SELECT MIN(cn.name) AS movie_company,\n       MIN(mi_idx.info) AS rating,\n       MIN(t.title) AS complete_euro_dark_movie\nFROM job.complete_cast AS cc,\n     job.comp_cast_type AS cct1,\n     job.comp_cast_type AS cct2,\n     job.company_name AS cn,\n     job.company_type AS ct,\n     job.info_type AS it1,\n     job.info_type AS it2,\n     job.keyword AS k,\n     job.kind_type AS kt,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.movie_info_idx AS mi_idx,\n     job.movie_keyword AS mk,\n     job.title AS t\nWHERE cct1.kind = 'cast'\n  AND cct2.kind = 'complete'\n  AND cn.country_code != '[us]'\n  AND it1.info = 'countries'\n  AND it2.info = 'rating'\n  AND k.keyword IN ('murder',\n                    'murder-in-title',\n                    'blood',\n                    'violence')\n  AND kt.kind IN ('movie',\n                  'episode')\n  AND mc.note NOT LIKE '%(USA)%'\n  AND mc.note LIKE '%(200%)%'\n  AND mi.info IN ('Sweden',\n                  'Norway',\n                  'Germany',\n                  'Denmark',\n                  'Swedish',\n                  'Danish',\n                  'Norwegian',\n                  'German',\n                  'USA',\n                  'American')\n  AND mi_idx.info < '8.5'\n  AND t.production_year > 2005\n  AND kt.id = t.kind_id\n  AND t.id = mi.movie_id\n  AND t.id = mk.movie_id\n  AND t.id = mi_idx.movie_id\n  AND t.id = mc.movie_id\n  AND t.id = cc.movie_id\n  AND mk.movie_id = mi.movie_id\n  AND mk.movie_id = mi_idx.movie_id\n  AND mk.movie_id = mc.movie_id\n  AND mk.movie_id = cc.movie_id\n  AND mi.movie_id = mi_idx.movie_id\n  AND mi.movie_id = mc.movie_id\n  AND mi.movie_id = cc.movie_id\n  AND mc.movie_id = mi_idx.movie_id\n  AND mc.movie_id = cc.movie_id\n  AND mi_idx.movie_id = cc.movie_id\n  AND k.id = mk.keyword_id\n  AND it1.id = mi.info_type_id\n  AND it2.id = mi_idx.info_type_id\n  AND ct.id = mc.company_type_id\n  AND cn.id = mc.company_id\n  AND cct1.id = cc.subject_id\n  AND cct2.id = cc.status_id;\n",
+      "startTime": "2026-06-25T16:17:12.364404Z",
+      "status": "OK",
+      "timeMs": 2369.711
+    }
+  ],
+  "runtime": {
+    "avgMs": 2369.711,
+    "bestMs": 2369.711,
+    "maxMs": 2369.711,
+    "minMs": 2369.711,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 28C Analysis",
+    "displayName": "JOB-28C",
+    "name": "PLAN-JOB-28C",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "16.0.4236.2"
+}

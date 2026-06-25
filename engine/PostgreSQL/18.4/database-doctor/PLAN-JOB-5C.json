@@ -82,16 +82,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(title)\n       4         4  AGGREGATE PARTIAL MIN(title)\n   13112       167  INNER JOIN HASH ON info_type_id = id\n     113       113  │└TABLE SCAN info_type AS it\n   52448       669  INNER JOIN LOOP ON movie_id = id\n   38652       767  │└INNER JOIN LOOP ON id = movie_id\n   14024       199  │ │└INNER JOIN HASH ON company_type_id = id\n       1         1  │ │ │└TABLE SCAN company_type AS ct WHERE ct.kind = 'production companies'\n  224380    295628  │ │ TABLE SCAN movie_companies AS mc WHERE (mc.note NOT  LIKE '%(TV)%') AND (mc.note LIKE '%(USA)%')\n     798       798  │ TABLE SEEK title AS t WHERE t.production_year > 1990\n    1534       767  TABLE SEEK movie_info AS mi WHERE mi.info IN('Sweden','Norway','Germany','Denmark','Swedish','Denish','Norwegian','German','USA','American')\n",
       "sql": "SELECT MIN(t.title) AS american_movie\nFROM job.company_type AS ct,\n     job.info_type AS it,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.title AS t\nWHERE ct.kind = 'production companies'\n  AND mc.note NOT LIKE '%(TV)%'\n  AND mc.note LIKE '%(USA)%'\n  AND mi.info IN ('Sweden',\n                  'Norway',\n                  'Germany',\n                  'Denmark',\n                  'Swedish',\n                  'Denish',\n                  'Norwegian',\n                  'German',\n                  'USA',\n                  'American')\n  AND t.production_year > 1990\n  AND t.id = mi.movie_id\n  AND t.id = mc.movie_id\n  AND mc.movie_id = mi.movie_id\n  AND ct.id = mc.company_type_id\n  AND it.id = mi.info_type_id;\n",
-      "startTime": "2026-06-25T12:58:54.579121Z",
+      "startTime": "2026-06-25T15:34:58.401620Z",
       "status": "OK",
-      "timeMs": 281.383
+      "timeMs": 267.378
     }
   ],
   "runtime": {
-    "avgMs": 281.383,
-    "bestMs": 281.383,
-    "maxMs": 281.383,
-    "minMs": 281.383,
+    "avgMs": 267.378,
+    "bestMs": 267.378,
+    "maxMs": 267.378,
+    "minMs": 267.378,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

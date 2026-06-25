@@ -1,4 +1,5 @@
 {
+  "config": "M5 Macbook Pro",
   "engine": "SQL Server",
   "queries": [
     {
@@ -81,16 +82,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(name as name) AS Expr1022, MIN(info as info) AS Expr1023, MIN(title as title) AS Expr1024\n       1      2851  INNER JOIN HASH ON mi_idx.info_type_id = it2.id\n       1         1  │└FILTER info as info = 'rating'\n     113       113  │ TABLE SCAN info_type AS it2\n       1      2851  FILTER kind as kind = 'episode' OR kind as kind = 'movie'\n       2      3027  INNER JOIN LOOP ON Bmk1010 = Bmk1010\n       1      3027  │└TABLE SEEK kind_type AS kt\n       2      3027  INNER JOIN LOOP ON t.kind_id = kt.id\n       1      3027  │└TABLE SEEK kind_type AS kt\n       2      3027  INNER JOIN HASH ON mk.keyword_id = k.id\n       4         3  │└TABLE SCAN keyword AS k WHERE keyword as keyword = 'blood' OR keyword as keyword = 'murder' OR keyword as keyword = 'murder-in-title' OR keyword as keyword = 'violence'\n       3      3027  INNER JOIN HASH ON mk.movie_id = t.id\n     782      4344  │└INNER JOIN HASH ON cn.id = mc.company_id\n    1450      5720  │ │└INNER JOIN HASH ON mc.movie_id = t.id\n    1208     23910  │ │ │└INNER JOIN HASH ON mi.info_type_id = it1.id\n       1         1  │ │ │ │└FILTER info as info = 'countries'\n     113       113  │ │ │ │ INNER JOIN LOOP ON Bmk1004 = Bmk1004\n       1       113  │ │ │ │ │└TABLE SEEK info_type AS it1\n     113       113  │ │ │ │ TABLE SEEK info_type AS it1\n     846     23910  │ │ │ INNER JOIN LOOP ON Bmk1020 = Bmk1020\n       0    147247  │ │ │ │└TABLE SEEK title AS t WHERE production_year as production_year > 2008\n    3220    147247  │ │ │ PROJECT BmkToPage Bmk1020 AS Expr1839\n    3220    147247  │ │ │ INNER JOIN LOOP ON mi_idx.movie_id = t.id\n       1    147247  │ │ │ │└TABLE SEEK title AS t\n    3220    147247  │ │ │ INNER JOIN HASH ON mi_idx.movie_id = mi.movie_id\n    6899    588764  │ │ │ │└TABLE SCAN movie_info AS mi WHERE (info as info = 'American' OR info as info = 'German' OR info as info = 'Germany' OR info as info = 'USA') AND BLOOM(info_type_id as info_type_id)\n    1174    312537  │ │ │ TABLE SCAN movie_info_idx AS mi_idx WHERE info as info < '7.0' AND BLOOM(movie_id as movie_id) AND BLOOM(info_type_id as info_type_id)\n     295      5263  │ │ TABLE SCAN movie_companies AS mc WHERE  NOT note as note LIKE '%(USA)%' AND note as note LIKE '%(200%)%' AND BLOOM(movie_id as movie_id)\n     126      1131  │ TABLE SCAN company_name AS cn WHERE country_code as country_code <> 'us' AND BLOOM(id as id)\n       1   4523930  TABLE SEEK movie_keyword AS mk WHERE BLOOM(keyword_id as keyword_id) AND BLOOM(movie_id as movie_id)\n",
       "sql": "SELECT MIN(cn.name) AS movie_company,\n       MIN(mi_idx.info) AS rating,\n       MIN(t.title) AS western_violent_movie\nFROM job.company_name AS cn,\n     job.company_type AS ct,\n     job.info_type AS it1,\n     job.info_type AS it2,\n     job.keyword AS k,\n     job.kind_type AS kt,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.movie_info_idx AS mi_idx,\n     job.movie_keyword AS mk,\n     job.title AS t\nWHERE cn.country_code != '[us]'\n  AND it1.info = 'countries'\n  AND it2.info = 'rating'\n  AND k.keyword IN ('murder',\n                    'murder-in-title',\n                    'blood',\n                    'violence')\n  AND kt.kind IN ('movie',\n                  'episode')\n  AND mc.note NOT LIKE '%(USA)%'\n  AND mc.note LIKE '%(200%)%'\n  AND mi.info IN ('Germany',\n                  'German',\n                  'USA',\n                  'American')\n  AND mi_idx.info < '7.0'\n  AND t.production_year > 2008\n  AND kt.id = t.kind_id\n  AND t.id = mi.movie_id\n  AND t.id = mk.movie_id\n  AND t.id = mi_idx.movie_id\n  AND t.id = mc.movie_id\n  AND mk.movie_id = mi.movie_id\n  AND mk.movie_id = mi_idx.movie_id\n  AND mk.movie_id = mc.movie_id\n  AND mi.movie_id = mi_idx.movie_id\n  AND mi.movie_id = mc.movie_id\n  AND mc.movie_id = mi_idx.movie_id\n  AND k.id = mk.keyword_id\n  AND it1.id = mi.info_type_id\n  AND it2.id = mi_idx.info_type_id\n  AND ct.id = mc.company_type_id\n  AND cn.id = mc.company_id;\n",
-      "startTime": "2026-06-23T08:20:07.064342Z",
+      "startTime": "2026-06-25T16:16:11.217032Z",
       "status": "OK",
-      "timeMs": 1619.778
+      "timeMs": 3169.85
     }
   ],
   "runtime": {
-    "avgMs": 1619.778,
-    "bestMs": 1619.778,
-    "maxMs": 1619.778,
-    "minMs": 1619.778,
+    "avgMs": 3169.85,
+    "bestMs": 3169.85,
+    "maxMs": 3169.85,
+    "minMs": 3169.85,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

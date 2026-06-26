@@ -8,11 +8,11 @@
           "+2x": 0,
           "+4x": 0,
           "+8x": 0,
-          "-2x": 1,
+          "-2x": 0,
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
-          "=": 1,
+          "=": 2,
           ">16x": 0
         },
         "filter": {
@@ -30,7 +30,7 @@
           "+2x": 0,
           "+4x": 0,
           "+8x": 0,
-          "-2x": 1,
+          "-2x": 0,
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
@@ -38,8 +38,8 @@
           ">16x": 0
         },
         "join": {
-          "+2x": 1,
-          "+4x": 0,
+          "+2x": 0,
+          "+4x": 1,
           "+8x": 0,
           "-2x": 2,
           "-4x": 0,
@@ -52,12 +52,12 @@
           "+2x": 0,
           "+4x": 0,
           "+8x": 0,
-          "-2x": 1,
+          "-2x": 0,
           "-4x": 0,
           "-8x": 0,
-          "<16x": 4,
-          "=": 2,
-          ">16x": 1
+          "<16x": 5,
+          "=": 3,
+          ">16x": 0
         },
         "sort": {
           "+2x": 0,
@@ -72,26 +72,26 @@
         }
       },
       "operatorRows": {
-        "aggregate": 216,
+        "aggregate": 215,
         "distribute": 0,
-        "hash": 40825,
-        "join": 31200,
-        "scan": 1569,
-        "seek": 27874,
+        "hash": 29640,
+        "join": 42385,
+        "scan": 30,
+        "seek": 29640,
         "sort": 3532
       },
-      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(partialagg1016) AS Expr1008\n       5        10  AGGREGATE MIN(title as title) AS partialagg1016\n     651       206  INNER JOIN LOOP ON Bmk1006 = Bmk1006\n       0       206  │└TABLE SEEK title AS t WHERE production_year as production_year > 2005\n    1637      1766  SORT Expr1018\n    1637      1766  PROJECT BmkToPage Bmk1006 AS Expr1018\n    1637      1766  INNER JOIN LOOP ON mi.movie_id = t.id\n       1      1766  │└TABLE SEEK title AS t\n    1637      1766  SORT movie_id\n    1637      1766  INNER JOIN HASH ON mi.movie_id = mk.movie_id\n    4309     12951  │└INNER JOIN LOOP ON Bmk1004 = Bmk1004\n       1     12951  │ │└TABLE SEEK movie_keyword AS mk\n    4309     12951  │ INNER JOIN LOOP ON k.id = mk.keyword_id\n      90     12951  │ │└TABLE SEEK movie_keyword AS mk\n      47        30  │ TABLE SCAN keyword AS k WHERE keyword as keyword LIKE '%sequel%'\n  101848      1539  TABLE SCAN movie_info AS mi WHERE (PROBE(Bitmap1023,movie_id as movie_id,N'IN ROW')) AND (info as info = 'Denish' OR info as info = 'Denmark' OR info as info = 'German' OR info as info = 'Germany' OR info as info = 'Norway' OR info as info = 'Norwegian' OR info as info = 'Sweden' OR info as info = 'Swedish')\n",
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(partialagg1016) AS Expr1008\n       5         9  AGGREGATE MIN(title as title) AS partialagg1016\n     961       206  INNER JOIN LOOP ON Bmk1006 = Bmk1006\n       0       206  │└TABLE SEEK title AS t WHERE production_year as production_year > 2005\n    2414      1766  SORT Expr1017\n    2414      1766  PROJECT BmkToPage Bmk1006 AS Expr1017\n    2414      1766  INNER JOIN LOOP ON mi.movie_id = t.id\n       1      1766  │└TABLE SEEK title AS t\n    2414      1766  SORT movie_id\n    2414      1766  INNER JOIN LOOP ON mk.movie_id = mi.movie_id\n       1      1766  │└TABLE SEEK movie_info AS mi WHERE info as info = 'Denish' OR info as info = 'Denmark' OR info as info = 'German' OR info as info = 'Germany' OR info as info = 'Norway' OR info as info = 'Norwegian' OR info as info = 'Sweden' OR info as info = 'Swedish'\n    4309     12951  INNER JOIN LOOP ON Bmk1004 = Bmk1004\n       1     12951  │└TABLE SEEK movie_keyword AS mk\n    4309     12951  INNER JOIN LOOP ON k.id = mk.keyword_id\n      90     12951  │└TABLE SEEK movie_keyword AS mk\n      47        30  TABLE SCAN keyword AS k WHERE keyword as keyword LIKE '%sequel%'\n",
       "sql": "SELECT MIN(t.title) AS movie_title\nFROM job.keyword AS k,\n     job.movie_info AS mi,\n     job.movie_keyword AS mk,\n     job.title AS t\nWHERE k.keyword LIKE '%sequel%'\n  AND mi.info IN ('Sweden',\n                  'Norway',\n                  'Germany',\n                  'Denmark',\n                  'Swedish',\n                  'Denish',\n                  'Norwegian',\n                  'German')\n  AND t.production_year > 2005\n  AND t.id = mi.movie_id\n  AND t.id = mk.movie_id\n  AND mk.movie_id = mi.movie_id\n  AND k.id = mk.keyword_id;\n",
-      "startTime": "2026-06-25T17:02:06.452814Z",
+      "startTime": "2026-06-26T11:01:10.800396Z",
       "status": "OK",
-      "timeMs": 648.254
+      "timeMs": 288.175
     }
   ],
   "runtime": {
-    "avgMs": 648.254,
-    "bestMs": 648.254,
-    "maxMs": 648.254,
-    "minMs": 648.254,
+    "avgMs": 288.175,
+    "bestMs": 288.175,
+    "maxMs": 288.175,
+    "minMs": 288.175,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

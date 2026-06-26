@@ -49,7 +49,7 @@
           ">16x": 1
         },
         "scan": {
-          "+2x": 3,
+          "+2x": 2,
           "+4x": 0,
           "+8x": 0,
           "-2x": 1,
@@ -57,7 +57,7 @@
           "-8x": 1,
           "<16x": 0,
           "=": 4,
-          ">16x": 0
+          ">16x": 1
         },
         "sort": {
           "+2x": 0,
@@ -80,18 +80,18 @@
         "seek": 1253995,
         "sort": 0
       },
-      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(partialagg1029) AS Expr1014, MIN(partialagg1030) AS Expr1015\n       5        10  AGGREGATE MIN(name as name) AS partialagg1029, MIN(title as title) AS partialagg1030\n14129900    323005  INNER JOIN HASH ON ci.person_id = an1.person_id\n  901343    901343  │└TABLE SCAN aka_name AS an1\n 3321310    285538  INNER JOIN HASH ON t.id = mc.movie_id\n 3321300    285538  │└INNER JOIN HASH ON ci.role_id = rt.id\n       1         1  │ │└FILTER role as role = 'costume designer'\n      12        12  │ │ INNER JOIN LOOP ON Bmk1010 = Bmk1010\n       1        12  │ │ │└TABLE SEEK role_type AS rt\n      12        12  │ │ TABLE SEEK role_type AS rt\n 3653430    285538  │ INNER JOIN HASH ON ci.movie_id = mc.movie_id\n  938352   1153798  │ │└INNER JOIN HASH ON mc.company_id = cn.id\n   84576     84843  │ │ │└TABLE SCAN company_name AS cn WHERE country_code as country_code = 'us'\n 2609130   1153798  │ │ TABLE SEEK movie_companies AS mc WHERE BLOOM(company_id as company_id)\n  362443    100173  │ TABLE SEEK cast_info AS ci WHERE BLOOM(role_id as role_id) AND BLOOM(movie_id as movie_id)\n  252831     93396  TABLE SCAN title AS t WHERE BLOOM(id as id)\n",
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(partialagg1030) AS Expr1014, MIN(partialagg1031) AS Expr1015\n       5        10  AGGREGATE MIN(name as name) AS partialagg1030, MIN(title as title) AS partialagg1031\n12508000    323005  INNER JOIN HASH ON ci.person_id = an1.person_id\n  901343    901343  │└TABLE SCAN aka_name AS an1\n 2577820    285538  INNER JOIN HASH ON t.id = mc.movie_id\n 2577810    285538  │└INNER JOIN HASH ON ci.role_id = rt.id\n       1         1  │ │└FILTER role as role = 'costume designer'\n      12        12  │ │ INNER JOIN LOOP ON Bmk1010 = Bmk1010\n       1        12  │ │ │└TABLE SEEK role_type AS rt\n      12        12  │ │ TABLE SEEK role_type AS rt\n 2835590    285538  │ INNER JOIN HASH ON ci.movie_id = mc.movie_id\n  938352   1153798  │ │└INNER JOIN HASH ON mc.company_id = cn.id\n   84576     84843  │ │ │└TABLE SCAN company_name AS cn WHERE country_code as country_code = 'us'\n 2609130   1153798  │ │ TABLE SEEK movie_companies AS mc WHERE BLOOM(company_id as company_id)\n  362443    100173  │ TABLE SEEK cast_info AS ci WHERE BLOOM(role_id as role_id) AND BLOOM(movie_id as movie_id)\n 2528310     93396  TABLE SCAN title AS t WHERE BLOOM(id as id)\n",
       "sql": "SELECT MIN(an1.name) AS costume_designer_pseudo,\n       MIN(t.title) AS movie_with_costumes\nFROM job.aka_name AS an1,\n     job.cast_info AS ci,\n     job.company_name AS cn,\n     job.movie_companies AS mc,\n     job.name AS n1,\n     job.role_type AS rt,\n     job.title AS t\nWHERE cn.country_code ='[us]'\n  AND rt.role ='costume designer'\n  AND an1.person_id = n1.id\n  AND n1.id = ci.person_id\n  AND ci.movie_id = t.id\n  AND t.id = mc.movie_id\n  AND mc.company_id = cn.id\n  AND ci.role_id = rt.id\n  AND an1.person_id = ci.person_id\n  AND ci.movie_id = mc.movie_id;\n",
-      "startTime": "2026-06-25T17:02:40.366906Z",
+      "startTime": "2026-06-26T11:02:08.684807Z",
       "status": "OK",
-      "timeMs": 1263.906
+      "timeMs": 615.685
     }
   ],
   "runtime": {
-    "avgMs": 1263.906,
-    "bestMs": 1263.906,
-    "maxMs": 1263.906,
-    "minMs": 1263.906,
+    "avgMs": 615.685,
+    "bestMs": 615.685,
+    "maxMs": 615.685,
+    "minMs": 615.685,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

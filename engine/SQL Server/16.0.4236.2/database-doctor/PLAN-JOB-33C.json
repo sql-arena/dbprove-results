@@ -23,8 +23,8 @@
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
-          "=": 0,
-          ">16x": 2
+          "=": 1,
+          ">16x": 1
         },
         "hash": {
           "+2x": 0,
@@ -38,26 +38,26 @@
           ">16x": 0
         },
         "join": {
-          "+2x": 0,
-          "+4x": 0,
-          "+8x": 0,
+          "+2x": 8,
+          "+4x": 5,
+          "+8x": 1,
           "-2x": 0,
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
-          "=": 0,
-          ">16x": 20
+          "=": 2,
+          ">16x": 3
         },
         "scan": {
           "+2x": 0,
           "+4x": 0,
           "+8x": 0,
           "-2x": 0,
-          "-4x": 2,
-          "-8x": 1,
-          "<16x": 11,
-          "=": 7,
-          ">16x": 1
+          "-4x": 1,
+          "-8x": 2,
+          "<16x": 10,
+          "=": 8,
+          ">16x": 0
         },
         "sort": {
           "+2x": 0,
@@ -74,24 +74,24 @@
       "operatorRows": {
         "aggregate": 114,
         "distribute": 0,
-        "hash": 3353,
-        "join": 1135,
-        "scan": 44,
-        "seek": 3211,
+        "hash": 3256,
+        "join": 1002,
+        "scan": 8,
+        "seek": 3150,
         "sort": 0
       },
-      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(name as name) AS Expr1028, MIN(name as name) AS Expr1029, MIN(info as info) AS Expr1030, MIN(info as info) AS Expr1031, MIN(title as title) AS Expr1032, MIN(title as title) AS Expr1033\n   21541       114  FILTER country_code as country_code <> 'us'\n   40426       131  INNER JOIN LOOP ON Bmk1000 = Bmk1000\n       1       131  │└TABLE SEEK company_name AS cn1\n   40426       131  INNER JOIN LOOP ON mc1.company_id = cn1.id\n       1       131  │└TABLE SEEK company_name AS cn1\n   40456       131  INNER JOIN LOOP ON Bmk1014 = Bmk1014\n       1       131  │└TABLE SEEK movie_companies AS mc1\n   40456       131  PROJECT BmkToPage Bmk1014 AS Expr1130\n   40456       131  INNER JOIN LOOP ON t1.id = mc1.movie_id\n       9       131  │└TABLE SEEK movie_companies AS mc1\n    4232        44  INNER JOIN LOOP ON Bmk1002 = Bmk1002\n       1        44  │└TABLE SEEK company_name AS cn2\n    4232        44  INNER JOIN LOOP ON mc2.company_id = cn2.id\n       1        44  │└TABLE SEEK company_name AS cn2\n    4235        44  INNER JOIN LOOP ON Bmk1016 = Bmk1016\n       1        44  │└TABLE SEEK movie_companies AS mc2\n    4235        44  PROJECT BmkToPage Bmk1016 AS Expr1125\n    4235        44  INNER JOIN LOOP ON t2.id = mc2.movie_id\n       9        44  │└TABLE SEEK movie_companies AS mc2\n     427        19  INNER JOIN HASH ON t1.kind_id = kt1.id\n       2         2  │└TABLE SCAN kind_type AS kt1 WHERE kind as kind = 'episode' OR kind as kind = 'tv series'\n    1282        19  INNER JOIN LOOP ON Bmk1024 = Bmk1024\n       1        19  │└TABLE SEEK title AS t1 WHERE BLOOM(kind_id as kind_id)\n    1282        19  PROJECT BmkToPage Bmk1024 AS Expr1122\n    1282        19  INNER JOIN LOOP ON ml.movie_id = t1.id\n       1        19  │└TABLE SEEK title AS t1\n    1282        19  INNER JOIN HASH ON mi_idx1.info_type_id = it1.id\n       1         1  │└TABLE SCAN info_type AS it1 WHERE info as info = 'rating'\n     641        19  INNER JOIN LOOP ON Bmk1018 = Bmk1018\n       1        19  │└TABLE SEEK movie_info_idx AS mi_idx1 WHERE BLOOM(info_type_id as info_type_id)\n    6410        57  INNER JOIN LOOP ON ml.movie_id = mi_idx1.movie_id\n       9        57  │└TABLE SEEK movie_info_idx AS mi_idx1\n     644        21  INNER JOIN HASH ON t2.kind_id = kt2.id\n       2         2  │└TABLE SCAN kind_type AS kt2 WHERE kind as kind = 'episode' OR kind as kind = 'tv series'\n    1932        21  FILTER production_year as production_year >= 2000 AND production_year as production_year <= 2010\n    4698        35  INNER JOIN LOOP ON Bmk1026 = Bmk1026\n       1        35  │└TABLE SEEK title AS t2 WHERE BLOOM(kind_id as kind_id)\n    4698        47  PROJECT BmkToPage Bmk1026 AS Expr1117\n    4698        47  INNER JOIN LOOP ON ml.linked_movie_id = t2.id\n       1        47  │└TABLE SEEK title AS t2\n    4698        47  INNER JOIN HASH ON ml.link_type_id = lt.id\n       2         2  │└TABLE SCAN link_type AS lt WHERE link as link = 'followed by' OR link as link = 'follows' OR link as link = 'sequel'\n    3759        47  INNER JOIN HASH ON mi_idx2.movie_id = ml.linked_movie_id\n    2999      2315  │└TABLE SEEK movie_link AS ml WHERE BLOOM(link_type_id as link_type_id)\n    1377        36  INNER JOIN HASH ON mi_idx2.info_type_id = it2.id\n       1         1  │└TABLE SCAN info_type AS it2 WHERE info as info = 'rating'\n     688        36  TABLE SCAN movie_info_idx AS mi_idx2 WHERE info as info < '3.5' AND BLOOM(movie_id as movie_id) AND BLOOM(info_type_id as info_type_id)\n",
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(name as name) AS Expr1028, MIN(name as name) AS Expr1029, MIN(info as info) AS Expr1030, MIN(info as info) AS Expr1031, MIN(title as title) AS Expr1032, MIN(title as title) AS Expr1033\n     786       114  INNER JOIN LOOP ON Bmk1002 = Bmk1002\n       1       114  │└TABLE SEEK company_name AS cn2\n     786       114  INNER JOIN LOOP ON mc2.company_id = cn2.id\n       1       114  │└TABLE SEEK company_name AS cn2\n     741       114  INNER JOIN LOOP ON Bmk1016 = Bmk1016\n       1       114  │└TABLE SEEK movie_companies AS mc2\n     741       114  PROJECT BmkToPage Bmk1016 AS Expr1131\n     741       114  INNER JOIN LOOP ON t2.id = mc2.movie_id\n       9       114  │└TABLE SEEK movie_companies AS mc2\n      74        46  FILTER country_code as country_code <> 'us'\n     138        51  INNER JOIN LOOP ON Bmk1000 = Bmk1000\n       1        51  │└TABLE SEEK company_name AS cn1\n     138        51  INNER JOIN LOOP ON mc1.company_id = cn1.id\n       1        51  │└TABLE SEEK company_name AS cn1\n     138        51  INNER JOIN LOOP ON Bmk1014 = Bmk1014\n       1        51  │└TABLE SEEK movie_companies AS mc1\n     138        51  PROJECT BmkToPage Bmk1014 AS Expr1126\n     138        51  INNER JOIN LOOP ON t1.id = mc1.movie_id\n       9        51  │└TABLE SEEK movie_companies AS mc1\n      14        19  INNER JOIN HASH ON t1.kind_id = kt1.id\n       2         2  │└TABLE SCAN kind_type AS kt1 WHERE kind as kind = 'episode' OR kind as kind = 'tv series'\n      43        19  INNER JOIN LOOP ON Bmk1024 = Bmk1024\n       1        19  │└TABLE SEEK title AS t1 WHERE BLOOM(kind_id as kind_id)\n      43        19  PROJECT BmkToPage Bmk1024 AS Expr1124\n      43        19  INNER JOIN LOOP ON ml.movie_id = t1.id\n       1        19  │└TABLE SEEK title AS t1\n      43        19  INNER JOIN HASH ON mi_idx1.info_type_id = it1.id\n       1         1  │└TABLE SCAN info_type AS it1 WHERE info as info = 'rating'\n      21        19  INNER JOIN LOOP ON ml.movie_id = mi_idx1.movie_id\n       1        19  │└TABLE SEEK movie_info_idx AS mi_idx1 WHERE BLOOM(info_type_id as info_type_id)\n     113        21  INNER JOIN HASH ON t2.kind_id = kt2.id\n       2         2  │└TABLE SCAN kind_type AS kt2 WHERE kind as kind = 'episode' OR kind as kind = 'tv series'\n     341        21  FILTER production_year as production_year >= 2000 AND production_year as production_year <= 2010\n     831        35  INNER JOIN LOOP ON Bmk1026 = Bmk1026\n       1        35  │└TABLE SEEK title AS t2 WHERE BLOOM(kind_id as kind_id)\n     831        47  PROJECT BmkToPage Bmk1026 AS Expr1120\n     831        47  INNER JOIN LOOP ON ml.linked_movie_id = t2.id\n       1        47  │└TABLE SEEK title AS t2\n     831        47  INNER JOIN HASH ON ml.link_type_id = lt.id\n       2         2  │└TABLE SCAN link_type AS lt WHERE link as link = 'followed by' OR link as link = 'follows' OR link as link = 'sequel'\n     665        47  INNER JOIN HASH ON mi_idx2.movie_id = ml.linked_movie_id\n    2999      2315  │└TABLE SEEK movie_link AS ml WHERE BLOOM(link_type_id as link_type_id)\n     138        36  INNER JOIN HASH ON mi_idx2.info_type_id = it2.id\n       1         1  │└TABLE SCAN info_type AS it2 WHERE info as info = 'rating'\n      69        36  TABLE SEEK movie_info_idx AS mi_idx2 WHERE info as info < '3.5' AND BLOOM(movie_id as movie_id) AND BLOOM(info_type_id as info_type_id)\n",
       "sql": "SELECT MIN(cn1.name) AS first_company,\n       MIN(cn2.name) AS second_company,\n       MIN(mi_idx1.info) AS first_rating,\n       MIN(mi_idx2.info) AS second_rating,\n       MIN(t1.title) AS first_movie,\n       MIN(t2.title) AS second_movie\nFROM job.company_name AS cn1,\n     job.company_name AS cn2,\n     job.info_type AS it1,\n     job.info_type AS it2,\n     job.kind_type AS kt1,\n     job.kind_type AS kt2,\n     job.link_type AS lt,\n     job.movie_companies AS mc1,\n     job.movie_companies AS mc2,\n     job.movie_info_idx AS mi_idx1,\n     job.movie_info_idx AS mi_idx2,\n     job.movie_link AS ml,\n     job.title AS t1,\n     job.title AS t2\nWHERE cn1.country_code != '[us]'\n  AND it1.info = 'rating'\n  AND it2.info = 'rating'\n  AND kt1.kind IN ('tv series',\n                   'episode')\n  AND kt2.kind IN ('tv series',\n                   'episode')\n  AND lt.link IN ('sequel',\n                  'follows',\n                  'followed by')\n  AND mi_idx2.info < '3.5'\n  AND t2.production_year BETWEEN 2000 AND 2010\n  AND lt.id = ml.link_type_id\n  AND t1.id = ml.movie_id\n  AND t2.id = ml.linked_movie_id\n  AND it1.id = mi_idx1.info_type_id\n  AND t1.id = mi_idx1.movie_id\n  AND kt1.id = t1.kind_id\n  AND cn1.id = mc1.company_id\n  AND t1.id = mc1.movie_id\n  AND ml.movie_id = mi_idx1.movie_id\n  AND ml.movie_id = mc1.movie_id\n  AND mi_idx1.movie_id = mc1.movie_id\n  AND it2.id = mi_idx2.info_type_id\n  AND t2.id = mi_idx2.movie_id\n  AND kt2.id = t2.kind_id\n  AND cn2.id = mc2.company_id\n  AND t2.id = mc2.movie_id\n  AND ml.linked_movie_id = mi_idx2.movie_id\n  AND ml.linked_movie_id = mc2.movie_id\n  AND mi_idx2.movie_id = mc2.movie_id;\n",
-      "startTime": "2026-06-25T17:02:05.925936Z",
+      "startTime": "2026-06-26T11:01:10.054573Z",
       "status": "OK",
-      "timeMs": 423.788
+      "timeMs": 300.925
     }
   ],
   "runtime": {
-    "avgMs": 423.788,
-    "bestMs": 423.788,
-    "maxMs": 423.788,
-    "minMs": 423.788,
+    "avgMs": 300.925,
+    "bestMs": 300.925,
+    "maxMs": 300.925,
+    "minMs": 300.925,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

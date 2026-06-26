@@ -33,7 +33,7 @@
           "-2x": 0,
           "-4x": 0,
           "-8x": 0,
-          "<16x": 2,
+          "<16x": 1,
           "=": 3,
           ">16x": 0
         },
@@ -44,7 +44,7 @@
           "-2x": 0,
           "-4x": 0,
           "-8x": 0,
-          "<16x": 11,
+          "<16x": 12,
           "=": 1,
           ">16x": 0
         },
@@ -56,7 +56,7 @@
           "-4x": 0,
           "-8x": 0,
           "<16x": 10,
-          "=": 4,
+          "=": 5,
           ">16x": 0
         },
         "sort": {
@@ -66,7 +66,7 @@
           "-2x": 0,
           "-4x": 0,
           "-8x": 0,
-          "<16x": 1,
+          "<16x": 4,
           "=": 0,
           ">16x": 0
         }
@@ -74,24 +74,24 @@
       "operatorRows": {
         "aggregate": 26153,
         "distribute": 0,
-        "hash": 8694013,
-        "join": 8608015,
-        "scan": 262207,
-        "seek": 8260070,
-        "sort": 54155
+        "hash": 6980896,
+        "join": 7763357,
+        "scan": 120,
+        "seek": 6922039,
+        "sort": 164456
       },
-      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(info as info) AS Expr1018, MIN(info as info) AS Expr1019, MIN(name as name) AS Expr1020, MIN(title as title) AS Expr1021\n       4     26153  INNER JOIN HASH ON mk.keyword_id = k.id\n       7         7  │└TABLE SCAN keyword AS k WHERE keyword as keyword = 'blood' OR keyword as keyword = 'death' OR keyword as keyword = 'female-nudity' OR keyword as keyword = 'gore' OR keyword as keyword = 'hospital' OR keyword as keyword = 'murder' OR keyword as keyword = 'violence'\n       3     26153  INNER JOIN HASH ON mk.movie_id = t.id\n     763     28073  │└INNER JOIN LOOP ON Bmk1016 = Bmk1016\n       1     28073  │ │└TABLE SEEK title AS t\n     764     28073  │ PROJECT BmkToPage Bmk1016 AS Expr1945\n     764     28073  │ INNER JOIN LOOP ON mi_idx.movie_id = t.id\n       1     28073  │ │└TABLE SEEK title AS t\n     763     28073  │ FILTER gender as gender = 'm'\n    1835     54155  │ INNER JOIN LOOP ON Bmk1014 = Bmk1014\n       1     54155  │ │└TABLE SEEK name AS n\n    1835     54155  │ PROJECT BmkToPage Bmk1014 AS Expr1942\n    1835     54155  │ INNER JOIN LOOP ON ci.person_id = n.id\n       1     54155  │ │└TABLE SEEK name AS n\n    1835     54155  │ SORT person_id\n    1835     54155  │ FILTER note as note = '(head writer)' OR note as note = '(story editor)' OR note as note = '(story)' OR note as note = '(writer)' OR note as note = '(written by)'\n   66795   4041796  │ INNER JOIN LOOP ON Bmk1000 = Bmk1000\n       1   4041796  │ │└TABLE SEEK cast_info AS ci\n   66795   4041796  │ PROJECT BmkToPage Bmk1000 AS Expr1939\n   66795   4041796  │ INNER JOIN LOOP ON mi_idx.movie_id = ci.movie_id\n      38   4041796  │ │└TABLE SEEK cast_info AS ci\n    1715    102516  │ INNER JOIN HASH ON mi_idx.info_type_id = it2.id\n       1         1  │ │└FILTER info as info = 'votes'\n     113       113  │ │ TABLE SCAN info_type AS it2\n     857    102516  │ INNER JOIN HASH ON mi.info_type_id = it1.id\n       1         1  │ │└FILTER info as info = 'genres'\n     113       113  │ │ INNER JOIN LOOP ON Bmk1002 = Bmk1002\n       1       113  │ │ │└TABLE SEEK info_type AS it1\n     113       113  │ │ TABLE SEEK info_type AS it1\n     600    102516  │ INNER JOIN HASH ON mi_idx.movie_id = mi.movie_id\n    1166    186594  │ │└TABLE SCAN movie_info AS mi WHERE (info as info = 'Action' OR info as info = 'Crime' OR info as info = 'Horror' OR info as info = 'Sci-Fi' OR info as info = 'Thriller' OR info as info = 'War') AND BLOOM(info_type_id as info_type_id)\n    1380     75493  │ TABLE SCAN movie_info_idx AS mi_idx WHERE BLOOM(movie_id as movie_id) AND BLOOM(info_type_id as info_type_id)\n       1     11796  TABLE SEEK movie_keyword AS mk WHERE BLOOM(keyword_id as keyword_id) AND BLOOM(movie_id as movie_id)\n",
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(info as info) AS Expr1018, MIN(info as info) AS Expr1019, MIN(name as name) AS Expr1020, MIN(title as title) AS Expr1021\n       1     26153  INNER JOIN HASH ON mk.keyword_id = k.id\n       7         7  │└TABLE SCAN keyword AS k WHERE keyword as keyword = 'blood' OR keyword as keyword = 'death' OR keyword as keyword = 'female-nudity' OR keyword as keyword = 'gore' OR keyword as keyword = 'hospital' OR keyword as keyword = 'murder' OR keyword as keyword = 'violence'\n       1     26153  INNER JOIN LOOP ON Bmk1012 = Bmk1012\n       1     26153  │└TABLE SEEK movie_keyword AS mk WHERE BLOOM(keyword_id as keyword_id)\n    6282    941053  INNER JOIN LOOP ON ci.movie_id = mk.movie_id\n      18    941053  │└TABLE SEEK movie_keyword AS mk\n     345     28073  SORT movie_id\n     345     28073  INNER JOIN LOOP ON Bmk1016 = Bmk1016\n       1     28073  │└TABLE SEEK title AS t\n     345     28073  SORT Expr1060\n     345     28073  PROJECT BmkToPage Bmk1016 AS Expr1060\n     345     28073  INNER JOIN LOOP ON mi_idx.movie_id = t.id\n       1     28073  │└TABLE SEEK title AS t\n     344     28073  FILTER gender as gender = 'm'\n     829     54155  INNER JOIN LOOP ON Bmk1014 = Bmk1014\n       1     54155  │└TABLE SEEK name AS n\n     829     54155  SORT Expr1092\n     829     54155  PROJECT BmkToPage Bmk1014 AS Expr1092\n     829     54155  INNER JOIN LOOP ON ci.person_id = n.id\n       1     54155  │└TABLE SEEK name AS n\n     826     54155  SORT person_id\n     826     54155  INNER JOIN HASH ON mi_idx.info_type_id = it2.id\n       1         1  │└FILTER info as info = 'votes'\n     113       113  │ TABLE SCAN info_type AS it2\n     413     54155  INNER JOIN HASH ON mi.info_type_id = it1.id\n       1         1  │└FILTER info as info = 'genres'\n     113       113  │ INNER JOIN LOOP ON Bmk1002 = Bmk1002\n       1       113  │ │└TABLE SEEK info_type AS it1\n     113       113  │ TABLE SEEK info_type AS it1\n     289     54155  INNER JOIN HASH ON mi_idx.movie_id = mi.movie_id\n    1560    186594  │└TABLE SEEK movie_info AS mi WHERE (info as info = 'Action' OR info as info = 'Crime' OR info as info = 'Horror' OR info as info = 'Sci-Fi' OR info as info = 'Thriller' OR info as info = 'War') AND BLOOM(info_type_id as info_type_id)\n     114     38275  FILTER note as note = '(head writer)' OR note as note = '(story editor)' OR note as note = '(story)' OR note as note = '(writer)' OR note as note = '(written by)'\n    4170   2764032  INNER JOIN LOOP ON Bmk1000 = Bmk1000\n       1   2764032  │└TABLE SEEK cast_info AS ci\n    4170   2764032  PROJECT BmkToPage Bmk1000 AS Expr1849\n    4170   2764032  INNER JOIN LOOP ON mi_idx.movie_id = ci.movie_id\n      30   2764032  │└TABLE SEEK cast_info AS ci\n  138004     75493  TABLE SEEK movie_info_idx AS mi_idx WHERE BLOOM(movie_id as movie_id) AND BLOOM(info_type_id as info_type_id)\n",
       "sql": "SELECT MIN(mi.info) AS movie_budget,\n       MIN(mi_idx.info) AS movie_votes,\n       MIN(n.name) AS male_writer,\n       MIN(t.title) AS violent_movie_title\nFROM job.cast_info AS ci,\n     job.info_type AS it1,\n     job.info_type AS it2,\n     job.keyword AS k,\n     job.movie_info AS mi,\n     job.movie_info_idx AS mi_idx,\n     job.movie_keyword AS mk,\n     job.name AS n,\n     job.title AS t\nWHERE ci.note IN ('(writer)',\n                  '(head writer)',\n                  '(written by)',\n                  '(story)',\n                  '(story editor)')\n  AND it1.info = 'genres'\n  AND it2.info = 'votes'\n  AND k.keyword IN ('murder',\n                    'violence',\n                    'blood',\n                    'gore',\n                    'death',\n                    'female-nudity',\n                    'hospital')\n  AND mi.info IN ('Horror',\n                  'Action',\n                  'Sci-Fi',\n                  'Thriller',\n                  'Crime',\n                  'War')\n  AND n.gender = 'm'\n  AND t.id = mi.movie_id\n  AND t.id = mi_idx.movie_id\n  AND t.id = ci.movie_id\n  AND t.id = mk.movie_id\n  AND ci.movie_id = mi.movie_id\n  AND ci.movie_id = mi_idx.movie_id\n  AND ci.movie_id = mk.movie_id\n  AND mi.movie_id = mi_idx.movie_id\n  AND mi.movie_id = mk.movie_id\n  AND mi_idx.movie_id = mk.movie_id\n  AND n.id = ci.person_id\n  AND it1.id = mi.info_type_id\n  AND it2.id = mi_idx.info_type_id\n  AND k.id = mk.keyword_id;\n",
-      "startTime": "2026-06-25T17:01:19.546118Z",
+      "startTime": "2026-06-26T11:00:22.829374Z",
       "status": "OK",
-      "timeMs": 5594.284
+      "timeMs": 3094.008
     }
   ],
   "runtime": {
-    "avgMs": 5594.284,
-    "bestMs": 5594.284,
-    "maxMs": 5594.284,
-    "minMs": 5594.284,
+    "avgMs": 3094.008,
+    "bestMs": 3094.008,
+    "maxMs": 3094.008,
+    "minMs": 3094.008,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

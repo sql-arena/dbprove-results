@@ -8,7 +8,7 @@
           "+2x": 0,
           "+4x": 0,
           "+8x": 0,
-          "-2x": 1,
+          "-2x": 0,
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
@@ -23,21 +23,10 @@
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
-          "=": 2,
+          "=": 0,
           ">16x": 0
         },
         "hash": {
-          "+2x": 1,
-          "+4x": 0,
-          "+8x": 0,
-          "-2x": 0,
-          "-4x": 0,
-          "-8x": 0,
-          "<16x": 0,
-          "=": 3,
-          ">16x": 2
-        },
-        "join": {
           "+2x": 0,
           "+4x": 0,
           "+8x": 0,
@@ -45,17 +34,28 @@
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
-          "=": 1,
-          ">16x": 6
+          "=": 3,
+          ">16x": 1
         },
-        "scan": {
-          "+2x": 2,
+        "join": {
+          "+2x": 0,
           "+4x": 0,
-          "+8x": 0,
-          "-2x": 1,
+          "+8x": 1,
+          "-2x": 0,
           "-4x": 0,
           "-8x": 0,
-          "<16x": 1,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 5
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 2,
           "=": 4,
           ">16x": 2
         },
@@ -72,26 +72,26 @@
         }
       },
       "operatorRows": {
-        "aggregate": 426,
+        "aggregate": 416,
         "distribute": 0,
-        "hash": 22311,
-        "join": 2577,
-        "scan": 21879,
-        "seek": 226,
+        "hash": 22264,
+        "join": 26790,
+        "scan": 24409,
+        "seek": 4264,
         "sort": 0
       },
-      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(partialagg1050) AS Expr1014, MIN(partialagg1051) AS Expr1015, MIN(partialagg1052) AS Expr1016\n       5        10  AGGREGATE MIN(info as info) AS partialagg1050, MIN(info as info) AS partialagg1051, MIN(title as title) AS partialagg1052\n  105547       416  INNER JOIN HASH ON mi_idx.info_type_id = it2.id\n       1         1  │└FILTER info as info = 'votes'\n     113       113  │ TABLE SCAN info_type AS it2\n   52773       416  INNER JOIN HASH ON ci.person_id = n.id\n   12244      9798  │└TABLE SCAN name AS n WHERE name as name LIKE '%Tim%' AND gender as gender = 'm'\n   27613       416  INNER JOIN HASH ON t.id = mi_idx.movie_id\n   27613       416  │└INNER JOIN HASH ON mi_idx.movie_id = ci.movie_id\n  240301      7370  │ │└TABLE SCAN cast_info AS ci WHERE (note as note = '(executive producer)' OR note as note = '(producer)') AND BLOOM(person_id as person_id)\n   11623       400  │ INNER JOIN HASH ON mi.info_type_id = it1.id\n       1         1  │ │└FILTER info as info = 'budget'\n     113       113  │ │ INNER JOIN LOOP ON Bmk1002 = Bmk1002\n       1       113  │ │ │└TABLE SEEK info_type AS it1\n     113       113  │ │ TABLE SEEK info_type AS it1\n    8136       400  │ INNER JOIN HASH ON mi.movie_id = mi_idx.movie_id\n   13800      3798  │ │└TABLE SCAN movie_info_idx AS mi_idx WHERE BLOOM(movie_id as movie_id) AND BLOOM(info_type_id as info_type_id)\n    1483       400  │ TABLE SCAN movie_info AS mi WHERE BLOOM(movie_id as movie_id) AND BLOOM(info_type_id as info_type_id)\n 2528310       400  TABLE SCAN title AS t WHERE BLOOM(id as id)\n",
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(info as info) AS Expr1014, MIN(info as info) AS Expr1015, MIN(title as title) AS Expr1016\n   37310       416  INNER JOIN HASH ON mi_idx.info_type_id = it2.id\n       1         1  │└TABLE SCAN info_type AS it2 WHERE info as info = 'votes'\n   18655       416  INNER JOIN HASH ON mi.info_type_id = it1.id\n       1         1  │└TABLE SCAN info_type AS it1 WHERE info as info = 'budget'\n   13058       416  INNER JOIN LOOP ON t.id = mi.movie_id\n      24       416  │└TABLE SEEK movie_info AS mi WHERE BLOOM(info_type_id as info_type_id)\n   54176      3848  INNER JOIN LOOP ON t.id = mi_idx.movie_id\n       1      3848  │└TABLE SEEK movie_info_idx AS mi_idx WHERE BLOOM(info_type_id as info_type_id)\n  470845      7370  INNER JOIN HASH ON t.id = ci.movie_id\n  470847      7370  │└INNER JOIN HASH ON ci.person_id = n.id\n   12244      9798  │ │└TABLE SCAN name AS n WHERE name as name LIKE '%Tim%' AND gender as gender = 'm'\n  240301      7370  │ TABLE SCAN cast_info AS ci WHERE (note as note = '(executive producer)' OR note as note = '(producer)') AND BLOOM(person_id as person_id)\n 2528310      7239  TABLE SCAN title AS t WHERE BLOOM(id as id)\n",
       "sql": "SELECT MIN(mi.info) AS movie_budget,\n       MIN(mi_idx.info) AS movie_votes,\n       MIN(t.title) AS movie_title\nFROM job.cast_info AS ci,\n     job.info_type AS it1,\n     job.info_type AS it2,\n     job.movie_info AS mi,\n     job.movie_info_idx AS mi_idx,\n     job.name AS n,\n     job.title AS t\nWHERE ci.note IN ('(producer)',\n                  '(executive producer)')\n  AND it1.info = 'budget'\n  AND it2.info = 'votes'\n  AND n.gender = 'm'\n  AND n.name LIKE '%Tim%'\n  AND t.id = mi.movie_id\n  AND t.id = mi_idx.movie_id\n  AND t.id = ci.movie_id\n  AND ci.movie_id = mi.movie_id\n  AND ci.movie_id = mi_idx.movie_id\n  AND mi.movie_id = mi_idx.movie_id\n  AND n.id = ci.person_id\n  AND it1.id = mi.info_type_id\n  AND it2.id = mi_idx.info_type_id;\n",
-      "startTime": "2026-06-25T16:59:56.061234Z",
+      "startTime": "2026-06-26T10:58:04.943524Z",
       "status": "OK",
-      "timeMs": 4022.439
+      "timeMs": 7370.179
     }
   ],
   "runtime": {
-    "avgMs": 4022.439,
-    "bestMs": 4022.439,
-    "maxMs": 4022.439,
-    "minMs": 4022.439,
+    "avgMs": 7370.179,
+    "bestMs": 7370.179,
+    "maxMs": 7370.179,
+    "minMs": 7370.179,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

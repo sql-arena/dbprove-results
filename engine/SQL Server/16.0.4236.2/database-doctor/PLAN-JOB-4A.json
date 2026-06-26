@@ -30,7 +30,7 @@
           "+2x": 0,
           "+4x": 0,
           "+8x": 0,
-          "-2x": 1,
+          "-2x": 0,
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
@@ -38,14 +38,14 @@
           ">16x": 0
         },
         "join": {
-          "+2x": 1,
+          "+2x": 0,
           "+4x": 0,
           "+8x": 0,
           "-2x": 2,
-          "-4x": 0,
-          "-8x": 0,
+          "-4x": 1,
+          "-8x": 2,
           "<16x": 0,
-          "=": 3,
+          "=": 1,
           ">16x": 0
         },
         "scan": {
@@ -53,45 +53,45 @@
           "+4x": 0,
           "+8x": 0,
           "-2x": 2,
-          "-4x": 0,
+          "-4x": 1,
           "-8x": 0,
           "<16x": 3,
-          "=": 4,
+          "=": 3,
           ">16x": 0
         },
         "sort": {
           "+2x": 0,
           "+4x": 0,
           "+8x": 0,
-          "-2x": 0,
+          "-2x": 1,
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
-          "=": 1,
+          "=": 0,
           ">16x": 0
         }
       },
       "operatorRows": {
         "aggregate": 750,
         "distribute": 0,
-        "hash": 38395,
-        "join": 36344,
-        "scan": 5112,
-        "seek": 19737,
-        "sort": 5820
+        "hash": 21104,
+        "join": 366223,
+        "scan": 30,
+        "seek": 372727,
+        "sort": 12951
       },
-      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(partialagg1018) AS Expr1010, MIN(partialagg1019) AS Expr1011\n       5        10  AGGREGATE MIN(info as info) AS partialagg1018, MIN(title as title) AS partialagg1019\n    1616       740  INNER JOIN LOOP ON Bmk1008 = Bmk1008\n       0       740  │└TABLE SEEK title AS t WHERE production_year as production_year > 2005\n    4059      5820  SORT Expr1021\n    4059      5820  PROJECT BmkToPage Bmk1008 AS Expr1021\n    4059      5820  INNER JOIN LOOP ON mk.movie_id = t.id\n       1      5820  │└TABLE SEEK title AS t\n    4059      5820  INNER JOIN HASH ON mi_idx.info_type_id = it.id\n       1         1  │└FILTER info as info = 'rating'\n     113       113  │ INNER JOIN LOOP ON Bmk1000 = Bmk1000\n       1       113  │ │└TABLE SEEK info_type AS it\n     113       113  │ TABLE SEEK info_type AS it\n    2029      5820  INNER JOIN HASH ON mi_idx.movie_id = mk.movie_id\n    4309     12951  │└INNER JOIN HASH ON mk.keyword_id = k.id\n      47        30  │ │└TABLE SCAN keyword AS k WHERE keyword as keyword LIKE '%sequel%'\n    4523     12951  │ TABLE SEEK movie_keyword AS mk WHERE BLOOM(keyword_id as keyword_id)\n    5160      5082  TABLE SCAN movie_info_idx AS mi_idx WHERE info as info > '5.0' AND BLOOM(movie_id as movie_id) AND BLOOM(info_type_id as info_type_id)\n",
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(partialagg1018) AS Expr1010, MIN(partialagg1019) AS Expr1011\n       5        10  AGGREGATE MIN(info as info) AS partialagg1018, MIN(title as title) AS partialagg1019\n     287       740  INNER JOIN HASH ON mk.keyword_id = k.id\n      47        30  │└TABLE SCAN keyword AS k WHERE keyword as keyword LIKE '%sequel%'\n     301       740  INNER JOIN HASH ON mi_idx.info_type_id = it.id\n       1         1  │└FILTER info as info = 'rating'\n     113       113  │ INNER JOIN LOOP ON Bmk1000 = Bmk1000\n       1       113  │ │└TABLE SEEK info_type AS it\n     113       113  │ TABLE SEEK info_type AS it\n     150       740  INNER JOIN LOOP ON Bmk1008 = Bmk1008\n       0       740  │└TABLE SEEK title AS t WHERE production_year as production_year > 2005\n     378      5820  PROJECT BmkToPage Bmk1008 AS Expr1135\n     378      5820  INNER JOIN LOOP ON mk.movie_id = t.id\n       1      5820  │└TABLE SEEK title AS t\n     378      5820  INNER JOIN MERGE ON movie_id as movie_id = movie_id as movie_id\n    4523     12951  │└SORT movie_id\n    4523     12951  │ TABLE SEEK movie_keyword AS mk WHERE BLOOM(keyword_id as keyword_id)\n   51373    352990  TABLE SEEK movie_info_idx AS mi_idx WHERE info as info > '5.0' AND BLOOM(info_type_id as info_type_id)\n",
       "sql": "SELECT MIN(mi_idx.info) AS rating,\n       MIN(t.title) AS movie_title\nFROM job.info_type AS it,\n     job.keyword AS k,\n     job.movie_info_idx AS mi_idx,\n     job.movie_keyword AS mk,\n     job.title AS t\nWHERE it.info ='rating'\n  AND k.keyword LIKE '%sequel%'\n  AND mi_idx.info > '5.0'\n  AND t.production_year > 2005\n  AND t.id = mi_idx.movie_id\n  AND t.id = mk.movie_id\n  AND mk.movie_id = mi_idx.movie_id\n  AND k.id = mk.keyword_id\n  AND it.id = mi_idx.info_type_id;\n",
-      "startTime": "2026-06-25T17:02:08.764155Z",
+      "startTime": "2026-06-26T11:01:12.351418Z",
       "status": "OK",
-      "timeMs": 288.572
+      "timeMs": 4755.676
     }
   ],
   "runtime": {
-    "avgMs": 288.572,
-    "bestMs": 288.572,
-    "maxMs": 288.572,
-    "minMs": 288.572,
+    "avgMs": 4755.676,
+    "bestMs": 4755.676,
+    "maxMs": 4755.676,
+    "minMs": 4755.676,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

@@ -22,7 +22,7 @@
           "-2x": 0,
           "-4x": 0,
           "-8x": 0,
-          "<16x": 3,
+          "<16x": 4,
           "=": 0,
           ">16x": 0
         },
@@ -33,8 +33,8 @@
           "-2x": 0,
           "-4x": 0,
           "-8x": 0,
-          "<16x": 2,
-          "=": 1,
+          "<16x": 1,
+          "=": 0,
           ">16x": 0
         },
         "join": {
@@ -44,7 +44,7 @@
           "-2x": 0,
           "-4x": 0,
           "-8x": 0,
-          "<16x": 11,
+          "<16x": 13,
           "=": 0,
           ">16x": 0
         },
@@ -55,7 +55,7 @@
           "-2x": 0,
           "-4x": 0,
           "-8x": 0,
-          "<16x": 11,
+          "<16x": 13,
           "=": 2,
           ">16x": 0
         },
@@ -74,24 +74,24 @@
       "operatorRows": {
         "aggregate": 310,
         "distribute": 0,
-        "hash": 25384,
-        "join": 15138,
-        "scan": 70,
-        "seek": 14385,
+        "hash": 36949,
+        "join": 26703,
+        "scan": 1,
+        "seek": 26655,
         "sort": 0
       },
-      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(name as name) AS Expr1016, MIN(link as link) AS Expr1017, MIN(title as title) AS Expr1018\n       1       310  FILTER (name as name LIKE '%Film%' OR name as name LIKE '%Warner%') AND country_code as country_code <> 'pl'\n       2       664  INNER JOIN LOOP ON Bmk1000 = Bmk1000\n       1       664  │└TABLE SEEK company_name AS cn\n       2       664  INNER JOIN LOOP ON mc.company_id = cn.id\n       1       664  │└TABLE SEEK company_name AS cn\n       2       664  FILTER kind as kind = 'production companies'\n       5       705  INNER JOIN LOOP ON Bmk1002 = Bmk1002\n       1       705  │└TABLE SEEK company_type AS ct\n       5       705  INNER JOIN LOOP ON mc.company_type_id = ct.id\n       1       705  │└TABLE SEEK company_type AS ct\n       5       705  INNER JOIN HASH ON mc.movie_id = t.id\n       1       152  │└INNER JOIN LOOP ON Bmk1014 = Bmk1014\n       1       152  │ │└TABLE SEEK title AS t WHERE production_year as production_year >= 1950 AND production_year as production_year <= 2000\n       1       199  │ PROJECT BmkToPage Bmk1014 AS Expr1278\n       1       199  │ INNER JOIN LOOP ON ml.movie_id = t.id\n       1       199  │ │└TABLE SEEK title AS t\n       1       199  │ FILTER link as link LIKE '%follow%'\n       7       251  │ INNER JOIN LOOP ON Bmk1006 = Bmk1006\n       1       251  │ │└TABLE SEEK link_type AS lt\n       7       251  │ INNER JOIN LOOP ON ml.link_type_id = lt.id\n       1       251  │ │└TABLE SEEK link_type AS lt\n       7       251  │ INNER JOIN HASH ON ml.movie_id = mk.movie_id\n      88     10544  │ │└INNER JOIN HASH ON mk.keyword_id = k.id\n       1         1  │ │ │└TABLE SCAN keyword AS k WHERE keyword as keyword = 'sequel'\n      45     10544  │ │ TABLE SEEK movie_keyword AS mk WHERE BLOOM(keyword_id as keyword_id)\n       2       250  │ TABLE SEEK movie_link AS ml WHERE BLOOM(movie_id as movie_id)\n       1        69  TABLE SCAN movie_companies AS mc WHERE note as note IS NULL AND BLOOM(movie_id as movie_id)\n",
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(name as name) AS Expr1016, MIN(link as link) AS Expr1017, MIN(title as title) AS Expr1018\n       1       310  FILTER (name as name LIKE '%Film%' OR name as name LIKE '%Warner%') AND country_code as country_code <> 'pl'\n       2       664  INNER JOIN LOOP ON Bmk1000 = Bmk1000\n       1       664  │└TABLE SEEK company_name AS cn\n       2       664  INNER JOIN LOOP ON mc.company_id = cn.id\n       1       664  │└TABLE SEEK company_name AS cn\n       2       664  FILTER kind as kind = 'production companies'\n       4       705  INNER JOIN LOOP ON Bmk1002 = Bmk1002\n       1       705  │└TABLE SEEK company_type AS ct\n       4       705  INNER JOIN LOOP ON mc.company_type_id = ct.id\n       1       705  │└TABLE SEEK company_type AS ct\n       4       705  FILTER note as note IS NULL\n       9       863  INNER JOIN LOOP ON Bmk1008 = Bmk1008\n       1       863  │└TABLE SEEK movie_companies AS mc\n       9       863  PROJECT BmkToPage Bmk1008 AS Expr1048\n       9       863  INNER JOIN LOOP ON t.id = mc.movie_id\n       9       863  │└TABLE SEEK movie_companies AS mc\n       1       152  INNER JOIN LOOP ON Bmk1014 = Bmk1014\n       1       152  │└TABLE SEEK title AS t WHERE production_year as production_year >= 1950 AND production_year as production_year <= 2000\n       1       199  PROJECT BmkToPage Bmk1014 AS Expr1047\n       1       199  INNER JOIN LOOP ON ml.movie_id = t.id\n       1       199  │└TABLE SEEK title AS t\n       1       199  FILTER link as link LIKE '%follow%'\n       7       251  INNER JOIN LOOP ON Bmk1006 = Bmk1006\n       1       251  │└TABLE SEEK link_type AS lt\n       7       251  INNER JOIN LOOP ON ml.link_type_id = lt.id\n       1       251  │└TABLE SEEK link_type AS lt\n       7       251  INNER JOIN HASH ON ml.movie_id = mk.movie_id\n      90     10544  │└INNER JOIN LOOP ON Bmk1010 = Bmk1010\n       1     10544  │ │└TABLE SEEK movie_keyword AS mk\n      90     10544  │ INNER JOIN LOOP ON k.id = mk.keyword_id\n      90     10544  │ │└TABLE SEEK movie_keyword AS mk\n       1         1  │ TABLE SCAN keyword AS k WHERE keyword as keyword = 'sequel'\n       2       250  TABLE SEEK movie_link AS ml WHERE BLOOM(movie_id as movie_id)\n",
       "sql": "SELECT MIN(cn.name) AS from_company,\n       MIN(lt.link) AS movie_link_type,\n       MIN(t.title) AS non_polish_sequel_movie\nFROM job.company_name AS cn,\n     job.company_type AS ct,\n     job.keyword AS k,\n     job.link_type AS lt,\n     job.movie_companies AS mc,\n     job.movie_keyword AS mk,\n     job.movie_link AS ml,\n     job.title AS t\nWHERE cn.country_code !='[pl]'\n  AND (cn.name LIKE '%Film%'\n       OR cn.name LIKE '%Warner%')\n  AND ct.kind ='production companies'\n  AND k.keyword ='sequel'\n  AND lt.link LIKE '%follow%'\n  AND mc.note IS NULL\n  AND t.production_year BETWEEN 1950 AND 2000\n  AND lt.id = ml.link_type_id\n  AND ml.movie_id = t.id\n  AND t.id = mk.movie_id\n  AND mk.keyword_id = k.id\n  AND t.id = mc.movie_id\n  AND mc.company_type_id = ct.id\n  AND mc.company_id = cn.id\n  AND ml.movie_id = mk.movie_id\n  AND ml.movie_id = mc.movie_id\n  AND mk.movie_id = mc.movie_id;\n",
-      "startTime": "2026-06-25T16:58:36.482043Z",
+      "startTime": "2026-06-26T10:56:43.523786Z",
       "status": "OK",
-      "timeMs": 684.976
+      "timeMs": 328.749
     }
   ],
   "runtime": {
-    "avgMs": 684.976,
-    "bestMs": 684.976,
-    "maxMs": 684.976,
-    "minMs": 684.976,
+    "avgMs": 328.749,
+    "bestMs": 328.749,
+    "maxMs": 328.749,
+    "minMs": 328.749,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

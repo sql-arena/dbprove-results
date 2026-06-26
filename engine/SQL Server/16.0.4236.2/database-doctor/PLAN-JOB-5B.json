@@ -24,7 +24,7 @@
           "-8x": 0,
           "<16x": 0,
           "=": 1,
-          ">16x": 1
+          ">16x": 0
         },
         "hash": {
           "+2x": 0,
@@ -46,7 +46,7 @@
           "-8x": 0,
           "<16x": 0,
           "=": 0,
-          ">16x": 5
+          ">16x": 4
         },
         "scan": {
           "+2x": 0,
@@ -57,7 +57,7 @@
           "-8x": 0,
           "<16x": 0,
           "=": 6,
-          ">16x": 1
+          ">16x": 0
         },
         "sort": {
           "+2x": 0,
@@ -80,18 +80,18 @@
         "seek": 0,
         "sort": 1419
       },
-      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(title as title) AS Expr1010\n     163         0  FILTER info as info = 'America' OR info as info = 'USA'\n    4011         0  INNER JOIN LOOP ON Bmk1006 = Bmk1006\n       1         0  │└TABLE SEEK movie_info AS mi\n    4011         ∞  PROJECT BmkToPage Bmk1006 AS Expr1031\n    4011         0  INNER JOIN LOOP ON t.id = mi.movie_id\n      55         0  │└TABLE SEEK movie_info AS mi\n      72         0  INNER JOIN LOOP ON Bmk1008 = Bmk1008\n       0         0  │└TABLE SEEK title AS t WHERE production_year as production_year > 2010\n     472         ∞  PROJECT BmkToPage Bmk1008 AS Expr1028\n     472         0  INNER JOIN LOOP ON mc.movie_id = t.id\n       1         0  │└TABLE SEEK title AS t\n     472         0  INNER JOIN MERGE ON id as id = company_type_id as company_type_id\n       1         1  │└SORT id\n       1         1  │ FILTER kind as kind = 'production companies'\n       4         4  │ TABLE SCAN company_type AS ct\n     945      1418  SORT company_type_id\n     945      1418  TABLE SCAN movie_companies AS mc WHERE note as note LIKE '%(VHS)%' AND note as note LIKE '%(USA)%' AND note as note LIKE '%(1994)%'\n",
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(title as title) AS Expr1010\n     144         0  INNER JOIN LOOP ON t.id = mi.movie_id\n       1         0  │└TABLE SEEK movie_info AS mi WHERE info as info = 'America' OR info as info = 'USA'\n      72         0  INNER JOIN LOOP ON Bmk1008 = Bmk1008\n       0         0  │└TABLE SEEK title AS t WHERE production_year as production_year > 2010\n     472         ∞  PROJECT BmkToPage Bmk1008 AS Expr1026\n     472         0  INNER JOIN LOOP ON mc.movie_id = t.id\n       1         0  │└TABLE SEEK title AS t\n     472         0  INNER JOIN MERGE ON id as id = company_type_id as company_type_id\n       1         1  │└SORT id\n       1         1  │ FILTER kind as kind = 'production companies'\n       4         4  │ TABLE SCAN company_type AS ct\n     945      1418  SORT company_type_id\n     945      1418  TABLE SCAN movie_companies AS mc WHERE note as note LIKE '%(VHS)%' AND note as note LIKE '%(USA)%' AND note as note LIKE '%(1994)%'\n",
       "sql": "SELECT MIN(t.title) AS american_vhs_movie\nFROM job.company_type AS ct,\n     job.info_type AS it,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.title AS t\nWHERE ct.kind = 'production companies'\n  AND mc.note LIKE '%(VHS)%'\n  AND mc.note LIKE '%(USA)%'\n  AND mc.note LIKE '%(1994)%'\n  AND mi.info IN ('USA',\n                  'America')\n  AND t.production_year > 2010\n  AND t.id = mi.movie_id\n  AND t.id = mc.movie_id\n  AND mc.movie_id = mi.movie_id\n  AND ct.id = mc.company_type_id\n  AND it.id = mi.info_type_id;\n",
-      "startTime": "2026-06-25T17:02:09.988779Z",
+      "startTime": "2026-06-26T11:01:24.516215Z",
       "status": "OK",
-      "timeMs": 263.201
+      "timeMs": 142.0
     }
   ],
   "runtime": {
-    "avgMs": 263.201,
-    "bestMs": 263.201,
-    "maxMs": 263.201,
-    "minMs": 263.201,
+    "avgMs": 142.0,
+    "bestMs": 142.0,
+    "maxMs": 142.0,
+    "minMs": 142.0,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

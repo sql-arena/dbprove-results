@@ -42,9 +42,9 @@
           "+4x": 0,
           "+8x": 0,
           "-2x": 0,
-          "-4x": 1,
+          "-4x": 0,
           "-8x": 3,
-          "<16x": 3,
+          "<16x": 4,
           "=": 1,
           ">16x": 0
         },
@@ -54,9 +54,9 @@
           "+8x": 0,
           "-2x": 2,
           "-4x": 0,
-          "-8x": 3,
+          "-8x": 2,
           "<16x": 1,
-          "=": 4,
+          "=": 5,
           ">16x": 1
         },
         "sort": {
@@ -80,18 +80,18 @@
         "seek": 47857,
         "sort": 0
       },
-      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(partialagg1047) AS Expr1016, MIN(partialagg1048) AS Expr1017, MIN(partialagg1049) AS Expr1018, MIN(partialagg1050) AS Expr1019\n       5        10  AGGREGATE MIN(name as name) AS partialagg1047, MIN(name as name) AS partialagg1048, MIN(name as name) AS partialagg1049, MIN(title as title) AS partialagg1050\n   34004    483138  INNER JOIN HASH ON ci.role_id = rt.id\n       1         1  │└FILTER role as role = 'actress'\n      12        12  │ INNER JOIN LOOP ON Bmk1012 = Bmk1012\n       1        12  │ │└TABLE SEEK role_type AS rt\n      12        12  │ TABLE SEEK role_type AS rt\n   37404    483138  INNER JOIN HASH ON an.person_id = n.id\n    8792    173655  │└INNER JOIN HASH ON mc.company_id = cn.id\n   84576     84843  │ │└TABLE SCAN company_name AS cn WHERE country_code as country_code = 'us'\n   24447    173655  │ INNER JOIN HASH ON mc.movie_id = t.id\n    8722    255592  │ │└INNER JOIN HASH ON t.id = ci.movie_id\n    8722    255592  │ │ │└INNER JOIN HASH ON id as id = person_role_id as person_role_id\n   19388    276108  │ │ │ │└INNER JOIN HASH ON n.id = ci.person_id\n   86757    276269  │ │ │ │ │└TABLE SCAN cast_info AS ci WHERE (note as note = '(voice)' OR note as note = '(voice) (uncredited)' OR note as note = '(voice: English version)' OR note as note = '(voice: Japanese version)') AND BLOOM(role_id as role_id)\n     931     31372  │ │ │ │ TABLE SCAN name AS n WHERE gender as gender = 'f' AND BLOOM(id as id)\n    3140     47378  │ │ │ TABLE SCAN char_name AS chn WHERE BLOOM(id as id)\n 2528310     76034  │ │ TABLE SCAN title AS t WHERE BLOOM(id as id)\n   26091     47833  │ TABLE SEEK movie_companies AS mc WHERE BLOOM(company_id as company_id) AND BLOOM(movie_id as movie_id)\n     901      9707  TABLE SCAN aka_name AS an WHERE BLOOM(person_id as person_id)\n",
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(partialagg1047) AS Expr1016, MIN(partialagg1048) AS Expr1017, MIN(partialagg1049) AS Expr1018, MIN(partialagg1050) AS Expr1019\n       5        10  AGGREGATE MIN(name as name) AS partialagg1047, MIN(name as name) AS partialagg1048, MIN(name as name) AS partialagg1049, MIN(title as title) AS partialagg1050\n   30101    483138  INNER JOIN HASH ON ci.role_id = rt.id\n       1         1  │└FILTER role as role = 'actress'\n      12        12  │ INNER JOIN LOOP ON Bmk1012 = Bmk1012\n       1        12  │ │└TABLE SEEK role_type AS rt\n      12        12  │ TABLE SEEK role_type AS rt\n   33111    483138  INNER JOIN HASH ON an.person_id = n.id\n    6824    173655  │└INNER JOIN HASH ON mc.company_id = cn.id\n   84576     84843  │ │└TABLE SCAN company_name AS cn WHERE country_code as country_code = 'us'\n   18974    173655  │ INNER JOIN HASH ON mc.movie_id = t.id\n    8722    255592  │ │└INNER JOIN HASH ON t.id = ci.movie_id\n    8722    255592  │ │ │└INNER JOIN HASH ON id as id = person_role_id as person_role_id\n   19388    276108  │ │ │ │└INNER JOIN HASH ON n.id = ci.person_id\n   86757    276269  │ │ │ │ │└TABLE SCAN cast_info AS ci WHERE (note as note = '(voice)' OR note as note = '(voice) (uncredited)' OR note as note = '(voice: English version)' OR note as note = '(voice: Japanese version)') AND BLOOM(role_id as role_id)\n     931     31372  │ │ │ │ TABLE SCAN name AS n WHERE gender as gender = 'f' AND BLOOM(id as id)\n   31403     47378  │ │ │ TABLE SCAN char_name AS chn WHERE BLOOM(id as id)\n 2528310     76034  │ │ TABLE SCAN title AS t WHERE BLOOM(id as id)\n   26091     47833  │ TABLE SEEK movie_companies AS mc WHERE BLOOM(company_id as company_id) AND BLOOM(movie_id as movie_id)\n     901      9707  TABLE SCAN aka_name AS an WHERE BLOOM(person_id as person_id)\n",
       "sql": "SELECT MIN(an.name) AS alternative_name,\n       MIN(chn.name) AS voiced_char_name,\n       MIN(n.name) AS voicing_actress,\n       MIN(t.title) AS american_movie\nFROM job.aka_name AS an,\n     job.char_name AS chn,\n     job.cast_info AS ci,\n     job.company_name AS cn,\n     job.movie_companies AS mc,\n     job.name AS n,\n     job.role_type AS rt,\n     job.title AS t\nWHERE ci.note IN ('(voice)',\n                  '(voice: Japanese version)',\n                  '(voice) (uncredited)',\n                  '(voice: English version)')\n  AND cn.country_code ='[us]'\n  AND n.gender ='f'\n  AND rt.role ='actress'\n  AND ci.movie_id = t.id\n  AND t.id = mc.movie_id\n  AND ci.movie_id = mc.movie_id\n  AND mc.company_id = cn.id\n  AND ci.role_id = rt.id\n  AND n.id = ci.person_id\n  AND chn.id = ci.person_role_id\n  AND an.person_id = n.id\n  AND an.person_id = ci.person_id;\n",
-      "startTime": "2026-06-25T17:02:52.635640Z",
+      "startTime": "2026-06-26T11:02:21.700500Z",
       "status": "OK",
-      "timeMs": 4918.654
+      "timeMs": 2682.024
     }
   ],
   "runtime": {
-    "avgMs": 4918.654,
-    "bestMs": 4918.654,
-    "maxMs": 4918.654,
-    "minMs": 4918.654,
+    "avgMs": 2682.024,
+    "bestMs": 2682.024,
+    "maxMs": 2682.024,
+    "minMs": 2682.024,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

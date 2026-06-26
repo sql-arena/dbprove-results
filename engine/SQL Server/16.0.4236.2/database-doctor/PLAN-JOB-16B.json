@@ -22,7 +22,7 @@
           "-2x": 0,
           "-4x": 0,
           "-8x": 0,
-          "<16x": 1,
+          "<16x": 0,
           "=": 0,
           ">16x": 0
         },
@@ -33,8 +33,8 @@
           "-2x": 0,
           "-4x": 0,
           "-8x": 0,
-          "<16x": 3,
-          "=": 1,
+          "<16x": 2,
+          "=": 0,
           ">16x": 0
         },
         "join": {
@@ -44,7 +44,7 @@
           "-2x": 0,
           "-4x": 0,
           "-8x": 0,
-          "<16x": 8,
+          "<16x": 10,
           "=": 0,
           ">16x": 0
         },
@@ -54,8 +54,8 @@
           "+8x": 0,
           "-2x": 1,
           "-4x": 0,
-          "-8x": 0,
-          "<16x": 8,
+          "-8x": 1,
+          "<16x": 9,
           "=": 2,
           ">16x": 0
         },
@@ -66,7 +66,7 @@
           "-2x": 0,
           "-4x": 0,
           "-8x": 0,
-          "<16x": 0,
+          "<16x": 2,
           "=": 0,
           ">16x": 0
         }
@@ -74,24 +74,24 @@
       "operatorRows": {
         "aggregate": 3710602,
         "distribute": 0,
-        "hash": 7193751,
-        "join": 7193751,
-        "scan": 227168,
-        "seek": 1371589,
-        "sort": 0
+        "hash": 9988718,
+        "join": 9908482,
+        "scan": 236604,
+        "seek": 6129574,
+        "sort": 2900871
       },
-      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(partialagg1029) AS Expr1016, MIN(partialagg1030) AS Expr1017\n       5        10  AGGREGATE MIN(name as name) AS partialagg1029, MIN(title as title) AS partialagg1030\n   65702   3710592  INNER JOIN HASH ON an.person_id = ci.person_id\n   12143   2832555  │└INNER JOIN HASH ON ci.movie_id = t.id\n     338     68316  │ │└INNER JOIN LOOP ON Bmk1014 = Bmk1014\n       1     68316  │ │ │└TABLE SEEK title AS t\n     338     68316  │ │ PROJECT BmkToPage Bmk1014 AS Expr1441\n     338     68316  │ │ INNER JOIN LOOP ON mk.movie_id = t.id\n       1     68316  │ │ │└TABLE SEEK title AS t\n     338     68316  │ │ INNER JOIN HASH ON mk.keyword_id = k.id\n       1         1  │ │ │└TABLE SCAN keyword AS k WHERE keyword as keyword = 'character-name-in-title'\n     172     68316  │ │ FILTER country_code as country_code = 'us'\n     478    148552  │ │ INNER JOIN LOOP ON Bmk1004 = Bmk1004\n       1    148552  │ │ │└TABLE SEEK company_name AS cn\n     478    148552  │ │ INNER JOIN LOOP ON mc.company_id = cn.id\n       1    148552  │ │ │└TABLE SEEK company_name AS cn\n     478    148552  │ │ INNER JOIN HASH ON mc.movie_id = mk.movie_id\n      45     41840  │ │ │└TABLE SEEK movie_keyword AS mk WHERE BLOOM(keyword_id as keyword_id)\n       2    148487  │ │ TABLE SEEK movie_companies AS mc WHERE BLOOM(movie_id as movie_id)\n    3624    747526  │ TABLE SEEK cast_info AS ci WHERE BLOOM(movie_id as movie_id)\n    9013    227167  TABLE SCAN aka_name AS an WHERE BLOOM(person_id as person_id)\n",
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(partialagg1030) AS Expr1016, MIN(partialagg1031) AS Expr1017\n       5        10  AGGREGATE MIN(name as name) AS partialagg1030, MIN(title as title) AS partialagg1031\n   47409   3710592  INNER JOIN HASH ON an.person_id = ci.person_id\n    9770   2832555  │└INNER JOIN LOOP ON Bmk1002 = Bmk1002\n       1   2832555  │ │└TABLE SEEK cast_info AS ci\n    9770   2832555  │ SORT Expr1051\n    9770   2832555  │ PROJECT BmkToPage Bmk1002 AS Expr1051\n    9770   2832555  │ INNER JOIN LOOP ON mc.movie_id = ci.movie_id\n      30   2832555  │ │└TABLE SEEK cast_info AS ci\n     323     68316  │ SORT movie_id\n     323     68316  │ INNER JOIN HASH ON cn.id = mc.company_id\n     899    148552  │ │└INNER JOIN LOOP ON Bmk1008 = Bmk1008\n       1    148552  │ │ │└TABLE SEEK movie_companies AS mc\n     899    148552  │ │ PROJECT BmkToPage Bmk1008 AS Expr1275\n     899    148552  │ │ INNER JOIN LOOP ON t.id = mc.movie_id\n       9    148552  │ │ │└TABLE SEEK movie_companies AS mc\n      90     41840  │ │ INNER JOIN LOOP ON Bmk1014 = Bmk1014\n       1     41840  │ │ │└TABLE SEEK title AS t\n      90     41840  │ │ PROJECT BmkToPage Bmk1014 AS Expr1272\n      90     41840  │ │ INNER JOIN LOOP ON mk.movie_id = t.id\n       1     41840  │ │ │└TABLE SEEK title AS t\n      90     41840  │ │ INNER JOIN LOOP ON Bmk1010 = Bmk1010\n       1     41840  │ │ │└TABLE SEEK movie_keyword AS mk\n      90     41840  │ │ INNER JOIN LOOP ON k.id = mk.keyword_id\n      90     41840  │ │ │└TABLE SEEK movie_keyword AS mk\n       1         1  │ │ TABLE SCAN keyword AS k WHERE keyword as keyword = 'character-name-in-title'\n     845      9436  │ TABLE SCAN company_name AS cn WHERE country_code as country_code = 'us' AND BLOOM(id as id)\n    9013    227167  TABLE SCAN aka_name AS an WHERE BLOOM(person_id as person_id)\n",
       "sql": "SELECT MIN(an.name) AS cool_actor_pseudonym,\n       MIN(t.title) AS series_named_after_char\nFROM job.aka_name AS an,\n     job.cast_info AS ci,\n     job.company_name AS cn,\n     job.keyword AS k,\n     job.movie_companies AS mc,\n     job.movie_keyword AS mk,\n     job.name AS n,\n     job.title AS t\nWHERE cn.country_code ='[us]'\n  AND k.keyword ='character-name-in-title'\n  AND an.person_id = n.id\n  AND n.id = ci.person_id\n  AND ci.movie_id = t.id\n  AND t.id = mk.movie_id\n  AND mk.keyword_id = k.id\n  AND t.id = mc.movie_id\n  AND mc.company_id = cn.id\n  AND an.person_id = ci.person_id\n  AND ci.movie_id = mc.movie_id\n  AND ci.movie_id = mk.movie_id\n  AND mc.movie_id = mk.movie_id;\n",
-      "startTime": "2026-06-25T16:59:08.682667Z",
+      "startTime": "2026-06-26T10:57:04.218269Z",
       "status": "OK",
-      "timeMs": 4241.285
+      "timeMs": 2336.948
     }
   ],
   "runtime": {
-    "avgMs": 4241.285,
-    "bestMs": 4241.285,
-    "maxMs": 4241.285,
-    "minMs": 4241.285,
+    "avgMs": 2336.948,
+    "bestMs": 2336.948,
+    "maxMs": 2336.948,
+    "minMs": 2336.948,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

@@ -20,10 +20,10 @@
           "+4x": 0,
           "+8x": 0,
           "-2x": 0,
-          "-4x": 1,
-          "-8x": 0,
-          "<16x": 0,
-          "=": 3,
+          "-4x": 0,
+          "-8x": 1,
+          "<16x": 1,
+          "=": 2,
           ">16x": 0
         },
         "hash": {
@@ -33,30 +33,30 @@
           "-2x": 0,
           "-4x": 0,
           "-8x": 0,
-          "<16x": 2,
-          "=": 3,
+          "<16x": 0,
+          "=": 2,
           ">16x": 0
         },
         "join": {
-          "+2x": 0,
+          "+2x": 1,
           "+4x": 0,
           "+8x": 0,
-          "-2x": 1,
-          "-4x": 3,
+          "-2x": 0,
+          "-4x": 0,
           "-8x": 2,
-          "<16x": 3,
-          "=": 1,
+          "<16x": 7,
+          "=": 2,
           ">16x": 0
         },
         "scan": {
-          "+2x": 0,
+          "+2x": 1,
           "+4x": 0,
           "+8x": 0,
-          "-2x": 1,
+          "-2x": 0,
           "-4x": 0,
           "-8x": 0,
-          "<16x": 7,
-          "=": 4,
+          "<16x": 10,
+          "=": 3,
           ">16x": 0
         },
         "sort": {
@@ -66,7 +66,7 @@
           "-2x": 0,
           "-4x": 0,
           "-8x": 2,
-          "<16x": 0,
+          "<16x": 1,
           "=": 0,
           ">16x": 0
         }
@@ -74,24 +74,24 @@
       "operatorRows": {
         "aggregate": 397,
         "distribute": 0,
-        "hash": 552828,
-        "join": 283437,
-        "scan": 274726,
-        "seek": 4836,
-        "sort": 3886
+        "hash": 31694,
+        "join": 46986,
+        "scan": 113,
+        "seek": 29864,
+        "sort": 3359
       },
-      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(name as name) AS Expr1016, MIN(info as info) AS Expr1017, MIN(title as title) AS Expr1018\n      55       397  FILTER country_code as country_code = 'us'\n     154       708  INNER JOIN LOOP ON Bmk1000 = Bmk1000\n       1       708  │└TABLE SEEK company_name AS cn\n     154       708  INNER JOIN LOOP ON mc.company_id = cn.id\n       1       708  │└TABLE SEEK company_name AS cn\n     154       708  INNER JOIN HASH ON mc.company_type_id = ct.id\n       1         1  │└FILTER kind as kind = 'production companies'\n       4         4  │ TABLE SCAN company_type AS ct\n     308       708  INNER JOIN HASH ON mc.movie_id = t.id\n      29       557  │└INNER JOIN LOOP ON Bmk1014 = Bmk1014\n       0       557  │ │└TABLE SEEK title AS t WHERE production_year as production_year >= 2005 AND production_year as production_year <= 2008\n     168      1943  │ SORT Expr1073\n     168      1943  │ PROJECT BmkToPage Bmk1014 AS Expr1073\n     168      1943  │ INNER JOIN LOOP ON mi.movie_id = t.id\n       1      1943  │ │└TABLE SEEK title AS t\n     168      1943  │ SORT movie_id\n     168      1943  │ INNER JOIN HASH ON mi_idx.info_type_id = it2.id\n       1         1  │ │└FILTER info as info = 'rating'\n     113       113  │ │ TABLE SCAN info_type AS it2\n      84      1943  │ INNER JOIN HASH ON mi_idx.movie_id = mi.movie_id\n    3951    272720  │ │└INNER JOIN HASH ON mi.info_type_id = it1.id\n       1         1  │ │ │└FILTER info as info = 'genres'\n     113       113  │ │ │ INNER JOIN LOOP ON Bmk1004 = Bmk1004\n       1       113  │ │ │ │└TABLE SEEK info_type AS it1\n     113       113  │ │ │ TABLE SEEK info_type AS it1\n    2766    272720  │ │ TABLE SCAN movie_info AS mi WHERE (info as info = 'Drama' OR info as info = 'Horror') AND BLOOM(info_type_id as info_type_id)\n      53      1889  │ TABLE SCAN movie_info_idx AS mi_idx WHERE info as info > '8.0' AND BLOOM(movie_id as movie_id) AND BLOOM(info_type_id as info_type_id)\n     260       694  TABLE SEEK movie_companies AS mc WHERE BLOOM(company_type_id as company_type_id) AND BLOOM(movie_id as movie_id)\n",
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(name as name) AS Expr1016, MIN(info as info) AS Expr1017, MIN(title as title) AS Expr1018\n      20       397  FILTER country_code as country_code = 'us'\n      58       708  INNER JOIN LOOP ON Bmk1000 = Bmk1000\n       1       708  │└TABLE SEEK company_name AS cn\n      58       708  SORT Expr1072\n      58       708  PROJECT BmkToPage Bmk1000 AS Expr1072\n      58       708  INNER JOIN LOOP ON mc.company_id = cn.id\n       1       708  │└TABLE SEEK company_name AS cn\n      58       708  SORT company_id\n      58       708  FILTER kind as kind = 'production companies'\n     116      1934  INNER JOIN LOOP ON Bmk1002 = Bmk1002\n       1      1934  │└TABLE SEEK company_type AS ct\n     116      1934  INNER JOIN LOOP ON mc.company_type_id = ct.id\n       1      1934  │└TABLE SEEK company_type AS ct\n     116      1934  INNER JOIN LOOP ON Bmk1008 = Bmk1008\n       1      1934  │└TABLE SEEK movie_companies AS mc\n     116      1934  PROJECT BmkToPage Bmk1008 AS Expr1081\n     116      1934  INNER JOIN LOOP ON t.id = mc.movie_id\n       9      1934  │└TABLE SEEK movie_companies AS mc\n      11       557  INNER JOIN LOOP ON Bmk1014 = Bmk1014\n       0       557  │└TABLE SEEK title AS t WHERE production_year as production_year >= 2005 AND production_year as production_year <= 2008\n      68      1943  PROJECT BmkToPage Bmk1014 AS Expr1079\n      68      1943  INNER JOIN LOOP ON mi.movie_id = t.id\n       1      1943  │└TABLE SEEK title AS t\n      68      1943  SORT movie_id\n      68      1943  INNER JOIN HASH ON mi.info_type_id = it1.id\n       1         1  │└FILTER info as info = 'genres'\n     113       113  │ TABLE SCAN info_type AS it1\n    4774      2137  INNER JOIN LOOP ON mi_idx.movie_id = mi.movie_id\n       1      2137  │└TABLE SEEK movie_info AS mi WHERE info as info = 'Drama' OR info as info = 'Horror'\n   10726     15849  INNER JOIN HASH ON mi_idx.info_type_id = it2.id\n       1         1  │└FILTER info as info = 'rating'\n     113       113  │ INNER JOIN LOOP ON Bmk1006 = Bmk1006\n       1       113  │ │└TABLE SEEK info_type AS it2\n     113       113  │ TABLE SEEK info_type AS it2\n   53631     15849  TABLE SEEK movie_info_idx AS mi_idx WHERE (PROBE(Bitmap1075,info_type_id as info_type_id,N'IN ROW')) AND (info as info > '8.0')\n",
       "sql": "SELECT MIN(cn.name) AS movie_company,\n       MIN(mi_idx.info) AS rating,\n       MIN(t.title) AS drama_horror_movie\nFROM job.company_name AS cn,\n     job.company_type AS ct,\n     job.info_type AS it1,\n     job.info_type AS it2,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.movie_info_idx AS mi_idx,\n     job.title AS t\nWHERE cn.country_code = '[us]'\n  AND ct.kind = 'production companies'\n  AND it1.info = 'genres'\n  AND it2.info = 'rating'\n  AND mi.info IN ('Drama',\n                  'Horror')\n  AND mi_idx.info > '8.0'\n  AND t.production_year BETWEEN 2005 AND 2008\n  AND t.id = mi.movie_id\n  AND t.id = mi_idx.movie_id\n  AND mi.info_type_id = it1.id\n  AND mi_idx.info_type_id = it2.id\n  AND t.id = mc.movie_id\n  AND ct.id = mc.company_type_id\n  AND cn.id = mc.company_id\n  AND mc.movie_id = mi.movie_id\n  AND mc.movie_id = mi_idx.movie_id\n  AND mi.movie_id = mi_idx.movie_id;\n",
-      "startTime": "2026-06-25T16:58:38.386502Z",
+      "startTime": "2026-06-26T10:56:45.142165Z",
       "status": "OK",
-      "timeMs": 2675.436
+      "timeMs": 1754.758
     }
   ],
   "runtime": {
-    "avgMs": 2675.436,
-    "bestMs": 2675.436,
-    "maxMs": 2675.436,
-    "minMs": 2675.436,
+    "avgMs": 1754.758,
+    "bestMs": 1754.758,
+    "maxMs": 1754.758,
+    "minMs": 1754.758,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

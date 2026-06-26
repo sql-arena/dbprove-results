@@ -31,32 +31,32 @@
           "+4x": 0,
           "+8x": 0,
           "-2x": 0,
-          "-4x": 1,
+          "-4x": 0,
           "-8x": 0,
-          "<16x": 1,
-          "=": 2,
+          "<16x": 0,
+          "=": 0,
           ">16x": 0
         },
         "join": {
           "+2x": 0,
           "+4x": 0,
           "+8x": 0,
-          "-2x": 0,
-          "-4x": 4,
+          "-2x": 4,
+          "-4x": 1,
           "-8x": 0,
-          "<16x": 0,
-          "=": 9,
+          "<16x": 1,
+          "=": 8,
           ">16x": 0
         },
         "scan": {
           "+2x": 0,
           "+4x": 0,
           "+8x": 0,
-          "-2x": 2,
-          "-4x": 6,
-          "-8x": 0,
+          "-2x": 0,
+          "-4x": 7,
+          "-8x": 1,
           "<16x": 4,
-          "=": 3,
+          "=": 4,
           ">16x": 0
         },
         "sort": {
@@ -67,31 +67,31 @@
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
-          "=": 0,
+          "=": 2,
           ">16x": 0
         }
       },
       "operatorRows": {
         "aggregate": 618,
         "distribute": 0,
-        "hash": 2641,
-        "join": 897,
-        "scan": 1785,
-        "seek": 536,
-        "sort": 0
+        "hash": 2608,
+        "join": 4354,
+        "scan": 113,
+        "seek": 2608,
+        "sort": 1786
       },
-      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(kind as kind) AS Expr1022, MIN(title as title) AS Expr1023\n     117       618  INNER JOIN HASH ON mk.movie_id = t.id\n       3         6  │└FILTER country_code as country_code = 'us'\n      10         6  │ INNER JOIN LOOP ON Bmk1004 = Bmk1004\n       1         6  │ │└TABLE SEEK company_name AS cn\n      10         6  │ INNER JOIN LOOP ON mc.company_id = cn.id\n       1         6  │ │└TABLE SEEK company_name AS cn\n      10         6  │ INNER JOIN HASH ON mc.movie_id = t.id\n       1         5  │ │└FILTER kind as kind = 'movie'\n       3         5  │ │ INNER JOIN LOOP ON Bmk1012 = Bmk1012\n       1         5  │ │ │└TABLE SEEK kind_type AS kt\n       3         5  │ │ INNER JOIN LOOP ON t.kind_id = kt.id\n       1         5  │ │ │└TABLE SEEK kind_type AS kt\n       3         5  │ │ INNER JOIN LOOP ON Bmk1020 = Bmk1020\n       0         5  │ │ │└TABLE SEEK title AS t WHERE production_year as production_year > 2000\n       6         6  │ │ PROJECT BmkToPage Bmk1020 AS Expr1566\n       6         6  │ │ INNER JOIN LOOP ON mi.movie_id = t.id\n       1         6  │ │ │└TABLE SEEK title AS t\n       6         6  │ │ INNER JOIN HASH ON mi.info_type_id = it1.id\n       1         1  │ │ │└FILTER info as info = 'release dates'\n     113       113  │ │ │ INNER JOIN LOOP ON Bmk1008 = Bmk1008\n       1       113  │ │ │ │└TABLE SEEK info_type AS it1\n     113       113  │ │ │ TABLE SEEK info_type AS it1\n       4         6  │ │ FILTER kind as kind = 'complete+verified'\n       9        40  │ │ INNER JOIN LOOP ON Bmk1002 = Bmk1002\n       1        40  │ │ │└TABLE SEEK comp_cast_type AS cct1\n       9        40  │ │ INNER JOIN LOOP ON cc.status_id = cct1.id\n       1        40  │ │ │└TABLE SEEK comp_cast_type AS cct1\n       9        40  │ │ INNER JOIN HASH ON movie_id as movie_id = movie_id as movie_id\n      18      1785  │ │ │└TABLE SCAN movie_info AS mi WHERE note as note LIKE '%internet%' AND (info as info LIKE 'USA:% 199%' OR info as info LIKE 'USA:% 200%') AND BLOOM(info_type_id as info_type_id)\n      13        38  │ │ TABLE SEEK complete_cast AS cc WHERE BLOOM(movie_id as movie_id)\n       2         3  │ TABLE SEEK movie_companies AS mc WHERE BLOOM(movie_id as movie_id)\n      45       156  TABLE SEEK movie_keyword AS mk WHERE BLOOM(movie_id as movie_id)\n",
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(kind as kind) AS Expr1022, MIN(title as title) AS Expr1023\n     102       618  INNER JOIN LOOP ON t.id = mk.movie_id\n      49       618  │└TABLE SEEK movie_keyword AS mk\n       3         6  FILTER country_code as country_code = 'us'\n       9         6  INNER JOIN LOOP ON Bmk1004 = Bmk1004\n       1         6  │└TABLE SEEK company_name AS cn\n       9         6  INNER JOIN LOOP ON mc.company_id = cn.id\n       1         6  │└TABLE SEEK company_name AS cn\n       9         6  INNER JOIN LOOP ON Bmk1014 = Bmk1014\n       1         6  │└TABLE SEEK movie_companies AS mc\n       9         6  PROJECT BmkToPage Bmk1014 AS Expr1083\n       9         6  INNER JOIN LOOP ON t.id = mc.movie_id\n       9         6  │└TABLE SEEK movie_companies AS mc\n       1         5  FILTER kind as kind = 'movie'\n       3         5  INNER JOIN LOOP ON Bmk1012 = Bmk1012\n       1         5  │└TABLE SEEK kind_type AS kt\n       3         5  INNER JOIN LOOP ON t.kind_id = kt.id\n       1         5  │└TABLE SEEK kind_type AS kt\n       3         5  INNER JOIN LOOP ON Bmk1020 = Bmk1020\n       0         5  │└TABLE SEEK title AS t WHERE production_year as production_year > 2000\n       6         6  PROJECT BmkToPage Bmk1020 AS Expr1082\n       6         6  INNER JOIN LOOP ON mi.movie_id = t.id\n       1         6  │└TABLE SEEK title AS t\n       6         6  FILTER kind as kind = 'complete+verified'\n      12        40  INNER JOIN LOOP ON Bmk1002 = Bmk1002\n       1        40  │└TABLE SEEK comp_cast_type AS cct1\n      12        40  INNER JOIN LOOP ON cc.status_id = cct1.id\n       1        40  │└TABLE SEEK comp_cast_type AS cct1\n      12        40  INNER JOIN LOOP ON Bmk1000 = Bmk1000\n       1        40  │└TABLE SEEK complete_cast AS cc\n      12        40  INNER JOIN LOOP ON mi.movie_id = cc.movie_id\n       1        40  │└TABLE SEEK complete_cast AS cc\n      24      1785  INNER JOIN MERGE ON id as id = info_type_id as info_type_id\n       1         1  │└SORT id\n       1         1  │ FILTER info as info = 'release dates'\n     113       113  │ TABLE SCAN info_type AS it1\n    1690      1785  SORT info_type_id\n    1690      1785  TABLE SEEK movie_info AS mi WHERE note as note LIKE '%internet%' AND (info as info LIKE 'USA:% 199%' OR info as info LIKE 'USA:% 200%')\n",
       "sql": "SELECT MIN(kt.kind) AS movie_kind,\n       MIN(t.title) AS complete_us_internet_movie\nFROM job.complete_cast AS cc,\n     job.comp_cast_type AS cct1,\n     job.company_name AS cn,\n     job.company_type AS ct,\n     job.info_type AS it1,\n     job.keyword AS k,\n     job.kind_type AS kt,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.movie_keyword AS mk,\n     job.title AS t\nWHERE cct1.kind = 'complete+verified'\n  AND cn.country_code = '[us]'\n  AND it1.info = 'release dates'\n  AND kt.kind IN ('movie')\n  AND mi.note LIKE '%internet%'\n  AND mi.info IS NOT NULL\n  AND (mi.info LIKE 'USA:% 199%'\n       OR mi.info LIKE 'USA:% 200%')\n  AND t.production_year > 2000\n  AND kt.id = t.kind_id\n  AND t.id = mi.movie_id\n  AND t.id = mk.movie_id\n  AND t.id = mc.movie_id\n  AND t.id = cc.movie_id\n  AND mk.movie_id = mi.movie_id\n  AND mk.movie_id = mc.movie_id\n  AND mk.movie_id = cc.movie_id\n  AND mi.movie_id = mc.movie_id\n  AND mi.movie_id = cc.movie_id\n  AND mc.movie_id = cc.movie_id\n  AND k.id = mk.keyword_id\n  AND it1.id = mi.info_type_id\n  AND cn.id = mc.company_id\n  AND ct.id = mc.company_type_id\n  AND cct1.id = cc.status_id;\n",
-      "startTime": "2026-06-25T17:01:01.571504Z",
+      "startTime": "2026-06-26T11:00:11.622726Z",
       "status": "OK",
-      "timeMs": 1083.226
+      "timeMs": 681.322
     }
   ],
   "runtime": {
-    "avgMs": 1083.226,
-    "bestMs": 1083.226,
-    "maxMs": 1083.226,
-    "minMs": 1083.226,
+    "avgMs": 681.322,
+    "bestMs": 681.322,
+    "maxMs": 681.322,
+    "minMs": 681.322,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

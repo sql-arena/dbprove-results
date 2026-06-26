@@ -8,10 +8,10 @@
           "+2x": 0,
           "+4x": 0,
           "+8x": 0,
-          "-2x": 1,
+          "-2x": 0,
           "-4x": 0,
           "-8x": 0,
-          "<16x": 0,
+          "<16x": 1,
           "=": 1,
           ">16x": 0
         },
@@ -19,10 +19,10 @@
           "+2x": 0,
           "+4x": 0,
           "+8x": 0,
-          "-2x": 0,
+          "-2x": 1,
           "-4x": 0,
           "-8x": 0,
-          "<16x": 1,
+          "<16x": 0,
           "=": 0,
           ">16x": 0
         },
@@ -33,18 +33,18 @@
           "-2x": 0,
           "-4x": 0,
           "-8x": 0,
-          "<16x": 2,
-          "=": 1,
+          "<16x": 0,
+          "=": 0,
           ">16x": 0
         },
         "join": {
           "+2x": 0,
           "+4x": 0,
           "+8x": 0,
-          "-2x": 1,
-          "-4x": 1,
+          "-2x": 0,
+          "-4x": 0,
           "-8x": 0,
-          "<16x": 3,
+          "<16x": 7,
           "=": 0,
           ">16x": 0
         },
@@ -52,10 +52,10 @@
           "+2x": 0,
           "+4x": 0,
           "+8x": 0,
-          "-2x": 1,
+          "-2x": 0,
           "-4x": 0,
           "-8x": 0,
-          "<16x": 5,
+          "<16x": 8,
           "=": 2,
           ">16x": 0
         },
@@ -66,32 +66,32 @@
           "-2x": 0,
           "-4x": 0,
           "-8x": 0,
-          "<16x": 0,
+          "<16x": 1,
           "=": 0,
           ">16x": 0
         }
       },
       "operatorRows": {
-        "aggregate": 52344,
+        "aggregate": 39694,
         "distribute": 0,
-        "hash": 2203613,
-        "join": 2107459,
+        "hash": 4270300,
+        "join": 4270300,
         "scan": 1,
-        "seek": 3116014,
-        "sort": 0
+        "seek": 4270300,
+        "sort": 41840
       },
-      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(partialagg1025) AS Expr1014\n       5        10  AGGREGATE MIN(name as name) AS partialagg1025\n   23830     52334  INNER JOIN HASH ON mk.keyword_id = k.id\n       1         1  │└TABLE SCAN keyword AS k WHERE keyword as keyword = 'character-name-in-title'\n   12114     52334  INNER JOIN HASH ON mc.movie_id = mk.movie_id\n      45     41840  │└TABLE SEEK movie_keyword AS mk WHERE BLOOM(keyword_id as keyword_id)\n      66     52333  INNER JOIN HASH ON ci.movie_id = mc.movie_id\n       2    148487  │└TABLE SEEK movie_companies AS mc WHERE BLOOM(movie_id as movie_id)\n       2      6250  FILTER name as name LIKE 'Z%'\n       3    975229  INNER JOIN LOOP ON Bmk1010 = Bmk1010\n       1    975229  │└TABLE SEEK name AS n\n       3    975229  PROJECT BmkToPage Bmk1010 AS Expr1126\n       3    975229  INNER JOIN LOOP ON ci.person_id = n.id\n       1    975229  │└TABLE SEEK name AS n\n       3    975229  TABLE SEEK cast_info AS ci WHERE BLOOM(movie_id as movie_id)\n",
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(partialagg1025) AS Expr1014\n     896     33048  INNER JOIN LOOP ON mk.movie_id = mc.movie_id\n       9     33048  │└TABLE SEEK movie_companies AS mc\n      90      4818  AGGREGATE MIN(name as name) AS partialagg1025 GROUP BY SORT movie_id\n    1984      6646  FILTER name as name LIKE 'Z%'\n    2741   1038393  INNER JOIN LOOP ON Bmk1010 = Bmk1010\n       1   1038393  │└TABLE SEEK name AS n\n    2741   1038393  INNER JOIN LOOP ON ci.person_id = n.id\n       1   1038393  │└TABLE SEEK name AS n\n    2741   1038393  INNER JOIN LOOP ON Bmk1000 = Bmk1000\n       1   1038393  │└TABLE SEEK cast_info AS ci\n    2741   1038393  INNER JOIN LOOP ON mk.movie_id = ci.movie_id\n      30   1038393  │└TABLE SEEK cast_info AS ci\n      90     41840  SORT movie_id\n      90     41840  INNER JOIN LOOP ON Bmk1008 = Bmk1008\n       1     41840  │└TABLE SEEK movie_keyword AS mk\n      90     41840  INNER JOIN LOOP ON k.id = mk.keyword_id\n      90     41840  │└TABLE SEEK movie_keyword AS mk\n       1         1  TABLE SCAN keyword AS k WHERE keyword as keyword = 'character-name-in-title'\n",
       "sql": "SELECT MIN(n.name) AS member_in_charnamed_movie,\n       MIN(n.name) AS a1\nFROM job.cast_info AS ci,\n     job.company_name AS cn,\n     job.keyword AS k,\n     job.movie_companies AS mc,\n     job.movie_keyword AS mk,\n     job.name AS n,\n     job.title AS t\nWHERE k.keyword ='character-name-in-title'\n  AND n.name LIKE 'Z%'\n  AND n.id = ci.person_id\n  AND ci.movie_id = t.id\n  AND t.id = mk.movie_id\n  AND mk.keyword_id = k.id\n  AND t.id = mc.movie_id\n  AND mc.company_id = cn.id\n  AND ci.movie_id = mc.movie_id\n  AND ci.movie_id = mk.movie_id\n  AND mc.movie_id = mk.movie_id;\n",
-      "startTime": "2026-06-25T16:59:30.958106Z",
+      "startTime": "2026-06-26T10:57:30.563515Z",
       "status": "OK",
-      "timeMs": 6171.078
+      "timeMs": 3342.118
     }
   ],
   "runtime": {
-    "avgMs": 6171.078,
-    "bestMs": 6171.078,
-    "maxMs": 6171.078,
-    "minMs": 6171.078,
+    "avgMs": 3342.118,
+    "bestMs": 3342.118,
+    "maxMs": 3342.118,
+    "minMs": 3342.118,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

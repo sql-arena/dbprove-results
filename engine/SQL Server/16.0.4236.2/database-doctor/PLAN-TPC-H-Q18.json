@@ -1,26 +1,27 @@
 {
+  "config": "M5 Macbook Pro",
   "engine": "SQL Server",
   "queries": [
     {
       "misEstimates": {
         "aggregate": {
-          "+2x": 0,
-          "+4x": 1,
+          "+2x": 1,
+          "+4x": 0,
           "+8x": 0,
           "-2x": 0,
           "-4x": 0,
-          "-8x": 0,
+          "-8x": 1,
           "<16x": 0,
-          "=": 1,
+          "=": 0,
           ">16x": 0
         },
         "filter": {
           "+2x": 0,
-          "+4x": 1,
+          "+4x": 0,
           "+8x": 0,
           "-2x": 0,
           "-4x": 0,
-          "-8x": 0,
+          "-8x": 1,
           "<16x": 0,
           "=": 0,
           ">16x": 0
@@ -37,34 +38,34 @@
           ">16x": 0
         },
         "join": {
-          "+2x": 2,
-          "+4x": 4,
+          "+2x": 0,
+          "+4x": 0,
           "+8x": 0,
           "-2x": 0,
           "-4x": 0,
-          "-8x": 0,
-          "<16x": 0,
+          "-8x": 4,
+          "<16x": 2,
           "=": 0,
           ">16x": 0
         },
         "scan": {
-          "+2x": 0,
-          "+4x": 1,
+          "+2x": 1,
+          "+4x": 0,
           "+8x": 0,
           "-2x": 0,
           "-4x": 0,
           "-8x": 5,
-          "<16x": 1,
-          "=": 2,
+          "<16x": 2,
+          "=": 1,
           ">16x": 0
         },
         "sort": {
           "+2x": 0,
-          "+4x": 1,
+          "+4x": 0,
           "+8x": 0,
           "-2x": 0,
           "-4x": 0,
-          "-8x": 0,
+          "-8x": 2,
           "<16x": 0,
           "=": 0,
           ">16x": 0
@@ -75,22 +76,22 @@
         "distribute": 0,
         "hash": 162,
         "join": 162,
-        "scan": 0,
-        "seek": 6001377,
-        "sort": 9
+        "scan": 6001296,
+        "seek": 81,
+        "sort": 18
       },
-      "plan": "Estimate    Actual  Operator\n      43         9  SORT o_totalprice, o_orderdate\n      43         9  INNER JOIN LOOP ON Bmk1006 = Bmk1006\n       1         9  │└TABLE SEEK customer\n      43         9  INNER JOIN LOOP ON o_custkey = c_custkey\n       1         9  │└TABLE SEEK customer\n      43         9  AGGREGATE SUM(l_quantity) AS Expr1013, o_custkey, o_orderkey, o_orderdate, o_totalprice GROUP BY HASH l_orderkey\n     172        63  INNER JOIN LOOP ON Bmk1000 = Bmk1000\n       1        63  │└TABLE SEEK lineitem\n     172        63  PROJECT BmkToPage Bmk1000 AS Expr1120\n     172        63  INNER JOIN LOOP ON l_orderkey = l_orderkey\n       4        63  │└TABLE SEEK lineitem\n      43         9  INNER JOIN LOOP ON Bmk1003 = Bmk1003\n       1         9  │└TABLE SEEK orders\n      43         9  PROJECT BmkToPage Bmk1003 AS Expr1117\n      43         9  INNER JOIN LOOP ON l_orderkey = o_orderkey\n       1         9  │└TABLE SEEK orders\n      43         9  FILTER Expr1012 > 314.00\n 1500000   1500000  AGGREGATE SUM(l_quantity) AS Expr1012 GROUP BY HASH l_orderkey\n 6001220   6001215  TABLE SEEK lineitem\n",
+      "plan": "Estimate    Actual  Operator\n       1         9  SORT o_totalprice, o_orderdate\n       1         9  AGGREGATE SUM(l_quantity) AS Expr1013, c_custkey, o_orderdate, o_totalprice GROUP BY SORT o_orderkey, c_name\n       1        63  INNER JOIN LOOP ON ColStoreLoc1000 = ColStoreLoc1000\n       1        63  │└TABLE SCAN lineitem\n       1        63  INNER JOIN LOOP ON o_orderkey = l_orderkey\n       1        63  │└TABLE SEEK lineitem\n       1         9  INNER JOIN LOOP ON ColStoreLoc1006 = ColStoreLoc1006\n       1         9  │└TABLE SCAN customer\n       1         9  INNER JOIN LOOP ON o_custkey = c_custkey\n       1         9  │└TABLE SEEK customer\n       1         9  INNER JOIN LOOP ON ColStoreLoc1003 = ColStoreLoc1003\n       1         9  │└TABLE SCAN orders\n       1         9  INNER JOIN LOOP ON l_orderkey = o_orderkey\n       1         9  │└TABLE SEEK orders\n       1         9  SORT l_orderkey\n       1         9  FILTER Expr1012 > 314.00\n 5449630   1500000  AGGREGATE SUM(l_quantity) AS Expr1012 GROUP BY HASH l_orderkey\n 6001220   6001215  TABLE SCAN lineitem\n",
       "sql": "/* TPC-H Q18 */\nSELECT c_name,\n       c_custkey,\n       o_orderkey,\n       o_orderdate,\n       o_totalprice,\n       SUM(l_quantity)\nFROM tpch_sf1.lineitem\nINNER JOIN tpch_sf1.orders\n    ON l_orderkey = o_orderkey\nINNER JOIN tpch_sf1.customer\n    ON o_custkey = c_custkey\nWHERE o_orderkey IN (SELECT l_orderkey\n                     FROM tpch_sf1.lineitem\n                     GROUP BY l_orderkey\n                     HAVING SUM(l_quantity) > 314)\nGROUP BY c_name,\n         c_custkey,\n         o_orderkey,\n         o_orderdate,\n         o_totalprice\nORDER BY o_totalprice DESC,\n         o_orderdate",
-      "startTime": "2026-06-22T16:16:21.683924Z",
+      "startTime": "2026-06-26T11:49:44.447486Z",
       "status": "OK",
-      "timeMs": 284.598
+      "timeMs": 367.558
     }
   ],
   "runtime": {
-    "avgMs": 284.598,
-    "bestMs": 284.598,
-    "maxMs": 284.598,
-    "minMs": 284.598,
+    "avgMs": 367.558,
+    "bestMs": 367.558,
+    "maxMs": 367.558,
+    "minMs": 367.558,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

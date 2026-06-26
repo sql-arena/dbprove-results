@@ -1,4 +1,5 @@
 {
+  "config": "M5 Macbook Pro",
   "engine": "SQL Server",
   "queries": [
     {
@@ -7,7 +8,7 @@
           "+2x": 0,
           "+4x": 1,
           "+8x": 0,
-          "-2x": 1,
+          "-2x": 0,
           "-4x": 0,
           "-8x": 0,
           "<16x": 1,
@@ -27,7 +28,7 @@
         },
         "hash": {
           "+2x": 0,
-          "+4x": 0,
+          "+4x": 1,
           "+8x": 0,
           "-2x": 0,
           "-4x": 0,
@@ -38,7 +39,7 @@
         },
         "join": {
           "+2x": 0,
-          "+4x": 2,
+          "+4x": 1,
           "+8x": 0,
           "-2x": 0,
           "-4x": 0,
@@ -50,11 +51,11 @@
         "scan": {
           "+2x": 0,
           "+4x": 2,
-          "+8x": 0,
-          "-2x": 1,
+          "+8x": 1,
+          "-2x": 0,
           "-4x": 0,
           "-8x": 0,
-          "<16x": 3,
+          "<16x": 1,
           "=": 1,
           ">16x": 0
         },
@@ -71,26 +72,26 @@
         }
       },
       "operatorRows": {
-        "aggregate": 12605,
+        "aggregate": 12595,
         "distribute": 0,
-        "hash": 18087,
-        "join": 12595,
-        "scan": 12256,
-        "seek": 12058,
-        "sort": 198
+        "hash": 12058,
+        "join": 6566,
+        "scan": 18285,
+        "seek": 0,
+        "sort": 6029
       },
-      "plan": "Estimate    Actual  Operator\n       1         1  SEQUENCE\n   29423      6029  ├─MATERIALISE AS m8\n   29423      6029  │ GROUP BY SORT l_partkey\n   29423      6029  │ INNER JOIN LOOP ON Bmk1000 = Bmk1000\n       1      6029  │ │└TABLE SEEK lineitem\n   29423      6029  │ INNER JOIN LOOP ON p_partkey = l_partkey\n      30      6029  │ │└TABLE SEEK lineitem\n     980       198  │ SORT p_partkey\n     980       198  │ TABLE SCAN part WHERE p_brand = 'Brand#13' AND p_container = 'MED CAN'\n       1         1  └─PROJECT Expr1010 / 7.0 AS Expr1011\n       1         1    PROJECT CASE WHEN globalagg1018 = 0 THEN NULL ELSE globalagg1020 END AS Expr1010\n       1         1    AGGREGATE SUM(partialagg1017) AS globalagg1018, SUM(partialagg1019) AS globalagg1020\n       5        10    AGGREGATE COUNT(*) AS partialagg1017, SUM(l_extendedprice) AS partialagg1019\n      30       537    INNER JOIN LOOP ON l_quantity < 0.2 * Expr1008\n      30      6029    │└SCAN MATERIALISED m8\n       1       198    PROJECT CASE WHEN Expr1055 = 0 THEN NULL ELSE Expr1056 / CONVERT_IMPLICIT(decimal(19,0),Expr1055,0) END AS Expr1008\n       1       198    AGGREGATE COUNT(*) AS Expr1055, SUM(l_quantity) AS Expr1056\n      30      6029    SCAN MATERIALISED m8\n",
+      "plan": "Estimate    Actual  Operator\n       1         1  SEQUENCE\n   30532      6029  ├─MATERIALISE AS m5\n   30532      6029  │ GROUP BY SORT l_partkey\n   30532      6029  │ SORT l_partkey\n   30532      6029  │ INNER JOIN HASH ON l_partkey = p_partkey\n    1017       198  │ │└TABLE SCAN part WHERE p_container = 'MED CAN' AND p_brand = 'Brand#13'\n   60012      6029  │ TABLE SCAN lineitem WHERE BLOOM(l_partkey)\n       1         1  └─PROJECT Expr1010 / 7.0 AS Expr1011\n       1         1    PROJECT CASE WHEN Expr1056 = 0 THEN NULL ELSE Expr1057 END AS Expr1010\n       1         1    AGGREGATE COUNT(*) AS Expr1056, SUM(l_extendedprice) AS Expr1057\n      30       537    INNER JOIN LOOP ON l_quantity < 0.2 * Expr1008\n      30      6029    │└SCAN MATERIALISED m5\n       1       198    PROJECT CASE WHEN Expr1054 = 0 THEN NULL ELSE Expr1055 / CONVERT_IMPLICIT(decimal(19,0),Expr1054,0) END AS Expr1008\n       1       198    AGGREGATE COUNT(*) AS Expr1054, SUM(l_quantity) AS Expr1055\n      30      6029    SCAN MATERIALISED m5\n",
       "sql": "/* TPC-H Q17 */\nSELECT SUM(l_extendedprice) / 7.0 AS avg_yearly\nFROM tpch_sf1.lineitem\nINNER JOIN tpch_sf1.part\n    ON l_partkey = p_partkey\nWHERE p_brand = 'Brand#13'\n  AND p_container = 'MED CAN'\n  AND l_quantity < (SELECT 0.2 * AVG(l_quantity) AS l_avg\n                    FROM tpch_sf1.lineitem li\n                    WHERE l_partkey = p_partkey)",
-      "startTime": "2026-06-22T16:16:21.369466Z",
+      "startTime": "2026-06-26T11:49:43.943037Z",
       "status": "OK",
-      "timeMs": 229.97
+      "timeMs": 389.664
     }
   ],
   "runtime": {
-    "avgMs": 229.97,
-    "bestMs": 229.97,
-    "maxMs": 229.97,
-    "minMs": 229.97,
+    "avgMs": 389.664,
+    "bestMs": 389.664,
+    "maxMs": 389.664,
+    "minMs": 389.664,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

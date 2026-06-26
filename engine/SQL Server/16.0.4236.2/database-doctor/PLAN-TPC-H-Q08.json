@@ -1,4 +1,5 @@
 {
+  "config": "M5 Macbook Pro",
   "engine": "SQL Server",
   "queries": [
     {
@@ -22,75 +23,75 @@
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
-          "=": 1,
+          "=": 0,
           ">16x": 0
         },
         "hash": {
           "+2x": 0,
           "+4x": 0,
           "+8x": 0,
-          "-2x": 1,
-          "-4x": 0,
-          "-8x": 1,
+          "-2x": 2,
+          "-4x": 1,
+          "-8x": 0,
           "<16x": 0,
-          "=": 5,
-          ">16x": 1
+          "=": 4,
+          ">16x": 0
         },
         "join": {
           "+2x": 0,
           "+4x": 0,
           "+8x": 0,
           "-2x": 2,
-          "-4x": 0,
+          "-4x": 4,
           "-8x": 0,
           "<16x": 0,
-          "=": 8,
+          "=": 1,
           ">16x": 0
         },
         "scan": {
           "+2x": 0,
           "+4x": 0,
           "+8x": 0,
-          "-2x": 0,
-          "-4x": 1,
-          "-8x": 3,
+          "-2x": 2,
+          "-4x": 0,
+          "-8x": 0,
           "<16x": 2,
           "=": 5,
-          ">16x": 1
+          ">16x": 0
         },
         "sort": {
           "+2x": 0,
           "+4x": 0,
           "+8x": 0,
-          "-2x": 0,
+          "-2x": 1,
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
-          "=": 1,
+          "=": 0,
           ">16x": 0
         }
       },
       "operatorRows": {
         "aggregate": 2647,
         "distribute": 0,
-        "hash": 374615,
-        "join": 359345,
-        "scan": 1428,
-        "seek": 1721014,
-        "sort": 2
+        "hash": 107601,
+        "join": 68194,
+        "scan": 60525,
+        "seek": 0,
+        "sort": 2647
       },
-      "plan": "Estimate    Actual  Operator\n       2         2  SORT Expr1022\n       2         2  PROJECT Expr1024 / Expr1025 AS Expr1026\n       2         2  AGGREGATE SUM(Expr1260) AS Expr1024, SUM(Expr1027) AS Expr1025 GROUP BY HASH Expr1022\n    2449      2647  PROJECT CASE WHEN n_name as n_name = 'FRANCE' THEN l_extendedprice * (1. - l_discount) ELSE 0.0000 END AS Expr1260\n    2449      2647  INNER JOIN HASH ON s_nationkey = n2.n_nationkey\n      25        25  │└TABLE SCAN nation AS n2\n    3883      2647  INNER JOIN HASH ON s_suppkey = l_suppkey\n    2449      2647  │└INNER JOIN HASH ON l_orderkey = o_orderkey\n  144296     92715  │ │└INNER JOIN HASH ON n1.n_regionkey = r_regionkey\n       1         1  │ │ │└FILTER r_name = 'EUROPE'\n       5         5  │ │ │ INNER JOIN LOOP ON Bmk1017 = Bmk1017\n       1         5  │ │ │ │└TABLE SEEK region\n       5         5  │ │ │ TABLE SEEK region\n   45518     92715  │ │ INNER JOIN HASH ON o_custkey = c_custkey\n   15000     30197  │ │ │└INNER JOIN HASH ON c_nationkey = n1.n_nationkey\n       2        25  │ │ │ │└TABLE SEEK nation AS n1 WHERE BLOOM(n_regionkey as n_regionkey)\n   15000    150000  │ │ │ TABLE SEEK customer WHERE BLOOM(c_nationkey)\n   45518     92715  │ │ PROJECT datepart(year,o_orderdate) AS Expr1022\n   45518   1500000  │ │ TABLE SEEK orders WHERE o_orderdate >= '1995-01-01' AND o_orderdate <= '1996-12-31' AND BLOOM(o_custkey)\n    2449      2814  │ INNER JOIN HASH ON l_partkey = p_partkey\n    1345      1403  │ │└TABLE SCAN part WHERE p_type = 'SMALL POLISHED NICKEL'\n    2449      2815  │ PROJECT l_extendedprice * (1. - l_discount) AS Expr1027\n    2449      2815  │ INNER JOIN LOOP ON Bmk1000 = Bmk1000\n       1      2815  │ │└TABLE SEEK lineitem\n    2449      2815  │ PROJECT BmkToPage Bmk1000 AS Expr1261\n    2449      2815  │ INNER JOIN HASH ON Bmk1000 = Bmk1000\n 6001220     55345  │ │└TABLE SEEK lineitem WHERE BLOOM(l_partkey,N'IN ROW')\n    3642      2819  │ TABLE SEEK lineitem WHERE (BLOOM(l_orderkey,N'IN ROW')) AND (BLOOM(Bmk1000))\n    1000     10000  TABLE SEEK supplier WHERE BLOOM(s_suppkey)\n",
+      "plan": "Estimate    Actual  Operator\n       2         2  PROJECT Expr1024 / Expr1025 AS Expr1026\n       2         2  AGGREGATE SUM(CASE WHEN n_name as n_name = 'FRANCE' THEN l_extendedprice * (1. - l_discount) ELSE 0.0000 END) AS Expr1024, SUM(Expr1027) AS Expr1025 GROUP BY SORT Expr1022\n     703      2647  SORT Expr1022\n     703      2647  INNER JOIN HASH ON n1.n_regionkey = r_regionkey\n       1         1  │└TABLE SCAN region WHERE r_name = 'EUROPE'\n     351      2647  INNER JOIN HASH ON s_nationkey = n2.n_nationkey\n      25        25  │└TABLE SCAN nation AS n2\n     351      2647  INNER JOIN HASH ON c_nationkey = n1.n_nationkey\n       2         5  │└TABLE SCAN nation AS n1 WHERE BLOOM(n_regionkey as n_regionkey)\n     351      2647  INNER JOIN HASH ON s_suppkey = l_suppkey\n     351      2647  │└INNER JOIN HASH ON c_custkey = o_custkey\n    3512     12905  │ │└INNER JOIN HASH ON o_orderkey = l_orderkey\n   42100     42054  │ │ │└INNER JOIN HASH ON l_partkey = p_partkey\n    1403      1403  │ │ │ │└TABLE SCAN part WHERE p_type = 'SMALL POLISHED NICKEL'\n   60012     42054  │ │ │ PROJECT l_extendedprice * (1. - l_discount) AS Expr1027\n   60012     42054  │ │ │ TABLE SCAN lineitem WHERE BLOOM(l_partkey)\n    4546     12714  │ │ PROJECT datepart(year,o_orderdate) AS Expr1022\n    4546     12714  │ │ TABLE SCAN orders WHERE o_orderdate >= '1995-01-01' AND o_orderdate <= '1996-12-31' AND BLOOM(o_orderkey)\n     150      2432  │ TABLE SCAN customer WHERE BLOOM(c_custkey) AND BLOOM(c_nationkey)\n     100      1891  TABLE SCAN supplier WHERE BLOOM(s_suppkey)\n",
       "sql": "/* TPC-H Q08 */\nSELECT o_year,\n       SUM(CASE\n               WHEN nation = 'FRANCE'\n                   THEN volume\n               ELSE 0\n           END) / SUM(volume) AS mkt_share\nFROM (SELECT EXTRACT(YEAR FROM o_orderdate)     AS o_year,\n             l_extendedprice * (1 - l_discount) AS volume,\n             n2.n_name                          AS nation\n      FROM tpch_sf1.lineitem\n      INNER JOIN tpch_sf1.orders\n          ON o_orderkey = l_orderkey\n      INNER JOIN tpch_sf1.part\n          ON l_partkey = p_partkey\n      INNER JOIN tpch_sf1.supplier\n          ON l_suppkey = s_suppkey\n      INNER JOIN tpch_sf1.customer\n          ON o_custkey = c_custkey\n      INNER JOIN tpch_sf1.nation n1\n          ON c_nationkey = n1.n_nationkey\n      INNER JOIN tpch_sf1.region\n          ON n1.n_regionkey = r_regionkey\n      INNER JOIN tpch_sf1.nation n2\n          ON s_nationkey = n2.n_nationkey\n      WHERE r_name = 'EUROPE'\n        AND o_orderdate BETWEEN '1995-01-01' AND '1996-12-31'\n        AND p_type = 'SMALL POLISHED NICKEL') AS all_nations\nGROUP BY o_year\nORDER BY o_year",
-      "startTime": "2026-06-22T16:16:14.561611Z",
+      "startTime": "2026-06-26T11:49:38.246678Z",
       "status": "OK",
-      "timeMs": 466.777
+      "timeMs": 83.738
     }
   ],
   "runtime": {
-    "avgMs": 466.777,
-    "bestMs": 466.777,
-    "maxMs": 466.777,
-    "minMs": 466.777,
+    "avgMs": 83.738,
+    "bestMs": 83.738,
+    "maxMs": 83.738,
+    "minMs": 83.738,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

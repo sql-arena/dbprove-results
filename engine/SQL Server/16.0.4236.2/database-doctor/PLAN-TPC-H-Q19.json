@@ -1,4 +1,5 @@
 {
+  "config": "M5 Macbook Pro",
   "engine": "SQL Server",
   "queries": [
     {
@@ -7,7 +8,7 @@
           "+2x": 0,
           "+4x": 0,
           "+8x": 0,
-          "-2x": 1,
+          "-2x": 0,
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
@@ -17,13 +18,13 @@
         "filter": {
           "+2x": 0,
           "+4x": 0,
-          "+8x": 0,
+          "+8x": 1,
           "-2x": 0,
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
           "=": 0,
-          ">16x": 1
+          ">16x": 0
         },
         "hash": {
           "+2x": 0,
@@ -53,7 +54,7 @@
           "+8x": 0,
           "-2x": 1,
           "-4x": 0,
-          "-8x": 1,
+          "-8x": 0,
           "<16x": 0,
           "=": 1,
           ">16x": 0
@@ -71,26 +72,26 @@
         }
       },
       "operatorRows": {
-        "aggregate": 137,
+        "aggregate": 127,
         "distribute": 0,
         "hash": 511,
         "join": 318,
-        "scan": 6001726,
+        "scan": 10079,
         "seek": 0,
         "sort": 0
       },
-      "plan": "Estimate    Actual  Operator\n       1         1  PROJECT CASE WHEN globalagg1009 = 0 THEN NULL ELSE globalagg1011 END AS Expr1006\n       1         1  AGGREGATE SUM(partialagg1008) AS globalagg1009, SUM(partialagg1010) AS globalagg1011\n       5        10  AGGREGATE COUNT(Expr1007) AS partialagg1008, SUM(Expr1007) AS partialagg1010\n    5877       127  INNER JOIN HASH ON l_partkey = p_partkey AND (p_brand = 'Brand#11' AND (p_container = 'SM BOX' OR p_container = 'SM CASE' OR p_container = 'SM PACK' OR p_container = 'SM PKG') AND l_quantity >= 5.00 AND l_quantity <= 15.00 AND p_size <= 5 OR p_brand = 'Brand#22' AND (p_container = 'MED BAG' OR p_container = 'MED BOX' OR p_container = 'MED PACK' OR p_container = 'MED PKG') AND l_quantity >= 15.00 AND l_quantity <= 25.00 AND p_size <= 10 OR p_brand = 'Brand#33' AND (p_contai...\n    3102       511  │└TABLE SCAN part WHERE (p_size >= 1) AND (p_brand = 'Brand#11' AND (p_container = 'SM BOX' OR p_container = 'SM CASE' OR p_container = 'SM PACK' OR p_container = 'SM PKG') AND p_size <= 5 OR p_brand = 'Brand#22' AND (p_container = 'MED BAG' OR p_container = 'MED BOX' OR p_container = 'MED PACK' OR p_container = 'MED PKG') AND p_size <= 10 OR p_brand = 'Brand#33' AND (p_container = 'LG BOX' OR p_container = 'LG CASE' OR p_container = 'LG PACK' OR p_container = 'LG PKG'...\n  378918       318  FILTER l_shipinstruct = 'DELIVER IN PERSON' AND (l_shipmode = 'AIR' OR l_shipmode = 'AIR REG')\n  378918   6001215  PROJECT l_extendedprice * (1. - l_discount) AS Expr1007\n  378918   6001215  TABLE SCAN lineitem WHERE l_quantity >= 5.00 AND l_quantity <= 35.00 AND PROBE(Bitmap1014,l_partkey,N'IN ROW')\n",
+      "plan": "Estimate    Actual  Operator\n       1         1  PROJECT CASE WHEN Expr1013 = 0 THEN NULL ELSE Expr1014 END AS Expr1006\n       1         1  AGGREGATE COUNT(Expr1007) AS Expr1013, SUM(Expr1007) AS Expr1014\n    5926       127  INNER JOIN HASH ON l_partkey = p_partkey AND (p_brand = 'Brand#11' AND (p_container = 'SM BOX' OR p_container = 'SM CASE' OR p_container = 'SM PACK' OR p_container = 'SM PKG') AND l_quantity >= 5.00 AND l_quantity <= 15.00 AND p_size <= 5 OR p_brand = 'Brand#22' AND (p_container = 'MED BAG' OR p_container = 'MED BOX' OR p_container = 'MED PACK' OR p_container = 'MED PKG') AND l_quantity >= 15.00 AND l_quantity <= 25.00 AND p_size <= 10 OR p_brand = 'Brand#33' AND (p_contai...\n    3099       511  │└TABLE SCAN part WHERE (p_size >= 1) AND (p_brand = 'Brand#11' AND (p_container = 'SM BOX' OR p_container = 'SM CASE' OR p_container = 'SM PACK' OR p_container = 'SM PKG') AND p_size <= 5 OR p_brand = 'Brand#22' AND (p_container = 'MED BAG' OR p_container = 'MED BOX' OR p_container = 'MED PACK' OR p_container = 'MED PKG') AND p_size <= 10 OR p_brand = 'Brand#33' AND (p_container = 'LG BOX' OR p_container = 'LG CASE' OR p_container = 'LG PACK' OR p_container = 'LG PKG'...\n    3824       318  FILTER (l_shipmode = 'AIR' OR l_shipmode = 'AIR REG') AND l_shipinstruct = 'DELIVER IN PERSON'\n    3824      9568  PROJECT l_extendedprice * (1. - l_discount) AS Expr1007\n    3824      9568  TABLE SCAN lineitem WHERE l_quantity >= 5.00 AND l_quantity <= 35.00 AND BLOOM(l_partkey)\n",
       "sql": "/* TPC-H Q19 */\nSELECT SUM(l_extendedprice * (1 - l_discount)) AS revenue\nFROM tpch_sf1.lineitem\nINNER JOIN tpch_sf1.part ON p_partkey = l_partkey\nWHERE (\n\n        p_brand = 'Brand#11'\n        AND p_container IN ('SM CASE', 'SM BOX', 'SM PACK', 'SM PKG')\n        AND l_quantity >= 5 AND l_quantity <= 5 + 10\n        AND p_size BETWEEN 1 AND 5\n        AND l_shipmode IN ('AIR', 'AIR REG')\n        AND l_shipinstruct = 'DELIVER IN PERSON'\n    )\n   OR ( p_brand = 'Brand#22'\n        AND p_container IN ('MED BAG', 'MED BOX', 'MED PKG', 'MED PACK')\n        AND l_quantity >= 15 AND l_quantity <= 15 + 10\n        AND p_size BETWEEN 1 AND 10\n        AND l_shipmode IN ('AIR', 'AIR REG')\n        AND l_shipinstruct = 'DELIVER IN PERSON'\n    )\n   OR ( p_brand = 'Brand#33'\n        AND p_container IN ('LG CASE', 'LG BOX', 'LG PACK', 'LG PKG')\n        AND l_quantity >= 25 AND l_quantity <= 25 + 10\n        AND p_size BETWEEN 1 AND 15\n        AND l_shipmode IN ('AIR', 'AIR REG')\n        AND l_shipinstruct = 'DELIVER IN PERSON'\n    )\n",
-      "startTime": "2026-06-22T16:16:22.174488Z",
+      "startTime": "2026-06-26T11:49:44.920943Z",
       "status": "OK",
-      "timeMs": 512.145
+      "timeMs": 231.487
     }
   ],
   "runtime": {
-    "avgMs": 512.145,
-    "bestMs": 512.145,
-    "maxMs": 512.145,
-    "minMs": 512.145,
+    "avgMs": 231.487,
+    "bestMs": 231.487,
+    "maxMs": 231.487,
+    "minMs": 231.487,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

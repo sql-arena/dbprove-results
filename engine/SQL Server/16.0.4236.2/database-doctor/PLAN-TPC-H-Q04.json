@@ -1,4 +1,5 @@
 {
+  "config": "M5 Macbook Pro",
   "engine": "SQL Server",
   "queries": [
     {
@@ -29,17 +30,6 @@
           "+2x": 0,
           "+4x": 0,
           "+8x": 0,
-          "-2x": 1,
-          "-4x": 0,
-          "-8x": 0,
-          "<16x": 0,
-          "=": 0,
-          ">16x": 0
-        },
-        "join": {
-          "+2x": 0,
-          "+4x": 0,
-          "+8x": 0,
           "-2x": 0,
           "-4x": 0,
           "-8x": 0,
@@ -47,15 +37,26 @@
           "=": 1,
           ">16x": 0
         },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
         "scan": {
           "+2x": 0,
           "+4x": 0,
           "+8x": 0,
-          "-2x": 2,
-          "-4x": 0,
+          "-2x": 1,
+          "-4x": 1,
           "-8x": 0,
-          "<16x": 1,
-          "=": 1,
+          "<16x": 0,
+          "=": 2,
           ">16x": 0
         },
         "sort": {
@@ -73,24 +74,24 @@
       "operatorRows": {
         "aggregate": 51326,
         "distribute": 0,
-        "hash": 6001215,
-        "join": 1500000,
-        "scan": 7501215,
+        "hash": 55935,
+        "join": 141050,
+        "scan": 196985,
         "seek": 0,
         "sort": 50
       },
-      "plan": "Estimate    Actual  Operator\n       5         5  PROJECT CONVERT_IMPLICIT(int,globalagg1009,0) AS Expr1007\n       5         5  AGGREGATE SUM(partialagg1008) AS globalagg1009 GROUP BY SORT o_orderpriority\n      25        50  SORT o_orderpriority\n      25        50  AGGREGATE COUNT(*) AS partialagg1008 GROUP BY HASH o_orderpriority\n   42878     51276  RIGHT SEMI INNER JOIN HASH ON o_orderkey = l_orderkey\n 1800360   6001215  │└TABLE SCAN lineitem WHERE l_commitdate < l_receiptdate\n   56421   1500000  TABLE SCAN orders WHERE o_orderdate >= '1995-02-01' AND o_orderdate < '1995-05-01'\n",
+      "plan": "Estimate    Actual  Operator\n       5         5  PROJECT CONVERT_IMPLICIT(int,globalagg1009,0) AS Expr1007\n       5         5  AGGREGATE SUM(partialagg1008) AS globalagg1009 GROUP BY SORT o_orderpriority\n      25        50  SORT o_orderpriority\n      25        50  AGGREGATE COUNT(*) AS partialagg1008 GROUP BY HASH o_orderpriority\n   18594     51276  LEFT SEMI JOIN HASH ON l_orderkey = o_orderkey\n   57280     55935  │└TABLE SCAN orders WHERE o_orderdate >= '1995-02-01' AND o_orderdate < '1995-05-01'\n   18003    141050  TABLE SCAN lineitem WHERE (BLOOM(l_orderkey)) AND (l_commitdate < l_receiptdate)\n",
       "sql": "/* TPC-H Q04 */\nSELECT o_orderpriority,\n       COUNT(*) AS order_count\nFROM tpch_sf1.orders\nWHERE o_orderdate >= '1995-02-01'\n  AND o_orderdate < '1995-05-01'\n  AND EXISTS (SELECT *\n              FROM tpch_sf1.lineitem\n              WHERE l_orderkey = o_orderkey\n                AND l_commitdate < l_receiptdate)\nGROUP BY o_orderpriority\nORDER BY o_orderpriority\n",
-      "startTime": "2026-06-22T17:08:03.772367Z",
+      "startTime": "2026-06-26T11:49:37.358532Z",
       "status": "OK",
-      "timeMs": 1759.133
+      "timeMs": 161.135
     }
   ],
   "runtime": {
-    "avgMs": 1759.133,
-    "bestMs": 1759.133,
-    "maxMs": 1759.133,
-    "minMs": 1759.133,
+    "avgMs": 161.135,
+    "bestMs": 161.135,
+    "maxMs": 161.135,
+    "minMs": 161.135,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

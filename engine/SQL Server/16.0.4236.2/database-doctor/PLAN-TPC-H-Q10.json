@@ -1,4 +1,5 @@
 {
+  "config": "M5 Macbook Pro",
   "engine": "SQL Server",
   "queries": [
     {
@@ -7,17 +8,17 @@
           "+2x": 0,
           "+4x": 0,
           "+8x": 0,
-          "-2x": 0,
+          "-2x": 1,
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
-          "=": 1,
+          "=": 0,
           ">16x": 0
         },
         "filter": {
           "+2x": 0,
           "+4x": 0,
-          "+8x": 1,
+          "+8x": 0,
           "-2x": 0,
           "-4x": 0,
           "-8x": 0,
@@ -30,31 +31,31 @@
           "+4x": 0,
           "+8x": 0,
           "-2x": 0,
-          "-4x": 0,
+          "-4x": 1,
           "-8x": 0,
-          "<16x": 1,
-          "=": 0,
+          "<16x": 0,
+          "=": 2,
           ">16x": 0
         },
         "join": {
           "+2x": 0,
           "+4x": 0,
           "+8x": 0,
-          "-2x": 1,
-          "-4x": 0,
+          "-2x": 0,
+          "-4x": 3,
           "-8x": 0,
           "<16x": 0,
-          "=": 4,
+          "=": 0,
           ">16x": 0
         },
         "scan": {
           "+2x": 0,
           "+4x": 0,
           "+8x": 0,
-          "-2x": 0,
-          "-4x": 0,
+          "-2x": 2,
+          "-4x": 1,
           "-8x": 0,
-          "<16x": 5,
+          "<16x": 0,
           "=": 2,
           ">16x": 0
         },
@@ -62,35 +63,35 @@
           "+2x": 0,
           "+4x": 0,
           "+8x": 0,
-          "-2x": 0,
-          "-4x": 0,
+          "-2x": 1,
+          "-4x": 1,
           "-8x": 0,
           "<16x": 0,
-          "=": 1,
+          "=": 0,
           ">16x": 0
         }
       },
       "operatorRows": {
         "aggregate": 115050,
         "distribute": 0,
-        "hash": 1652728,
-        "join": 279249,
-        "scan": 7501215,
-        "seek": 152728,
-        "sort": 38182
+        "hash": 345150,
+        "join": 345150,
+        "scan": 210731,
+        "seek": 0,
+        "sort": 153232
       },
-      "plan": "Estimate    Actual  Operator\n   32332     38182  INNER JOIN LOOP ON Bmk1009 = Bmk1009\n       1     38182  │└TABLE SEEK nation\n   32332     38182  INNER JOIN LOOP ON c_nationkey = n_nationkey\n       1     38182  │└TABLE SEEK nation\n   32332     38182  INNER JOIN LOOP ON Bmk1006 = Bmk1006\n       1     38182  │└TABLE SEEK customer\n   32332     38182  INNER JOIN LOOP ON o_custkey = c_custkey\n       1     38182  │└TABLE SEEK customer\n   32332     38182  SORT Expr1012\n   32332     38182  AGGREGATE SUM(Expr1013) AS Expr1012 GROUP BY HASH o_custkey\n   57078    115050  INNER JOIN HASH ON l_orderkey = o_orderkey\n   57242   1500000  │└TABLE SCAN orders WHERE o_orderdate >= '1994-06-01' AND o_orderdate < '1994-09-01'\n 1495690    126521  FILTER l_returnflag = 'R'\n 6001220   6001215  PROJECT l_extendedprice * (1. - l_discount) AS Expr1013\n 6001220   6001215  TABLE SCAN lineitem WHERE PROBE(Bitmap1027,l_orderkey,N'IN ROW')\n",
+      "plan": "Estimate    Actual  Operator\n   14568     38182  SORT Expr1012\n   14568     38182  AGGREGATE SUM(Expr1013) AS Expr1012, c_name, c_acctbal, c_phone, c_address, c_comment GROUP BY SORT n_name, o_custkey\n   15935    115050  SORT n_name, o_custkey\n   15935    115050  INNER JOIN HASH ON c_nationkey = n_nationkey\n      25        25  │└TABLE SCAN nation\n   15935    115050  INNER JOIN HASH ON c_custkey = o_custkey\n   15912    115050  │└INNER JOIN HASH ON l_orderkey = o_orderkey\n   58598     57474  │ │└TABLE SCAN orders WHERE o_orderdate >= '1994-06-01' AND o_orderdate < '1994-09-01'\n   14798    115050  │ PROJECT l_extendedprice * (1. - l_discount) AS Expr1013\n   14798    115050  │ TABLE SCAN lineitem WHERE (BLOOM(l_orderkey)) AND (l_returnflag = 'R')\n   15000     38182  TABLE SCAN customer WHERE BLOOM(c_custkey)\n",
       "sql": "/* TPC-H Q10 */\nSELECT c_custkey,\n       c_name,\n       SUM(l_extendedprice * (1 - l_discount)) AS revenue,\n       c_acctbal,\n       n_name,\n       c_address,\n       c_phone,\n       c_comment\nFROM tpch_sf1.lineitem\nINNER JOIN tpch_sf1.orders\n    ON l_orderkey = o_orderkey\nINNER JOIN tpch_sf1.customer\n    ON o_custkey = c_custkey\nINNER JOIN tpch_sf1.nation\n    ON c_nationkey = n_nationkey\nWHERE o_orderdate >= '1994-06-01'\n  AND o_orderdate < '1994-09-01'\n  AND l_returnflag = 'R'\nGROUP BY c_custkey,\n         c_name,\n         c_acctbal,\n         c_phone,\n         n_name,\n         c_address,\n         c_comment\nORDER BY revenue DESC",
-      "startTime": "2026-06-22T16:16:16.128229Z",
+      "startTime": "2026-06-26T11:49:39.632653Z",
       "status": "OK",
-      "timeMs": 861.014
+      "timeMs": 719.294
     }
   ],
   "runtime": {
-    "avgMs": 861.014,
-    "bestMs": 861.014,
-    "maxMs": 861.014,
-    "minMs": 861.014,
+    "avgMs": 719.294,
+    "bestMs": 719.294,
+    "maxMs": 719.294,
+    "minMs": 719.294,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

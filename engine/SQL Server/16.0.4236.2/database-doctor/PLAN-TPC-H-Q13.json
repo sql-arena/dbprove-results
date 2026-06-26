@@ -1,4 +1,5 @@
 {
+  "config": "M5 Macbook Pro",
   "engine": "SQL Server",
   "queries": [
     {
@@ -75,22 +76,22 @@
         "distribute": 0,
         "hash": 150000,
         "join": 150000,
-        "scan": 1499959,
-        "seek": 150000,
+        "scan": 1649959,
+        "seek": 0,
         "sort": 42
       },
-      "plan": "Estimate    Actual  Operator\n      24        42  SORT Expr1007, Expr1006\n      24        42  PROJECT CONVERT_IMPLICIT(int,Expr1015,0) AS Expr1007\n      24        42  AGGREGATE COUNT(*) AS Expr1015 GROUP BY HASH Expr1006\n  150000    150000  PROJECT CASE WHEN Expr1006 IS NULL THEN 0 ELSE Expr1006 END AS Expr1006\n  150000    150000  RIGHT OUTER JOIN HASH ON c_custkey = o_custkey\n   94636     99996  │└PROJECT CONVERT_IMPLICIT(int,Expr1014,0) AS Expr1006\n   94636     99996  │ AGGREGATE COUNT(*) AS Expr1014 GROUP BY HASH o_custkey\n 1500000   1499959  │ TABLE SCAN orders WHERE  NOT o_comment LIKE ' % special % requests % '\n  150000    150000  TABLE SEEK customer\n",
-      "sql": "/* TPC-H Q13 */\nSELECT\n  c_count,\n  COUNT(*) AS custdist\nFROM\n  (\n    SELECT\n      c_custkey,\n      COUNT(o_orderkey)\n    FROM\n      tpch_sf1.customer\n      LEFT OUTER JOIN tpch_sf1.orders ON c_custkey = o_custkey\n      AND o_comment NOT LIKE ' % special % requests % '\n    GROUP BY\n      c_custkey\n  ) AS c_orders (c_custkey, c_count)\nGROUP BY\n  c_count\nORDER BY\n  custdist DESC,\n  c_count DESC\n;",
-      "startTime": "2026-06-22T16:16:18.800260Z",
+      "plan": "Estimate    Actual  Operator\n      24        42  SORT Expr1007, Expr1006\n      24        42  PROJECT CONVERT_IMPLICIT(int,Expr1015,0) AS Expr1007\n      24        42  AGGREGATE COUNT(*) AS Expr1015 GROUP BY HASH Expr1006\n  150000    150000  PROJECT CASE WHEN Expr1006 IS NULL THEN 0 ELSE Expr1006 END AS Expr1006\n  150000    150000  RIGHT OUTER JOIN HASH ON c_custkey = o_custkey\n   96548     99996  │└PROJECT CONVERT_IMPLICIT(int,Expr1014,0) AS Expr1006\n   96548     99996  │ AGGREGATE COUNT(*) AS Expr1014 GROUP BY HASH o_custkey\n 1500000   1499959  │ TABLE SCAN orders WHERE  NOT o_comment LIKE ' % special % requests % '\n  150000    150000  TABLE SCAN customer\n",
+      "sql": "/* TPC-H Q13 */\nSELECT\n  c_count,\n  COUNT(*) AS custdist\nFROM\n  (\n    SELECT\n      c_custkey,\n      COUNT(o_orderkey) AS c_count\n    FROM\n      tpch_sf1.customer\n      LEFT OUTER JOIN tpch_sf1.orders ON c_custkey = o_custkey\n      AND o_comment NOT LIKE ' % special % requests % '\n    GROUP BY\n      c_custkey\n  ) AS c_orders\nGROUP BY\n  c_count\nORDER BY\n  custdist DESC,\n  c_count DESC\n;",
+      "startTime": "2026-06-26T11:49:41.416793Z",
       "status": "OK",
-      "timeMs": 452.706
+      "timeMs": 612.618
     }
   ],
   "runtime": {
-    "avgMs": 452.706,
-    "bestMs": 452.706,
-    "maxMs": 452.706,
-    "minMs": 452.706,
+    "avgMs": 612.618,
+    "bestMs": 612.618,
+    "maxMs": 612.618,
+    "minMs": 612.618,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

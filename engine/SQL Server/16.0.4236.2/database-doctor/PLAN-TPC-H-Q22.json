@@ -1,4 +1,5 @@
 {
+  "config": "M5 Macbook Pro",
   "engine": "SQL Server",
   "queries": [
     {
@@ -7,7 +8,7 @@
           "+2x": 0,
           "+4x": 0,
           "+8x": 0,
-          "-2x": 1,
+          "-2x": 0,
           "-4x": 1,
           "-8x": 0,
           "<16x": 0,
@@ -51,7 +52,7 @@
           "+2x": 0,
           "+4x": 0,
           "+8x": 0,
-          "-2x": 1,
+          "-2x": 0,
           "-4x": 1,
           "-8x": 0,
           "<16x": 2,
@@ -71,26 +72,26 @@
         }
       },
       "operatorRows": {
-        "aggregate": 44460,
+        "aggregate": 44450,
         "distribute": 0,
-        "hash": 10914296558,
+        "hash": 54608,
         "join": 37934,
-        "scan": 10914554600,
-        "seek": 0,
-        "sort": 18967
+        "scan": 286301,
+        "seek": 12650,
+        "sort": 6317
       },
-      "plan": "Estimate    Actual  Operator\n       1         7  PROJECT CONVERT_IMPLICIT(int,Expr1027,0) AS Expr1013\n       1         7  AGGREGATE COUNT(*) AS Expr1027, SUM(c_acctbal) AS Expr1014 GROUP BY SORT Expr1012\n       1      6317  LEFT ANTI JOIN LOOP ON o_custkey = c_custkey\n       1        0B  │└TABLE SCAN orders WHERE o_custkey = c_custkey\n       1     18967  SORT Expr1012\n       1     18967  INNER JOIN LOOP ON Expr1012 = '27' OR Expr1012 = '31' OR Expr1012 = '22' OR Expr1012 = '23' OR Expr1012 = '19' OR Expr1012 = '17' OR Expr1012 = '10'\n       1     41958  │└FILTER Expr1012 = '27' OR Expr1012 = '31' OR Expr1012 = '22' OR Expr1012 = '23' OR Expr1012 = '19' OR Expr1012 = '17' OR Expr1012 = '10'\n  150000    150000  │ PROJECT substring(c_phone,1,2) AS Expr1012\n  150000    150000  │ TABLE SCAN customer\n       1         1  PROJECT CASE WHEN globalagg1017 = 0 THEN NULL ELSE globalagg1019 / CONVERT_IMPLICIT(decimal(19,0),globalagg1017,0) END AS Expr1006\n       1         1  AGGREGATE SUM(partialagg1016) AS globalagg1017, SUM(partialagg1018) AS globalagg1019\n       5        10  AGGREGATE COUNT(*) AS partialagg1016, SUM(c_acctbal) AS partialagg1018\n    2582     38133  FILTER Expr1015 = '27' OR Expr1015 = '31' OR Expr1015 = '22' OR Expr1015 = '23' OR Expr1015 = '19' OR Expr1015 = '17' OR Expr1015 = '10'\n    2582    150000  PROJECT substring(c_phone,1,2) AS Expr1015\n    2582    150000  TABLE SCAN customer WHERE c_acctbal > 0.00\n",
+      "plan": "Estimate    Actual  Operator\n       1         7  PROJECT CONVERT_IMPLICIT(int,Expr1025,0) AS Expr1013\n       1         7  AGGREGATE COUNT(*) AS Expr1025, SUM(c_acctbal) AS Expr1014 GROUP BY SORT Expr1012\n       1      6317  SORT Expr1012\n       1      6317  LEFT ANTI JOIN LOOP ON c_custkey = o_custkey\n       1     12650  │└TABLE SEEK orders\n       1     18967  INNER JOIN LOOP ON Expr1012 = '27' OR Expr1012 = '31' OR Expr1012 = '22' OR Expr1012 = '23' OR Expr1012 = '19' OR Expr1012 = '17' OR Expr1012 = '10'\n       1     41958  │└FILTER Expr1012 = '27' OR Expr1012 = '31' OR Expr1012 = '22' OR Expr1012 = '23' OR Expr1012 = '19' OR Expr1012 = '17' OR Expr1012 = '10'\n  150000    150000  │ PROJECT substring(c_phone,1,2) AS Expr1012\n  150000    150000  │ TABLE SCAN customer\n       1         1  PROJECT CASE WHEN Expr1023 = 0 THEN NULL ELSE Expr1024 / CONVERT_IMPLICIT(decimal(19,0),Expr1023,0) END AS Expr1006\n       1         1  AGGREGATE COUNT(*) AS Expr1023, SUM(c_acctbal) AS Expr1024\n    2585     38133  FILTER Expr1015 = '27' OR Expr1015 = '31' OR Expr1015 = '22' OR Expr1015 = '23' OR Expr1015 = '19' OR Expr1015 = '17' OR Expr1015 = '10'\n    2585    136301  PROJECT substring(c_phone,1,2) AS Expr1015\n    2585    136301  TABLE SCAN customer WHERE c_acctbal > 0.00\n",
       "sql": "/* TPC-H Q22 */\nSELECT cntrycode,\n       COUNT(*)       AS numcust,\n       SUM(c_acctbal) AS totacctbal\nFROM (SELECT LEFT(c_phone,2) AS cntrycode,\n             c_acctbal\n      FROM tpch_sf1.customer\n      WHERE LEFT(c_phone,2) IN\n            ('10', '17', '19', '23', '22', '31', '27')\n        AND c_acctbal > (SELECT AVG(c_acctbal)\n                         FROM tpch_sf1.customer\n                         WHERE c_acctbal > 0.00\n                           AND LEFT(c_phone,2) IN\n                               ('10', '17', '19', '23', '22', '31', '27'))\n        AND NOT EXISTS (SELECT *\n                        FROM tpch_sf1.orders\n                        WHERE o_custkey = c_custkey)) AS custsale\nGROUP BY cntrycode\nORDER BY cntrycode\n\n\n",
-      "startTime": "2026-06-22T16:16:24.820572Z",
+      "startTime": "2026-06-26T12:25:33.669236Z",
       "status": "OK",
-      "timeMs": 172017.456
+      "timeMs": 454.145
     }
   ],
   "runtime": {
-    "avgMs": 172017.456,
-    "bestMs": 172017.456,
-    "maxMs": 172017.456,
-    "minMs": 172017.456,
+    "avgMs": 454.145,
+    "bestMs": 454.145,
+    "maxMs": 454.145,
+    "minMs": 454.145,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

@@ -1,4 +1,5 @@
 {
+  "config": "M5 Macbook Pro",
   "engine": "SQL Server",
   "queries": [
     {
@@ -54,8 +55,8 @@
           "-2x": 0,
           "-4x": 0,
           "-8x": 0,
-          "<16x": 1,
-          "=": 3,
+          "<16x": 0,
+          "=": 4,
           ">16x": 0
         },
         "sort": {
@@ -75,22 +76,22 @@
         "distribute": 0,
         "hash": 2,
         "join": 2,
-        "scan": 0,
-        "seek": 6001217,
-        "sort": 2701
+        "scan": 226298,
+        "seek": 1,
+        "sort": 901
       },
-      "plan": "Estimate    Actual  Operator\n       1         1  SORT s_suppkey\n       1         1  INNER JOIN LOOP ON Bmk1000 = Bmk1000\n       1         1  │└TABLE SEEK supplier\n       1         1  INNER JOIN LOOP ON l_suppkey = s_suppkey\n       1         1  │└TABLE SEEK supplier\n       1         1  LIMIT 0\n       1      2700  SORT Expr1006\n    8992     10000  FILTER Expr1006 IS NOT NULL\n    9991     10000  AGGREGATE SUM(Expr1027) AS Expr1006 GROUP BY HASH l_suppkey\n  227822    226297  PROJECT l_extendedprice * (1. - l_discount) AS Expr1027\n  227822   6001215  TABLE SEEK lineitem WHERE l_shipdate >= '1997-09-01' AND l_shipdate < '1997-12-01'\n",
+      "plan": "Estimate    Actual  Operator\n       1         1  INNER JOIN LOOP ON ColStoreLoc1000 = ColStoreLoc1000\n       1         1  │└TABLE SCAN supplier\n       1         1  INNER JOIN LOOP ON l_suppkey = s_suppkey\n       1         1  │└TABLE SEEK supplier\n       1         1  SORT l_suppkey\n       1         1  LIMIT 0\n       1       900  SORT Expr1006\n    8998     10000  FILTER Expr1006 IS NOT NULL\n    9998     10000  AGGREGATE SUM(Expr1021) AS Expr1006 GROUP BY HASH l_suppkey\n  226751    226297  PROJECT l_extendedprice * (1. - l_discount) AS Expr1021\n  226751    226297  TABLE SCAN lineitem WHERE l_shipdate >= '1997-09-01' AND l_shipdate < '1997-12-01'\n",
       "sql": "/* TPC-H Q15 */\nWITH revenue AS (SELECT l_suppkey                               AS supplier_no,\n                        SUM(l_extendedprice * (1 - l_discount)) AS total_revenue\n                 FROM tpch_sf1.lineitem\n                 WHERE l_shipdate >= '1997-09-01'\n                   AND l_shipdate < '1997-12-01'\n                 GROUP BY l_suppkey)\nSELECT s_suppkey,\n       s_name,\n       s_address,\n       s_phone,\n       total_revenue\nFROM tpch_sf1.supplier\nINNER JOIN revenue\n    ON s_suppkey = supplier_no\nWHERE total_revenue = (SELECT MAX(total_revenue)\n                       FROM revenue)\nORDER BY s_suppkey\n",
-      "startTime": "2026-06-22T16:16:19.845523Z",
+      "startTime": "2026-06-26T11:49:42.525700Z",
       "status": "OK",
-      "timeMs": 133.626
+      "timeMs": 34.139
     }
   ],
   "runtime": {
-    "avgMs": 133.626,
-    "bestMs": 133.626,
-    "maxMs": 133.626,
-    "minMs": 133.626,
+    "avgMs": 34.139,
+    "bestMs": 34.139,
+    "maxMs": 34.139,
+    "minMs": 34.139,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

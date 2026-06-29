@@ -82,16 +82,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       7         2  AGGREGATE SUM(CASE WHEN ((o_orderpriority = '1-URGENT') OR (o_orderpriority = '2-HIGH')) THEN 1 ELSE 0 END), SUM(CASE WHEN ((o_orderpriority <> '1-URGENT') AND (o_orderpriority <> '2-HIGH')) THEN 1 ELSE 0 END) GROUP BY SORT l_shipmode\n      35        10  AGGREGATE PARTIAL SUM(CASE WHEN ((o_orderpriority = '1-URGENT') OR (o_orderpriority = '2-HIGH')) THEN 1 ELSE 0 END), PARTIAL SUM(CASE WHEN ((o_orderpriority <> '1-URGENT') AND (o_orderpriority <> '2-HIGH')) THEN 1 ELSE 0 END) GROUP BY SORT l_shipmode\n   36850     30837  SORT l_shipmode\n   36850     30837  INNER JOIN LOOP ON o_orderkey = l_orderkey\n   36850     30837  │└TABLE SCAN lineitem AS lineitem WHERE (l_shipmode IN('AIR','TRUCK')) AND (l_commitdate < l_receiptdate) AND (l_shipdate < l_commitdate) AND (l_receiptdate >= '1994-01-01') AND (l_receiptdate < '1995-01-01')\n   30837     30837  TABLE SEEK orders AS orders\n",
       "sql": "/* TPC-H Q12 */\nSELECT l_shipmode,\n       SUM(CASE\n               WHEN o_orderpriority = '1-URGENT'\n                   OR o_orderpriority = '2-HIGH'\n                   THEN 1\n               ELSE 0\n           END) AS high_line_count,\n       SUM(CASE\n               WHEN o_orderpriority <> '1-URGENT'\n                   AND o_orderpriority <> '2-HIGH'\n                   THEN 1\n               ELSE 0\n           END) AS low_line_count\nFROM tpch_sf1.lineitem\nINNER JOIN tpch_sf1.orders\n    ON o_orderkey = l_orderkey\nWHERE l_shipmode IN ('AIR', 'TRUCK')\n  AND l_commitdate < l_receiptdate\n  AND l_shipdate < l_commitdate\n  AND l_receiptdate >= '1994-01-01'\n  AND l_receiptdate < '1995-01-01'\nGROUP BY l_shipmode\nORDER BY l_shipmode\n\n\n",
-      "startTime": "2026-06-25T13:01:19.010603Z",
+      "startTime": "2026-06-26T15:26:47.906075Z",
       "status": "OK",
-      "timeMs": 283.83
+      "timeMs": 183.718
     }
   ],
   "runtime": {
-    "avgMs": 283.83,
-    "bestMs": 283.83,
-    "maxMs": 283.83,
-    "minMs": 283.83,
+    "avgMs": 183.718,
+    "bestMs": 183.718,
+    "maxMs": 183.718,
+    "minMs": 183.718,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

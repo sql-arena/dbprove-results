@@ -1,4 +1,5 @@
 {
+  "config": "M5 Macbook Pro",
   "engine": "ClickHouse",
   "queries": [
     {
@@ -81,16 +82,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       -      1225  PROJECT ps_partkey, a4 AS v\n       -      1225  SORT a4\n       -      1225  PROJECT a4, ps_partkey\n       -      1225  FILTER (a4 > 7589177.37) AS a2\n       -     28515  AGGREGATE SUM(a6) AS a4 GROUP BY HASH ps_partkey\n       -     30160  PROJECT ps_partkey, ps_supplycost * ps_availqty AS a6\n       -     30160  PROJECT ps_partkey, ps_supplycost, ps_availqty\n       -     30160  INNER JOIN HASH ON PROJECTION_304.ps_suppkey = PROJECTION_295.s_suppkey\n       -       377  │└PROJECT s_suppkey\n       -       377  │ PROJECT s_suppkey\n       -       377  │ INNER JOIN HASH ON PROJECTION_301.s_nationkey = PROJECTION_298.n_nationkey\n       -         1  │ │└PROJECT n_nationkey\n       -         1  │ │ PROJECT n_nationkey\n       -         1  │ │ TABLE SCAN nation WHERE n_name = 'JAPAN'\n       -     10000  │ PROJECT s_nationkey, s_suppkey\n       -     10000  │ PROJECT s_suppkey, s_nationkey\n       -     10000  │ TABLE SCAN supplier\n       -    800000  PROJECT ps_suppkey, ps_partkey, ps_supplycost, ps_availqty\n       -    800000  PROJECT ps_partkey, ps_supplycost, ps_availqty, ps_suppkey\n       -    800000  TABLE SCAN partsupp\n",
       "sql": "/* TPC-H Q11 */\nSELECT ps_partkey,\n       SUM(ps_supplycost * ps_availqty) AS v\nFROM tpch_sf1.partsupp\nINNER JOIN tpch_sf1.supplier\n    ON ps_suppkey = s_suppkey\nINNER JOIN tpch_sf1.nation\n    ON s_nationkey = n_nationkey\nWHERE n_name = 'JAPAN'\nGROUP BY ps_partkey\nHAVING SUM(ps_supplycost * ps_availqty)\n           > (SELECT SUM(ps_supplycost * ps_availqty) * 0.0001\n              FROM tpch_sf1.partsupp\n              INNER JOIN tpch_sf1.supplier\n                  ON ps_suppkey = s_suppkey\n              INNER JOIN tpch_sf1.nation\n                  ON s_nationkey = n_nationkey\n              WHERE n_name = 'JAPAN')\nORDER BY v DESC\n",
-      "startTime": "2026-06-23T11:14:59.627581Z",
+      "startTime": "2026-06-26T15:36:13.801402Z",
       "status": "OK",
-      "timeMs": 29.135
+      "timeMs": 29.958
     }
   ],
   "runtime": {
-    "avgMs": 29.135,
-    "bestMs": 29.135,
-    "maxMs": 29.135,
-    "minMs": 29.135,
+    "avgMs": 29.958,
+    "bestMs": 29.958,
+    "maxMs": 29.958,
+    "minMs": 29.958,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

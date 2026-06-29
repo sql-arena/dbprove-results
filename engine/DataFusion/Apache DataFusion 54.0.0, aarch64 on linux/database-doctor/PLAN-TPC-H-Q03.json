@@ -1,6 +1,99 @@
 {
+  "config": "M5 Macbook Pro",
   "engine": "DataFusion",
-  "queries": [],
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 1,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 2,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 1,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 1,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 3,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 2
+        }
+      },
+      "operatorRows": {
+        "aggregate": 29857,
+        "distribute": 3999030,
+        "hash": 757254,
+        "join": 3393107,
+        "scan": 7651215,
+        "seek": 0,
+        "sort": 82
+      },
+      "plan": "Estimate    Actual  Operator\n   60000        10  LIMIT 10\n   60000        10  SORT revenue, o_orderdate\n   60000        72  LIMIT 10\n   60000        72  SORT revenue, o_orderdate\n   60000     11281  PROJECT l_orderkey, revenue, o_orderdate, o_shippriority\n   60000     11281  AGGREGATE SUM(l_extendedprice * (1 - l_discount)) GROUP BY HASH l_orderkey, o_orderdate, o_shippriority\n   60000     29857  INNER JOIN HASH ON c_custkey = o_custkey\n   30000     29949  │└DISTRIBUTE GATHER\n   30000     29949  │ FILTER c_mktsegment = 'MACHINERY'\n  150000    150000  │ TABLE SCAN customer WHERE c_mktsegment = 'MACHINERY'\n  300000    151331  PROJECT l_orderkey, l_extendedprice, l_discount, o_custkey, o_orderdate, o_shippriority\n  300000    151331  INNER JOIN HASH ON o_orderkey = l_orderkey\n  300000    727305  │└DISTRIBUTE HASH ON o_orderkey\n  300000    727305  │ FILTER o_orderdate < DATE'1995-03-15'\n 1500000   1500000  │ TABLE SCAN orders WHERE (o_orderdate < DATE'1995-03-15') AND (((o_custkey >= 4) AND (o_custkey <= 149997)) AND TRUE)\n 1200243   3241776  DISTRIBUTE HASH ON l_orderkey\n 1200243   3241776  FILTER l_shipdate > DATE'1995-03-15'\n 6001215   6001215  TABLE SCAN lineitem WHERE (l_shipdate > DATE'1995-03-15') AND CASE MOD(HASH_REPARTITION l_orderkey,10) WHEN 0 THEN (((l_orderkey >= 5) AND (l_orderkey <= 5999813)) AND TRUE) WHEN 1 THEN (((l_orderkey >= 6) AND (l_orderkey <= 5999843)) AND TRUE) WHEN 2 THEN (((l_orderkey >= 37) AND (l_orderkey <= 5999975)) AND TRUE) WHEN 3 THEN (((l_orderkey >= 99) AND (l_orderkey <= 5999942)) AND TRUE) WHEN 4 THEN (((l_orderkey >= 131) AND (l_orderkey <= 5999685)) AND TRUE) WHEN 5 THEN (((...\n",
+      "sql": "/* TPC-H Q03 */\nSELECT l_orderkey,\n       SUM(l_extendedprice * (1 - l_discount)) AS revenue,\n       o_orderdate,\n       o_shippriority\nFROM tpch_sf1.lineitem\nINNER JOIN tpch_sf1.orders\n    ON l_orderkey = o_orderkey\nINNER JOIN tpch_sf1.customer\n    ON o_custkey = c_custkey\nWHERE c_mktsegment = 'MACHINERY'\n  AND o_orderdate < '1995-03-15'\n  AND l_shipdate > '1995-03-15'\nGROUP BY l_orderkey,\n         o_orderdate,\n         o_shippriority\nORDER BY revenue DESC,\n         o_orderdate\nLIMIT 10\n",
+      "startTime": "2026-06-26T23:27:50.554055Z",
+      "status": "OK",
+      "timeMs": 135.904
+    }
+  ],
+  "runtime": {
+    "avgMs": 135.904,
+    "bestMs": 135.904,
+    "maxMs": 135.904,
+    "minMs": 135.904,
+    "stdDevMs": 0.0
+  },
   "storageVariant": "iceberg",
   "theorem": {
     "categories": [

@@ -1,6 +1,99 @@
 {
+  "config": "M5 Macbook Pro",
   "engine": "ClickHouse",
-  "queries": [],
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 0,
+        "distribute": 0,
+        "hash": 466919377,
+        "join": 927835635,
+        "scan": 54997475,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       -         1  PROJECT a1 AS movie_budget, a2 AS movie_votes, a3 AS movie_title\n       -         1  AGGREGATE MIN(info_left) AS a1, MIN(info_right) AS a2, MIN(title) AS a3\n       -         0  PROJECT info, info, title\n       -         0  PROJECT info, info, title\n       -         0  INNER JOIN HASH ON tuple(PROJECTION_1471.movie_id,PROJECTION_1471.movie_id,PROJECTION_1471.id) = tuple(PROJECTION_1462.movie_id,PROJECTION_1462.movie_id,PROJECTION_1462.movie_id)\n       -    459925  │└PROJECT movie_id AS movie_id_right, info AS info_right\n       -    459925  │ PROJECT info, movie_id\n       -    459925  │ INNER JOIN HASH ON PROJECTION_1468.info_type_id = PROJECTION_1465.id\n       -         1  │ │└PROJECT id\n       -         1  │ │ PROJECT id\n       -         1  │ │ TABLE SCAN info_type WHERE info = 'votes'\n       -   1380035  │ PROJECT info_type_id, info, movie_id\n       -   1380035  │ PROJECT info, movie_id, info_type_id\n       -   1380035  │ TABLE SCAN movie_info_idx\n       -      9626  PROJECT movie_id_left, movie_id AS movie_id_left_2, id, info AS info_left, title\n       -      9626  PROJECT movie_id, info, movie_id, title, id\n       -      9626  INNER JOIN HASH ON PROJECTION_1477.person_id = PROJECTION_1474.id\n       -      9062  │└PROJECT id AS id_right\n       -      9062  │ PROJECT id\n       -      9062  │ TABLE SCAN name WHERE (gender = 'm') AND name LIKE '%Tim%'\n       -   2766914  PROJECT person_id, movie_id, info, movie_id, title, id AS id_left\n       -   2766914  PROJECT movie_id, person_id, info, movie_id, title, id\n       -   2766914  INNER JOIN HASH ON tuple(PROJECTION_1483.movie_id,PROJECTION_1483.movie_id) = tuple(PROJECTION_1480.id,PROJECTION_1480.id)\n       -   2528312  │└PROJECT id, title\n       -   2528312  │ PROJECT title, id\n       -   2528312  │ TABLE SCAN title\n       -   2766914  PROJECT movie_id, movie_id, person_id, info\n       -   2766914  PROJECT movie_id, person_id, info, movie_id\n       -   2766914  INNER JOIN HASH ON PROJECTION_1489.info_type_id = PROJECTION_1486.id\n       -         1  │└PROJECT id\n       -         1  │ PROJECT id\n       -         1  │ TABLE SCAN info_type WHERE info = 'budget'\n       -      460M  PROJECT info_type_id, movie_id, person_id, info, movie_id\n       -      460M  PROJECT movie_id, person_id, info, movie_id, info_type_id\n       -      460M  INNER JOIN HASH ON PROJECTION_1495.movie_id = PROJECTION_1492.movie_id\n       -  14835720  │└PROJECT movie_id AS movie_id_right, info, info_type_id\n       -  14835720  │ PROJECT info, movie_id, info_type_id\n       -  14835720  │ TABLE SCAN movie_info\n       -  36244344  PROJECT movie_id AS movie_id_left, person_id\n       -  36244344  PROJECT movie_id, person_id\n       -  36244344  TABLE SCAN cast_info WHERE TRUE\n",
+      "sql": "SELECT MIN(mi.info) AS movie_budget,\n       MIN(mi_idx.info) AS movie_votes,\n       MIN(t.title) AS movie_title\nFROM job.cast_info AS ci,\n     job.info_type AS it1,\n     job.info_type AS it2,\n     job.movie_info AS mi,\n     job.movie_info_idx AS mi_idx,\n     job.name AS n,\n     job.title AS t\nWHERE ci.note IN ('(producer)',\n                  '(executive producer)')\n  AND it1.info = 'budget'\n  AND it2.info = 'votes'\n  AND n.gender = 'm'\n  AND n.name LIKE '%Tim%'\n  AND t.id = mi.movie_id\n  AND t.id = mi_idx.movie_id\n  AND t.id = ci.movie_id\n  AND ci.movie_id = mi.movie_id\n  AND ci.movie_id = mi_idx.movie_id\n  AND mi.movie_id = mi_idx.movie_id\n  AND n.id = ci.person_id\n  AND it1.id = mi.info_type_id\n  AND it2.id = mi_idx.info_type_id;\n",
+      "startTime": "2026-06-26T18:50:23.448808Z",
+      "status": "OK",
+      "timeMs": 994461.341
+    }
+  ],
+  "runtime": {
+    "avgMs": 994461.341,
+    "bestMs": 994461.341,
+    "maxMs": 994461.341,
+    "minMs": 994461.341,
+    "stdDevMs": 0.0
+  },
   "storageVariant": "native",
   "theorem": {
     "categories": [

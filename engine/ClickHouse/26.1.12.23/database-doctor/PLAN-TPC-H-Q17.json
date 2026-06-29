@@ -1,4 +1,5 @@
 {
+  "config": "M5 Macbook Pro",
   "engine": "ClickHouse",
   "queries": [
     {
@@ -81,16 +82,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       -         1  PROJECT a2 / 7. AS avg_yearly\n       -         1  AGGREGATE SUM(l_extendedprice) AS a2\n       -       537  PROJECT l_extendedprice\n       -       537  FILTER l_quantity < a8\n       -      6029  PROJECT a8, l_extendedprice, l_quantity\n       -      6029  INNER JOIN HASH ON PROJECTION_386.p_partkey = PROJECTION_383.l_partkey\n       -   6001215  │└PROJECT l_partkey, l_extendedprice, l_quantity\n       -   6001215  │ PROJECT l_extendedprice, l_partkey, l_quantity\n       -   6001215  │ TABLE SCAN lineitem\n       -       198  PROJECT p_partkey, a8\n       -       198  PROJECT p_partkey, a8\n       -       198  INNER JOIN HASH ON PROJECTION_392.l_partkey = PROJECTION_389.p_partkey\n       -       198  │└PROJECT p_partkey AS p_partkey_right\n       -       198  │ PROJECT p_partkey\n       -       198  │ TABLE SCAN part WHERE (p_brand = 'Brand#13') AND (p_container = 'MED CAN')\n       -    200000  PROJECT p_partkey, a8\n       -    200000  PROJECT 0.2 * a9 AS a8, l_partkey AS p_partkey\n       -    200000  AGGREGATE AVG(l_quantity) AS a9 GROUP BY HASH l_partkey\n       -   6001215  PROJECT l_quantity, l_partkey, l_partkey\n       -   6001215  PROJECT l_quantity, l_partkey, l_partkey\n       -   6001215  TABLE SCAN lineitem WHERE l_partkey = l_partkey\n",
       "sql": "/* TPC-H Q17 */\nSELECT SUM(l_extendedprice) / 7.0 AS avg_yearly\nFROM tpch_sf1.lineitem\nINNER JOIN tpch_sf1.part\n    ON l_partkey = p_partkey\nWHERE p_brand = 'Brand#13'\n  AND p_container = 'MED CAN'\n  AND l_quantity < (SELECT 0.2 * AVG(l_quantity) AS l_avg\n                    FROM tpch_sf1.lineitem li\n                    WHERE l_partkey = p_partkey)",
-      "startTime": "2026-06-23T11:15:04.977901Z",
+      "startTime": "2026-06-26T15:36:19.231609Z",
       "status": "OK",
-      "timeMs": 183.795
+      "timeMs": 306.392
     }
   ],
   "runtime": {
-    "avgMs": 183.795,
-    "bestMs": 183.795,
-    "maxMs": 183.795,
-    "minMs": 183.795,
+    "avgMs": 306.392,
+    "bestMs": 306.392,
+    "maxMs": 306.392,
+    "minMs": 306.392,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

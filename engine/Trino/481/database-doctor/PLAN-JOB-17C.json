@@ -1,4 +1,5 @@
 {
+  "config": "M5 Macbook Pro",
   "engine": "Trino",
   "queries": [
     {
@@ -81,16 +82,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  PROJECT min AS member_in_charnamed_movie, min AS a1\n       1         1  AGGREGATE MIN(min_35) AS min\n       -         1  DISTRIBUTE GATHER\n       -         1  AGGREGATE MIN(name_20) AS min_35\n       -      1918  INNER JOIN HASH ON movie_id = id_27\n 2528312   2528312  │└DISTRIBUTE HASH ON id_27\n 2528312   2528312  │ PROJECT id AS id_27\n 2528312   2528312  │ TABLE SCAN title\n       -      1918  INNER JOIN HASH ON person_id = id_19\n 3750741      2664  │└DISTRIBUTE HASH ON id_19\n 4167491      2664  │ PROJECT id AS id_19, name AS name_20\n 4167491      2664  │ FILTER (name >= 'X') AND (name < 'Y') AND (name LIKE 'X%')\n 4167491   4167491  │ TABLE SCAN name\n       -   7796926  INNER JOIN HASH ON keyword_id = id_4\n       -         1  │└DISTRIBUTE GATHER\n  134170         1  │ PROJECT id AS id_4\n  134170         1  │ FILTER keyword = 'character-name-in-title'\n  134170    134170  │ TABLE SCAN keyword\n       -     3101M  INNER JOIN HASH ON movie_id = movie_id_15\n 4523930   4523930  │└DISTRIBUTE HASH ON movie_id_15\n 4523930   4523930  │ PROJECT movie_id AS movie_id_15, keyword_id\n 4523930   4523930  │ TABLE SCAN movie_keyword\n       -  80274241  INNER JOIN HASH ON company_id = id_0\n  234997    234997  │└DISTRIBUTE GATHER\n  234997    234997  │ PROJECT id AS id_0\n  234997    234997  │ TABLE SCAN company_name\n       -  80274241  INNER JOIN HASH ON movie_id = movie_id_9\n 2609129   2609129  │└DISTRIBUTE HASH ON movie_id_9\n 2609129   2609129  │ PROJECT movie_id AS movie_id_9, company_id\n 2609129   2609129  │ TABLE SCAN movie_companies\n36244344  36244344  TABLE SCAN cast_info\n",
       "sql": "SELECT MIN(n.name) AS member_in_charnamed_movie,\n       MIN(n.name) AS a1\nFROM job.cast_info AS ci,\n     job.company_name AS cn,\n     job.keyword AS k,\n     job.movie_companies AS mc,\n     job.movie_keyword AS mk,\n     job.name AS n,\n     job.title AS t\nWHERE k.keyword ='character-name-in-title'\n  AND n.name LIKE 'X%'\n  AND n.id = ci.person_id\n  AND ci.movie_id = t.id\n  AND t.id = mk.movie_id\n  AND mk.keyword_id = k.id\n  AND t.id = mc.movie_id\n  AND mc.company_id = cn.id\n  AND ci.movie_id = mc.movie_id\n  AND ci.movie_id = mk.movie_id\n  AND mc.movie_id = mk.movie_id;\n",
-      "startTime": "2026-06-23T15:19:33.862644Z",
+      "startTime": "2026-06-26T16:42:17.070801Z",
       "status": "OK",
-      "timeMs": 1150.548
+      "timeMs": 778.051
     }
   ],
   "runtime": {
-    "avgMs": 1150.548,
-    "bestMs": 1150.548,
-    "maxMs": 1150.548,
-    "minMs": 1150.548,
+    "avgMs": 778.051,
+    "bestMs": 778.051,
+    "maxMs": 778.051,
+    "minMs": 778.051,
     "stdDevMs": 0.0
   },
   "storageVariant": "iceberg",

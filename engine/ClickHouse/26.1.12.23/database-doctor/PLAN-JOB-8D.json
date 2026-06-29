@@ -1,6 +1,99 @@
 {
+  "config": "M5 Macbook Pro",
   "engine": "ClickHouse",
-  "queries": [],
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 0,
+        "distribute": 0,
+        "hash": 2277410,
+        "join": 46450619,
+        "scan": 46450620,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       -         1  PROJECT a1 AS costume_designer_pseudo, a2 AS movie_with_costumes\n       -         1  AGGREGATE MIN(name) AS a1, MIN(title) AS a2\n       -         0  PROJECT name, title\n       -         0  PROJECT name, title\n       -         0  INNER JOIN HASH ON tuple(PROJECTION_5612.id,PROJECTION_5612.id) = tuple(PROJECTION_5579.person_id,PROJECTION_5579.person_id)\n       -         0  │└PROJECT person_id, person_id, name, title\n       -         0  │ PROJECT name, person_id, person_id, title\n       -         0  │ INNER JOIN HASH ON PROJECTION_5609.id = PROJECTION_5582.company_id\n       -    752819  │ │└PROJECT company_id, name, person_id, person_id, title\n       -    752819  │ │ PROJECT name, person_id, person_id, company_id, title\n       -    752819  │ │ INNER JOIN HASH ON tuple(PROJECTION_5606.movie_id,PROJECTION_5606.movie_id) = tuple(PROJECTION_5585.movie_id,PROJECTION_5585.id)\n       -    218966  │ │ │└PROJECT movie_id AS movie_id_right, id, name, person_id, person_id, title\n       -    218966  │ │ │ PROJECT name, person_id, person_id, movie_id, title, id\n       -    218966  │ │ │ INNER JOIN HASH ON PROJECTION_5603.id = PROJECTION_5588.movie_id\n       -    218966  │ │ │ │└PROJECT movie_id, name, person_id, person_id\n       -    218966  │ │ │ │ PROJECT name, person_id, person_id, movie_id\n       -    218966  │ │ │ │ INNER JOIN HASH ON PROJECTION_5600.person_id = PROJECTION_5591.person_id\n       -    276403  │ │ │ │ │└PROJECT person_id AS person_id_right, movie_id\n       -    276403  │ │ │ │ │ PROJECT person_id, movie_id\n       -    276403  │ │ │ │ │ INNER JOIN HASH ON PROJECTION_5597.role_id = PROJECTION_5594.id\n       -         1  │ │ │ │ │ │└PROJECT id\n       -         1  │ │ │ │ │ │ PROJECT id\n       -         1  │ │ │ │ │ │ TABLE SCAN role_type WHERE role = 'costume designer'\n       -  36244344  │ │ │ │ │ PROJECT role_id, person_id, movie_id\n       -  36244344  │ │ │ │ │ PROJECT person_id, movie_id, role_id\n       -  36244344  │ │ │ │ │ TABLE SCAN cast_info\n       -    901343  │ │ │ │ PROJECT person_id AS person_id_left, name\n       -    901343  │ │ │ │ PROJECT name, person_id\n       -    901343  │ │ │ │ TABLE SCAN aka_name\n       -   2528312  │ │ │ PROJECT id, title\n       -   2528312  │ │ │ PROJECT title, id\n       -   2528312  │ │ │ TABLE SCAN title\n       -   2609129  │ │ PROJECT movie_id AS movie_id_left, company_id\n       -   2609129  │ │ PROJECT movie_id, company_id\n       -   2609129  │ │ TABLE SCAN movie_companies\n       -         0  │ PROJECT id\n       -         0  │ PROJECT id\n       -         0  │ TABLE SCAN company_name WHERE country_code = 'us'\n       -   4167491  PROJECT id\n       -   4167491  PROJECT id\n       -   4167491  TABLE SCAN name\n",
+      "sql": "SELECT MIN(an1.name) AS costume_designer_pseudo,\n       MIN(t.title) AS movie_with_costumes\nFROM job.aka_name AS an1,\n     job.cast_info AS ci,\n     job.company_name AS cn,\n     job.movie_companies AS mc,\n     job.name AS n1,\n     job.role_type AS rt,\n     job.title AS t\nWHERE cn.country_code ='[us]'\n  AND rt.role ='costume designer'\n  AND an1.person_id = n1.id\n  AND n1.id = ci.person_id\n  AND ci.movie_id = t.id\n  AND t.id = mc.movie_id\n  AND mc.company_id = cn.id\n  AND ci.role_id = rt.id\n  AND an1.person_id = ci.person_id\n  AND ci.movie_id = mc.movie_id;\n",
+      "startTime": "2026-06-26T23:10:12.316847Z",
+      "status": "OK",
+      "timeMs": 517.834
+    }
+  ],
+  "runtime": {
+    "avgMs": 517.834,
+    "bestMs": 517.834,
+    "maxMs": 517.834,
+    "minMs": 517.834,
+    "stdDevMs": 0.0
+  },
   "storageVariant": "native",
   "theorem": {
     "categories": [

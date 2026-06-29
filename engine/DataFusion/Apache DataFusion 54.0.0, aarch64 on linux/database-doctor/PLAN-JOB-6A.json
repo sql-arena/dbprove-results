@@ -1,4 +1,5 @@
 {
+  "config": "M5 Macbook Pro",
   "engine": "DataFusion",
   "queries": [
     {
@@ -81,16 +82,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  PROJECT movie_keyword, actor_name, marvel_movie\n       1         1  AGGREGATE MIN(keyword), MIN(name), MIN(title)\n  171414        10  DISTRIBUTE GATHER\n  171414        10  AGGREGATE MIN(keyword), MIN(name), MIN(title)\n  171414         6  PROJECT keyword, name, title\n  171414         6  INNER JOIN HASH ON id = movie_id AND id = movie_id\n  162535    391666  │└DISTRIBUTE HASH ON id, id\n  162535    391666  │ FILTER production_year > 2010\n 2528312   2528312  │ TABLE SCAN title WHERE production_year > 2010\n 2663974         6  DISTRIBUTE HASH ON movie_id, movie_id\n 2663974         6  PROJECT movie_id, movie_id, keyword, name\n 2663974         6  INNER JOIN HASH ON id = person_id\n  833499         2  │└DISTRIBUTE HASH ON id\n  833499         2  │ FILTER name LIKE '%Downey%Robert%'\n 4167491   4167491  │ TABLE SCAN name WHERE name LIKE '%Downey%Robert%'\n12982462      1242  DISTRIBUTE HASH ON person_id\n12982462      1242  PROJECT person_id, movie_id, movie_id, keyword\n12982462      1242  INNER JOIN HASH ON id = keyword_id\n   26834         1  │└DISTRIBUTE GATHER\n   26834         1  │ FILTER keyword = 'marvel-cinematic-universe'\n  134170    134170  │ DISTRIBUTE ROUND ROBIN\n  134170    134170  │ TABLE SCAN keyword WHERE keyword = 'marvel-cinematic-universe'\n64912311      146M  PROJECT person_id, movie_id, movie_id, keyword_id\n64912311      146M  INNER JOIN HASH ON movie_id = movie_id\n 4523930   3046704  │└DISTRIBUTE HASH ON movie_id\n 4523930   3046704  │ TABLE SCAN movie_keyword WHERE (((keyword_id >= 8200) AND (keyword_id <= 8200)) AND keyword_id IN 8200) AND CASE MOD(HASH_REPARTITION(movie_id,movie_id),10) WHEN 1 THEN ((((movie_id >= 13) AND (movie_id <= 2528194)) AND ((movie_id >= 13) AND (movie_id <= 2528194))) AND TRUE) WHEN 3 THEN ((((movie_id >= 11) AND (movie_id <= 2528183)) AND ((movie_id >= 11) AND (movie_id <= 2528183))) AND TRUE) WHEN 5 THEN ((((movie_id >= 12) AND (movie_id <= 2528256)) AND ((movie_id >= 1...\n36244344  36244344  DISTRIBUTE HASH ON movie_id\n36244344  36244344  TABLE SCAN cast_info WHERE CASE MOD(HASH_REPARTITION movie_id,10) WHEN 0 THEN (((movie_id >= 86) AND (movie_id <= 2525735)) AND TRUE) WHEN 1 THEN (((movie_id >= 64) AND (movie_id <= 2525706)) AND TRUE) WHEN 2 THEN (((movie_id >= 24) AND (movie_id <= 2525574)) AND TRUE) WHEN 3 THEN (((movie_id >= 2) AND (movie_id <= 2525707)) AND TRUE) WHEN 4 THEN (((movie_id >= 228) AND (movie_id <= 2525736)) AND TRUE) WHEN 5 THEN (((movie_id >= 302) AND (movie_id <= 2525713)) AND TRUE) WH...\n",
       "sql": "SELECT MIN(k.keyword) AS movie_keyword,\n       MIN(n.name) AS actor_name,\n       MIN(t.title) AS marvel_movie\nFROM job.cast_info AS ci,\n     job.keyword AS k,\n     job.movie_keyword AS mk,\n     job.name AS n,\n     job.title AS t\nWHERE k.keyword = 'marvel-cinematic-universe'\n  AND n.name LIKE '%Downey%Robert%'\n  AND t.production_year > 2010\n  AND k.id = mk.keyword_id\n  AND t.id = mk.movie_id\n  AND t.id = ci.movie_id\n  AND ci.movie_id = mk.movie_id\n  AND n.id = ci.person_id;\n",
-      "startTime": "2026-06-23T17:15:56.914875Z",
+      "startTime": "2026-06-26T23:55:05.360652Z",
       "status": "OK",
-      "timeMs": 569.462
+      "timeMs": 574.349
     }
   ],
   "runtime": {
-    "avgMs": 569.462,
-    "bestMs": 569.462,
-    "maxMs": 569.462,
-    "minMs": 569.462,
+    "avgMs": 574.349,
+    "bestMs": 574.349,
+    "maxMs": 574.349,
+    "minMs": 574.349,
     "stdDevMs": 0.0
   },
   "storageVariant": "iceberg",

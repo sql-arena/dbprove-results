@@ -82,16 +82,16 @@
       },
       "plan": "Estimate    Actual  Operator\n   56768     38182  SORT SUM(l_extendedprice * ('1' - l_discount))\n   56768     38182  AGGREGATE c_name, SUM(l_extendedprice * ('1' - l_discount)), c_acctbal, c_address, c_phone, c_comment GROUP BY HASH c_custkey, n_name\n   18312     28762  INNER JOIN HASH ON c_nationkey = n_nationkey\n      25        25  │└TABLE SCAN nation AS nation\n   18312     28762  INNER JOIN HASH ON o_custkey = c_custkey\n  250000    150000  │└TABLE SCAN customer AS customer\n   73248    115050  INNER JOIN LOOP ON l_orderkey = o_orderkey\n   75080     57474  │└TABLE SCAN orders AS orders WHERE (o_orderdate >= '1994-06-01') AND (o_orderdate < '1994-09-01')\n  172422    114948  TABLE SEEK lineitem AS lineitem WHERE l_returnflag = 'R'\n",
       "sql": "/* TPC-H Q10 */\nSELECT c_custkey,\n       c_name,\n       SUM(l_extendedprice * (1 - l_discount)) AS revenue,\n       c_acctbal,\n       n_name,\n       c_address,\n       c_phone,\n       c_comment\nFROM tpch_sf1.lineitem\nINNER JOIN tpch_sf1.orders\n    ON l_orderkey = o_orderkey\nINNER JOIN tpch_sf1.customer\n    ON o_custkey = c_custkey\nINNER JOIN tpch_sf1.nation\n    ON c_nationkey = n_nationkey\nWHERE o_orderdate >= '1994-06-01'\n  AND o_orderdate < '1994-09-01'\n  AND l_returnflag = 'R'\nGROUP BY c_custkey,\n         c_name,\n         c_acctbal,\n         c_phone,\n         n_name,\n         c_address,\n         c_comment\nORDER BY revenue DESC",
-      "startTime": "2026-06-25T13:01:18.355018Z",
+      "startTime": "2026-06-26T15:26:47.520950Z",
       "status": "OK",
-      "timeMs": 375.061
+      "timeMs": 236.467
     }
   ],
   "runtime": {
-    "avgMs": 375.061,
-    "bestMs": 375.061,
-    "maxMs": 375.061,
-    "minMs": 375.061,
+    "avgMs": 236.467,
+    "bestMs": 236.467,
+    "maxMs": 236.467,
+    "minMs": 236.467,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

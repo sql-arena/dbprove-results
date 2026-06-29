@@ -1,4 +1,5 @@
 {
+  "config": "M5 Macbook Pro",
   "engine": "DataFusion",
   "queries": [
     {
@@ -81,16 +82,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  PROJECT link_type, first_movie, second_movie\n       1         1  AGGREGATE MIN(link), MIN(title), MIN(title)\n   29997        10  DISTRIBUTE GATHER\n   29997        10  AGGREGATE MIN(link), MIN(title), MIN(title)\n   29997         0  PROJECT link, title, title\n   29997         0  INNER JOIN HASH ON linked_movie_id = id\n   29997         0  │└DISTRIBUTE GATHER\n   29997         0  │ PROJECT title, linked_movie_id, link\n   29997         0  │ INNER JOIN HASH ON id = link_type_id\n      18        18  │ │└TABLE SCAN link_type\n   29997         0  │ PROJECT title, linked_movie_id, link_type_id\n   29997         0  │ INNER JOIN HASH ON movie_id = id\n   29997     29997  │ │└TABLE SCAN movie_link WHERE ((link_type_id >= 1) AND (link_type_id <= 18)) AND link_type_id IN(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18)\n  904786         0  │ INNER JOIN HASH ON movie_id = id\n  904786         1  │ │└DISTRIBUTE HASH ON movie_id\n  904786         1  │ │ INNER JOIN HASH ON id = keyword_id\n   26834         1  │ │ │└DISTRIBUTE GATHER\n   26834         1  │ │ │ FILTER keyword = '10,000-mile-club'\n  134170    134170  │ │ │ DISTRIBUTE ROUND ROBIN\n  134170    134170  │ │ │ TABLE SCAN keyword WHERE keyword = '10,000-mile-club'\n 4523930    339804  │ │ TABLE SCAN movie_keyword WHERE ((keyword_id >= 131852) AND (keyword_id <= 131852)) AND keyword_id IN 131852\n 2528312         0  │ DISTRIBUTE HASH ON id\n 2528312         0  │ TABLE SCAN title WHERE (((id >= 2469620) AND (id <= 2469620)) AND id IN 2469620) AND (((id >= 2) AND (id <= 186175)) AND TRUE)\n 2528312   2528312  TABLE SCAN title WHERE TRUE\n",
       "sql": "SELECT MIN(lt.link) AS link_type,\n       MIN(t1.title) AS first_movie,\n       MIN(t2.title) AS second_movie\nFROM job.keyword AS k,\n     job.link_type AS lt,\n     job.movie_keyword AS mk,\n     job.movie_link AS ml,\n     job.title AS t1,\n     job.title AS t2\nWHERE k.keyword ='10,000-mile-club'\n  AND mk.keyword_id = k.id\n  AND t1.id = mk.movie_id\n  AND ml.movie_id = t1.id\n  AND ml.linked_movie_id = t2.id\n  AND lt.id = ml.link_type_id\n  AND mk.movie_id = t1.id;\n",
-      "startTime": "2026-06-23T17:15:50.794798Z",
+      "startTime": "2026-06-26T23:55:02.386983Z",
       "status": "OK",
-      "timeMs": 20.46
+      "timeMs": 28.428
     }
   ],
   "runtime": {
-    "avgMs": 20.46,
-    "bestMs": 20.46,
-    "maxMs": 20.46,
-    "minMs": 20.46,
+    "avgMs": 28.428,
+    "bestMs": 28.428,
+    "maxMs": 28.428,
+    "minMs": 28.428,
     "stdDevMs": 0.0
   },
   "storageVariant": "iceberg",

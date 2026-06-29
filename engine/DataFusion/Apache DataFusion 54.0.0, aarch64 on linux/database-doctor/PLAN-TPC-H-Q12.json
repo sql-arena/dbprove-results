@@ -1,6 +1,99 @@
 {
+  "config": "M5 Macbook Pro",
   "engine": "DataFusion",
-  "queries": [],
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 2
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 1
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 1
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 1
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 2,
+          ">16x": 2
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 2
+        }
+      },
+      "operatorRows": {
+        "aggregate": 30857,
+        "distribute": 1530857,
+        "hash": 30837,
+        "join": 1500000,
+        "scan": 7501215,
+        "seek": 0,
+        "sort": 4
+      },
+      "plan": "Estimate    Actual  Operator\n 1200243         2  SORT l_shipmode\n 1200243         2  SORT l_shipmode\n 1200243         2  PROJECT l_shipmode, high_line_count, low_line_count\n 1200243         2  AGGREGATE SUM(CASE WHEN ((o_orderpriority = '1-URGENT') OR (o_orderpriority = '2-HIGH')) THEN 1 ELSE 0 END), SUM(CASE WHEN ((o_orderpriority <> '1-URGENT') AND (o_orderpriority <> '2-HIGH')) THEN 1 ELSE 0 END) GROUP BY HASH l_shipmode\n 1200243        20  DISTRIBUTE HASH ON l_shipmode\n 1200243        20  AGGREGATE SUM(CASE WHEN ((o_orderpriority = '1-URGENT') OR (o_orderpriority = '2-HIGH')) THEN 1 ELSE 0 END), SUM(CASE WHEN ((o_orderpriority <> '1-URGENT') AND (o_orderpriority <> '2-HIGH')) THEN 1 ELSE 0 END) GROUP BY HASH l_shipmode\n 1200243     30837  INNER JOIN HASH ON l_orderkey = o_orderkey\n 1200243     30837  │└DISTRIBUTE HASH ON l_orderkey\n 1200243     30837  │ FILTER (((((l_shipmode = 'AIR') OR (l_shipmode = 'TRUCK')) AND (l_receiptdate > l_commitdate)) AND (l_shipdate < l_commitdate)) AND (l_receiptdate >= DATE'1994-01-01')) AND (l_receiptdate < DATE'1995-01-01')\n 6001215   6001215  │ TABLE SCAN lineitem WHERE (((((l_shipmode = 'AIR') OR (l_shipmode = 'TRUCK')) AND (l_receiptdate > l_commitdate)) AND (l_shipdate < l_commitdate)) AND (l_receiptdate >= DATE'1994-01-01')) AND (l_receiptdate < DATE'1995-01-01')\n 1500000   1500000  DISTRIBUTE HASH ON o_orderkey\n 1500000   1500000  TABLE SCAN orders WHERE CASE MOD(HASH_REPARTITION o_orderkey,10) WHEN 0 THEN (((o_orderkey >= 833) AND (o_orderkey <= 5999072)) AND TRUE) WHEN 1 THEN (((o_orderkey >= 1316) AND (o_orderkey <= 5999394)) AND TRUE) WHEN 2 THEN (((o_orderkey >= 3073) AND (o_orderkey <= 5999202)) AND TRUE) WHEN 3 THEN (((o_orderkey >= 1031) AND (o_orderkey <= 5994951)) AND TRUE) WHEN 4 THEN (((o_orderkey >= 1985) AND (o_orderkey <= 5999493)) AND TRUE) WHEN 5 THEN (((o_orderkey >= 66) AND (o_ord...\n",
+      "sql": "/* TPC-H Q12 */\nSELECT l_shipmode,\n       SUM(CASE\n               WHEN o_orderpriority = '1-URGENT'\n                   OR o_orderpriority = '2-HIGH'\n                   THEN 1\n               ELSE 0\n           END) AS high_line_count,\n       SUM(CASE\n               WHEN o_orderpriority <> '1-URGENT'\n                   AND o_orderpriority <> '2-HIGH'\n                   THEN 1\n               ELSE 0\n           END) AS low_line_count\nFROM tpch_sf1.lineitem\nINNER JOIN tpch_sf1.orders\n    ON o_orderkey = l_orderkey\nWHERE l_shipmode IN ('AIR', 'TRUCK')\n  AND l_commitdate < l_receiptdate\n  AND l_shipdate < l_commitdate\n  AND l_receiptdate >= '1994-01-01'\n  AND l_receiptdate < '1995-01-01'\nGROUP BY l_shipmode\nORDER BY l_shipmode\n\n\n",
+      "startTime": "2026-06-26T23:43:57.592385Z",
+      "status": "OK",
+      "timeMs": 86.54
+    }
+  ],
+  "runtime": {
+    "avgMs": 86.54,
+    "bestMs": 86.54,
+    "maxMs": 86.54,
+    "minMs": 86.54,
+    "stdDevMs": 0.0
+  },
   "storageVariant": "iceberg",
   "theorem": {
     "categories": [

@@ -1,4 +1,5 @@
 {
+  "config": "M5 Macbook Pro",
   "engine": "DataFusion",
   "queries": [
     {
@@ -81,16 +82,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  PROJECT rating, movie_title\n       1         1  AGGREGATE MIN(info), MIN(title)\n   98863        10  DISTRIBUTE GATHER\n   98863        10  AGGREGATE MIN(info), MIN(title)\n   98863      4700  INNER JOIN HASH ON movie_id = id AND movie_id = id\n   98863      8092  │└DISTRIBUTE GATHER\n   98863      8092  │ INNER JOIN HASH ON id = keyword_id\n   26834        30  │ │└DISTRIBUTE GATHER\n   26834        30  │ │ FILTER keyword LIKE '%sequel%'\n  134170    134170  │ │ DISTRIBUTE ROUND ROBIN\n  134170    134170  │ │ TABLE SCAN keyword WHERE keyword LIKE '%sequel%'\n  494319   3435922  │ INNER JOIN HASH ON movie_id = movie_id\n  276007    448969  │ │└DISTRIBUTE HASH ON movie_id\n  276007    448969  │ │ INNER JOIN HASH ON id = info_type_id\n      23         1  │ │ │└DISTRIBUTE GATHER\n      23         1  │ │ │ FILTER info = 'rating'\n     113       113  │ │ │ DISTRIBUTE ROUND ROBIN\n     113       113  │ │ │ TABLE SCAN info_type WHERE info = 'rating'\n  276007    806365  │ │ FILTER info > '2.0'\n 1380035   1380035  │ │ TABLE SCAN movie_info_idx WHERE (info > '2.0') AND (((info_type_id >= 101) AND (info_type_id <= 101)) AND info_type_id IN 101)\n 4523930   4523930  │ DISTRIBUTE HASH ON movie_id\n 4523930   4523930  │ TABLE SCAN movie_keyword WHERE CASE MOD(HASH_REPARTITION movie_id,10) WHEN 0 THEN (((movie_id >= 67) AND (movie_id <= 2525666)) AND TRUE) WHEN 1 THEN (((movie_id >= 63) AND (movie_id <= 2525670)) AND TRUE) WHEN 2 THEN (((movie_id >= 24) AND (movie_id <= 2525791)) AND TRUE) WHEN 3 THEN (((movie_id >= 2) AND (movie_id <= 2525793)) AND TRUE) WHEN 4 THEN (((movie_id >= 55) AND (movie_id <= 2525632)) AND TRUE) WHEN 5 THEN (((movie_id >= 54) AND (movie_id <= 2525669)) AND TR...\n  523722   1749032  FILTER production_year > 1990\n 2528312   2528312  TABLE SCAN title WHERE (production_year > 1990) AND ((((id >= 963) AND (id <= 2525558)) AND ((id >= 963) AND (id <= 2525558))) AND TRUE)\n",
       "sql": "SELECT MIN(mi_idx.info) AS rating,\n       MIN(t.title) AS movie_title\nFROM job.info_type AS it,\n     job.keyword AS k,\n     job.movie_info_idx AS mi_idx,\n     job.movie_keyword AS mk,\n     job.title AS t\nWHERE it.info ='rating'\n  AND k.keyword LIKE '%sequel%'\n  AND mi_idx.info > '2.0'\n  AND t.production_year > 1990\n  AND t.id = mi_idx.movie_id\n  AND t.id = mk.movie_id\n  AND mk.movie_id = mi_idx.movie_id\n  AND k.id = mk.keyword_id\n  AND it.id = mi_idx.info_type_id;\n",
-      "startTime": "2026-06-23T17:15:55.134372Z",
+      "startTime": "2026-06-26T23:55:04.723376Z",
       "status": "OK",
-      "timeMs": 77.539
+      "timeMs": 67.293
     }
   ],
   "runtime": {
-    "avgMs": 77.539,
-    "bestMs": 77.539,
-    "maxMs": 77.539,
-    "minMs": 77.539,
+    "avgMs": 67.293,
+    "bestMs": 67.293,
+    "maxMs": 67.293,
+    "minMs": 67.293,
     "stdDevMs": 0.0
   },
   "storageVariant": "iceberg",

@@ -1,4 +1,5 @@
 {
+  "config": "M5 Macbook Pro",
   "engine": "DataFusion",
   "queries": [
     {
@@ -81,16 +82,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  PROJECT from_company, production_note, movie_based_on_book\n       1         1  AGGREGATE MIN(name), MIN(note), MIN(title)\n   26834        10  DISTRIBUTE GATHER\n   26834        10  AGGREGATE MIN(name), MIN(note), MIN(title)\n   26834     14899  INNER JOIN HASH ON movie_id = id AND movie_id = id AND movie_id = id\n   26834     14899  │└DISTRIBUTE GATHER\n   26834     14899  │ INNER JOIN HASH ON id = link_type_id\n      18        18  │ │└TABLE SCAN link_type\n   26834     14899  │ INNER JOIN HASH ON movie_id = movie_id AND movie_id = movie_id\n   26834    151940  │ │└DISTRIBUTE GATHER\n   26834    151940  │ │ INNER JOIN HASH ON id = keyword_id\n   26834         3  │ │ │└DISTRIBUTE GATHER\n   26834         3  │ │ │ FILTER ((keyword = 'sequel') OR (keyword = 'revenge')) OR (keyword = 'based-on-novel')\n  134170    134170  │ │ │ DISTRIBUTE ROUND ROBIN\n  134170    134170  │ │ │ TABLE SCAN keyword WHERE ((keyword = 'sequel') OR (keyword = 'revenge')) OR (keyword = 'based-on-novel')\n   93458  25320459  │ │ INNER JOIN HASH ON movie_id = movie_id\n   52183   1174202  │ │ │└DISTRIBUTE GATHER\n   52183   1174202  │ │ │ INNER JOIN HASH ON id = company_type_id\n       1         3  │ │ │ │└DISTRIBUTE GATHER\n       1         3  │ │ │ │ FILTER (kind <> 'production companies') AND kind IS NOT NULL\n       4         4  │ │ │ │ DISTRIBUTE ROUND ROBIN\n       4         4  │ │ │ │ TABLE SCAN company_type WHERE (kind <> 'production companies') AND kind IS NOT NULL\n  104366   1180547  │ │ │ INNER JOIN HASH ON id = company_id\n   47000    210031  │ │ │ │└DISTRIBUTE GATHER\n   47000    210031  │ │ │ │ FILTER country_code <> 'pl'\n  234997    234997  │ │ │ │ TABLE SCAN company_name WHERE country_code <> 'pl'\n  521826   1202647  │ │ │ FILTER note IS NOT NULL\n 2609129   1356171  │ │ │ TABLE SCAN movie_companies WHERE (note IS NOT NULL AND (((company_id >= 1) AND (company_id <= 234997)) AND TRUE)) AND (((company_type_id >= 1) AND (company_type_id <= 4)) AND company_type_id IN(1,3,4))\n 4523930   4523930  │ │ TABLE SCAN movie_keyword WHERE (((movie_id >= 2) AND (movie_id <= 2525671)) AND TRUE) AND (((keyword_id >= 359) AND (keyword_id <= 398)) AND keyword_id IN(373,359,398))\n   29997     29997  │ DISTRIBUTE ROUND ROBIN\n   29997     29997  │ TABLE SCAN movie_link WHERE ((((movie_id >= 907) AND (movie_id <= 2525539)) AND ((movie_id >= 907) AND (movie_id <= 2525539))) AND TRUE) AND (((link_type_id >= 1) AND (link_type_id <= 18)) AND link_type_id IN(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18))\n 1246097    234742  FILTER production_year > 1950\n 2528312    245760  TABLE SCAN title WHERE (production_year > 1950) AND (((((id >= 907) AND (id <= 164032)) AND ((id >= 907) AND (id <= 164032))) AND ((id >= 907) AND (id <= 164032))) AND TRUE)\n",
       "sql": "SELECT MIN(cn.name) AS from_company,\n       MIN(mc.note) AS production_note,\n       MIN(t.title) AS movie_based_on_book\nFROM job.company_name AS cn,\n     job.company_type AS ct,\n     job.keyword AS k,\n     job.link_type AS lt,\n     job.movie_companies AS mc,\n     job.movie_keyword AS mk,\n     job.movie_link AS ml,\n     job.title AS t\nWHERE cn.country_code !='[pl]'\n  AND ct.kind != 'production companies'\n  AND ct.kind IS NOT NULL\n  AND k.keyword IN ('sequel',\n                    'revenge',\n                    'based-on-novel')\n  AND mc.note IS NOT NULL\n  AND t.production_year > 1950\n  AND lt.id = ml.link_type_id\n  AND ml.movie_id = t.id\n  AND t.id = mk.movie_id\n  AND mk.keyword_id = k.id\n  AND t.id = mc.movie_id\n  AND mc.company_type_id = ct.id\n  AND mc.company_id = cn.id\n  AND ml.movie_id = mk.movie_id\n  AND ml.movie_id = mc.movie_id\n  AND mk.movie_id = mc.movie_id;\n",
-      "startTime": "2026-06-23T16:40:57.611460Z",
+      "startTime": "2026-06-26T23:44:29.701981Z",
       "status": "OK",
-      "timeMs": 77.597
+      "timeMs": 110.87
     }
   ],
   "runtime": {
-    "avgMs": 77.597,
-    "bestMs": 77.597,
-    "maxMs": 77.597,
-    "minMs": 77.597,
+    "avgMs": 110.87,
+    "bestMs": 110.87,
+    "maxMs": 110.87,
+    "minMs": 110.87,
     "stdDevMs": 0.0
   },
   "storageVariant": "iceberg",

@@ -1,6 +1,99 @@
 {
+  "config": "M5 Macbook Pro",
   "engine": "ClickHouse",
-  "queries": [],
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 0,
+        "distribute": 0,
+        "hash": 958915,
+        "join": 5014646,
+        "scan": 5472264,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       -         1  PROJECT a1 AS alternative_name, a2 AS voiced_character, a3 AS voicing_actress, a4 AS american_movie\n       -         1  AGGREGATE MIN(name_right) AS a1, MIN(name_left) AS a2, MIN(name_right_2) AS a3, MIN(title) AS a4\n       -         0  PROJECT name_right, name_left, name_right_2, title\n       -         0  PROJECT name_right, name_left, name_right_2, title\n       -         0  INNER JOIN HASH ON tuple(PROJECTION_5682.movie_id,PROJECTION_5682.movie_id) = tuple(PROJECTION_5667.movie_id,PROJECTION_5667.id)\n       -         0  │└PROJECT movie_id AS movie_id_right, id, title\n       -         0  │ PROJECT movie_id, title, id\n       -         0  │ INNER JOIN HASH ON PROJECTION_5673.company_id = PROJECTION_5670.id\n       -         0  │ │└PROJECT id AS id_right\n       -         0  │ │ PROJECT id\n       -         0  │ │ TABLE SCAN company_name WHERE country_code = 'us'\n       -     54971  │ PROJECT company_id, movie_id, title, id AS id_left\n       -     54971  │ PROJECT movie_id, company_id, title, id\n       -     54971  │ INNER JOIN HASH ON PROJECTION_5679.movie_id = PROJECTION_5676.id\n       -    512825  │ │└PROJECT id, title\n       -    512825  │ │ PROJECT id, title\n       -    512825  │ │ TABLE SCAN title WHERE (production_year >= 2007) AND (production_year <= 2010)\n       -    198519  │ PROJECT movie_id, company_id\n       -    198519  │ PROJECT movie_id, company_id\n       -    198519  │ TABLE SCAN movie_companies WHERE note LIKE '%(200%)%' AND (note LIKE '%(USA)%' OR note LIKE '%(worldwide)%')\n       -       237  PROJECT movie_id AS movie_id_left, name, name, name\n       -       237  PROJECT name, movie_id, name, name\n       -       237  INNER JOIN HASH ON PROJECTION_5706.id = PROJECTION_5685.person_role_id\n       -       265  │└PROJECT person_role_id, name_right, movie_id, name AS name_right_2\n       -       265  │ PROJECT name, person_role_id, movie_id, name\n       -       265  │ INNER JOIN HASH ON tuple(PROJECTION_5703.person_id,PROJECTION_5703.person_id) = tuple(PROJECTION_5688.person_id,PROJECTION_5688.id)\n       -       453  │ │└PROJECT person_id AS person_id_right, id, person_role_id, movie_id, name AS name_right\n       -       453  │ │ PROJECT person_id, person_role_id, movie_id, name, id\n       -       453  │ │ INNER JOIN HASH ON PROJECTION_5700.id = PROJECTION_5691.person_id\n       -    222686  │ │ │└PROJECT person_id, person_role_id, movie_id\n       -    222686  │ │ │ PROJECT person_id, person_role_id, movie_id\n       -    222686  │ │ │ INNER JOIN HASH ON PROJECTION_5697.role_id = PROJECTION_5694.id\n       -         1  │ │ │ │└PROJECT id\n       -         1  │ │ │ │ PROJECT id\n       -         1  │ │ │ │ TABLE SCAN role_type WHERE role = 'actress'\n       -    713828  │ │ │ PROJECT role_id, person_id, person_role_id, movie_id\n       -    713828  │ │ │ PROJECT person_id, person_role_id, movie_id, role_id\n       -    713828  │ │ │ TABLE SCAN cast_info WHERE note = '(voice)'\n       -      5409  │ │ PROJECT id, name\n       -      5409  │ │ PROJECT id, name\n       -      5409  │ │ TABLE SCAN name WHERE (gender = 'f') AND name LIKE '%Angel%'\n       -    901343  │ PROJECT person_id AS person_id_left, name AS name_left\n       -    901343  │ PROJECT name, person_id\n       -    901343  │ TABLE SCAN aka_name\n       -   3140339  PROJECT id, name AS name_left\n       -   3140339  PROJECT name, id\n       -   3140339  TABLE SCAN char_name\n",
+      "sql": "SELECT MIN(an.name) AS alternative_name,\n       MIN(chn.name) AS voiced_character,\n       MIN(n.name) AS voicing_actress,\n       MIN(t.title) AS american_movie\nFROM job.aka_name AS an,\n     job.char_name AS chn,\n     job.cast_info AS ci,\n     job.company_name AS cn,\n     job.movie_companies AS mc,\n     job.name AS n,\n     job.role_type AS rt,\n     job.title AS t\nWHERE ci.note = '(voice)'\n  AND cn.country_code ='[us]'\n  AND mc.note LIKE '%(200%)%'\n  AND (mc.note LIKE '%(USA)%'\n       OR mc.note LIKE '%(worldwide)%')\n  AND n.gender ='f'\n  AND n.name LIKE '%Angel%'\n  AND rt.role ='actress'\n  AND t.production_year BETWEEN 2007 AND 2010\n  AND ci.movie_id = t.id\n  AND t.id = mc.movie_id\n  AND ci.movie_id = mc.movie_id\n  AND mc.company_id = cn.id\n  AND ci.role_id = rt.id\n  AND n.id = ci.person_id\n  AND chn.id = ci.person_role_id\n  AND an.person_id = n.id\n  AND an.person_id = ci.person_id;\n",
+      "startTime": "2026-06-26T23:10:24.242691Z",
+      "status": "OK",
+      "timeMs": 594.695
+    }
+  ],
+  "runtime": {
+    "avgMs": 594.695,
+    "bestMs": 594.695,
+    "maxMs": 594.695,
+    "minMs": 594.695,
+    "stdDevMs": 0.0
+  },
   "storageVariant": "native",
   "theorem": {
     "categories": [

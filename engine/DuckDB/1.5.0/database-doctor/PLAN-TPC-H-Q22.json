@@ -82,16 +82,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       -         7  SORT custsale.cntrycode\n       2         7  AGGREGATE count_star(), SUM(#1) GROUP BY HASH #0\n       3      6321  PROJECT cntrycode, c_acctbal\n       3      6321  PROJECT cntrycode, c_acctbal\n       3         0  RIGHT SEMI INNER JOIN HASH ON c_custkey IS NOT DISTINCT FROM c_custkey\n      18     18975  │└AGGREGATE  GROUP BY HASH #2\n       3      6321  │ RIGHT ANTI JOIN HASH ON c_custkey IS NOT DISTINCT FROM c_custkey\n       -         0  │ │└SCAN EMPTY\n     180    190744  │ PROJECT c_custkey\n     180    190744  │ INNER JOIN HASH ON o_custkey = c_custkey\n      18         0  │ │└SCAN MATERIALISED\n 1500000   1499950  │ TABLE SCAN orders\n      19     18975  INNER JOIN LOOP ON CAST(c_acctbal AS DOUBLE) > SUBQUERY\n       1         1  │└PROJECT CASE WHEN (#1 > 1) THEN (\"error\"('More than one row returned by a subquery used as an expression - scalar subqueries can only return a single row. Use \"SET scalar_subquery_error_on_multiple_rows=false\" to revert to previous behavior of returning a random row.')) ELSE #0 END\n       -         1  │ AGGREGATE \"first\" #0, count_star()\n       -         1  │ AGGREGATE AVG(#0)\n   30000     38137  │ PROJECT c_acctbal\n   30000     38137  │ TABLE SCAN customer WHERE c_acctbal > 0.000 AND (\"left\"(c_phone,2) IN('10','17','19','23','22','31','27'))\n   30000     41958  TABLE SCAN customer WHERE \"left\"(c_phone,2) IN('10','17','19','23','22','31','27')\n",
       "sql": "/* TPC-H Q22 */\nSELECT cntrycode,\n       COUNT(*)       AS numcust,\n       SUM(c_acctbal) AS totacctbal\nFROM (SELECT LEFT(c_phone,2) AS cntrycode,\n             c_acctbal\n      FROM tpch_sf1.customer\n      WHERE LEFT(c_phone,2) IN\n            ('10', '17', '19', '23', '22', '31', '27')\n        AND c_acctbal > (SELECT AVG(c_acctbal)\n                         FROM tpch_sf1.customer\n                         WHERE c_acctbal > 0.00\n                           AND LEFT(c_phone,2) IN\n                               ('10', '17', '19', '23', '22', '31', '27'))\n        AND NOT EXISTS (SELECT *\n                        FROM tpch_sf1.orders\n                        WHERE o_custkey = c_custkey)) AS custsale\nGROUP BY cntrycode\nORDER BY cntrycode\n\n\n",
-      "startTime": "2026-06-24T10:15:50.378600Z",
+      "startTime": "2026-06-26T15:25:04.223381Z",
       "status": "OK",
-      "timeMs": 8.419
+      "timeMs": 8.865
     }
   ],
   "runtime": {
-    "avgMs": 8.419,
-    "bestMs": 8.419,
-    "maxMs": 8.419,
-    "minMs": 8.419,
+    "avgMs": 8.865,
+    "bestMs": 8.865,
+    "maxMs": 8.865,
+    "minMs": 8.865,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

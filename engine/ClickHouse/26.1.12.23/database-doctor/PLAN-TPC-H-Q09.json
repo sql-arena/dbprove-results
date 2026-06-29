@@ -1,4 +1,5 @@
 {
+  "config": "M5 Macbook Pro",
   "engine": "ClickHouse",
   "queries": [
     {
@@ -81,16 +82,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       -       175  PROJECT nation, o_year, a1 AS sum_profit\n       -       175  SORT nation, o_year\n       -       175  PROJECT nation, o_year, a1\n       -       175  AGGREGATE SUM(amount) AS a1 GROUP BY HASH nation, o_year\n       -    327148  PROJECT n_name AS nation, EXTRACT(YEAR FROM o_orderdate) AS o_year, (l_extendedprice * (1 - l_discount)) - (ps_supplycost * l_quantity) AS amount\n       -    327148  PROJECT l_extendedprice, l_discount, l_quantity, o_orderdate, ps_supplycost, n_name\n       -    327148  INNER JOIN HASH ON PROJECTION_259.o_orderkey = PROJECTION_232.l_orderkey\n       -    327148  │└PROJECT l_orderkey, l_extendedprice, l_discount, l_quantity, ps_supplycost, n_name\n       -    327148  │ PROJECT l_extendedprice, l_discount, l_quantity, l_orderkey, ps_supplycost, n_name\n       -    327148  │ INNER JOIN HASH ON tuple(PROJECTION_256.ps_suppkey,PROJECTION_256.ps_partkey) = tuple(PROJECTION_235.l_suppkey,PROJECTION_235.l_partkey)\n       -    327148  │ │└PROJECT l_suppkey, l_partkey, l_extendedprice, l_discount, l_quantity, l_orderkey, n_name\n       -    327148  │ │ PROJECT l_extendedprice, l_discount, l_quantity, l_orderkey, l_suppkey, l_partkey, n_name\n       -    327148  │ │ INNER JOIN HASH ON PROJECTION_253.p_partkey = PROJECTION_238.l_partkey\n       -   6001215  │ │ │└PROJECT l_partkey, l_extendedprice, l_discount, l_quantity, l_orderkey, l_suppkey, n_name\n       -   6001215  │ │ │ PROJECT l_extendedprice, l_discount, l_quantity, l_orderkey, l_suppkey, l_partkey, n_name\n       -   6001215  │ │ │ INNER JOIN HASH ON PROJECTION_250.l_suppkey = PROJECTION_241.s_suppkey\n       -     10000  │ │ │ │└PROJECT s_suppkey, n_name\n       -     10000  │ │ │ │ PROJECT s_suppkey, n_name\n       -     10000  │ │ │ │ INNER JOIN HASH ON PROJECTION_247.s_nationkey = PROJECTION_244.n_nationkey\n       -        25  │ │ │ │ │└PROJECT n_nationkey, n_name\n       -        25  │ │ │ │ │ PROJECT n_name, n_nationkey\n       -        25  │ │ │ │ │ TABLE SCAN nation\n       -     10000  │ │ │ │ PROJECT s_nationkey, s_suppkey\n       -     10000  │ │ │ │ PROJECT s_suppkey, s_nationkey\n       -     10000  │ │ │ │ TABLE SCAN supplier\n       -   6001215  │ │ │ PROJECT l_suppkey, l_extendedprice, l_discount, l_quantity, l_orderkey, l_partkey\n       -   6001215  │ │ │ PROJECT l_extendedprice, l_discount, l_quantity, l_orderkey, l_suppkey, l_partkey\n       -   6001215  │ │ │ TABLE SCAN lineitem\n       -     10907  │ │ PROJECT p_partkey\n       -     10907  │ │ PROJECT p_partkey\n       -     10907  │ │ TABLE SCAN part WHERE p_name LIKE '%lace%'\n       -    800000  │ PROJECT ps_suppkey, ps_partkey, ps_supplycost\n       -    800000  │ PROJECT ps_supplycost, ps_suppkey, ps_partkey\n       -    800000  │ TABLE SCAN partsupp\n       -   1500000  PROJECT o_orderkey, o_orderdate\n       -   1500000  PROJECT o_orderdate, o_orderkey\n       -   1500000  TABLE SCAN orders\n",
       "sql": "/* TPC-H Q09 */\nSELECT nation,\n       o_year,\n       SUM(amount) AS sum_profit\nFROM (SELECT n_name                                                          AS nation,\n             EXTRACT(YEAR FROM o_orderdate)                                  AS o_year,\n             l_extendedprice * (1 - l_discount) - ps_supplycost * l_quantity AS amount\n      FROM tpch_sf1.lineitem\n      INNER JOIN tpch_sf1.orders\n          ON l_orderkey = o_orderkey\n      INNER JOIN tpch_sf1.partsupp\n          ON l_suppkey = ps_suppkey\n          AND l_partkey = ps_partkey\n      INNER JOIN tpch_sf1.part\n          ON l_partkey = p_partkey\n      INNER JOIN tpch_sf1.supplier\n          ON l_suppkey = s_suppkey\n      INNER JOIN tpch_sf1.nation\n          ON s_nationkey = n_nationkey\n      WHERE p_name LIKE '%lace%') AS profit\nGROUP BY nation,\n         o_year\nORDER BY nation,\n         o_year DESC",
-      "startTime": "2026-06-23T11:14:47.942122Z",
+      "startTime": "2026-06-26T15:36:02.284692Z",
       "status": "OK",
-      "timeMs": 138.518
+      "timeMs": 253.235
     }
   ],
   "runtime": {
-    "avgMs": 138.518,
-    "bestMs": 138.518,
-    "maxMs": 138.518,
-    "minMs": 138.518,
+    "avgMs": 253.235,
+    "bestMs": 253.235,
+    "maxMs": 253.235,
+    "minMs": 253.235,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

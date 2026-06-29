@@ -82,16 +82,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(name), MIN(title)\n       1         6  INNER JOIN LOOP ON id = role_id\n       1         6  │└INNER JOIN LOOP ON id = person_id\n       1       171  │ │└INNER JOIN LOOP ON person_id = person_id\n       1       104  │ │ │└INNER JOIN LOOP ON movie_id = movie_id AND movie_id = id AND (movie_id = id)\n       2         4  │ │ │ │└INNER JOIN LOOP ON id = movie_id\n      14      8495  │ │ │ │ │└INNER JOIN LOOP ON company_id = id\n    7870      6752  │ │ │ │ │ │└TABLE SEEK company_name AS cn\n    6752      8507  │ │ │ │ │ TABLE SEEK movie_companies AS mc WHERE (mc.note LIKE '%(Japan)%') AND (mc.note NOT  LIKE '%(USA)%') AND ((mc.note LIKE '%(2006)%') OR (mc.note LIKE '%(2007)%'))\n    8495      8495  │ │ │ │ TABLE SEEK title AS t WHERE (t.production_year >= 2006) AND (t.production_year <= 2007) AND ((t.title LIKE 'One Piece%') OR (t.title LIKE 'Dragon Ball Z%'))\n       4       104  │ │ │ TABLE SEEK cast_info AS ci WHERE ci.note = '(voice: English version)'\n     208       170  │ │ TABLE SEEK aka_name AS an\n     171       171  │ TABLE SEEK name AS n WHERE (n.name LIKE '%Yo%') AND (n.name NOT  LIKE '%Yu%')\n       6         6  TABLE SEEK role_type AS rt WHERE rt.role = 'actress'\n",
       "sql": "SELECT MIN(an.name) AS acress_pseudonym,\n       MIN(t.title) AS japanese_anime_movie\nFROM job.aka_name AS an,\n     job.cast_info AS ci,\n     job.company_name AS cn,\n     job.movie_companies AS mc,\n     job.name AS n,\n     job.role_type AS rt,\n     job.title AS t\nWHERE ci.note ='(voice: English version)'\n  AND cn.country_code ='[jp]'\n  AND mc.note LIKE '%(Japan)%'\n  AND mc.note NOT LIKE '%(USA)%'\n  AND (mc.note LIKE '%(2006)%'\n       OR mc.note LIKE '%(2007)%')\n  AND n.name LIKE '%Yo%'\n  AND n.name NOT LIKE '%Yu%'\n  AND rt.role ='actress'\n  AND t.production_year BETWEEN 2006 AND 2007\n  AND (t.title LIKE 'One Piece%'\n       OR t.title LIKE 'Dragon Ball Z%')\n  AND an.person_id = n.id\n  AND n.id = ci.person_id\n  AND ci.movie_id = t.id\n  AND t.id = mc.movie_id\n  AND mc.company_id = cn.id\n  AND ci.role_id = rt.id\n  AND an.person_id = ci.person_id\n  AND ci.movie_id = mc.movie_id;\n",
-      "startTime": "2026-06-25T15:36:06.580686Z",
+      "startTime": "2026-06-26T15:34:47.526111Z",
       "status": "OK",
-      "timeMs": 531.693
+      "timeMs": 242.453
     }
   ],
   "runtime": {
-    "avgMs": 531.693,
-    "bestMs": 531.693,
-    "maxMs": 531.693,
-    "minMs": 531.693,
+    "avgMs": 242.453,
+    "bestMs": 242.453,
+    "maxMs": 242.453,
+    "minMs": 242.453,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

@@ -82,16 +82,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(name), MIN(title)\n       2         2  AGGREGATE PARTIAL MIN(name), PARTIAL MIN(title)\n      18       104  INNER JOIN LOOP ON id = company_type_id\n      18       104  │└INNER JOIN LOOP ON id = person_role_id\n       9        56  │ │└INNER JOIN HASH ON role_id = id\n       1         1  │ │ │└TABLE SCAN role_type AS rt WHERE rt.role = 'actor'\n     204       151  │ │ INNER JOIN LOOP ON movie_id = movie_id AND movie_id = id AND (movie_id = id)\n    6996      4539  │ │ │└INNER JOIN LOOP ON id = movie_id\n   17698      8790  │ │ │ │└INNER JOIN LOOP ON company_id = id\n    1594      1361  │ │ │ │ │└TABLE SEEK company_name AS cn\n  181013      8792  │ │ │ │ TABLE SEEK movie_companies AS mc\n    8790      8790  │ │ │ TABLE SEEK title AS t WHERE t.production_year > 2005\n    4539      4539  │ │ TABLE SEEK cast_info AS ci WHERE (ci.note LIKE '%(voice)%') AND (ci.note LIKE '%(uncredited)%')\n     112       112  │ TABLE SEEK char_name AS chn\n       4         4  TABLE SEEK company_type AS ct\n",
       "sql": "SELECT MIN(chn.name) AS uncredited_voiced_character,\n       MIN(t.title) AS russian_movie\nFROM job.char_name AS chn,\n     job.cast_info AS ci,\n     job.company_name AS cn,\n     job.company_type AS ct,\n     job.movie_companies AS mc,\n     job.role_type AS rt,\n     job.title AS t\nWHERE ci.note LIKE '%(voice)%'\n  AND ci.note LIKE '%(uncredited)%'\n  AND cn.country_code = '[ru]'\n  AND rt.role = 'actor'\n  AND t.production_year > 2005\n  AND t.id = mc.movie_id\n  AND t.id = ci.movie_id\n  AND ci.movie_id = mc.movie_id\n  AND chn.id = ci.person_role_id\n  AND rt.id = ci.role_id\n  AND cn.id = mc.company_id\n  AND ct.id = mc.company_type_id;\n",
-      "startTime": "2026-06-25T15:21:18.062235Z",
+      "startTime": "2026-06-26T15:27:24.579760Z",
       "status": "OK",
-      "timeMs": 24728.482
+      "timeMs": 9195.295
     }
   ],
   "runtime": {
-    "avgMs": 24728.482,
-    "bestMs": 24728.482,
-    "maxMs": 24728.482,
-    "minMs": 24728.482,
+    "avgMs": 9195.295,
+    "bestMs": 9195.295,
+    "maxMs": 9195.295,
+    "minMs": 9195.295,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

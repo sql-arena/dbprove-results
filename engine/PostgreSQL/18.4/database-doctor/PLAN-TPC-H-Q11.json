@@ -82,16 +82,16 @@
       },
       "plan": "Estimate    Actual  Operator\n   10667      1225  SEQUENCE\n       1         1  ├─AGGREGATE SUM(ps_supplycost * ps_availqty) * 0.0001\n   32000     30160  │ INNER JOIN LOOP ON ps_suppkey = s_suppkey\n     400       377  │ │└INNER JOIN LOOP ON s_nationkey = n_nationkey\n       1         1  │ │ │└TABLE SCAN nation AS nation_1 WHERE nation_1.n_name = 'JAPAN'\n     400       377  │ │ TABLE SEEK supplier AS supplier_1\n   30160     30160  │ TABLE SEEK partsupp AS partsupp_1\n   10667      1225  └─SORT SUM(ps_supplycost * ps_availqty)\n   10667      1225    AGGREGATE SUM(ps_supplycost * ps_availqty) GROUP BY HASH ps_partkey\n   32000     30160    INNER JOIN LOOP ON ps_suppkey = s_suppkey\n     400       377    │└INNER JOIN LOOP ON s_nationkey = n_nationkey\n       1         1    │ │└TABLE SCAN nation AS nation WHERE n_name = 'JAPAN'\n     400       377    │ TABLE SEEK supplier AS supplier\n   30160     30160    TABLE SEEK partsupp AS partsupp\n",
       "sql": "/* TPC-H Q11 */\nSELECT ps_partkey,\n       SUM(ps_supplycost * ps_availqty) AS v\nFROM tpch_sf1.partsupp\nINNER JOIN tpch_sf1.supplier\n    ON ps_suppkey = s_suppkey\nINNER JOIN tpch_sf1.nation\n    ON s_nationkey = n_nationkey\nWHERE n_name = 'JAPAN'\nGROUP BY ps_partkey\nHAVING SUM(ps_supplycost * ps_availqty)\n           > (SELECT SUM(ps_supplycost * ps_availqty) * 0.0001\n              FROM tpch_sf1.partsupp\n              INNER JOIN tpch_sf1.supplier\n                  ON ps_suppkey = s_suppkey\n              INNER JOIN tpch_sf1.nation\n                  ON s_nationkey = n_nationkey\n              WHERE n_name = 'JAPAN')\nORDER BY v DESC\n",
-      "startTime": "2026-06-25T13:01:18.768430Z",
+      "startTime": "2026-06-26T15:26:47.784334Z",
       "status": "OK",
-      "timeMs": 208.666
+      "timeMs": 99.824
     }
   ],
   "runtime": {
-    "avgMs": 208.666,
-    "bestMs": 208.666,
-    "maxMs": 208.666,
-    "minMs": 208.666,
+    "avgMs": 99.824,
+    "bestMs": 99.824,
+    "maxMs": 99.824,
+    "minMs": 99.824,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

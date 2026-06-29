@@ -82,16 +82,16 @@
       },
       "plan": "Estimate    Actual  Operator\n      25         5  SORT SUM(l_extendedprice * ('1' - l_discount))\n      25         5  AGGREGATE SUM(l_extendedprice * ('1' - l_discount)) GROUP BY SORT n_name\n      75        15  AGGREGATE PARTIAL SUM(l_extendedprice * ('1' - l_discount)) GROUP BY SORT n_name\n    9087      7403  SORT n_name\n    3029      2467  INNER JOIN HASH ON (l_suppkey = s_suppkey) AND (n_nationkey = s_nationkey)\n   10000     10000  │└TABLE SCAN supplier AS supplier\n  227133    184383  INNER JOIN LOOP ON l_orderkey = o_orderkey\n   56766     46197  │└INNER JOIN LOOP ON o_custkey = c_custkey\n   12500     10065  │ │└INNER JOIN HASH ON c_nationkey = n_nationkey\n       5         5  │ │ │└INNER JOIN HASH ON n_regionkey = r_regionkey\n       1         1  │ │ │ │└TABLE SCAN region AS region WHERE r_name = 'EUROPE'\n      25        25  │ │ │ TABLE SCAN nation AS nation\n  187500    150000  │ │ TABLE SCAN customer AS customer\n   90591     46201  │ TABLE SEEK orders AS orders WHERE (o_orderdate >= '1995-01-01') AND (o_orderdate < '1996-01-01')\n  600561    184326  TABLE SEEK lineitem AS lineitem\n",
       "sql": "/* TPC-H Q05 */\nSELECT n_name,\n       SUM(l_extendedprice * (1 - l_discount)) AS revenue\nFROM tpch_sf1.lineitem\nINNER JOIN tpch_sf1.orders\n    ON l_orderkey = o_orderkey\nINNER JOIN tpch_sf1.customer\n    ON o_custkey = c_custkey\nINNER JOIN tpch_sf1.supplier\n    ON l_suppkey = s_suppkey\nINNER JOIN tpch_sf1.nation\n    ON s_nationkey = n_nationkey\nINNER JOIN tpch_sf1.region\n    ON n_regionkey = r_regionkey\nWHERE r_name = 'EUROPE'\n  AND o_orderdate >= '1995-01-01'\n  AND o_orderdate < '1996-01-01'\n  AND s_nationkey = c_nationkey\nGROUP BY n_name\nORDER BY revenue DESC\n",
-      "startTime": "2026-06-25T13:01:14.220479Z",
+      "startTime": "2026-06-26T15:26:45.571119Z",
       "status": "OK",
-      "timeMs": 481.366
+      "timeMs": 146.719
     }
   ],
   "runtime": {
-    "avgMs": 481.366,
-    "bestMs": 481.366,
-    "maxMs": 481.366,
-    "minMs": 481.366,
+    "avgMs": 146.719,
+    "bestMs": 146.719,
+    "maxMs": 146.719,
+    "minMs": 146.719,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

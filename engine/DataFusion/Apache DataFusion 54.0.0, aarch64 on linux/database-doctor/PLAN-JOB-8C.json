@@ -1,4 +1,5 @@
 {
+  "config": "M5 Macbook Pro",
   "engine": "DataFusion",
   "queries": [
     {
@@ -81,16 +82,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  PROJECT writer_pseudo_name, movie_title\n       1         1  AGGREGATE MIN(name), MIN(title)\n  453136        10  DISTRIBUTE GATHER\n  453136        10  AGGREGATE MIN(name), MIN(title)\n  453136   2487611  INNER JOIN HASH ON movie_id = id AND movie_id = id\n  453136   2487611  │└DISTRIBUTE HASH ON movie_id, movie_id\n  453136   2487611  │ INNER JOIN HASH ON id = role_id\n       3         1  │ │└DISTRIBUTE GATHER\n       3         1  │ │ FILTER role = 'writer'\n      12        12  │ │ DISTRIBUTE ROUND ROBIN\n      12        12  │ │ TABLE SCAN role_type WHERE role = 'writer'\n 1661500   2592587  │ INNER JOIN HASH ON person_id = id AND person_id = id\n 1661500   2592587  │ │└DISTRIBUTE HASH ON person_id, person_id\n 1661500   2592587  │ │ INNER JOIN HASH ON id = company_id\n   47000     84843  │ │ │└DISTRIBUTE GATHER\n   47000     84843  │ │ │ FILTER country_code = 'us'\n  234997    234997  │ │ │ TABLE SCAN company_name WHERE country_code = 'us'\n 8307394   5189683  │ │ PROJECT person_id, name, person_id, movie_id, role_id, movie_id, company_id\n 8307394   5189683  │ │ INNER JOIN HASH ON movie_id = movie_id\n 2609129   2609129  │ │ │└DISTRIBUTE HASH ON movie_id\n 2609129   2609129  │ │ │ TABLE SCAN movie_companies WHERE ((company_id >= 1) AND (company_id <= 234997)) AND TRUE\n 8042634   2420843  │ │ DISTRIBUTE HASH ON movie_id\n 8042634   2420843  │ │ INNER JOIN HASH ON person_id = person_id\n  901343    901343  │ │ │└DISTRIBUTE HASH ON person_id\n  901343    901343  │ │ │ TABLE SCAN aka_name\n36244344   2841468  │ │ DISTRIBUTE HASH ON person_id\n36244344   2841468  │ │ TABLE SCAN cast_info WHERE (CASE MOD(HASH_REPARTITION person_id,10) WHEN 0 THEN (((person_id >= 5) AND (person_id <= 4167489)) AND TRUE) WHEN 1 THEN (((person_id >= 15) AND (person_id <= 4167473)) AND TRUE) WHEN 2 THEN (((person_id >= 69) AND (person_id <= 4167478)) AND TRUE) WHEN 3 THEN (((person_id >= 161) AND (person_id <= 4167352)) AND TRUE) WHEN 4 THEN (((person_id >= 94) AND (person_id <= 4167420)) AND TRUE) WHEN 5 THEN (((person_id >= 113) AND (person_id <= ...\n 4167491   4167491  │ DISTRIBUTE HASH ON id, id\n 4167491   4167491  │ TABLE SCAN name WHERE CASE MOD(HASH_REPARTITION(id,id),10) WHEN 1 THEN ((((id >= 862) AND (id <= 3233413)) AND ((id >= 862) AND (id <= 3233413))) AND TRUE) WHEN 3 THEN ((((id >= 161) AND (id <= 3233335)) AND ((id >= 161) AND (id <= 3233335))) AND TRUE) WHEN 5 THEN ((((id >= 15) AND (id <= 3233447)) AND ((id >= 15) AND (id <= 3233447))) AND TRUE) WHEN 7 THEN ((((id >= 333) AND (id <= 3233169)) AND ((id >= 333) AND (id <= 3233169))) AND TRUE) WHEN 9 THEN ((((id >= 836) A...\n 2528312   2528312  DISTRIBUTE HASH ON id, id\n 2528312   2528312  TABLE SCAN title WHERE CASE MOD(HASH_REPARTITION(id,id),10) WHEN 1 THEN ((((id >= 57) AND (id <= 2525740)) AND ((id >= 57) AND (id <= 2525740))) AND TRUE) WHEN 3 THEN ((((id >= 51) AND (id <= 2525737)) AND ((id >= 51) AND (id <= 2525737))) AND TRUE) WHEN 5 THEN ((((id >= 56) AND (id <= 2525744)) AND ((id >= 56) AND (id <= 2525744))) AND TRUE) WHEN 7 THEN ((((id >= 54) AND (id <= 2525743)) AND ((id >= 54) AND (id <= 2525743))) AND TRUE) WHEN 9 THEN ((((id >= 50) AND (id <= ...\n",
       "sql": "SELECT MIN(a1.name) AS writer_pseudo_name,\n       MIN(t.title) AS movie_title\nFROM job.aka_name AS a1,\n     job.cast_info AS ci,\n     job.company_name AS cn,\n     job.movie_companies AS mc,\n     job.name AS n1,\n     job.role_type AS rt,\n     job.title AS t\nWHERE cn.country_code ='[us]'\n  AND rt.role ='writer'\n  AND a1.person_id = n1.id\n  AND n1.id = ci.person_id\n  AND ci.movie_id = t.id\n  AND t.id = mc.movie_id\n  AND mc.company_id = cn.id\n  AND ci.role_id = rt.id\n  AND a1.person_id = ci.person_id\n  AND ci.movie_id = mc.movie_id;\n",
-      "startTime": "2026-06-23T17:16:08.504199Z",
+      "startTime": "2026-06-26T23:55:10.854472Z",
       "status": "OK",
-      "timeMs": 234.786
+      "timeMs": 189.721
     }
   ],
   "runtime": {
-    "avgMs": 234.786,
-    "bestMs": 234.786,
-    "maxMs": 234.786,
-    "minMs": 234.786,
+    "avgMs": 189.721,
+    "bestMs": 189.721,
+    "maxMs": 189.721,
+    "minMs": 189.721,
     "stdDevMs": 0.0
   },
   "storageVariant": "iceberg",

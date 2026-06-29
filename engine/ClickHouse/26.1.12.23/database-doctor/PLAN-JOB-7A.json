@@ -1,6 +1,99 @@
 {
+  "config": "M5 Macbook Pro",
   "engine": "ClickHouse",
-  "queries": [],
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 0,
+        "distribute": 0,
+        "hash": 41132505,
+        "join": 59740356,
+        "scan": 37832576,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       -         1  PROJECT a1 AS of_person, a2 AS biography_movie\n       -         1  AGGREGATE MIN(name) AS a1, MIN(title) AS a2\n       -         0  PROJECT name, title\n       -         0  PROJECT name, title\n       -         0  INNER JOIN HASH ON tuple(PROJECTION_5330.person_id,PROJECTION_5330.person_id,PROJECTION_5330.person_id,PROJECTION_5330.person_id) = tuple(PROJECTION_5315.id,PROJECTION_5315.id,PROJECTION_5315.person_id,PROJECTION_5315.person_id)\n       -        17  │└PROJECT id, person_id AS person_id_right, name\n       -        17  │ PROJECT name, id, person_id\n       -        17  │ INNER JOIN HASH ON PROJECTION_5321.info_type_id = PROJECTION_5318.id\n       -         1  │ │└PROJECT id AS id_right\n       -         1  │ │ PROJECT id\n       -         1  │ │ TABLE SCAN info_type WHERE info = 'mini biography'\n       -        17  │ PROJECT info_type_id, name, id AS id_left, person_id\n       -        17  │ PROJECT name, id, person_id, info_type_id\n       -        17  │ INNER JOIN HASH ON PROJECTION_5327.id = PROJECTION_5324.person_id\n       -        64  │ │└PROJECT person_id, info_type_id\n       -        64  │ │ PROJECT person_id, info_type_id\n       -        64  │ │ TABLE SCAN person_info WHERE note = 'Volker Boehm'\n       -    543291  │ PROJECT id, name\n       -    543291  │ PROJECT id, name\n       -    543291  │ TABLE SCAN name WHERE (name_pcode_cf >= 'A') AND (name_pcode_cf <= 'F') AND ((gender = 'm') OR ((gender = 'f') AND startsWith(name,'B')))\n       -         0  PROJECT person_id_left, person_id_right AS person_id_left_2, title\n       -         0  PROJECT person_id_left, person_id_right, title\n       -         0  INNER JOIN HASH ON tuple(PROJECTION_5342.movie_id,PROJECTION_5342.id) = tuple(PROJECTION_5333.linked_movie_id,PROJECTION_5333.linked_movie_id)\n       -      5186  │└PROJECT linked_movie_id\n       -      5186  │ PROJECT linked_movie_id\n       -      5186  │ INNER JOIN HASH ON PROJECTION_5339.link_type_id = PROJECTION_5336.id\n       -         1  │ │└PROJECT id\n       -         1  │ │ PROJECT id\n       -         1  │ │ TABLE SCAN link_type WHERE link = 'features'\n       -     29997  │ PROJECT link_type_id, linked_movie_id\n       -     29997  │ PROJECT linked_movie_id, link_type_id\n       -     29997  │ TABLE SCAN movie_link\n       -   4877691  PROJECT movie_id, id, person_id, person_id, title\n       -   4877691  PROJECT person_id, person_id, movie_id, title, id\n       -   4877691  INNER JOIN HASH ON PROJECTION_5348.movie_id = PROJECTION_5345.id\n       -    340186  │└PROJECT id, title\n       -    340186  │ PROJECT id, title\n       -    340186  │ TABLE SCAN title WHERE (production_year >= 1980) AND (production_year <= 1995)\n       -  27144680  PROJECT movie_id, person_id, person_id\n       -  27144680  PROJECT person_id, person_id, movie_id\n       -  27144680  INNER JOIN HASH ON PROJECTION_5354.person_id = PROJECTION_5351.person_id\n       -  36244344  │└PROJECT person_id AS person_id_right, movie_id\n       -  36244344  │ PROJECT person_id, movie_id\n       -  36244344  │ TABLE SCAN cast_info\n       -    674692  PROJECT person_id AS person_id_left\n       -    674692  PROJECT person_id\n       -    674692  TABLE SCAN aka_name WHERE name LIKE '%a%'\n",
+      "sql": "SELECT MIN(n.name) AS of_person,\n       MIN(t.title) AS biography_movie\nFROM job.aka_name AS an,\n     job.cast_info AS ci,\n     job.info_type AS it,\n     job.link_type AS lt,\n     job.movie_link AS ml,\n     job.name AS n,\n     job.person_info AS pi,\n     job.title AS t\nWHERE an.name LIKE '%a%'\n  AND it.info ='mini biography'\n  AND lt.link ='features'\n  AND n.name_pcode_cf BETWEEN 'A' AND 'F'\n  AND (n.gender='m'\n       OR (n.gender = 'f'\n           AND n.name LIKE 'B%'))\n  AND pi.note ='Volker Boehm'\n  AND t.production_year BETWEEN 1980 AND 1995\n  AND n.id = an.person_id\n  AND n.id = pi.person_id\n  AND ci.person_id = n.id\n  AND t.id = ci.movie_id\n  AND ml.linked_movie_id = t.id\n  AND lt.id = ml.link_type_id\n  AND it.id = pi.info_type_id\n  AND pi.person_id = an.person_id\n  AND pi.person_id = ci.person_id\n  AND an.person_id = ci.person_id\n  AND ci.movie_id = ml.linked_movie_id;\n",
+      "startTime": "2026-06-26T22:54:00.540167Z",
+      "status": "OK",
+      "timeMs": 745.647
+    }
+  ],
+  "runtime": {
+    "avgMs": 745.647,
+    "bestMs": 745.647,
+    "maxMs": 745.647,
+    "minMs": 745.647,
+    "stdDevMs": 0.0
+  },
   "storageVariant": "native",
   "theorem": {
     "categories": [

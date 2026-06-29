@@ -1,4 +1,5 @@
 {
+  "config": "M5 Macbook Pro",
   "engine": "Trino",
   "queries": [
     {
@@ -81,16 +82,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  PROJECT min AS movie_keyword, min_21 AS actor_name, min_22 AS hero_movie\n       1         1  AGGREGATE MIN(min_23) AS min, MIN(min_24) AS min_21, MIN(min_25) AS min_22\n       -         1  DISTRIBUTE GATHER\n       -         1  AGGREGATE MIN(keyword) AS min_23, MIN(name) AS min_24, MIN(title) AS min_25\n       -        12  INNER JOIN HASH ON movie_id = id_13\n   88353       438  │└DISTRIBUTE HASH ON id_13\n 2528312       438  │ PROJECT id AS id_13, title\n 2528312       438  │ FILTER production_year > 2014\n 2528312   2528312  │ TABLE SCAN title\n       -       112  INNER JOIN HASH ON person_id = id_9\n       -         2  │└DISTRIBUTE HASH ON id_9\n 4167491         2  │ PROJECT id AS id_9, name\n 4167491         2  │ FILTER name LIKE '%Downey%Robert%'\n 4167491   4167491  │ TABLE SCAN name\n       -   1564305  INNER JOIN HASH ON keyword_id = id_0\n       -         8  │└DISTRIBUTE GATHER\n  134170         8  │ PROJECT id AS id_0, keyword\n  134170         8  │ FILTER keyword IN('based-on-comic','fight','marvel-comics','second-part','sequel','superhero','tv-special','violence')\n  134170    134170  │ TABLE SCAN keyword\n       -      215M  INNER JOIN HASH ON movie_id = movie_id_5\n 4523930   4523930  │└DISTRIBUTE HASH ON movie_id_5\n 4523930   4523930  │ PROJECT movie_id AS movie_id_5, keyword_id\n 4523930   4523930  │ TABLE SCAN movie_keyword\n36244344  36244344  TABLE SCAN cast_info\n",
       "sql": "SELECT MIN(k.keyword) AS movie_keyword,\n       MIN(n.name) AS actor_name,\n       MIN(t.title) AS hero_movie\nFROM job.cast_info AS ci,\n     job.keyword AS k,\n     job.movie_keyword AS mk,\n     job.name AS n,\n     job.title AS t\nWHERE k.keyword IN ('superhero',\n                    'sequel',\n                    'second-part',\n                    'marvel-comics',\n                    'based-on-comic',\n                    'tv-special',\n                    'fight',\n                    'violence')\n  AND n.name LIKE '%Downey%Robert%'\n  AND t.production_year > 2014\n  AND k.id = mk.keyword_id\n  AND t.id = mk.movie_id\n  AND t.id = ci.movie_id\n  AND ci.movie_id = mk.movie_id\n  AND n.id = ci.person_id;\n",
-      "startTime": "2026-06-23T15:34:10.968342Z",
+      "startTime": "2026-06-26T16:53:42.584279Z",
       "status": "OK",
-      "timeMs": 648.278
+      "timeMs": 481.919
     }
   ],
   "runtime": {
-    "avgMs": 648.278,
-    "bestMs": 648.278,
-    "maxMs": 648.278,
-    "minMs": 648.278,
+    "avgMs": 481.919,
+    "bestMs": 481.919,
+    "maxMs": 481.919,
+    "minMs": 481.919,
     "stdDevMs": 0.0
   },
   "storageVariant": "iceberg",

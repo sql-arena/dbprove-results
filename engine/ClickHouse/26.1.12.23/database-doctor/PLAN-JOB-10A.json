@@ -1,6 +1,99 @@
 {
+  "config": "M5 Macbook Pro",
   "engine": "ClickHouse",
-  "queries": [],
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 0,
+        "distribute": 0,
+        "hash": 310129,
+        "join": 6880803,
+        "scan": 6794681,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       -         1  PROJECT a1 AS uncredited_voiced_character, a2 AS russian_movie\n       -         1  AGGREGATE MIN(name) AS a1, MIN(title) AS a2\n       -         0  PROJECT name, title\n       -         0  PROJECT name, title\n       -         0  INNER JOIN HASH ON tuple(PROJECTION_38.id,PROJECTION_38.id) = tuple(PROJECTION_5.movie_id,PROJECTION_5.movie_id)\n       -         0  │└PROJECT movie_id, movie_id, name\n       -         0  │ PROJECT name, movie_id, movie_id\n       -         0  │ INNER JOIN HASH ON PROJECTION_35.id = PROJECTION_8.company_id\n       -     86127  │ │└PROJECT company_id, name, movie_id, movie_id\n       -     86127  │ │ PROJECT name, movie_id, movie_id, company_id\n       -     86127  │ │ INNER JOIN HASH ON PROJECTION_32.id = PROJECTION_11.company_type_id\n       -     86127  │ │ │└PROJECT company_type_id, name, movie_id, movie_id, company_id\n       -     86127  │ │ │ PROJECT name, movie_id, movie_id, company_id, company_type_id\n       -     86127  │ │ │ INNER JOIN HASH ON PROJECTION_29.movie_id = PROJECTION_14.movie_id\n       -     25523  │ │ │ │└PROJECT movie_id AS movie_id_right, name\n       -     25523  │ │ │ │ PROJECT name, movie_id\n       -     25523  │ │ │ │ INNER JOIN HASH ON PROJECTION_26.id = PROJECTION_17.person_role_id\n       -     25874  │ │ │ │ │└PROJECT person_role_id, movie_id\n       -     25874  │ │ │ │ │ PROJECT person_role_id, movie_id\n       -     25874  │ │ │ │ │ INNER JOIN HASH ON PROJECTION_23.role_id = PROJECTION_20.id\n       -         1  │ │ │ │ │ │└PROJECT id\n       -         1  │ │ │ │ │ │ PROJECT id\n       -         1  │ │ │ │ │ │ TABLE SCAN role_type WHERE role = 'actor'\n       -     32288  │ │ │ │ │ PROJECT role_id, person_role_id, movie_id\n       -     32288  │ │ │ │ │ PROJECT person_role_id, movie_id, role_id\n       -     32288  │ │ │ │ │ TABLE SCAN cast_info WHERE note LIKE '%(voice)%' AND note LIKE '%(uncredited)%'\n       -   3140339  │ │ │ │ PROJECT id, name\n       -   3140339  │ │ │ │ PROJECT name, id\n       -   3140339  │ │ │ │ TABLE SCAN char_name\n       -   2609129  │ │ │ PROJECT movie_id AS movie_id_left, company_id, company_type_id\n       -   2609129  │ │ │ PROJECT movie_id, company_id, company_type_id\n       -   2609129  │ │ │ TABLE SCAN movie_companies\n       -         4  │ │ PROJECT id\n       -         4  │ │ PROJECT id\n       -         4  │ │ TABLE SCAN company_type\n       -         0  │ PROJECT id\n       -         0  │ PROJECT id\n       -         0  │ TABLE SCAN company_name WHERE country_code = 'ru'\n       -   1012920  PROJECT id, title\n       -   1012920  PROJECT id, title\n       -   1012920  TABLE SCAN title WHERE production_year > 2005\n",
+      "sql": "SELECT MIN(chn.name) AS uncredited_voiced_character,\n       MIN(t.title) AS russian_movie\nFROM job.char_name AS chn,\n     job.cast_info AS ci,\n     job.company_name AS cn,\n     job.company_type AS ct,\n     job.movie_companies AS mc,\n     job.role_type AS rt,\n     job.title AS t\nWHERE ci.note LIKE '%(voice)%'\n  AND ci.note LIKE '%(uncredited)%'\n  AND cn.country_code = '[ru]'\n  AND rt.role = 'actor'\n  AND t.production_year > 2005\n  AND t.id = mc.movie_id\n  AND t.id = ci.movie_id\n  AND ci.movie_id = mc.movie_id\n  AND chn.id = ci.person_role_id\n  AND rt.id = ci.role_id\n  AND cn.id = mc.company_id\n  AND ct.id = mc.company_type_id;\n",
+      "startTime": "2026-06-26T18:26:48.838860Z",
+      "status": "OK",
+      "timeMs": 609.877
+    }
+  ],
+  "runtime": {
+    "avgMs": 609.877,
+    "bestMs": 609.877,
+    "maxMs": 609.877,
+    "minMs": 609.877,
+    "stdDevMs": 0.0
+  },
   "storageVariant": "native",
   "theorem": {
     "categories": [

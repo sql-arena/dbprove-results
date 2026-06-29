@@ -82,16 +82,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       -       175  SORT profit.nation, profit.o_year\n 4934640       175  AGGREGATE SUM(#2) GROUP BY HASH #0, #1\n 5118056    327148  PROJECT nation, o_year, amount\n 5118056    327148  PROJECT nation, o_year, amount\n 5118056    327148  INNER JOIN HASH ON l_suppkey = s_suppkey AND p_partkey = ps_partkey\n  769230    800000  │└INNER JOIN HASH ON ps_suppkey = s_suppkey\n    9615     10000  │ │└INNER JOIN HASH ON s_nationkey = n_nationkey\n      25        25  │ │ │└TABLE SCAN nation\n   10000     10000  │ │ TABLE SCAN supplier\n  800000    800000  │ TABLE SCAN partsupp\n 1269050    327148  INNER JOIN HASH ON l_orderkey = o_orderkey\n 1500000   1500000  │└TABLE SCAN orders\n 1258545    327148  INNER JOIN HASH ON l_partkey = p_partkey\n   40000     10907  │└TABLE SCAN part WHERE contains(p_name,'lace')\n 6001215   6001179  TABLE SCAN lineitem\n",
       "sql": "/* TPC-H Q09 */\nSELECT nation,\n       o_year,\n       SUM(amount) AS sum_profit\nFROM (SELECT n_name                                                          AS nation,\n             EXTRACT(YEAR FROM o_orderdate)                                  AS o_year,\n             l_extendedprice * (1 - l_discount) - ps_supplycost * l_quantity AS amount\n      FROM tpch_sf1.lineitem\n      INNER JOIN tpch_sf1.orders\n          ON l_orderkey = o_orderkey\n      INNER JOIN tpch_sf1.partsupp\n          ON l_suppkey = ps_suppkey\n          AND l_partkey = ps_partkey\n      INNER JOIN tpch_sf1.part\n          ON l_partkey = p_partkey\n      INNER JOIN tpch_sf1.supplier\n          ON l_suppkey = s_suppkey\n      INNER JOIN tpch_sf1.nation\n          ON s_nationkey = n_nationkey\n      WHERE p_name LIKE '%lace%') AS profit\nGROUP BY nation,\n         o_year\nORDER BY nation,\n         o_year DESC",
-      "startTime": "2026-06-24T10:15:49.939468Z",
+      "startTime": "2026-06-26T15:25:03.855773Z",
       "status": "OK",
-      "timeMs": 39.5
+      "timeMs": 37.49
     }
   ],
   "runtime": {
-    "avgMs": 39.5,
-    "bestMs": 39.5,
-    "maxMs": 39.5,
-    "minMs": 39.5,
+    "avgMs": 37.49,
+    "bestMs": 37.49,
+    "maxMs": 37.49,
+    "minMs": 37.49,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

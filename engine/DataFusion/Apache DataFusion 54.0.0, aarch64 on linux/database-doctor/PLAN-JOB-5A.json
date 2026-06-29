@@ -1,4 +1,5 @@
 {
+  "config": "M5 Macbook Pro",
   "engine": "DataFusion",
   "queries": [
     {
@@ -81,16 +82,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  PROJECT typical_european_movie\n       1         1  AGGREGATE MIN(title)\n  252832        10  DISTRIBUTE GATHER\n  252832        10  AGGREGATE MIN(title)\n  252832         0  INNER JOIN HASH ON id = movie_id AND id = movie_id\n  252832   1012920  │└DISTRIBUTE HASH ON id, id\n  252832   1012920  │ FILTER production_year > 2005\n 2528312   2528312  │ TABLE SCAN title WHERE (production_year > 2005) AND TRUE\n  306427         0  DISTRIBUTE HASH ON movie_id, movie_id\n  306427         0  INNER JOIN HASH ON id = info_type_id\n     113       113  │└TABLE SCAN info_type\n  306427         0  INNER JOIN HASH ON movie_id = movie_id\n  260913         0  │└DISTRIBUTE GATHER\n  260913         0  │ INNER JOIN HASH ON id = company_type_id\n       1         1  │ │└DISTRIBUTE GATHER\n       1         1  │ │ FILTER kind = 'production companies'\n       4         4  │ │ DISTRIBUTE ROUND ROBIN\n       4         4  │ │ TABLE SCAN company_type WHERE kind = 'production companies'\n  521826       960  │ FILTER note LIKE '%(theatrical)%' AND note LIKE '%(France)%'\n 2609129   1376261  │ TABLE SCAN movie_companies WHERE ((note LIKE '%(theatrical)%' AND note LIKE '%(France)%') AND (((company_type_id >= 2) AND (company_type_id <= 2)) AND company_type_id IN 2)) AND CASE MOD(HASH_REPARTITION(movie_id,movie_id),10) WHEN 1 THEN ((((movie_id >= 4) AND (movie_id <= 2528297)) AND ((movie_id >= 4) AND (movie_id <= 2528297))) AND TRUE) WHEN 3 THEN ((((movie_id >= 3) AND (movie_id <= 2528185)) AND ((movie_id >= 3) AND (movie_id <= 2528185))) AND TRUE) WHEN 5 THEN ...\n 2967144    153897  FILTER info IN('Sweden','Norway','Germany','Denmark','Swedish','Denish','Norwegian','German')\n14835720   9042947  TABLE SCAN movie_info WHERE (info IN('Sweden','Norway','Germany','Denmark','Swedish','Denish','Norwegian','German') AND TRUE) AND (((info_type_id >= 1) AND (info_type_id <= 113)) AND info_type_id IN(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96...\n",
       "sql": "SELECT MIN(t.title) AS typical_european_movie\nFROM job.company_type AS ct,\n     job.info_type AS it,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.title AS t\nWHERE ct.kind = 'production companies'\n  AND mc.note LIKE '%(theatrical)%'\n  AND mc.note LIKE '%(France)%'\n  AND mi.info IN ('Sweden',\n                  'Norway',\n                  'Germany',\n                  'Denmark',\n                  'Swedish',\n                  'Denish',\n                  'Norwegian',\n                  'German')\n  AND t.production_year > 2005\n  AND t.id = mi.movie_id\n  AND t.id = mc.movie_id\n  AND mc.movie_id = mi.movie_id\n  AND ct.id = mc.company_type_id\n  AND it.id = mi.info_type_id;\n",
-      "startTime": "2026-06-23T17:15:55.400218Z",
+      "startTime": "2026-06-26T23:55:04.826068Z",
       "status": "OK",
-      "timeMs": 37.398
+      "timeMs": 34.529
     }
   ],
   "runtime": {
-    "avgMs": 37.398,
-    "bestMs": 37.398,
-    "maxMs": 37.398,
-    "minMs": 37.398,
+    "avgMs": 34.529,
+    "bestMs": 34.529,
+    "maxMs": 34.529,
+    "minMs": 34.529,
     "stdDevMs": 0.0
   },
   "storageVariant": "iceberg",

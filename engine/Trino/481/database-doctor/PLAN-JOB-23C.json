@@ -1,4 +1,5 @@
 {
+  "config": "M5 Macbook Pro",
   "engine": "Trino",
   "queries": [
     {
@@ -81,16 +82,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  PROJECT min AS movie_kind, min_50 AS complete_us_internet_movie\n       1         1  AGGREGATE MIN(min_51) AS min, MIN(min_52) AS min_50\n       -         1  DISTRIBUTE GATHER\n       -         1  AGGREGATE MIN(kind_22) AS min_51, MIN(title) AS min_52\n       -         0  INNER JOIN HASH ON kind_id = id_21\n       -         4  │└DISTRIBUTE GATHER\n       7         4  │ PROJECT id AS id_21, kind AS kind_22\n       7         4  │ FILTER kind IN('movie','tv movie','video game','video movie')\n       7         7  │ TABLE SCAN kind_type\n       -         0  INNER JOIN HASH ON movie_id = id_43\n  512448   1749032  │└DISTRIBUTE HASH ON id_43\n 2528312   1749032  │ PROJECT id AS id_43, title, kind_id\n 2528312   1749032  │ FILTER production_year > 1990\n 2528312   2528312  │ TABLE SCAN title\n       -         0  INNER JOIN HASH ON keyword_id = id_17\n  134170    134170  │└DISTRIBUTE GATHER\n  134170    134170  │ PROJECT id AS id_17\n  134170    134170  │ TABLE SCAN keyword\n       -         0  INNER JOIN HASH ON movie_id = movie_id_39\n 4523930   4523930  │└DISTRIBUTE HASH ON movie_id_39\n 4523930   4523930  │ PROJECT movie_id AS movie_id_39, keyword_id\n 4523930   4523930  │ TABLE SCAN movie_keyword\n       -         0  INNER JOIN HASH ON info_type_id = id_13\n       -         1  │└DISTRIBUTE GATHER\n     113         1  │ PROJECT id AS id_13\n     113         1  │ FILTER info = 'release dates'\n     113       113  │ TABLE SCAN info_type\n       -         0  INNER JOIN HASH ON movie_id = movie_id_32\n13352148      1783  │└DISTRIBUTE HASH ON movie_id_32\n14835720      1783  │ PROJECT movie_id AS movie_id_32, info_type_id\n14835720      1783  │ FILTER (info >= 'USA:') AND (info < 'USA;') AND (note LIKE '%internet%') AND ((info LIKE 'USA:% 199%') OR (info LIKE 'USA:% 200%'))\n14835720  14835720  │ TABLE SCAN movie_info\n       -         0  INNER JOIN HASH ON company_type_id = id_8\n       4         4  │└DISTRIBUTE GATHER\n       4         4  │ PROJECT id AS id_8\n       4         4  │ TABLE SCAN company_type\n       -         0  INNER JOIN HASH ON company_id = id_4\n       -         0  │└DISTRIBUTE GATHER\n  234997         0  │ PROJECT id AS id_4\n  234997         0  │ FILTER country_code = 'us'\n  234997    234997  │ TABLE SCAN company_name\n       -    227682  INNER JOIN HASH ON movie_id = movie_id_27\n 2609129   2609129  │└DISTRIBUTE HASH ON movie_id_27\n 2609129   2609129  │ PROJECT movie_id AS movie_id_27, company_id, company_type_id\n 2609129   2609129  │ TABLE SCAN movie_companies\n       -     24592  INNER JOIN HASH ON status_id = id_0\n       -         1  │└DISTRIBUTE GATHER\n       4         1  │ PROJECT id AS id_0\n       4         1  │ FILTER kind = 'complete+verified'\n       4         4  │ TABLE SCAN comp_cast_type\n  135086    135086  TABLE SCAN complete_cast\n",
       "sql": "SELECT MIN(kt.kind) AS movie_kind,\n       MIN(t.title) AS complete_us_internet_movie\nFROM job.complete_cast AS cc,\n     job.comp_cast_type AS cct1,\n     job.company_name AS cn,\n     job.company_type AS ct,\n     job.info_type AS it1,\n     job.keyword AS k,\n     job.kind_type AS kt,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.movie_keyword AS mk,\n     job.title AS t\nWHERE cct1.kind = 'complete+verified'\n  AND cn.country_code = '[us]'\n  AND it1.info = 'release dates'\n  AND kt.kind IN ('movie',\n                  'tv movie',\n                  'video movie',\n                  'video game')\n  AND mi.note LIKE '%internet%'\n  AND mi.info IS NOT NULL\n  AND (mi.info LIKE 'USA:% 199%'\n       OR mi.info LIKE 'USA:% 200%')\n  AND t.production_year > 1990\n  AND kt.id = t.kind_id\n  AND t.id = mi.movie_id\n  AND t.id = mk.movie_id\n  AND t.id = mc.movie_id\n  AND t.id = cc.movie_id\n  AND mk.movie_id = mi.movie_id\n  AND mk.movie_id = mc.movie_id\n  AND mk.movie_id = cc.movie_id\n  AND mi.movie_id = mc.movie_id\n  AND mi.movie_id = cc.movie_id\n  AND mc.movie_id = cc.movie_id\n  AND k.id = mk.keyword_id\n  AND it1.id = mi.info_type_id\n  AND cn.id = mc.company_id\n  AND ct.id = mc.company_type_id\n  AND cct1.id = cc.status_id;\n",
-      "startTime": "2026-06-23T15:24:51.239016Z",
+      "startTime": "2026-06-26T16:46:21.369501Z",
       "status": "OK",
-      "timeMs": 1525.216
+      "timeMs": 795.445
     }
   ],
   "runtime": {
-    "avgMs": 1525.216,
-    "bestMs": 1525.216,
-    "maxMs": 1525.216,
-    "minMs": 1525.216,
+    "avgMs": 795.445,
+    "bestMs": 795.445,
+    "maxMs": 795.445,
+    "minMs": 795.445,
     "stdDevMs": 0.0
   },
   "storageVariant": "iceberg",

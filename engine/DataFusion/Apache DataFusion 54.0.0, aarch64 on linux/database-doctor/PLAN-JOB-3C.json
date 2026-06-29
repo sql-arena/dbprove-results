@@ -1,4 +1,5 @@
 {
+  "config": "M5 Macbook Pro",
   "engine": "DataFusion",
   "queries": [
     {
@@ -81,16 +82,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  PROJECT movie_title\n       1         1  AGGREGATE MIN(title)\n  523722        10  DISTRIBUTE GATHER\n  523722        10  AGGREGATE MIN(title)\n  523722      7250  INNER JOIN HASH ON id = movie_id AND id = movie_id\n  523722   1749032  │└DISTRIBUTE HASH ON id, id\n  523722   1749032  │ FILTER production_year > 1990\n 2528312   2528312  │ TABLE SCAN title WHERE (production_year > 1990) AND (title < '& Teller 2')\n 1062618     12163  DISTRIBUTE HASH ON movie_id, movie_id\n 1062618     12163  INNER JOIN HASH ON movie_id = movie_id\n  904786     12951  │└DISTRIBUTE HASH ON movie_id\n  904786     12951  │ INNER JOIN HASH ON id = keyword_id\n   26834        30  │ │└DISTRIBUTE GATHER\n   26834        30  │ │ FILTER keyword LIKE '%sequel%'\n  134170    134170  │ │ DISTRIBUTE ROUND ROBIN\n  134170    134170  │ │ TABLE SCAN keyword WHERE keyword LIKE '%sequel%'\n 4523930   4523930  │ TABLE SCAN movie_keyword WHERE (((keyword_id >= 398) AND (keyword_id <= 128826)) AND keyword_id IN(398,89546,83664,87951,83665,39892,45883,118026,128826,92506,21183,100855,102660,78133,75006,76744,72594,77599,69167,61591,64972,72203,73181,59320,40815,40221,126175,122943,122578,90485)) AND CASE MOD(HASH_REPARTITION(movie_id,movie_id),10) WHEN 1 THEN ((((movie_id >= 4) AND (movie_id <= 2528297)) AND ((movie_id >= 4) AND (movie_id <= 2528297))) AND TRUE) WHEN 3 THEN ((((m...\n 2967144    706674  DISTRIBUTE HASH ON movie_id\n 2967144    706674  FILTER info IN('Sweden','Norway','Germany','Denmark','Swedish','Denish','Norwegian','German','USA','American')\n14835720   9042947  TABLE SCAN movie_info WHERE info IN('Sweden','Norway','Germany','Denmark','Swedish','Denish','Norwegian','German','USA','American') AND CASE MOD(HASH_REPARTITION movie_id,10) WHEN 0 THEN (((movie_id >= 963) AND (movie_id <= 2524070)) AND TRUE) WHEN 1 THEN (((movie_id >= 15613) AND (movie_id <= 2525732)) AND TRUE) WHEN 2 THEN (((movie_id >= 34044) AND (movie_id <= 2524779)) AND TRUE) WHEN 3 THEN (((movie_id >= 19450) AND (movie_id <= 2524082)) AND TRUE) WHEN 4 THEN (((movie...\n",
       "sql": "SELECT MIN(t.title) AS movie_title\nFROM job.keyword AS k,\n     job.movie_info AS mi,\n     job.movie_keyword AS mk,\n     job.title AS t\nWHERE k.keyword LIKE '%sequel%'\n  AND mi.info IN ('Sweden',\n                  'Norway',\n                  'Germany',\n                  'Denmark',\n                  'Swedish',\n                  'Denish',\n                  'Norwegian',\n                  'German',\n                  'USA',\n                  'American')\n  AND t.production_year > 1990\n  AND t.id = mi.movie_id\n  AND t.id = mk.movie_id\n  AND mk.movie_id = mi.movie_id\n  AND k.id = mk.keyword_id;\n",
-      "startTime": "2026-06-23T17:15:53.928284Z",
+      "startTime": "2026-06-26T23:55:04.225751Z",
       "status": "OK",
-      "timeMs": 249.745
+      "timeMs": 222.207
     }
   ],
   "runtime": {
-    "avgMs": 249.745,
-    "bestMs": 249.745,
-    "maxMs": 249.745,
-    "minMs": 249.745,
+    "avgMs": 222.207,
+    "bestMs": 222.207,
+    "maxMs": 222.207,
+    "minMs": 222.207,
     "stdDevMs": 0.0
   },
   "storageVariant": "iceberg",

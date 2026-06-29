@@ -1,6 +1,99 @@
 {
+  "config": "M5 Macbook Pro",
   "engine": "ClickHouse",
-  "queries": [],
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": -1,
+        "distribute": 0,
+        "hash": -1,
+        "join": -1,
+        "scan": 25031371,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       -         ∞  PROJECT a1 AS producing_company, a2 AS link_type, a3 AS complete_western_sequel\n       -         ∞  AGGREGATE MIN(name) AS a1, MIN(link) AS a2, MIN(title) AS a3\n       -         ∞  PROJECT name, link, title\n       -         ∞  FILTER 0\n       -         ∞  PROJECT name, link, title\n       -         ∞  INNER JOIN HASH ON TRUE\n       -         0  │└PROJECT title\n       -         0  │ FILTER 0\n       -   2528312  │ TABLE SCAN title\n       -         ∞  PROJECT name, link\n       -         ∞  FILTER 0\n       -         ∞  PROJECT name, link\n       -         ∞  INNER JOIN HASH ON TRUE\n       -         0  │└PROJECT id\n       -         0  │ FILTER 0\n       -     29997  │ TABLE SCAN movie_link\n       -         ∞  PROJECT name, link\n       -         ∞  FILTER 0\n       -         ∞  PROJECT name, link\n       -         ∞  INNER JOIN HASH ON TRUE\n       -         0  │└PROJECT movie_id\n       -         0  │ FILTER 0\n       -   4523930  │ TABLE SCAN movie_keyword\n       -         ∞  PROJECT name, link\n       -         ∞  FILTER 0\n       -         ∞  PROJECT name, link\n       -         ∞  INNER JOIN HASH ON TRUE\n       -         0  │└PROJECT info_type_id\n       -         0  │ FILTER 0\n       -  14835720  │ TABLE SCAN movie_info\n       -         ∞  PROJECT name, link\n       -         ∞  FILTER 0\n       -         ∞  PROJECT name, link\n       -         ∞  INNER JOIN HASH ON TRUE\n       -         0  │└PROJECT company_type_id\n       -         0  │ FILTER 0\n       -   2609129  │ TABLE SCAN movie_companies\n       -         ∞  PROJECT name, link\n       -         ∞  FILTER 0\n       -         ∞  PROJECT name, link\n       -         ∞  INNER JOIN HASH ON TRUE\n       -         0  │└PROJECT link\n       -         0  │ FILTER 0\n       -        18  │ TABLE SCAN link_type\n       -         ∞  PROJECT name\n       -         ∞  FILTER 0\n       -         ∞  PROJECT name\n       -         ∞  INNER JOIN HASH ON TRUE\n       -         0  │└PROJECT id\n       -         0  │ FILTER 0\n       -    134170  │ TABLE SCAN keyword\n       -         ∞  PROJECT name\n       -         ∞  FILTER 0\n       -         ∞  PROJECT name\n       -         ∞  INNER JOIN HASH ON TRUE\n       -         0  │└PROJECT id\n       -         0  │ FILTER 0\n       -         4  │ TABLE SCAN company_type\n       -         ∞  PROJECT name\n       -         ∞  FILTER 0\n       -         ∞  PROJECT name\n       -         ∞  INNER JOIN HASH ON TRUE\n       -         0  │└PROJECT name\n       -         0  │ FILTER 0\n       -    234997  │ PROJECT name\n       -    234997  │ TABLE SCAN company_name\n       -         ∞  PROJECT __join_result_dummy\n       -         ∞  FILTER 0\n       -         ∞  PROJECT __join_result_dummy\n       -         ∞  INNER JOIN HASH ON PROJECTION_3407.__lhs_const = PROJECTION_3404.__rhs_const\n       -         ∞  │└PROJECT __rhs_const, id AS id_right\n       -         4  │ PROJECT id\n       -         4  │ TABLE SCAN comp_cast_type\n       -         ∞  PROJECT __lhs_const, __join_result_dummy, id_left\n       -    540344  PROJECT id\n       -    540344  INNER JOIN HASH ON TRUE\n       -         4  │└PROJECT id AS id_right\n       -         4  │ PROJECT id\n       -         4  │ TABLE SCAN comp_cast_type\n       -    135086  PROJECT id AS id_left\n       -    135086  PROJECT id\n       -    135086  TABLE SCAN complete_cast\n",
+      "sql": "SELECT MIN(cn.name) AS producing_company,\n       MIN(lt.link) AS link_type,\n       MIN(t.title) AS complete_western_sequel\nFROM job.complete_cast AS cc,\n     job.comp_cast_type AS cct1,\n     job.comp_cast_type AS cct2,\n     job.company_name AS cn,\n     job.company_type AS ct,\n     job.keyword AS k,\n     job.link_type AS lt,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.movie_keyword AS mk,\n     job.movie_link AS ml,\n     job.title AS t\nWHERE cct1.kind IN ('cast',\n                    'crew')\n  AND cct2.kind = 'complete'\n  AND cn.country_code !='[pl]'\n  AND (cn.name LIKE '%Film%'\n       OR cn.name LIKE '%Warner%')\n  AND ct.kind ='production companies'\n  AND k.keyword ='sequel'\n  AND lt.link LIKE '%follow%'\n  AND mc.note IS NULL\n  AND mi.info IN ('Sweden',\n                  'Germany',\n                  'Swedish',\n                  'German')\n  AND t.production_year = 1998\n  AND lt.id = ml.link_type_id\n  AND ml.movie_id = t.id\n  AND t.id = mk.movie_id\n  AND mk.keyword_id = k.id\n  AND t.id = mc.movie_id\n  AND mc.company_type_id = ct.id\n  AND mc.company_id = cn.id\n  AND mi.movie_id = t.id\n  AND t.id = cc.movie_id\n  AND cct1.id = cc.subject_id\n  AND cct2.id = cc.status_id\n  AND ml.movie_id = mk.movie_id\n  AND ml.movie_id = mc.movie_id\n  AND mk.movie_id = mc.movie_id\n  AND ml.movie_id = mi.movie_id\n  AND mk.movie_id = mi.movie_id\n  AND mc.movie_id = mi.movie_id\n  AND ml.movie_id = cc.movie_id\n  AND mk.movie_id = cc.movie_id\n  AND mc.movie_id = cc.movie_id\n  AND mi.movie_id = cc.movie_id;\n",
+      "startTime": "2026-06-26T21:12:06.820381Z",
+      "status": "OK",
+      "timeMs": 314.995
+    }
+  ],
+  "runtime": {
+    "avgMs": 314.995,
+    "bestMs": 314.995,
+    "maxMs": 314.995,
+    "minMs": 314.995,
+    "stdDevMs": 0.0
+  },
   "storageVariant": "native",
   "theorem": {
     "categories": [

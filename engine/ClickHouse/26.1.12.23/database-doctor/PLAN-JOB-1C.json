@@ -1,6 +1,99 @@
 {
+  "config": "M5 Macbook Pro",
   "engine": "ClickHouse",
-  "queries": [],
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 3,
+        "distribute": 0,
+        "hash": 36127,
+        "join": 1789524,
+        "scan": 1789519,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       -         1  PROJECT a1 AS production_note, a2 AS movie_title, a3 AS movie_year\n       -         1  AGGREGATE MIN(note) AS a1, MIN(title) AS a2, MIN(production_year) AS a3\n       -         3  PROJECT note, title, production_year\n       -         3  PROJECT note, title, production_year\n       -         3  INNER JOIN HASH ON tuple(PROJECTION_1894.movie_id,PROJECTION_1894.id) = tuple(PROJECTION_1885.movie_id,PROJECTION_1885.movie_id)\n       -     17811  │└PROJECT movie_id AS movie_id_right, note\n       -     17811  │ PROJECT note, movie_id\n       -     17811  │ INNER JOIN HASH ON PROJECTION_1891.id = PROJECTION_1888.company_type_id\n       -     17816  │ │└PROJECT company_type_id, note, movie_id\n       -     17816  │ │ PROJECT company_type_id, note, movie_id\n       -     17816  │ │ TABLE SCAN movie_companies WHERE notLike(note,'%(as Metro-Goldwyn-Mayer Pictures)%') AND note LIKE '%(co-production)%'\n       -         1  │ PROJECT id\n       -         1  │ PROJECT id\n       -         1  │ TABLE SCAN company_type WHERE kind = 'production companies'\n       -        12  PROJECT movie_id AS movie_id_left, id, title, production_year\n       -        12  PROJECT movie_id, title, production_year, id\n       -        12  INNER JOIN HASH ON PROJECTION_1906.id = PROJECTION_1897.movie_id\n       -       250  │└PROJECT movie_id\n       -       250  │ PROJECT movie_id\n       -       250  │ INNER JOIN HASH ON PROJECTION_1903.info_type_id = PROJECTION_1900.id\n       -         1  │ │└PROJECT id\n       -         1  │ │ PROJECT id\n       -         1  │ │ TABLE SCAN info_type WHERE info = 'top 250 rank'\n       -   1380035  │ PROJECT info_type_id, movie_id\n       -   1380035  │ PROJECT movie_id, info_type_id\n       -   1380035  │ TABLE SCAN movie_info_idx\n       -    391666  PROJECT id, title, production_year\n       -    391666  PROJECT id, production_year, title\n       -    391666  TABLE SCAN title WHERE production_year > 2010\n",
+      "sql": "SELECT MIN(mc.note) AS production_note,\n       MIN(t.title) AS movie_title,\n       MIN(t.production_year) AS movie_year\nFROM job.company_type AS ct,\n     job.info_type AS it,\n     job.movie_companies AS mc,\n     job.movie_info_idx AS mi_idx,\n     job.title AS t\nWHERE ct.kind = 'production companies'\n  AND it.info = 'top 250 rank'\n  AND mc.note NOT LIKE '%(as Metro-Goldwyn-Mayer Pictures)%'\n  AND (mc.note LIKE '%(co-production)%')\n  AND t.production_year >2010\n  AND ct.id = mc.company_type_id\n  AND t.id = mc.movie_id\n  AND t.id = mi_idx.movie_id\n  AND mc.movie_id = mi_idx.movie_id\n  AND it.id = mi_idx.info_type_id;\n",
+      "startTime": "2026-06-26T20:07:59.825298Z",
+      "status": "OK",
+      "timeMs": 59.936
+    }
+  ],
+  "runtime": {
+    "avgMs": 59.936,
+    "bestMs": 59.936,
+    "maxMs": 59.936,
+    "minMs": 59.936,
+    "stdDevMs": 0.0
+  },
   "storageVariant": "native",
   "theorem": {
     "categories": [

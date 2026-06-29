@@ -82,16 +82,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(name), MIN(title)\n     920    249455  INNER JOIN LOOP ON person_id = id\n     379    169273  │└INNER JOIN LOOP ON id = person_id\n     379    169273  │ │└INNER JOIN LOOP ON movie_id = movie_id AND movie_id = id AND (movie_id = id)\n      17      6766  │ │ │└INNER JOIN LOOP ON id = company_id\n      47      8661  │ │ │ │└INNER JOIN LOOP ON movie_id = movie_id AND movie_id = id AND (movie_id = id)\n       9      5385  │ │ │ │ │└INNER JOIN LOOP ON id = movie_id\n      34     41840  │ │ │ │ │ │└INNER JOIN LOOP ON keyword_id = id\n       1         1  │ │ │ │ │ │ │└TABLE SEEK keyword AS k\n     305     41840  │ │ │ │ │ │ TABLE SEEK movie_keyword AS mk\n   41840     41840  │ │ │ │ │ TABLE SEEK title AS t WHERE (t.episode_nr >= 5) AND (t.episode_nr < 100)\n   26925      8669  │ │ │ │ TABLE SEEK movie_companies AS mc\n    8661      8661  │ │ │ TABLE SEEK company_name AS cn WHERE cn.country_code = 'us'\n  263874    169285  │ │ TABLE SEEK cast_info AS ci\n  169273    169273  │ TABLE SEEK name AS n\n  338546    248831  TABLE SEEK aka_name AS an\n",
       "sql": "SELECT MIN(an.name) AS cool_actor_pseudonym,\n       MIN(t.title) AS series_named_after_char\nFROM job.aka_name AS an,\n     job.cast_info AS ci,\n     job.company_name AS cn,\n     job.keyword AS k,\n     job.movie_companies AS mc,\n     job.movie_keyword AS mk,\n     job.name AS n,\n     job.title AS t\nWHERE cn.country_code ='[us]'\n  AND k.keyword ='character-name-in-title'\n  AND t.episode_nr >= 5\n  AND t.episode_nr < 100\n  AND an.person_id = n.id\n  AND n.id = ci.person_id\n  AND ci.movie_id = t.id\n  AND t.id = mk.movie_id\n  AND mk.keyword_id = k.id\n  AND t.id = mc.movie_id\n  AND mc.company_id = cn.id\n  AND an.person_id = ci.person_id\n  AND ci.movie_id = mc.movie_id\n  AND ci.movie_id = mk.movie_id\n  AND mc.movie_id = mk.movie_id;\n",
-      "startTime": "2026-06-25T15:24:16.359590Z",
+      "startTime": "2026-06-26T15:28:37.170487Z",
       "status": "OK",
-      "timeMs": 822.599
+      "timeMs": 413.981
     }
   ],
   "runtime": {
-    "avgMs": 822.599,
-    "bestMs": 822.599,
-    "maxMs": 822.599,
-    "minMs": 822.599,
+    "avgMs": 413.981,
+    "bestMs": 413.981,
+    "maxMs": 413.981,
+    "minMs": 413.981,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

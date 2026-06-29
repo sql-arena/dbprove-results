@@ -1,6 +1,99 @@
 {
+  "config": "M5 Macbook Pro",
   "engine": "ClickHouse",
-  "queries": [],
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 0,
+        "distribute": 0,
+        "hash": 30684361,
+        "join": 14863674,
+        "scan": 15872779,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       -         1  PROJECT a1 AS typical_european_movie\n       -         1  AGGREGATE MIN(title) AS a1\n       -         0  PROJECT title\n       -         0  PROJECT title\n       -         0  INNER JOIN HASH ON tuple(PROJECTION_5063.movie_id,PROJECTION_5063.id) = tuple(PROJECTION_5054.movie_id,PROJECTION_5054.movie_id)\n       -  14835720  │└PROJECT movie_id AS movie_id_right\n       -  14835720  │ PROJECT movie_id\n       -  14835720  │ INNER JOIN HASH ON PROJECTION_5060.info_type_id = PROJECTION_5057.id\n       -       113  │ │└PROJECT id\n       -       113  │ │ PROJECT id\n       -       113  │ │ TABLE SCAN info_type\n       -  14835720  │ PROJECT info_type_id, movie_id\n       -  14835720  │ PROJECT movie_id, info_type_id\n       -  14835720  │ TABLE SCAN movie_info WHERE TRUE\n       -         0  PROJECT movie_id AS movie_id_left, id, title\n       -         0  PROJECT movie_id, title, id\n       -         0  INNER JOIN HASH ON PROJECTION_5069.company_type_id = PROJECTION_5066.id\n       -         1  │└PROJECT id AS id_right\n       -         1  │ PROJECT id\n       -         1  │ TABLE SCAN company_type WHERE kind = 'production companies'\n       -      3929  PROJECT company_type_id, movie_id, title, id AS id_left\n       -      3929  PROJECT company_type_id, movie_id, title, id\n       -      3929  INNER JOIN HASH ON PROJECTION_5075.movie_id = PROJECTION_5072.id\n       -   1012920  │└PROJECT id, title\n       -   1012920  │ PROJECT id, title\n       -   1012920  │ TABLE SCAN title WHERE production_year > 2005\n       -     24025  PROJECT movie_id, company_type_id\n       -     24025  PROJECT company_type_id, movie_id\n       -     24025  TABLE SCAN movie_companies WHERE note LIKE '%(theatrical)%' AND note LIKE '%(France)%'\n",
+      "sql": "SELECT MIN(t.title) AS typical_european_movie\nFROM job.company_type AS ct,\n     job.info_type AS it,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.title AS t\nWHERE ct.kind = 'production companies'\n  AND mc.note LIKE '%(theatrical)%'\n  AND mc.note LIKE '%(France)%'\n  AND mi.info IN ('Sweden',\n                  'Norway',\n                  'Germany',\n                  'Denmark',\n                  'Swedish',\n                  'Denish',\n                  'Norwegian',\n                  'German')\n  AND t.production_year > 2005\n  AND t.id = mi.movie_id\n  AND t.id = mc.movie_id\n  AND mc.movie_id = mi.movie_id\n  AND ct.id = mc.company_type_id\n  AND it.id = mi.info_type_id;\n",
+      "startTime": "2026-06-26T22:43:15.407175Z",
+      "status": "OK",
+      "timeMs": 384.733
+    }
+  ],
+  "runtime": {
+    "avgMs": 384.733,
+    "bestMs": 384.733,
+    "maxMs": 384.733,
+    "minMs": 384.733,
+    "stdDevMs": 0.0
+  },
   "storageVariant": "native",
   "theorem": {
     "categories": [

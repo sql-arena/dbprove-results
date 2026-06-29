@@ -1,6 +1,99 @@
 {
+  "config": "M5 Macbook Pro",
   "engine": "ClickHouse",
-  "queries": [],
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 114182642,
+        "distribute": 0,
+        "hash": 237413144,
+        "join": 234859594,
+        "scan": 46451388,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       -         ∞  PROJECT a1 AS movie_keyword, a2 AS actor_name, a3 AS hero_movie\n       -         ∞  AGGREGATE MIN(keyword) AS a1, MIN(name) AS a2, MIN(title) AS a3\n       -      114M  PROJECT keyword, name, title\n       -      114M  PROJECT keyword, name, title\n       -      114M  INNER JOIN HASH ON PROJECTION_5307.id = PROJECTION_5286.person_id\n       -      114M  │└PROJECT person_id, keyword, title\n       -      114M  │ PROJECT person_id, keyword, title\n       -      114M  │ INNER JOIN HASH ON tuple(PROJECTION_5304.movie_id,PROJECTION_5304.movie_id) = tuple(PROJECTION_5289.movie_id,PROJECTION_5289.id)\n       -   1970380  │ │└PROJECT movie_id AS movie_id_right, id, keyword, title\n       -   1970380  │ │ PROJECT movie_id, keyword, title, id\n       -   1970380  │ │ INNER JOIN HASH ON PROJECTION_5301.id = PROJECTION_5292.movie_id\n       -   4523930  │ │ │└PROJECT movie_id, keyword\n       -   4523930  │ │ │ PROJECT movie_id, keyword\n       -   4523930  │ │ │ INNER JOIN HASH ON PROJECTION_5298.keyword_id = PROJECTION_5295.id\n       -    134170  │ │ │ │└PROJECT id, keyword\n       -    134170  │ │ │ │ PROJECT id, keyword\n       -    134170  │ │ │ │ TABLE SCAN keyword WHERE TRUE\n       -   4523930  │ │ │ PROJECT keyword_id, movie_id\n       -   4523930  │ │ │ PROJECT movie_id, keyword_id\n       -   4523930  │ │ │ TABLE SCAN movie_keyword\n       -   1381453  │ │ PROJECT id, title\n       -   1381453  │ │ PROJECT id, title\n       -   1381453  │ │ TABLE SCAN title WHERE production_year > 2000\n       -  36244344  │ PROJECT movie_id AS movie_id_left, person_id\n       -  36244344  │ PROJECT movie_id, person_id\n       -  36244344  │ TABLE SCAN cast_info\n       -   4167491  PROJECT id, name\n       -   4167491  PROJECT name, id\n       -   4167491  TABLE SCAN name\n",
+      "sql": "SELECT MIN(k.keyword) AS movie_keyword,\n       MIN(n.name) AS actor_name,\n       MIN(t.title) AS hero_movie\nFROM job.cast_info AS ci,\n     job.keyword AS k,\n     job.movie_keyword AS mk,\n     job.name AS n,\n     job.title AS t\nWHERE k.keyword IN ('superhero',\n                    'sequel',\n                    'second-part',\n                    'marvel-comics',\n                    'based-on-comic',\n                    'tv-special',\n                    'fight',\n                    'violence')\n  AND t.production_year > 2000\n  AND k.id = mk.keyword_id\n  AND t.id = mk.movie_id\n  AND t.id = ci.movie_id\n  AND ci.movie_id = mk.movie_id\n  AND n.id = ci.person_id;\n",
+      "startTime": "2026-06-26T22:43:48.772671Z",
+      "status": "OK",
+      "timeMs": 264.927
+    }
+  ],
+  "runtime": {
+    "avgMs": 264.927,
+    "bestMs": 264.927,
+    "maxMs": 264.927,
+    "minMs": 264.927,
+    "stdDevMs": 0.0
+  },
   "storageVariant": "native",
   "theorem": {
     "categories": [

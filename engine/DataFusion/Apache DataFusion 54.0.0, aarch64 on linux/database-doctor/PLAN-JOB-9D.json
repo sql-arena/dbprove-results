@@ -1,4 +1,5 @@
 {
+  "config": "M5 Macbook Pro",
   "engine": "DataFusion",
   "queries": [
     {
@@ -81,16 +82,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  PROJECT alternative_name, voiced_char_name, voicing_actress, american_movie\n       1         1  AGGREGATE MIN(name), MIN(name), MIN(name), MIN(title)\n   90635        10  DISTRIBUTE GATHER\n   90635        10  AGGREGATE MIN(name), MIN(name), MIN(name), MIN(title)\n   90635    483082  INNER JOIN HASH ON movie_id = id AND movie_id = id\n   90635    483082  │└DISTRIBUTE GATHER\n   90635    483082  │ INNER JOIN HASH ON id = role_id\n       3         1  │ │└DISTRIBUTE GATHER\n       3         1  │ │ FILTER role = 'actress'\n      12        12  │ │ DISTRIBUTE ROUND ROBIN\n      12        12  │ │ TABLE SCAN role_type WHERE role = 'actress'\n  332330    483082  │ INNER JOIN HASH ON person_id = id AND person_id = id\n  332330    490029  │ │└DISTRIBUTE HASH ON person_id, person_id\n  332330    490029  │ │ INNER JOIN HASH ON id = company_id\n   47000     84843  │ │ │└DISTRIBUTE GATHER\n   47000     84843  │ │ │ FILTER country_code = 'us'\n  234997    234997  │ │ │ TABLE SCAN company_name WHERE country_code = 'us'\n 1661629    930328  │ │ INNER JOIN HASH ON movie_id = movie_id\n 1608526    497319  │ │ │└DISTRIBUTE HASH ON movie_id\n 1608526    497319  │ │ │ INNER JOIN HASH ON person_role_id = id\n 1608526    517803  │ │ │ │└DISTRIBUTE HASH ON person_role_id\n 1608526    517803  │ │ │ │ INNER JOIN HASH ON person_id = person_id\n  901343    901343  │ │ │ │ │└DISTRIBUTE HASH ON person_id\n  901343    901343  │ │ │ │ │ TABLE SCAN aka_name\n 7248869    280995  │ │ │ │ DISTRIBUTE HASH ON person_id\n 7248869    280995  │ │ │ │ FILTER note IN('(voice)','(voice: Japanese version)','(voice) (uncredited)','(voice: English version)')\n36244344   7656546  │ │ │ │ TABLE SCAN cast_info WHERE (note IN('(voice)','(voice: Japanese version)','(voice) (uncredited)','(voice: English version)') AND CASE MOD(HASH_REPARTITION person_id,10) WHEN 0 THEN (((person_id >= 5) AND (person_id <= 4167489)) AND TRUE) WHEN 1 THEN (((person_id >= 15) AND (person_id <= 4167473)) AND TRUE) WHEN 2 THEN (((person_id >= 69) AND (person_id <= 4167478)) AND TRUE) WHEN 3 THEN (((person_id >= 161) AND (person_id <= 4167352)) AND TRUE) WHEN 4 THEN ...\n 3140339   3140339  │ │ │ DISTRIBUTE HASH ON id\n 3140339   3140339  │ │ │ TABLE SCAN char_name WHERE CASE MOD(HASH_REPARTITION id,10) WHEN 0 THEN (((id >= 119) AND (id <= 3139884)) AND TRUE) WHEN 1 THEN (((id >= 63) AND (id <= 3139863)) AND TRUE) WHEN 2 THEN (((id >= 53) AND (id <= 3139889)) AND TRUE) WHEN 3 THEN (((id >= 1) AND (id <= 3139888)) AND TRUE) WHEN 4 THEN (((id >= 21) AND (id <= 3139890)) AND TRUE) WHEN 5 THEN (((id >= 57) AND (id <= 3139914)) AND TRUE) WHEN 6 THEN (((id >= 142) AND (id <= 3139883)) AND TRUE) WHEN 7 THEN ...\n 2609129   2609129  │ │ DISTRIBUTE HASH ON movie_id\n 2609129   2609129  │ │ TABLE SCAN movie_companies WHERE CASE MOD(HASH_REPARTITION movie_id,10) WHEN 0 THEN (((movie_id >= 920) AND (movie_id <= 2525688)) AND TRUE) WHEN 1 THEN (((movie_id >= 1126) AND (movie_id <= 2525697)) AND TRUE) WHEN 2 THEN (((movie_id >= 921) AND (movie_id <= 2525701)) AND TRUE) WHEN 3 THEN (((movie_id >= 912) AND (movie_id <= 2525700)) AND TRUE) WHEN 4 THEN (((movie_id >= 925) AND (movie_id <= 2525205)) AND TRUE) WHEN 5 THEN (((movie_id >= 908) AND (movie_id <= 25...\n  833499    961555  │ DISTRIBUTE HASH ON id, id\n  833499    961555  │ FILTER gender = 'f'\n 4167491    983636  │ TABLE SCAN name WHERE (gender = 'f') AND CASE MOD(HASH_REPARTITION(id,id),10) WHEN 1 THEN ((((id >= 169332) AND (id <= 2700427)) AND ((id >= 169332) AND (id <= 2700427))) AND TRUE) WHEN 3 THEN ((((id >= 4453) AND (id <= 2698015)) AND ((id >= 4453) AND (id <= 2698015))) AND TRUE) WHEN 5 THEN ((((id >= 1728587) AND (id <= 2700464)) AND ((id >= 1728587) AND (id <= 2700464))) AND TRUE) WHEN 7 THEN ((((id >= 1728872) AND (id <= 2700366)) AND ((id >= 1728872) AND (id <= 2700...\n 2528312   2528312  TABLE SCAN title WHERE (((id >= 908) AND (id <= 2525702)) AND ((id >= 908) AND (id <= 2525702))) AND TRUE\n",
       "sql": "SELECT MIN(an.name) AS alternative_name,\n       MIN(chn.name) AS voiced_char_name,\n       MIN(n.name) AS voicing_actress,\n       MIN(t.title) AS american_movie\nFROM job.aka_name AS an,\n     job.char_name AS chn,\n     job.cast_info AS ci,\n     job.company_name AS cn,\n     job.movie_companies AS mc,\n     job.name AS n,\n     job.role_type AS rt,\n     job.title AS t\nWHERE ci.note IN ('(voice)',\n                  '(voice: Japanese version)',\n                  '(voice) (uncredited)',\n                  '(voice: English version)')\n  AND cn.country_code ='[us]'\n  AND n.gender ='f'\n  AND rt.role ='actress'\n  AND ci.movie_id = t.id\n  AND t.id = mc.movie_id\n  AND ci.movie_id = mc.movie_id\n  AND mc.company_id = cn.id\n  AND ci.role_id = rt.id\n  AND n.id = ci.person_id\n  AND chn.id = ci.person_role_id\n  AND an.person_id = n.id\n  AND an.person_id = ci.person_id;\n",
-      "startTime": "2026-06-23T17:16:11.466835Z",
+      "startTime": "2026-06-26T23:55:12.349212Z",
       "status": "OK",
-      "timeMs": 247.318
+      "timeMs": 212.229
     }
   ],
   "runtime": {
-    "avgMs": 247.318,
-    "bestMs": 247.318,
-    "maxMs": 247.318,
-    "minMs": 247.318,
+    "avgMs": 212.229,
+    "bestMs": 212.229,
+    "maxMs": 212.229,
+    "minMs": 212.229,
     "stdDevMs": 0.0
   },
   "storageVariant": "iceberg",

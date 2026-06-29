@@ -1,4 +1,5 @@
 {
+  "config": "M5 Macbook Pro",
   "engine": "Trino",
   "queries": [
     {
@@ -71,26 +72,26 @@
         }
       },
       "operatorRows": {
-        "aggregate": 0,
-        "distribute": 3433383,
-        "hash": 3433383,
-        "join": 1,
+        "aggregate": -1,
+        "distribute": -1,
+        "hash": -1,
+        "join": -1,
         "scan": 6517593,
         "seek": 0,
         "sort": 0
       },
       "plan": "Estimate    Actual  Operator\n       1         ∞  PROJECT min AS production_note, min_19 AS movie_title, min_20 AS movie_year\n       1         ∞  AGGREGATE MIN(min_21) AS min, MIN(min_22) AS min_19, MIN(min_23) AS min_20\n       -         ∞  DISTRIBUTE GATHER\n       -         ∞  AGGREGATE MIN(note) AS min_21, MIN(title) AS min_22, MIN(production_year) AS min_23\n       -         ∞  INNER JOIN HASH ON movie_id = id_15\n   88353    716259  │└DISTRIBUTE HASH ON id_15\n 2528312    716259  │ PROJECT id AS id_15, title, production_year\n 2528312    716259  │ FILTER production_year BETWEEN 2005 AND 2010\n 2528312   2528312  │ TABLE SCAN title\n       -         ∞  INNER JOIN HASH ON info_type_id = id_0\n       -         1  │└DISTRIBUTE GATHER\n     113         1  │ PROJECT id AS id_0\n     113         1  │ FILTER info = 'bottom 10 rank'\n     113       113  │ TABLE SCAN info_type\n       -         ∞  INNER JOIN HASH ON movie_id = movie_id_9\n 1380035   1380035  │└DISTRIBUTE HASH ON movie_id_9\n 1380035   1380035  │ PROJECT movie_id AS movie_id_9, info_type_id\n 1380035   1380035  │ TABLE SCAN movie_info_idx\n       -         ∞  INNER JOIN HASH ON id = company_type_id\n 2348216   1337088  │└DISTRIBUTE HASH ON company_type_id\n 2609129   1337088  │ FILTER  NOT (note LIKE '%(as Metro-Goldwyn-Mayer Pictures)%')\n 2609129   2609129  │ TABLE SCAN movie_companies\n       4         1  FILTER kind = 'production companies'\n       4         4  TABLE SCAN company_type\n",
       "sql": "SELECT MIN(mc.note) AS production_note,\n       MIN(t.title) AS movie_title,\n       MIN(t.production_year) AS movie_year\nFROM job.company_type AS ct,\n     job.info_type AS it,\n     job.movie_companies AS mc,\n     job.movie_info_idx AS mi_idx,\n     job.title AS t\nWHERE ct.kind = 'production companies'\n  AND it.info = 'bottom 10 rank'\n  AND mc.note NOT LIKE '%(as Metro-Goldwyn-Mayer Pictures)%'\n  AND t.production_year BETWEEN 2005 AND 2010\n  AND ct.id = mc.company_type_id\n  AND t.id = mc.movie_id\n  AND t.id = mi_idx.movie_id\n  AND mc.movie_id = mi_idx.movie_id\n  AND it.id = mi_idx.info_type_id;\n",
-      "startTime": "2026-06-23T15:23:22.528710Z",
+      "startTime": "2026-06-26T16:45:24.647951Z",
       "status": "OK",
-      "timeMs": 629.093
+      "timeMs": 466.349
     }
   ],
   "runtime": {
-    "avgMs": 629.093,
-    "bestMs": 629.093,
-    "maxMs": 629.093,
-    "minMs": 629.093,
+    "avgMs": 466.349,
+    "bestMs": 466.349,
+    "maxMs": 466.349,
+    "minMs": 466.349,
     "stdDevMs": 0.0
   },
   "storageVariant": "iceberg",

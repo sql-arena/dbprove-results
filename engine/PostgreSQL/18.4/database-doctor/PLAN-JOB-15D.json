@@ -82,16 +82,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(title), MIN(title)\n    3232     11347  INNER JOIN LOOP ON movie_id = id\n    1229     25564  │└INNER JOIN LOOP ON id = keyword_id\n    1229     25564  │ │└INNER JOIN LOOP ON movie_id = id\n     102      9857  │ │ │└INNER JOIN HASH ON company_type_id = id\n       4         4  │ │ │ │└TABLE SCAN company_type AS ct\n     102      9857  │ │ │ INNER JOIN LOOP ON id = company_id\n     280     14377  │ │ │ │└INNER JOIN LOOP ON movie_id = id\n      55     10662  │ │ │ │ │└INNER JOIN LOOP ON id = movie_id\n      80     10679  │ │ │ │ │ │└INNER JOIN LOOP ON info_type_id = id\n       1         1  │ │ │ │ │ │ │└TABLE SEEK info_type AS it1\n     129     10679  │ │ │ │ │ │ TABLE SEEK movie_info AS mi WHERE mi.note LIKE '%internet%'\n   10679     10679  │ │ │ │ │ TABLE SEEK title AS t WHERE t.production_year > 1990\n   53310     14393  │ │ │ │ TABLE SEEK movie_companies AS mc\n   14377     14377  │ │ │ TABLE SEEK company_name AS cn WHERE cn.country_code = 'us'\n  443565     25529  │ │ TABLE SEEK movie_keyword AS mk\n   25564     25564  │ TABLE SEEK keyword AS k\n   76692     25564  TABLE SEEK aka_title AS aka_t\n",
       "sql": "SELECT MIN(aka_t.title) AS aka_title,\n       MIN(t.title) AS internet_movie_title\nFROM job.aka_title AS aka_t,\n     job.company_name AS cn,\n     job.company_type AS ct,\n     job.info_type AS it1,\n     job.keyword AS k,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.movie_keyword AS mk,\n     job.title AS t\nWHERE cn.country_code = '[us]'\n  AND it1.info = 'release dates'\n  AND mi.note LIKE '%internet%'\n  AND t.production_year > 1990\n  AND t.id = aka_t.movie_id\n  AND t.id = mi.movie_id\n  AND t.id = mk.movie_id\n  AND t.id = mc.movie_id\n  AND mk.movie_id = mi.movie_id\n  AND mk.movie_id = mc.movie_id\n  AND mk.movie_id = aka_t.movie_id\n  AND mi.movie_id = mc.movie_id\n  AND mi.movie_id = aka_t.movie_id\n  AND mc.movie_id = aka_t.movie_id\n  AND k.id = mk.keyword_id\n  AND it1.id = mi.info_type_id\n  AND cn.id = mc.company_id\n  AND ct.id = mc.company_type_id;\n",
-      "startTime": "2026-06-25T15:22:47.588098Z",
+      "startTime": "2026-06-26T15:28:09.646871Z",
       "status": "OK",
-      "timeMs": 1393.559
+      "timeMs": 575.391
     }
   ],
   "runtime": {
-    "avgMs": 1393.559,
-    "bestMs": 1393.559,
-    "maxMs": 1393.559,
-    "minMs": 1393.559,
+    "avgMs": 575.391,
+    "bestMs": 575.391,
+    "maxMs": 575.391,
+    "minMs": 575.391,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

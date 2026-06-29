@@ -1,4 +1,5 @@
 {
+  "config": "M5 Macbook Pro",
   "engine": "Trino",
   "queries": [
     {
@@ -71,26 +72,26 @@
         }
       },
       "operatorRows": {
-        "aggregate": 0,
-        "distribute": 1190955,
-        "hash": 1190955,
-        "join": 1,
+        "aggregate": -1,
+        "distribute": -1,
+        "hash": -1,
+        "join": -1,
         "scan": 19973278,
         "seek": 0,
         "sort": 0
       },
       "plan": "Estimate    Actual  Operator\n       1         ∞  PROJECT min AS typical_european_movie\n       1         ∞  AGGREGATE MIN(min_19) AS min\n       -         ∞  DISTRIBUTE GATHER\n       -         ∞  AGGREGATE MIN(title) AS min_19\n       -         ∞  INNER JOIN HASH ON movie_id = id_15\n  247388   1012920  │└DISTRIBUTE HASH ON id_15\n 2528312   1012920  │ PROJECT id AS id_15, title\n 2528312   1012920  │ FILTER production_year > 2005\n 2528312   2528312  │ TABLE SCAN title\n       -         ∞  INNER JOIN HASH ON info_type_id = id_0\n     113       113  │└DISTRIBUTE GATHER\n     113       113  │ PROJECT id AS id_0\n     113       113  │ TABLE SCAN info_type\n       -         ∞  INNER JOIN HASH ON movie_id = movie_id_9\n13352148    153897  │└DISTRIBUTE HASH ON movie_id_9\n14835720    153897  │ PROJECT movie_id AS movie_id_9, info_type_id\n14835720    153897  │ FILTER info IN('Denish','Denmark','German','Germany','Norway','Norwegian','Sweden','Swedish')\n14835720  14835720  │ TABLE SCAN movie_info\n       -         ∞  INNER JOIN HASH ON id = company_type_id\n 2348216     24025  │└DISTRIBUTE HASH ON company_type_id\n 2609129     24025  │ FILTER (note LIKE '%(theatrical)%') AND (note LIKE '%(France)%')\n 2609129   2609129  │ TABLE SCAN movie_companies\n       4         1  FILTER kind = 'production companies'\n       4         4  TABLE SCAN company_type\n",
       "sql": "SELECT MIN(t.title) AS typical_european_movie\nFROM job.company_type AS ct,\n     job.info_type AS it,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.title AS t\nWHERE ct.kind = 'production companies'\n  AND mc.note LIKE '%(theatrical)%'\n  AND mc.note LIKE '%(France)%'\n  AND mi.info IN ('Sweden',\n                  'Norway',\n                  'Germany',\n                  'Denmark',\n                  'Swedish',\n                  'Denish',\n                  'Norwegian',\n                  'German')\n  AND t.production_year > 2005\n  AND t.id = mi.movie_id\n  AND t.id = mc.movie_id\n  AND mc.movie_id = mi.movie_id\n  AND ct.id = mc.company_type_id\n  AND it.id = mi.info_type_id;\n",
-      "startTime": "2026-06-23T15:33:39.456112Z",
+      "startTime": "2026-06-26T16:52:18.370128Z",
       "status": "OK",
-      "timeMs": 2385.999
+      "timeMs": 2267.113
     }
   ],
   "runtime": {
-    "avgMs": 2385.999,
-    "bestMs": 2385.999,
-    "maxMs": 2385.999,
-    "minMs": 2385.999,
+    "avgMs": 2267.113,
+    "bestMs": 2267.113,
+    "maxMs": 2267.113,
+    "minMs": 2267.113,
     "stdDevMs": 0.0
   },
   "storageVariant": "iceberg",

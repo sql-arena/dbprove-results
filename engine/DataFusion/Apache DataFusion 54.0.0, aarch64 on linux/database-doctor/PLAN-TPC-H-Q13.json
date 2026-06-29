@@ -1,6 +1,99 @@
 {
+  "config": "M5 Macbook Pro",
   "engine": "DataFusion",
-  "queries": [],
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 1,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 2
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 1,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 1,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 1,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 2,
+          ">16x": 2
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 2
+        }
+      },
+      "operatorRows": {
+        "aggregate": 1700347,
+        "distribute": 1650343,
+        "hash": 1549963,
+        "join": 1549963,
+        "scan": 1650000,
+        "seek": 0,
+        "sort": 84
+      },
+      "plan": "Estimate    Actual  Operator\n  300000        42  SORT custdist, c_count\n  300000        42  SORT custdist, c_count\n  300000        42  PROJECT c_count, custdist\n  300000        42  AGGREGATE COUNT(1) GROUP BY HASH c_count\n  300000       384  DISTRIBUTE HASH ON c_count\n  300000       384  AGGREGATE COUNT(1) GROUP BY HASH c_count\n  300000    150000  PROJECT c_count\n  300000    150000  AGGREGATE COUNT(o_orderkey) GROUP BY HASH c_custkey\n  300000   1549963  LEFT OUTER JOIN HASH ON c_custkey = o_custkey\n  150000    150000  │└DISTRIBUTE HASH ON c_custkey\n  150000    150000  │ TABLE SCAN customer\n  300000   1499959  DISTRIBUTE HASH ON o_custkey\n  300000   1499959  FILTER o_comment NOT  LIKE ' % special % requests % '\n 1500000   1500000  TABLE SCAN orders WHERE o_comment NOT  LIKE ' % special % requests % '\n",
+      "sql": "/* TPC-H Q13 */\nSELECT\n  c_count,\n  COUNT(*) AS custdist\nFROM\n  (\n    SELECT\n      c_custkey,\n      COUNT(o_orderkey) AS c_count\n    FROM\n      tpch_sf1.customer\n      LEFT OUTER JOIN tpch_sf1.orders ON c_custkey = o_custkey\n      AND o_comment NOT LIKE ' % special % requests % '\n    GROUP BY\n      c_custkey\n  ) AS c_orders\nGROUP BY\n  c_count\nORDER BY\n  custdist DESC,\n  c_count DESC\n;",
+      "startTime": "2026-06-26T23:43:57.724109Z",
+      "status": "OK",
+      "timeMs": 73.53
+    }
+  ],
+  "runtime": {
+    "avgMs": 73.53,
+    "bestMs": 73.53,
+    "maxMs": 73.53,
+    "minMs": 73.53,
+    "stdDevMs": 0.0
+  },
   "storageVariant": "iceberg",
   "theorem": {
     "categories": [

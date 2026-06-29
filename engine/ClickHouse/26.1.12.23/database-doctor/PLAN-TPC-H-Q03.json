@@ -1,4 +1,5 @@
 {
+  "config": "M5 Macbook Pro",
   "engine": "ClickHouse",
   "queries": [
     {
@@ -81,16 +82,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       -        10  PROJECT l_orderkey, a1 AS revenue, o_orderdate, o_shippriority\n       -        10  LIMIT 10\n       -     11281  SORT a1, o_orderdate\n       -     11281  PROJECT a1, o_orderdate, l_orderkey, o_shippriority\n       -     11281  AGGREGATE SUM(a5) AS a1 GROUP BY HASH l_orderkey, o_orderdate, o_shippriority\n       -     29857  PROJECT l_orderkey, o_orderdate, o_shippriority, l_extendedprice * (1 - l_discount) AS a5\n       -     29857  PROJECT l_orderkey, l_extendedprice, l_discount, o_orderdate, o_shippriority\n       -     29857  INNER JOIN HASH ON PROJECTION_75.o_custkey = PROJECTION_72.c_custkey\n       -     29949  │└PROJECT c_custkey\n       -     29949  │ PROJECT c_custkey\n       -     29949  │ TABLE SCAN customer WHERE c_mktsegment = 'MACHINERY'\n       -    151331  PROJECT o_custkey, l_orderkey, l_extendedprice, l_discount, o_orderdate, o_shippriority\n       -    151331  PROJECT l_orderkey, l_extendedprice, l_discount, o_orderdate, o_shippriority, o_custkey\n       -    151331  INNER JOIN HASH ON PROJECTION_81.l_orderkey = PROJECTION_78.o_orderkey\n       -    727305  │└PROJECT o_orderkey, o_orderdate, o_shippriority, o_custkey\n       -    727305  │ PROJECT o_orderkey, o_orderdate, o_shippriority, o_custkey\n       -    727305  │ TABLE SCAN orders WHERE o_orderdate < '1995-03-15'\n       -   3241776  PROJECT l_orderkey, l_extendedprice, l_discount\n       -   3241776  PROJECT l_orderkey, l_extendedprice, l_discount\n       -   3241776  TABLE SCAN lineitem WHERE l_shipdate > '1995-03-15'\n",
       "sql": "/* TPC-H Q03 */\nSELECT l_orderkey,\n       SUM(l_extendedprice * (1 - l_discount)) AS revenue,\n       o_orderdate,\n       o_shippriority\nFROM tpch_sf1.lineitem\nINNER JOIN tpch_sf1.orders\n    ON l_orderkey = o_orderkey\nINNER JOIN tpch_sf1.customer\n    ON o_custkey = c_custkey\nWHERE c_mktsegment = 'MACHINERY'\n  AND o_orderdate < '1995-03-15'\n  AND l_shipdate > '1995-03-15'\nGROUP BY l_orderkey,\n         o_orderdate,\n         o_shippriority\nORDER BY revenue DESC,\n         o_orderdate\nLIMIT 10\n",
-      "startTime": "2026-06-23T11:14:19.367830Z",
+      "startTime": "2026-06-26T15:35:36.073812Z",
       "status": "OK",
-      "timeMs": 139.282
+      "timeMs": 139.477
     }
   ],
   "runtime": {
-    "avgMs": 139.282,
-    "bestMs": 139.282,
-    "maxMs": 139.282,
-    "minMs": 139.282,
+    "avgMs": 139.477,
+    "bestMs": 139.477,
+    "maxMs": 139.477,
+    "minMs": 139.477,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

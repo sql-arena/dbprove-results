@@ -1,6 +1,99 @@
 {
+  "config": "M5 Macbook Pro",
   "engine": "ClickHouse",
-  "queries": [],
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": -1,
+        "distribute": 0,
+        "hash": -1,
+        "join": -1,
+        "scan": 44777725,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       -         ∞  PROJECT a1 AS voicing_actress, a2 AS jap_engl_voiced_movie\n       -         ∞  AGGREGATE MIN(name) AS a1, MIN(title) AS a2\n       -         ∞  PROJECT name, title\n       -         ∞  PROJECT name, title\n       -         ∞  INNER JOIN HASH ON tuple(PROJECTION_1736.movie_id,PROJECTION_1736.movie_id,PROJECTION_1736.movie_id) = tuple(PROJECTION_1709.movie_id,PROJECTION_1709.movie_id,PROJECTION_1709.id)\n       -         ∞  │└PROJECT movie_id_right, movie_id AS movie_id_right_2, id, title\n       -         ∞  │ PROJECT movie_id, movie_id, title, id\n       -         ∞  │ INNER JOIN HASH ON tuple(PROJECTION_1733.id,PROJECTION_1733.id) = tuple(PROJECTION_1712.movie_id,PROJECTION_1712.movie_id)\n       -         ∞  │ │└PROJECT movie_id, movie_id\n       -         ∞  │ │ PROJECT movie_id, movie_id\n       -         ∞  │ │ INNER JOIN HASH ON PROJECTION_1730.id = PROJECTION_1715.company_id\n       -         ∞  │ │ │└PROJECT company_id, movie_id, movie_id\n       -         ∞  │ │ │ PROJECT movie_id, company_id, movie_id\n       -         ∞  │ │ │ INNER JOIN HASH ON PROJECTION_1727.movie_id = PROJECTION_1718.movie_id\n       -         ∞  │ │ │ │└PROJECT movie_id AS movie_id_right\n       -         ∞  │ │ │ │ PROJECT movie_id\n       -         ∞  │ │ │ │ INNER JOIN HASH ON PROJECTION_1724.info_type_id = PROJECTION_1721.id\n       -         1  │ │ │ │ │└PROJECT id\n       -         1  │ │ │ │ │ FILTER (1 AND info = 'release dates'_String) AS a51\n       -         1  │ │ │ │ │ TABLE SCAN info_type WHERE info = 'release dates'\n       -         ∞  │ │ │ │ PROJECT info_type_id, movie_id\n       -         ∞  │ │ │ │ FILTER (1 AND  OR ( LIKE (info,'Japan:%200%'_String), LIKE (info,'USA:%200%'_String))) AS a43\n       -    451104  │ │ │ │ TABLE SCAN movie_info WHERE info LIKE 'Japan:%200%' OR info LIKE 'USA:%200%'\n       -   2609129  │ │ │ PROJECT movie_id AS movie_id_left, company_id\n       -   2609129  │ │ │ PROJECT movie_id, company_id\n       -   2609129  │ │ │ TABLE SCAN movie_companies\n       -         0  │ │ PROJECT id\n       -         0  │ │ FILTER (1 AND country_code = 'us'_String) AS a37\n       -         0  │ │ TABLE SCAN company_name WHERE country_code = 'us'\n       -   1381453  │ PROJECT id, title\n       -   1381453  │ FILTER (1 AND production_year > 2000_UInt16) AS a32\n       -   1381453  │ TABLE SCAN title WHERE production_year > 2000\n       -         ∞  PROJECT movie_id AS movie_id_left, name\n       -         ∞  PROJECT movie_id, name\n       -         ∞  INNER JOIN HASH ON PROJECTION_1760.id = PROJECTION_1739.person_role_id\n       -         ∞  │└PROJECT person_role_id, movie_id, name\n       -         ∞  │ PROJECT person_role_id, movie_id, name\n       -         ∞  │ INNER JOIN HASH ON tuple(PROJECTION_1757.person_id,PROJECTION_1757.person_id) = tuple(PROJECTION_1742.person_id,PROJECTION_1742.id)\n       -         ∞  │ │└PROJECT person_id AS person_id_right, id, person_role_id, movie_id, name\n       -         ∞  │ │ PROJECT person_id, person_role_id, movie_id, name, id\n       -         ∞  │ │ INNER JOIN HASH ON PROJECTION_1754.id = PROJECTION_1745.person_id\n       -         ∞  │ │ │└PROJECT person_id, person_role_id, movie_id\n       -         ∞  │ │ │ PROJECT person_id, person_role_id, movie_id\n       -         ∞  │ │ │ INNER JOIN HASH ON PROJECTION_1751.role_id = PROJECTION_1748.id\n       -         1  │ │ │ │└PROJECT id\n       -         1  │ │ │ │ FILTER (1 AND role = 'actress'_String) AS a25\n       -         1  │ │ │ │ TABLE SCAN role_type WHERE role = 'actress'\n       -         ∞  │ │ │ PROJECT role_id, person_id, person_role_id, movie_id\n       -         ∞  │ │ │ FILTER (in(note,__set_String_6680244196204786103_17565861716447275384) AND 1) AS a21\n       -  36244344  │ │ │ TABLE SCAN cast_info WHERE TRUE\n       -         ∞  │ │ PROJECT id, name\n       -         ∞  │ │ FILTER (1 AND  LIKE (name,'%An%'_String) AND gender = 'f'_String) AS a12\n       -     50011  │ │ TABLE SCAN name WHERE (gender = 'f') AND name LIKE '%An%'\n       -    901343  │ PROJECT person_id AS person_id_left\n       -    901343  │ PROJECT person_id\n       -    901343  │ TABLE SCAN aka_name\n       -   3140339  PROJECT id\n       -   3140339  PROJECT id\n       -   3140339  TABLE SCAN char_name\n",
+      "sql": "SELECT MIN(n.name) AS voicing_actress,\n       MIN(t.title) AS jap_engl_voiced_movie\nFROM job.aka_name AS an,\n     job.char_name AS chn,\n     job.cast_info AS ci,\n     job.company_name AS cn,\n     job.info_type AS it,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.name AS n,\n     job.role_type AS rt,\n     job.title AS t\nWHERE ci.note IN ('(voice)',\n                  '(voice: Japanese version)',\n                  '(voice) (uncredited)',\n                  '(voice: English version)')\n  AND cn.country_code ='[us]'\n  AND it.info = 'release dates'\n  AND mi.info IS NOT NULL\n  AND (mi.info LIKE 'Japan:%200%'\n       OR mi.info LIKE 'USA:%200%')\n  AND n.gender ='f'\n  AND n.name LIKE '%An%'\n  AND rt.role ='actress'\n  AND t.production_year > 2000\n  AND t.id = mi.movie_id\n  AND t.id = mc.movie_id\n  AND t.id = ci.movie_id\n  AND mc.movie_id = ci.movie_id\n  AND mc.movie_id = mi.movie_id\n  AND mi.movie_id = ci.movie_id\n  AND cn.id = mc.company_id\n  AND it.id = mi.info_type_id\n  AND n.id = ci.person_id\n  AND rt.id = ci.role_id\n  AND n.id = an.person_id\n  AND ci.person_id = an.person_id\n  AND chn.id = ci.person_role_id;\n",
+      "startTime": "2026-06-26T20:07:34.446403Z",
+      "status": "OK",
+      "timeMs": 818.757
+    }
+  ],
+  "runtime": {
+    "avgMs": 818.757,
+    "bestMs": 818.757,
+    "maxMs": 818.757,
+    "minMs": 818.757,
+    "stdDevMs": 0.0
+  },
   "storageVariant": "native",
   "theorem": {
     "categories": [

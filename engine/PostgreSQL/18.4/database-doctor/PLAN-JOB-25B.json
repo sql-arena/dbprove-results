@@ -82,16 +82,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(info), MIN(info), MIN(name), MIN(title)\n       1         6  INNER JOIN LOOP ON id = person_id\n       1         6  │└INNER JOIN LOOP ON id = info_type_id\n       1        18  │ │└INNER JOIN LOOP ON movie_id = movie_id AND movie_id = id AND (movie_id = id)\n       1         6  │ │ │└INNER JOIN LOOP ON id = info_type_id\n       1         6  │ │ │ │└INNER JOIN LOOP ON movie_id = movie_id AND movie_id = id AND (movie_id = id)\n       1         6  │ │ │ │ │└INNER JOIN LOOP ON movie_id = movie_id AND movie_id = id AND (movie_id = id)\n       1         9  │ │ │ │ │ │└INNER JOIN LOOP ON id = movie_id\n     169     62096  │ │ │ │ │ │ │└INNER JOIN LOOP ON keyword_id = id\n       5         5  │ │ │ │ │ │ │ │└TABLE SEEK keyword AS k\n    1525     62096  │ │ │ │ │ │ │ TABLE SEEK movie_keyword AS mk\n   62096     62096  │ │ │ │ │ │ TABLE SEEK title AS t WHERE (t.production_year > 2010) AND (t.title LIKE 'Vampire%')\n       9         9  │ │ │ │ │ TABLE SEEK cast_info AS ci WHERE ci.note IN('(writer)','(head writer)','(written by)','(story)','(story editor)')\n       6         6  │ │ │ │ TABLE SEEK movie_info AS mi WHERE mi.info = 'Horror'\n       6         6  │ │ │ TABLE SEEK info_type AS it1 WHERE it1.info = 'genres'\n      18        18  │ │ TABLE SEEK movie_info_idx AS mi_idx\n      18        18  │ TABLE SEEK info_type AS it2 WHERE it2.info = 'votes'\n       6         6  TABLE SEEK name AS n WHERE n.gender = 'm'\n",
       "sql": "SELECT MIN(mi.info) AS movie_budget,\n       MIN(mi_idx.info) AS movie_votes,\n       MIN(n.name) AS male_writer,\n       MIN(t.title) AS violent_movie_title\nFROM job.cast_info AS ci,\n     job.info_type AS it1,\n     job.info_type AS it2,\n     job.keyword AS k,\n     job.movie_info AS mi,\n     job.movie_info_idx AS mi_idx,\n     job.movie_keyword AS mk,\n     job.name AS n,\n     job.title AS t\nWHERE ci.note IN ('(writer)',\n                  '(head writer)',\n                  '(written by)',\n                  '(story)',\n                  '(story editor)')\n  AND it1.info = 'genres'\n  AND it2.info = 'votes'\n  AND k.keyword IN ('murder',\n                    'blood',\n                    'gore',\n                    'death',\n                    'female-nudity')\n  AND mi.info = 'Horror'\n  AND n.gender = 'm'\n  AND t.production_year > 2010\n  AND t.title LIKE 'Vampire%'\n  AND t.id = mi.movie_id\n  AND t.id = mi_idx.movie_id\n  AND t.id = ci.movie_id\n  AND t.id = mk.movie_id\n  AND ci.movie_id = mi.movie_id\n  AND ci.movie_id = mi_idx.movie_id\n  AND ci.movie_id = mk.movie_id\n  AND mi.movie_id = mi_idx.movie_id\n  AND mi.movie_id = mk.movie_id\n  AND mi_idx.movie_id = mk.movie_id\n  AND n.id = ci.person_id\n  AND it1.id = mi.info_type_id\n  AND it2.id = mi_idx.info_type_id\n  AND k.id = mk.keyword_id;\n",
-      "startTime": "2026-06-25T15:31:39.749955Z",
+      "startTime": "2026-06-26T15:31:59.386284Z",
       "status": "OK",
-      "timeMs": 2434.434
+      "timeMs": 1063.641
     }
   ],
   "runtime": {
-    "avgMs": 2434.434,
-    "bestMs": 2434.434,
-    "maxMs": 2434.434,
-    "minMs": 2434.434,
+    "avgMs": 1063.641,
+    "bestMs": 1063.641,
+    "maxMs": 1063.641,
+    "minMs": 1063.641,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

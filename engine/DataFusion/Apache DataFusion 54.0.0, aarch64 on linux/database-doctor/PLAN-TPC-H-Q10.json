@@ -1,6 +1,99 @@
 {
+  "config": "M5 Macbook Pro",
   "engine": "DataFusion",
-  "queries": [],
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 1,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 1,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 1,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 2,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 3,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 1,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 4,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 2,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 115050,
+        "distribute": 1801394,
+        "hash": 380100,
+        "join": 1708970,
+        "scan": 7651240,
+        "seek": 0,
+        "sort": 76364
+      },
+      "plan": "Estimate    Actual  Operator\n  300000     38182  SORT revenue\n  300000     38182  SORT revenue\n  300000     38182  PROJECT c_custkey, c_name, revenue, c_acctbal, n_name, c_address, c_phone, c_comment\n  300000     38182  AGGREGATE SUM(l_extendedprice * (1 - l_discount)) GROUP BY HASH c_custkey, c_name, c_acctbal, c_phone, n_name, c_address, c_comment\n  300000    115050  PROJECT l_extendedprice, l_discount, c_custkey, c_name, c_address, c_phone, c_acctbal, c_comment, n_name\n  300000    115050  INNER JOIN HASH ON n_nationkey = c_nationkey\n      25        25  │└TABLE SCAN nation\n  300000    115050  PROJECT l_extendedprice, l_discount, c_custkey, c_name, c_address, c_nationkey, c_phone, c_acctbal, c_comment\n  300000    115050  INNER JOIN HASH ON c_custkey = o_custkey\n  150000    150000  │└DISTRIBUTE HASH ON c_custkey\n  150000    150000  │ TABLE SCAN customer WHERE ((c_nationkey >= 0) AND (c_nationkey <= 24)) AND c_nationkey IN(0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24)\n  300000    115050  DISTRIBUTE HASH ON o_custkey\n  300000    115050  PROJECT l_extendedprice, l_discount, o_custkey\n  300000    115050  INNER JOIN HASH ON o_orderkey = l_orderkey\n  300000     57474  │└DISTRIBUTE HASH ON o_orderkey\n  300000     57474  │ FILTER (o_orderdate >= DATE'1994-06-01') AND (o_orderdate < DATE'1994-09-01')\n 1500000   1500000  │ TABLE SCAN orders WHERE ((o_orderdate >= DATE'1994-06-01') AND (o_orderdate < DATE'1994-09-01')) AND CASE MOD(HASH_REPARTITION o_custkey,10) WHEN 0 THEN (((o_custkey >= 5) AND (o_custkey <= 149992)) AND TRUE) WHEN 1 THEN (((o_custkey >= 6) AND (o_custkey <= 149997)) AND TRUE) WHEN 2 THEN (((o_custkey >= 10) AND (o_custkey <= 149995)) AND TRUE) WHEN 3 THEN (((o_custkey >= 1) AND (o_custkey <= 150000)) AND TRUE) WHEN 4 THEN (((o_custkey >= 12) AND (o_custkey <= 149998)) ...\n 1200243   1478870  DISTRIBUTE HASH ON l_orderkey\n 1200243   1478870  FILTER l_returnflag = 'R'\n 6001215   6001215  TABLE SCAN lineitem WHERE (l_returnflag = 'R') AND CASE MOD(HASH_REPARTITION l_orderkey,10) WHEN 0 THEN (((l_orderkey >= 5) AND (l_orderkey <= 5999588)) AND TRUE) WHEN 1 THEN (((l_orderkey >= 64) AND (l_orderkey <= 5999394)) AND TRUE) WHEN 2 THEN (((l_orderkey >= 69) AND (l_orderkey <= 5998789)) AND TRUE) WHEN 3 THEN (((l_orderkey >= 161) AND (l_orderkey <= 5999812)) AND TRUE) WHEN 4 THEN (((l_orderkey >= 131) AND (l_orderkey <= 5999045)) AND TRUE) WHEN 5 THEN (((l_orderke...\n",
+      "sql": "/* TPC-H Q10 */\nSELECT c_custkey,\n       c_name,\n       SUM(l_extendedprice * (1 - l_discount)) AS revenue,\n       c_acctbal,\n       n_name,\n       c_address,\n       c_phone,\n       c_comment\nFROM tpch_sf1.lineitem\nINNER JOIN tpch_sf1.orders\n    ON l_orderkey = o_orderkey\nINNER JOIN tpch_sf1.customer\n    ON o_custkey = c_custkey\nINNER JOIN tpch_sf1.nation\n    ON c_nationkey = n_nationkey\nWHERE o_orderdate >= '1994-06-01'\n  AND o_orderdate < '1994-09-01'\n  AND l_returnflag = 'R'\nGROUP BY c_custkey,\n         c_name,\n         c_acctbal,\n         c_phone,\n         n_name,\n         c_address,\n         c_comment\nORDER BY revenue DESC",
+      "startTime": "2026-06-26T23:27:52.081171Z",
+      "status": "OK",
+      "timeMs": 965281.306
+    }
+  ],
+  "runtime": {
+    "avgMs": 965281.306,
+    "bestMs": 965281.306,
+    "maxMs": 965281.306,
+    "minMs": 965281.306,
+    "stdDevMs": 0.0
+  },
   "storageVariant": "iceberg",
   "theorem": {
     "categories": [

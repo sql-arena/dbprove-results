@@ -1,4 +1,5 @@
 {
+  "config": "M5 Macbook Pro",
   "engine": "ClickHouse",
   "queries": [
     {
@@ -81,16 +82,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       -         9  SEQUENCE\n       -   1500000  ├─PROJECT c_name, c_custkey, o_orderkey, o_orderdate, o_totalprice, a1\n       -   1500000  │ SORT o_totalprice, o_orderdate\n       -   1500000  │ PROJECT o_totalprice, o_orderdate, a1, c_name, c_custkey, o_orderkey\n       -   1500000  │ AGGREGATE SUM(l_quantity) AS a1 GROUP BY HASH c_name, c_custkey, o_orderkey, o_orderdate, o_totalprice\n       -   6001215  │ PROJECT c_name, c_custkey, o_orderkey, o_orderdate, o_totalprice, l_quantity\n       -   6001215  │ PROJECT l_quantity, o_orderkey, o_orderdate, o_totalprice, c_name, c_custkey\n       -   6001215  │ INNER JOIN HASH ON PROJECTION_408.o_custkey = PROJECTION_405.c_custkey\n       -    150000  │ │└PROJECT c_custkey, c_name\n       -    150000  │ │ PROJECT c_name, c_custkey\n       -    150000  │ │ TABLE SCAN customer\n       -   6001215  │ PROJECT o_custkey, l_quantity, o_orderkey, o_orderdate, o_totalprice\n       -   6001215  │ PROJECT l_quantity, o_orderkey, o_orderdate, o_totalprice, o_custkey\n       -   6001215  │ INNER JOIN HASH ON PROJECTION_414.l_orderkey = PROJECTION_411.o_orderkey\n       -   1500000  │ │└PROJECT o_orderkey, o_orderdate, o_totalprice, o_custkey\n       -   1500000  │ │ PROJECT o_orderkey, o_orderdate, o_totalprice, o_custkey\n       -   1500000  │ │ TABLE SCAN orders WHERE TRUE\n       -   6001215  │ PROJECT l_orderkey, l_quantity\n       -   6001215  │ PROJECT l_orderkey, l_quantity\n       -   6001215  │ TABLE SCAN lineitem WHERE TRUE\n       -         9  └─PROJECT l_orderkey\n       -         9    FILTER (a9 > 314) AS a7\n       -   1500000    AGGREGATE SUM(l_quantity) AS a9 GROUP BY HASH l_orderkey\n       -   6001215    PROJECT l_orderkey, l_quantity\n       -   6001215    TABLE SCAN lineitem\n",
       "sql": "/* TPC-H Q18 */\nSELECT c_name,\n       c_custkey,\n       o_orderkey,\n       o_orderdate,\n       o_totalprice,\n       SUM(l_quantity)\nFROM tpch_sf1.lineitem\nINNER JOIN tpch_sf1.orders\n    ON l_orderkey = o_orderkey\nINNER JOIN tpch_sf1.customer\n    ON o_custkey = c_custkey\nWHERE o_orderkey IN (SELECT l_orderkey\n                     FROM tpch_sf1.lineitem\n                     GROUP BY l_orderkey\n                     HAVING SUM(l_quantity) > 314)\nGROUP BY c_name,\n         c_custkey,\n         o_orderkey,\n         o_orderdate,\n         o_totalprice\nORDER BY o_totalprice DESC,\n         o_orderdate",
-      "startTime": "2026-06-23T11:15:07.493136Z",
+      "startTime": "2026-06-26T15:36:21.567695Z",
       "status": "OK",
-      "timeMs": 71.306
+      "timeMs": 63.137
     }
   ],
   "runtime": {
-    "avgMs": 71.306,
-    "bestMs": 71.306,
-    "maxMs": 71.306,
-    "minMs": 71.306,
+    "avgMs": 63.137,
+    "bestMs": 63.137,
+    "maxMs": 63.137,
+    "minMs": 63.137,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

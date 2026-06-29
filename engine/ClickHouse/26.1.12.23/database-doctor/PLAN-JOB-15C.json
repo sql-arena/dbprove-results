@@ -1,6 +1,99 @@
 {
+  "config": "M5 Macbook Pro",
   "engine": "ClickHouse",
-  "queries": [],
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": -1,
+        "distribute": 0,
+        "hash": -1,
+        "join": -1,
+        "scan": 9379428,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       -         ∞  PROJECT a1 AS release_date, a2 AS modern_american_internet_movie\n       -         ∞  AGGREGATE MIN(info) AS a1, MIN(title) AS a2\n       -         ∞  PROJECT info, title\n       -         ∞  PROJECT info, title\n       -         ∞  INNER JOIN HASH ON PROJECTION_967.id = PROJECTION_922.keyword_id\n       -         ∞  │└PROJECT keyword_id, info, title\n       -         ∞  │ PROJECT info, keyword_id, title\n       -         ∞  │ INNER JOIN HASH ON tuple(PROJECTION_964.movie_id,PROJECTION_964.movie_id,PROJECTION_964.movie_id,PROJECTION_964.movie_id) = tuple(PROJECTION_925.movie_id,PROJECTION_925.movie_id,PROJECTION_925.movie_id,PROJECTION_925.id)\n       -         ∞  │ │└PROJECT movie_id_right, movie_id_right_2, movie_id AS movie_id_right_3, id, info, title\n       -         ∞  │ │ PROJECT movie_id, movie_id, info, movie_id, title, id\n       -         ∞  │ │ INNER JOIN HASH ON tuple(PROJECTION_961.id,PROJECTION_961.id,PROJECTION_961.id) = tuple(PROJECTION_928.movie_id,PROJECTION_928.movie_id,PROJECTION_928.movie_id)\n       -         ∞  │ │ │└PROJECT movie_id, movie_id, movie_id, info\n       -         ∞  │ │ │ PROJECT movie_id, movie_id, info, movie_id\n       -         ∞  │ │ │ INNER JOIN HASH ON PROJECTION_958.id = PROJECTION_931.company_id\n       -         ∞  │ │ │ │└PROJECT company_id, movie_id, movie_id, info, movie_id\n       -         ∞  │ │ │ │ PROJECT movie_id, movie_id, company_id, info, movie_id\n       -         ∞  │ │ │ │ INNER JOIN HASH ON PROJECTION_955.id = PROJECTION_934.company_type_id\n       -         ∞  │ │ │ │ │└PROJECT company_type_id, movie_id, movie_id, company_id, info, movie_id\n       -         ∞  │ │ │ │ │ PROJECT movie_id, movie_id, company_id, company_type_id, info, movie_id\n       -         ∞  │ │ │ │ │ INNER JOIN HASH ON tuple(PROJECTION_952.movie_id,PROJECTION_952.movie_id) = tuple(PROJECTION_937.movie_id,PROJECTION_937.movie_id)\n       -         ∞  │ │ │ │ │ │└PROJECT movie_id_right, movie_id AS movie_id_right_2, info\n       -         ∞  │ │ │ │ │ │ PROJECT movie_id, info, movie_id\n       -         ∞  │ │ │ │ │ │ INNER JOIN HASH ON PROJECTION_949.movie_id = PROJECTION_940.movie_id\n       -         ∞  │ │ │ │ │ │ │└PROJECT movie_id AS movie_id_right, info\n       -         ∞  │ │ │ │ │ │ │ PROJECT info, movie_id\n       -         ∞  │ │ │ │ │ │ │ INNER JOIN HASH ON PROJECTION_946.info_type_id = PROJECTION_943.id\n       -         1  │ │ │ │ │ │ │ │└PROJECT id\n       -         1  │ │ │ │ │ │ │ │ FILTER (1 AND info = 'release dates'_String) AS a40\n       -         1  │ │ │ │ │ │ │ │ TABLE SCAN info_type WHERE info = 'release dates'\n       -         ∞  │ │ │ │ │ │ │ PROJECT info_type_id, info, movie_id\n       -         ∞  │ │ │ │ │ │ │ FILTER ( LIKE (note,'%internet%'_String) AND 1 AND  OR ( LIKE (info,'USA:% 199%'_String), LIKE (info,'USA:% 200%'_String))) AS a26\n       -      1783  │ │ │ │ │ │ │ TABLE SCAN movie_info WHERE note LIKE '%internet%' AND (info LIKE 'USA:% 199%' OR info LIKE 'USA:% 200%')\n       -    361379  │ │ │ │ │ │ PROJECT movie_id AS movie_id_left\n       -    361379  │ │ │ │ │ │ PROJECT movie_id\n       -    361379  │ │ │ │ │ │ TABLE SCAN aka_title\n       -   2609129  │ │ │ │ │ PROJECT movie_id AS movie_id_left, company_id, company_type_id\n       -   2609129  │ │ │ │ │ PROJECT movie_id, company_id, company_type_id\n       -   2609129  │ │ │ │ │ TABLE SCAN movie_companies\n       -         4  │ │ │ │ PROJECT id\n       -         4  │ │ │ │ PROJECT id\n       -         4  │ │ │ │ TABLE SCAN company_type\n       -         0  │ │ │ PROJECT id\n       -         0  │ │ │ FILTER (1 AND country_code = 'us'_String) AS a16\n       -         0  │ │ │ TABLE SCAN company_name WHERE country_code = 'us'\n       -   1749032  │ │ PROJECT id, title\n       -   1749032  │ │ FILTER (1 AND production_year > 1990_UInt16) AS a11\n       -   1749032  │ │ TABLE SCAN title WHERE production_year > 1990\n       -   4523930  │ PROJECT movie_id AS movie_id_left, keyword_id\n       -   4523930  │ PROJECT movie_id, keyword_id\n       -   4523930  │ TABLE SCAN movie_keyword\n       -    134170  PROJECT id\n       -    134170  PROJECT id\n       -    134170  TABLE SCAN keyword\n",
+      "sql": "SELECT MIN(mi.info) AS release_date,\n       MIN(t.title) AS modern_american_internet_movie\nFROM job.aka_title AS aka_t,\n     job.company_name AS cn,\n     job.company_type AS ct,\n     job.info_type AS it1,\n     job.keyword AS k,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.movie_keyword AS mk,\n     job.title AS t\nWHERE cn.country_code = '[us]'\n  AND it1.info = 'release dates'\n  AND mi.note LIKE '%internet%'\n  AND mi.info IS NOT NULL\n  AND (mi.info LIKE 'USA:% 199%'\n       OR mi.info LIKE 'USA:% 200%')\n  AND t.production_year > 1990\n  AND t.id = aka_t.movie_id\n  AND t.id = mi.movie_id\n  AND t.id = mk.movie_id\n  AND t.id = mc.movie_id\n  AND mk.movie_id = mi.movie_id\n  AND mk.movie_id = mc.movie_id\n  AND mk.movie_id = aka_t.movie_id\n  AND mi.movie_id = mc.movie_id\n  AND mi.movie_id = aka_t.movie_id\n  AND mc.movie_id = aka_t.movie_id\n  AND k.id = mk.keyword_id\n  AND it1.id = mi.info_type_id\n  AND cn.id = mc.company_id\n  AND ct.id = mc.company_type_id;\n",
+      "startTime": "2026-06-26T18:38:37.842784Z",
+      "status": "OK",
+      "timeMs": 440.56
+    }
+  ],
+  "runtime": {
+    "avgMs": 440.56,
+    "bestMs": 440.56,
+    "maxMs": 440.56,
+    "minMs": 440.56,
+    "stdDevMs": 0.0
+  },
   "storageVariant": "native",
   "theorem": {
     "categories": [

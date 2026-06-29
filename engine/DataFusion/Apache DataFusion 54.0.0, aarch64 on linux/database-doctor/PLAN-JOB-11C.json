@@ -1,4 +1,5 @@
 {
+  "config": "M5 Macbook Pro",
   "engine": "DataFusion",
   "queries": [
     {
@@ -81,16 +82,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  PROJECT from_company, production_note, movie_based_on_book\n       1         1  AGGREGATE MIN(name), MIN(note), MIN(title)\n   26834        10  DISTRIBUTE GATHER\n   26834        10  AGGREGATE MIN(name), MIN(note), MIN(title)\n   26834      6946  INNER JOIN HASH ON movie_id = id AND movie_id = id AND movie_id = id\n   26834      6946  │└DISTRIBUTE GATHER\n   26834      6946  │ INNER JOIN HASH ON id = link_type_id\n      18        18  │ │└TABLE SCAN link_type\n   26834      6946  │ INNER JOIN HASH ON movie_id = movie_id AND movie_id = movie_id\n   26834      4726  │ │└DISTRIBUTE GATHER\n   26834      4726  │ │ INNER JOIN HASH ON id = keyword_id\n   26834         3  │ │ │└DISTRIBUTE GATHER\n   26834         3  │ │ │ FILTER ((keyword = 'sequel') OR (keyword = 'revenge')) OR (keyword = 'based-on-novel')\n  134170    134170  │ │ │ DISTRIBUTE ROUND ROBIN\n  134170    134170  │ │ │ TABLE SCAN keyword WHERE ((keyword = 'sequel') OR (keyword = 'revenge')) OR (keyword = 'based-on-novel')\n   93458    827544  │ │ INNER JOIN HASH ON movie_id = movie_id\n   52183     13192  │ │ │└DISTRIBUTE GATHER\n   52183     13192  │ │ │ INNER JOIN HASH ON id = company_type_id\n       1         3  │ │ │ │└DISTRIBUTE GATHER\n       1         3  │ │ │ │ FILTER (kind <> 'production companies') AND kind IS NOT NULL\n       4         4  │ │ │ │ DISTRIBUTE ROUND ROBIN\n       4         4  │ │ │ │ TABLE SCAN company_type WHERE (kind <> 'production companies') AND kind IS NOT NULL\n  104366     13233  │ │ │ INNER JOIN HASH ON id = company_id\n   47000        89  │ │ │ │└DISTRIBUTE GATHER\n   47000        89  │ │ │ │ FILTER (country_code <> 'pl') AND (name LIKE '20th Century Fox%' OR name LIKE 'Twentieth Century Fox%')\n  234997    234997  │ │ │ │ TABLE SCAN company_name WHERE (country_code <> 'pl') AND (name LIKE '20th Century Fox%' OR name LIKE 'Twentieth Century Fox%')\n  521826   1202647  │ │ │ FILTER note IS NOT NULL\n 2609129   1356171  │ │ │ TABLE SCAN movie_companies WHERE (note IS NOT NULL AND (((company_id >= 423) AND (company_id <= 70247)) AND company_id IN(63280,58583,11410,11408,52207,61361,18836,70246,9617,63279,12093,11964,3043,6726,18150,2982,460,1920,8002,424,12781,12065,34463,47849,9329,63935,45919,63281,9247,29349,1635,12062,42632,3815,52786,452,2346,12094,16574,44066,451,29571,13774,50022,49954,20442,63958,58879,18739,70247,44103,23687,14960,9133,19496,11412,461,31647,17627,23046,25729...\n 4523930   4523930  │ │ TABLE SCAN movie_keyword WHERE (((movie_id >= 8343) AND (movie_id <= 2525637)) AND TRUE) AND (((keyword_id >= 359) AND (keyword_id <= 398)) AND keyword_id IN(373,359,398))\n   29997     29997  │ DISTRIBUTE ROUND ROBIN\n   29997     29997  │ TABLE SCAN movie_link WHERE ((((movie_id >= 8805) AND (movie_id <= 2517829)) AND ((movie_id >= 8805) AND (movie_id <= 2517829))) AND TRUE) AND (((link_type_id >= 1) AND (link_type_id <= 18)) AND link_type_id IN(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18))\n 1246097   1812583  FILTER production_year > 1950\n 2528312   2034729  TABLE SCAN title WHERE (production_year > 1950) AND (((((id >= 8805) AND (id <= 73570)) AND ((id >= 8805) AND (id <= 73570))) AND ((id >= 8805) AND (id <= 73570))) AND struct(id,id,id) IN( < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < ...\n",
       "sql": "SELECT MIN(cn.name) AS from_company,\n       MIN(mc.note) AS production_note,\n       MIN(t.title) AS movie_based_on_book\nFROM job.company_name AS cn,\n     job.company_type AS ct,\n     job.keyword AS k,\n     job.link_type AS lt,\n     job.movie_companies AS mc,\n     job.movie_keyword AS mk,\n     job.movie_link AS ml,\n     job.title AS t\nWHERE cn.country_code !='[pl]'\n  AND (cn.name LIKE '20th Century Fox%'\n       OR cn.name LIKE 'Twentieth Century Fox%')\n  AND ct.kind != 'production companies'\n  AND ct.kind IS NOT NULL\n  AND k.keyword IN ('sequel',\n                    'revenge',\n                    'based-on-novel')\n  AND mc.note IS NOT NULL\n  AND t.production_year > 1950\n  AND lt.id = ml.link_type_id\n  AND ml.movie_id = t.id\n  AND t.id = mk.movie_id\n  AND mk.keyword_id = k.id\n  AND t.id = mc.movie_id\n  AND mc.company_type_id = ct.id\n  AND mc.company_id = cn.id\n  AND ml.movie_id = mk.movie_id\n  AND ml.movie_id = mc.movie_id\n  AND mk.movie_id = mc.movie_id;\n",
-      "startTime": "2026-06-23T16:40:56.470293Z",
+      "startTime": "2026-06-26T23:44:28.549249Z",
       "status": "OK",
-      "timeMs": 40.22
+      "timeMs": 52.042
     }
   ],
   "runtime": {
-    "avgMs": 40.22,
-    "bestMs": 40.22,
-    "maxMs": 40.22,
-    "minMs": 40.22,
+    "avgMs": 52.042,
+    "bestMs": 52.042,
+    "maxMs": 52.042,
+    "minMs": 52.042,
     "stdDevMs": 0.0
   },
   "storageVariant": "iceberg",

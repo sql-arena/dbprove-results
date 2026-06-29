@@ -1,4 +1,5 @@
 {
+  "config": "M5 Macbook Pro",
   "engine": "DataFusion",
   "queries": [
     {
@@ -81,16 +82,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  PROJECT character, russian_mov_with_actor_producer\n       1         1  AGGREGATE MIN(name), MIN(title)\n  162535        10  DISTRIBUTE GATHER\n  162535        10  AGGREGATE MIN(name), MIN(title)\n  162535         0  PROJECT name, title\n  162535         0  INNER JOIN HASH ON id = movie_id AND id = movie_id\n  162535    391666  │└DISTRIBUTE HASH ON id, id\n  162535    391666  │ FILTER production_year > 2010\n 2528312   2528312  │ TABLE SCAN title WHERE production_year > 2010\n  408414         0  DISTRIBUTE HASH ON movie_id, movie_id\n  408414         0  INNER JOIN HASH ON id = role_id\n       3         1  │└DISTRIBUTE GATHER\n       3         1  │ FILTER role = 'actor'\n      12        12  │ DISTRIBUTE ROUND ROBIN\n      12        12  │ TABLE SCAN role_type WHERE role = 'actor'\n 1497518         0  INNER JOIN HASH ON id = company_type_id\n       4         4  │└TABLE SCAN company_type\n 1497518         0  INNER JOIN HASH ON id = company_id\n   47000      1361  │└DISTRIBUTE GATHER\n   47000      1361  │ FILTER country_code = 'ru'\n  234997    234997  │ TABLE SCAN company_name WHERE country_code = 'ru'\n 7487498        30  PROJECT name, movie_id, role_id, movie_id, company_id, company_type_id\n 7487498        30  INNER JOIN HASH ON movie_id = movie_id\n 2609129   2609129  │└DISTRIBUTE HASH ON movie_id\n 2609129   2609129  │ TABLE SCAN movie_companies WHERE ((((company_id >= 220) AND (company_id <= 234623)) AND TRUE) AND (((company_type_id >= 1) AND (company_type_id <= 4)) AND company_type_id IN(1,2,3,4))) AND CASE MOD(HASH_REPARTITION(movie_id,movie_id),10) WHEN 1 THEN ((((movie_id >= 13) AND (movie_id <= 2528194)) AND ((movie_id >= 13) AND (movie_id <= 2528194))) AND TRUE) WHEN 3 THEN ((((movie_id >= 11) AND (movie_id <= 2528183)) AND ((movie_id >= 11) AND (movie_id <= 2528183))) AND TRU...\n 7248869        13  DISTRIBUTE HASH ON movie_id\n 7248869        13  INNER JOIN HASH ON id = person_role_id\n 3140339   3140339  │└DISTRIBUTE HASH ON id\n 3140339   3140339  │ TABLE SCAN char_name\n 7248869        13  DISTRIBUTE HASH ON person_role_id\n 7248869        13  FILTER note LIKE '%(producer)%'\n36244344  12710426  TABLE SCAN cast_info WHERE ((note LIKE '%(producer)%' AND CASE MOD(HASH_REPARTITION person_role_id,10) WHEN 0 THEN (((person_role_id >= 5) AND (person_role_id <= 3140327)) AND TRUE) WHEN 1 THEN (((person_role_id >= 6) AND (person_role_id <= 3140324)) AND TRUE) WHEN 2 THEN (((person_role_id >= 10) AND (person_role_id <= 3140333)) AND TRUE) WHEN 3 THEN (((person_role_id >= 1) AND (person_role_id <= 3140339)) AND TRUE) WHEN 4 THEN (((person_role_id >= 12) AND (person_role_id ...\n",
       "sql": "SELECT MIN(chn.name) AS character,\n       MIN(t.title) AS russian_mov_with_actor_producer\nFROM job.char_name AS chn,\n     job.cast_info AS ci,\n     job.company_name AS cn,\n     job.company_type AS ct,\n     job.movie_companies AS mc,\n     job.role_type AS rt,\n     job.title AS t\nWHERE ci.note LIKE '%(producer)%'\n  AND cn.country_code = '[ru]'\n  AND rt.role = 'actor'\n  AND t.production_year > 2010\n  AND t.id = mc.movie_id\n  AND t.id = ci.movie_id\n  AND ci.movie_id = mc.movie_id\n  AND chn.id = ci.person_role_id\n  AND rt.id = ci.role_id\n  AND cn.id = mc.company_id\n  AND ct.id = mc.company_type_id;\n",
-      "startTime": "2026-06-23T16:40:55.426658Z",
+      "startTime": "2026-06-26T23:44:27.011813Z",
       "status": "OK",
-      "timeMs": 205.354
+      "timeMs": 193.479
     }
   ],
   "runtime": {
-    "avgMs": 205.354,
-    "bestMs": 205.354,
-    "maxMs": 205.354,
-    "minMs": 205.354,
+    "avgMs": 193.479,
+    "bestMs": 193.479,
+    "maxMs": 193.479,
+    "minMs": 193.479,
     "stdDevMs": 0.0
   },
   "storageVariant": "iceberg",

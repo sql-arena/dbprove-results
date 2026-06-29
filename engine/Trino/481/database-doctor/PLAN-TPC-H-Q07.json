@@ -82,16 +82,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       -         4  PROJECT n_name AS supp_nation, n_name_13 AS cust_nation, expr_gid AS l_year, sum AS revenue\n       -         4  SORT n_name, n_name_13, expr_gid\n       -         4  AGGREGATE SUM(sum_20) AS sum GROUP BY HASH n_name, n_name_13, expr_gid\n       -         4  DISTRIBUTE HASH ON n_name, n_name_13, expr_gid\n       -         4  AGGREGATE SUM(expr_19) AS sum_20 GROUP BY PARTIAL n_name, n_name_13, expr_gid\n       -      5924  PROJECT l_extendedprice * (1 - l_discount) AS expr_19, n_name, n_name_13, EXTRACT(YEAR FROM l_shipdate) AS expr_gid\n       -      5924  INNER JOIN HASH ON (c_nationkey = n_nationkey_12) AND (((n_name = 'GERMANY') OR (n_name_13 = 'GERMANY')) AND ((n_name_13 = 'FRANCE') OR (n_name = 'FRANCE')))\n       -         2  │└DISTRIBUTE GATHER\n      25         2  │ PROJECT n_nationkey AS n_nationkey_12, n_name AS n_name_13\n      25         2  │ FILTER n_name IN('FRANCE','GERMANY')\n      25        25  │ TABLE SCAN nation\n       -    145703  INNER JOIN HASH ON s_nationkey = n_nationkey\n       -         2  │└DISTRIBUTE GATHER\n      25         2  │ FILTER n_name IN('FRANCE','GERMANY')\n      25        25  │ TABLE SCAN nation\n       -   1828450  INNER JOIN HASH ON o_custkey = c_custkey\n  150000    150000  │└DISTRIBUTE GATHER\n  150000    150000  │ TABLE SCAN customer\n       -   1828450  INNER JOIN HASH ON l_suppkey = s_suppkey\n   10000     10000  │└DISTRIBUTE GATHER\n   10000     10000  │ TABLE SCAN supplier\n       -   1828450  INNER JOIN HASH ON l_orderkey = o_orderkey\n 1500000   1500000  │└DISTRIBUTE HASH ON o_orderkey\n 1500000   1500000  │ TABLE SCAN orders\n 6001215   1828450  FILTER l_shipdate BETWEEN '1995-01-01' AND '1996-12-31'\n 6001215   6001215  TABLE SCAN lineitem\n",
       "sql": "/* TPC-H Q07 */\nSELECT supp_nation,\n       cust_nation,\n       l_year,\n       SUM(volume) AS revenue\nFROM (SELECT n1.n_name                          AS supp_nation,\n             n2.n_name                          AS cust_nation,\n             EXTRACT(YEAR FROM l_shipdate)      AS l_year,\n             l_extendedprice * (1 - l_discount) AS volume\n      FROM tpch_sf1.lineitem\n      INNER JOIN tpch_sf1.orders\n          ON l_orderkey = o_orderkey\n      INNER JOIN tpch_sf1.supplier\n          ON l_suppkey = s_suppkey\n      INNER JOIN tpch_sf1.customer\n          ON o_custkey = c_custkey\n      INNER JOIN tpch_sf1.nation n1\n          ON s_nationkey = n1.n_nationkey\n      INNER JOIN tpch_sf1.nation n2\n          ON c_nationkey = n2.n_nationkey\n      WHERE ((n1.n_name = 'GERMANY' AND n2.n_name = 'FRANCE')\n          OR (n1.n_name = 'FRANCE' AND n2.n_name = 'GERMANY'))\n        AND l_shipdate BETWEEN '1995-01-01' AND '1996-12-31') AS shipping\nGROUP BY supp_nation,\n         cust_nation,\n         l_year\nORDER BY supp_nation,\n         cust_nation,\n         l_year\n\n\n",
-      "startTime": "2026-06-25T16:27:04.515707Z",
+      "startTime": "2026-06-26T16:37:34.594590Z",
       "status": "OK",
-      "timeMs": 849.598
+      "timeMs": 806.479
     }
   ],
   "runtime": {
-    "avgMs": 849.598,
-    "bestMs": 849.598,
-    "maxMs": 849.598,
-    "minMs": 849.598,
+    "avgMs": 806.479,
+    "bestMs": 806.479,
+    "maxMs": 806.479,
+    "minMs": 806.479,
     "stdDevMs": 0.0
   },
   "storageVariant": "iceberg",

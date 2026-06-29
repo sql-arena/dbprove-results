@@ -82,16 +82,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(note), MIN(title), MIN(production_year)\n       3         3  AGGREGATE PARTIAL MIN(note), PARTIAL MIN(title), PARTIAL MIN(production_year)\n    1816         1  INNER JOIN HASH ON company_type_id = id\n       1         1  │└TABLE SCAN company_type AS ct WHERE ct.kind = 'production companies'\n   21792        78  INNER JOIN LOOP ON movie_id = id\n    8307         6  │└INNER JOIN LOOP ON id = movie_id\n    5089         3  │ │└INNER JOIN HASH ON info_type_id = id\n       3         3  │ │ │└TABLE SEEK info_type AS it\n 1725045   1380035  │ │ TABLE SCAN movie_info_idx AS mi_idx\n      10        10  │ TABLE SEEK title AS t WHERE t.production_year > 2000\n      18        78  TABLE SEEK movie_companies AS mc WHERE mc.note NOT  LIKE '%(as Metro-Goldwyn-Mayer Pictures)%'\n",
       "sql": "SELECT MIN(mc.note) AS production_note,\n       MIN(t.title) AS movie_title,\n       MIN(t.production_year) AS movie_year\nFROM job.company_type AS ct,\n     job.info_type AS it,\n     job.movie_companies AS mc,\n     job.movie_info_idx AS mi_idx,\n     job.title AS t\nWHERE ct.kind = 'production companies'\n  AND it.info = 'bottom 10 rank'\n  AND mc.note NOT LIKE '%(as Metro-Goldwyn-Mayer Pictures)%'\n  AND t.production_year >2000\n  AND ct.id = mc.company_type_id\n  AND t.id = mc.movie_id\n  AND t.id = mi_idx.movie_id\n  AND mc.movie_id = mi_idx.movie_id\n  AND it.id = mi_idx.info_type_id;\n",
-      "startTime": "2026-06-25T15:29:44.821812Z",
+      "startTime": "2026-06-26T15:30:52.903858Z",
       "status": "OK",
-      "timeMs": 94.887
+      "timeMs": 42.399
     }
   ],
   "runtime": {
-    "avgMs": 94.887,
-    "bestMs": 94.887,
-    "maxMs": 94.887,
-    "minMs": 94.887,
+    "avgMs": 42.399,
+    "bestMs": 42.399,
+    "maxMs": 42.399,
+    "minMs": 42.399,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

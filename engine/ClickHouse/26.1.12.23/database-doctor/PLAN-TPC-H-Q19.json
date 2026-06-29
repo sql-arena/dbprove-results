@@ -1,4 +1,5 @@
 {
+  "config": "M5 Macbook Pro",
   "engine": "ClickHouse",
   "queries": [
     {
@@ -81,16 +82,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       -         1  PROJECT a1 AS revenue\n       -         1  AGGREGATE SUM(a5) AS a1\n       -       120  PROJECT l_extendedprice * (1 - l_discount) AS a5\n       -       120  FILTER ((p_brand = 'Brand#11') AND p_container IN('SM CASE','SM BOX','SM PACK','SM PKG') AND (l_quantity >= 5) AND (l_quantity <= 15) AND (p_size <= 5) AND (p_size <= 15) AND (l_quantity >= 1)) OR ((p_brand = 'Brand#22') AND p_container IN('SM CASE','SM BOX','SM PACK','SM PKG') AND (l_quantity >= 15) AND (l_quantity <= 25) AND (p_size <= 10)) OR ((p_brand = 'Brand#33') AND p_container IN('SM CASE','SM BOX','SM PACK','SM PKG') AND (l_quantity >= 25) AND (l_quantity <= 35) AND (p_size <= 15))\n       -       312  PROJECT l_extendedprice, l_discount, l_quantity, p_size, p_brand, p_container\n       -       312  INNER JOIN HASH ON PROJECTION_432.l_partkey = PROJECTION_429.p_partkey\n       -       476  │└PROJECT p_partkey, p_size, p_brand, p_container\n       -       476  │ PROJECT p_partkey, p_size, p_brand, p_container\n       -       476  │ TABLE SCAN part WHERE (p_size >= 1) AND (((p_brand = 'Brand#11') AND p_container IN('SM CASE','SM BOX','SM PACK','SM PKG') AND (p_size <= 5) AND (p_size <= 15)) OR ((p_brand = 'Brand#22') AND p_container IN('SM CASE','SM BOX','SM PACK','SM PKG') AND (p_size <= 10)) OR ((p_brand = 'Brand#33') AND p_container IN('SM CASE','SM BOX','SM PACK','SM PKG') AND (p_size <= 15)))\n       -    132509  PROJECT l_partkey, l_extendedprice, l_discount, l_quantity\n       -    132509  PROJECT l_partkey, l_extendedprice, l_discount, l_quantity\n       -    132509  TABLE SCAN lineitem WHERE (((l_quantity >= 5) AND (l_quantity <= 15) AND (l_quantity >= 1)) OR ((l_quantity >= 15) AND (l_quantity <= 25)) OR ((l_quantity >= 25) AND (l_quantity <= 35))) AND l_shipmode IN('AIR','AIR REG') AND (l_shipinstruct = 'DELIVER IN PERSON')\n",
       "sql": "/* TPC-H Q19 */\nSELECT SUM(l_extendedprice * (1 - l_discount)) AS revenue\nFROM tpch_sf1.lineitem\nINNER JOIN tpch_sf1.part ON p_partkey = l_partkey\nWHERE (\n\n        p_brand = 'Brand#11'\n        AND p_container IN ('SM CASE', 'SM BOX', 'SM PACK', 'SM PKG')\n        AND l_quantity >= 5 AND l_quantity <= 5 + 10\n        AND p_size BETWEEN 1 AND 5\n        AND l_shipmode IN ('AIR', 'AIR REG')\n        AND l_shipinstruct = 'DELIVER IN PERSON'\n    )\n   OR ( p_brand = 'Brand#22'\n        AND p_container IN ('MED BAG', 'MED BOX', 'MED PKG', 'MED PACK')\n        AND l_quantity >= 15 AND l_quantity <= 15 + 10\n        AND p_size BETWEEN 1 AND 10\n        AND l_shipmode IN ('AIR', 'AIR REG')\n        AND l_shipinstruct = 'DELIVER IN PERSON'\n    )\n   OR ( p_brand = 'Brand#33'\n        AND p_container IN ('LG CASE', 'LG BOX', 'LG PACK', 'LG PKG')\n        AND l_quantity >= 25 AND l_quantity <= 25 + 10\n        AND p_size BETWEEN 1 AND 15\n        AND l_shipmode IN ('AIR', 'AIR REG')\n        AND l_shipinstruct = 'DELIVER IN PERSON'\n    )\n",
-      "startTime": "2026-06-23T11:15:10.931363Z",
+      "startTime": "2026-06-26T15:36:24.545637Z",
       "status": "OK",
-      "timeMs": 120.255
+      "timeMs": 102.965
     }
   ],
   "runtime": {
-    "avgMs": 120.255,
-    "bestMs": 120.255,
-    "maxMs": 120.255,
-    "minMs": 120.255,
+    "avgMs": 102.965,
+    "bestMs": 102.965,
+    "maxMs": 102.965,
+    "minMs": 102.965,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

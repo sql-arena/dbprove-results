@@ -1,4 +1,5 @@
 {
+  "config": "M5 Macbook Pro",
   "engine": "DataFusion",
   "queries": [
     {
@@ -81,16 +82,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  PROJECT production_note, movie_title, movie_year\n       1         1  AGGREGATE MIN(note), MIN(title), MIN(production_year)\n  260913        10  DISTRIBUTE GATHER\n  260913        10  AGGREGATE MIN(note), MIN(title), MIN(production_year)\n  260913         4  INNER JOIN HASH ON movie_id = id AND movie_id = id\n  260913         5  │└DISTRIBUTE HASH ON movie_id, movie_id\n  260913         5  │ INNER JOIN HASH ON id = info_type_id\n      23         1  │ │└DISTRIBUTE GATHER\n      23         1  │ │ FILTER info = 'bottom 10 rank'\n     113       113  │ │ DISTRIBUTE ROUND ROBIN\n     113       113  │ │ TABLE SCAN info_type WHERE info = 'bottom 10 rank'\n  260913      5097  │ INNER JOIN HASH ON movie_id = movie_id\n  260913    140904  │ │└DISTRIBUTE HASH ON movie_id\n  260913    140904  │ │ INNER JOIN HASH ON id = company_type_id\n       1         1  │ │ │└DISTRIBUTE GATHER\n       1         1  │ │ │ FILTER kind = 'production companies'\n       4         4  │ │ │ DISTRIBUTE ROUND ROBIN\n       4         4  │ │ │ TABLE SCAN company_type WHERE kind = 'production companies'\n  521826    178918  │ │ FILTER note NOT  LIKE '%(as Metro-Goldwyn-Mayer Pictures)%'\n 2609129   1376261  │ │ TABLE SCAN movie_companies WHERE note NOT  LIKE '%(as Metro-Goldwyn-Mayer Pictures)%' AND (((company_type_id >= 2) AND (company_type_id <= 2)) AND company_type_id IN 2)\n 1380035     26625  │ DISTRIBUTE HASH ON movie_id\n 1380035     26625  │ TABLE SCAN movie_info_idx WHERE CASE MOD(HASH_REPARTITION movie_id,10) WHEN 0 THEN (((movie_id >= 286) AND (movie_id <= 2525688)) AND TRUE) WHEN 1 THEN (((movie_id >= 350) AND (movie_id <= 2525697)) AND TRUE) WHEN 2 THEN (((movie_id >= 921) AND (movie_id <= 2525701)) AND TRUE) WHEN 3 THEN (((movie_id >= 320) AND (movie_id <= 2525700)) AND TRUE) WHEN 4 THEN (((movie_id >= 925) AND (movie_id <= 2525716)) AND TRUE) WHEN 5 THEN (((movie_id >= 290) AND (movie_id <= 2525689)...\n  343129   1381453  DISTRIBUTE HASH ON id, id\n  343129   1381453  FILTER production_year > 2000\n 2528312   2528312  TABLE SCAN title WHERE (production_year > 2000) AND CASE MOD(HASH_REPARTITION(id,id),10) WHEN 1 THEN ((((id >= 1834714) AND (id <= 2322570)) AND ((id >= 1834714) AND (id <= 2322570))) AND struct(id,id) IN( < expr > , < expr > , < expr > , < expr > )) WHEN 7 THEN ((((id >= 2101545) AND (id <= 2101545)) AND ((id >= 2101545) AND (id <= 2101545))) AND struct(id,id) IN( < expr > )) ELSE FALSE END\n",
       "sql": "SELECT MIN(mc.note) AS production_note,\n       MIN(t.title) AS movie_title,\n       MIN(t.production_year) AS movie_year\nFROM job.company_type AS ct,\n     job.info_type AS it,\n     job.movie_companies AS mc,\n     job.movie_info_idx AS mi_idx,\n     job.title AS t\nWHERE ct.kind = 'production companies'\n  AND it.info = 'bottom 10 rank'\n  AND mc.note NOT LIKE '%(as Metro-Goldwyn-Mayer Pictures)%'\n  AND t.production_year >2000\n  AND ct.id = mc.company_type_id\n  AND t.id = mc.movie_id\n  AND t.id = mi_idx.movie_id\n  AND mc.movie_id = mi_idx.movie_id\n  AND it.id = mi_idx.info_type_id;\n",
-      "startTime": "2026-06-23T16:59:32.497379Z",
+      "startTime": "2026-06-26T23:54:44.220284Z",
       "status": "OK",
-      "timeMs": 43.735
+      "timeMs": 37.221
     }
   ],
   "runtime": {
-    "avgMs": 43.735,
-    "bestMs": 43.735,
-    "maxMs": 43.735,
-    "minMs": 43.735,
+    "avgMs": 37.221,
+    "bestMs": 37.221,
+    "maxMs": 37.221,
+    "minMs": 37.221,
     "stdDevMs": 0.0
   },
   "storageVariant": "iceberg",

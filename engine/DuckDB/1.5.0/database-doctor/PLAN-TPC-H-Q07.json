@@ -82,16 +82,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       -         4  SORT shipping.supp_nation, shipping.cust_nation, shipping.l_year\n   47237         4  AGGREGATE SUM(#3) GROUP BY HASH #0, #1, #2\n   47238      5924  PROJECT supp_nation, cust_nation, l_year, volume\n   47238      5924  PROJECT supp_nation, cust_nation, l_year, volume\n   47238      5924  FILTER ((n_name = 'GERMANY') AND (n_name = 'FRANCE')) OR ((n_name = 'FRANCE') AND (n_name = 'GERMANY'))\n   47238     11723  INNER JOIN HASH ON o_custkey = c_custkey\n   28846     12008  │└INNER JOIN HASH ON c_nationkey = n_nationkey\n      25         2  │ │└FILTER (n_name = 'FRANCE') OR (n_name = 'GERMANY')\n      25        25  │ │ TABLE SCAN nation WHERE n_name = 'FRANCE' OR n_name = 'GERMANY'\n  150000     12008  │ TABLE SCAN customer WHERE c_custkey <= 149999\n  232742    145696  INNER JOIN HASH ON o_orderkey = l_orderkey\n  230815    145703  │└INNER JOIN HASH ON l_suppkey = s_suppkey\n    1923       798  │ │└INNER JOIN HASH ON s_nationkey = n_nationkey\n       5         2  │ │ │└FILTER (n_name = 'GERMANY') OR (n_name = 'FRANCE')\n      25        25  │ │ │ TABLE SCAN nation WHERE n_name = 'GERMANY' OR n_name = 'FRANCE'\n   10000       798  │ │ TABLE SCAN supplier\n 1200243   1827687  │ TABLE SCAN lineitem WHERE l_shipdate >= '1995-01-01' AND l_shipdate <= '1996-12-31'\n 1500000    132510  TABLE SCAN orders\n",
       "sql": "/* TPC-H Q07 */\nSELECT supp_nation,\n       cust_nation,\n       l_year,\n       SUM(volume) AS revenue\nFROM (SELECT n1.n_name                          AS supp_nation,\n             n2.n_name                          AS cust_nation,\n             EXTRACT(YEAR FROM l_shipdate)      AS l_year,\n             l_extendedprice * (1 - l_discount) AS volume\n      FROM tpch_sf1.lineitem\n      INNER JOIN tpch_sf1.orders\n          ON l_orderkey = o_orderkey\n      INNER JOIN tpch_sf1.supplier\n          ON l_suppkey = s_suppkey\n      INNER JOIN tpch_sf1.customer\n          ON o_custkey = c_custkey\n      INNER JOIN tpch_sf1.nation n1\n          ON s_nationkey = n1.n_nationkey\n      INNER JOIN tpch_sf1.nation n2\n          ON c_nationkey = n2.n_nationkey\n      WHERE ((n1.n_name = 'GERMANY' AND n2.n_name = 'FRANCE')\n          OR (n1.n_name = 'FRANCE' AND n2.n_name = 'GERMANY'))\n        AND l_shipdate BETWEEN '1995-01-01' AND '1996-12-31') AS shipping\nGROUP BY supp_nation,\n         cust_nation,\n         l_year\nORDER BY supp_nation,\n         cust_nation,\n         l_year\n\n\n",
-      "startTime": "2026-06-24T10:15:49.870538Z",
+      "startTime": "2026-06-26T15:25:03.798642Z",
       "status": "OK",
-      "timeMs": 13.477
+      "timeMs": 12.207
     }
   ],
   "runtime": {
-    "avgMs": 13.477,
-    "bestMs": 13.477,
-    "maxMs": 13.477,
-    "minMs": 13.477,
+    "avgMs": 12.207,
+    "bestMs": 12.207,
+    "maxMs": 12.207,
+    "minMs": 12.207,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

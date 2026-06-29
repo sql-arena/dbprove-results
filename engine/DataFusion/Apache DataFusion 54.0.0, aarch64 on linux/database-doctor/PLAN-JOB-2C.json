@@ -1,4 +1,5 @@
 {
+  "config": "M5 Macbook Pro",
   "engine": "DataFusion",
   "queries": [
     {
@@ -81,16 +82,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  PROJECT movie_title\n       1         1  AGGREGATE MIN(title)\n  186916        10  DISTRIBUTE GATHER\n  186916        10  AGGREGATE MIN(title)\n  186916         0  INNER JOIN HASH ON movie_id = id AND movie_id = id\n  186916         0  │└DISTRIBUTE HASH ON movie_id, movie_id\n  186916         0  │ INNER JOIN HASH ON id = keyword_id\n   26834         1  │ │└DISTRIBUTE GATHER\n   26834         1  │ │ FILTER keyword = 'character-name-in-title'\n  134170    134170  │ │ DISTRIBUTE ROUND ROBIN\n  134170    134170  │ │ TABLE SCAN keyword WHERE keyword = 'character-name-in-title'\n  934584         2  │ INNER JOIN HASH ON movie_id = movie_id\n  521832         2  │ │└DISTRIBUTE HASH ON movie_id\n  521832         2  │ │ INNER JOIN HASH ON id = company_id\n   47000         1  │ │ │└DISTRIBUTE GATHER\n   47000         1  │ │ │ FILTER country_code = 'sm'\n  234997    122880  │ │ │ TABLE SCAN company_name WHERE country_code = 'sm'\n 2609129   1128978  │ │ TABLE SCAN movie_companies WHERE ((company_id >= 57564) AND (company_id <= 57564)) AND company_id IN 57564\n 4523930   4523930  │ DISTRIBUTE HASH ON movie_id\n 4523930   4523930  │ TABLE SCAN movie_keyword WHERE CASE MOD(HASH_REPARTITION movie_id,10) WHEN 6 THEN (((movie_id >= 2227491) AND (movie_id <= 2227491)) AND movie_id IN 2227491) WHEN 8 THEN (((movie_id >= 2463761) AND (movie_id <= 2463761)) AND movie_id IN 2463761) ELSE FALSE END AND (((keyword_id >= 117) AND (keyword_id <= 117)) AND keyword_id IN 117)\n 2528312         0  DISTRIBUTE HASH ON id, id\n 2528312         0  TABLE SCAN title WHERE FALSE AND TRUE\n",
       "sql": "SELECT MIN(t.title) AS movie_title\nFROM job.company_name AS cn,\n     job.keyword AS k,\n     job.movie_companies AS mc,\n     job.movie_keyword AS mk,\n     job.title AS t\nWHERE cn.country_code ='[sm]'\n  AND k.keyword ='character-name-in-title'\n  AND cn.id = mc.company_id\n  AND mc.movie_id = t.id\n  AND t.id = mk.movie_id\n  AND mk.keyword_id = k.id\n  AND mc.movie_id = mk.movie_id;\n",
-      "startTime": "2026-06-23T17:15:45.450722Z",
+      "startTime": "2026-06-26T23:54:59.011494Z",
       "status": "OK",
-      "timeMs": 27.528
+      "timeMs": 24.037
     }
   ],
   "runtime": {
-    "avgMs": 27.528,
-    "bestMs": 27.528,
-    "maxMs": 27.528,
-    "minMs": 27.528,
+    "avgMs": 24.037,
+    "bestMs": 24.037,
+    "maxMs": 24.037,
+    "minMs": 24.037,
     "stdDevMs": 0.0
   },
   "storageVariant": "iceberg",

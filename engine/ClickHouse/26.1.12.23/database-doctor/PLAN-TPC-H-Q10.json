@@ -1,4 +1,5 @@
 {
+  "config": "M5 Macbook Pro",
   "engine": "ClickHouse",
   "queries": [
     {
@@ -81,16 +82,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       -     38182  PROJECT c_custkey, c_name, a1 AS revenue, c_acctbal, n_name, c_address, c_phone, c_comment\n       -     38182  SORT a1\n       -     38182  PROJECT a1, c_custkey, c_name, c_acctbal, c_phone, n_name, c_address, c_comment\n       -     38182  AGGREGATE SUM(a5) AS a1 GROUP BY HASH c_custkey, c_name, c_acctbal, c_phone, n_name, c_address, c_comment\n       -    115050  PROJECT c_custkey, c_name, c_acctbal, c_phone, n_name, c_address, c_comment, l_extendedprice * (1 - l_discount) AS a5\n       -    115050  PROJECT l_extendedprice, l_discount, c_custkey, c_name, c_acctbal, c_address, c_phone, c_comment, n_name\n       -    115050  INNER JOIN HASH ON PROJECTION_272.c_nationkey = PROJECTION_269.n_nationkey\n       -        25  │└PROJECT n_nationkey, n_name\n       -        25  │ PROJECT n_name, n_nationkey\n       -        25  │ TABLE SCAN nation\n       -    115050  PROJECT c_nationkey, l_extendedprice, l_discount, c_custkey, c_name, c_acctbal, c_address, c_phone, c_comment\n       -    115050  PROJECT l_extendedprice, l_discount, c_custkey, c_name, c_acctbal, c_address, c_phone, c_comment, c_nationkey\n       -    115050  INNER JOIN HASH ON PROJECTION_278.o_custkey = PROJECTION_275.c_custkey\n       -    150000  │└PROJECT c_custkey, c_name, c_acctbal, c_address, c_phone, c_comment, c_nationkey\n       -    150000  │ PROJECT c_custkey, c_name, c_acctbal, c_address, c_phone, c_comment, c_nationkey\n       -    150000  │ TABLE SCAN customer\n       -    115050  PROJECT o_custkey, l_extendedprice, l_discount\n       -    115050  PROJECT l_extendedprice, l_discount, o_custkey\n       -    115050  INNER JOIN HASH ON PROJECTION_284.l_orderkey = PROJECTION_281.o_orderkey\n       -     57474  │└PROJECT o_orderkey, o_custkey\n       -     57474  │ PROJECT o_orderkey, o_custkey\n       -     57474  │ TABLE SCAN orders WHERE (o_orderdate >= '1994-06-01') AND (o_orderdate < '1994-09-01')\n       -   1478870  PROJECT l_orderkey, l_extendedprice, l_discount\n       -   1478870  PROJECT l_orderkey, l_extendedprice, l_discount\n       -   1478870  TABLE SCAN lineitem WHERE l_returnflag = 'R'\n",
       "sql": "/* TPC-H Q10 */\nSELECT c_custkey,\n       c_name,\n       SUM(l_extendedprice * (1 - l_discount)) AS revenue,\n       c_acctbal,\n       n_name,\n       c_address,\n       c_phone,\n       c_comment\nFROM tpch_sf1.lineitem\nINNER JOIN tpch_sf1.orders\n    ON l_orderkey = o_orderkey\nINNER JOIN tpch_sf1.customer\n    ON o_custkey = c_custkey\nINNER JOIN tpch_sf1.nation\n    ON c_nationkey = n_nationkey\nWHERE o_orderdate >= '1994-06-01'\n  AND o_orderdate < '1994-09-01'\n  AND l_returnflag = 'R'\nGROUP BY c_custkey,\n         c_name,\n         c_acctbal,\n         c_phone,\n         n_name,\n         c_address,\n         c_comment\nORDER BY revenue DESC",
-      "startTime": "2026-06-23T11:14:56.596130Z",
+      "startTime": "2026-06-26T15:36:10.775485Z",
       "status": "OK",
-      "timeMs": 113.442
+      "timeMs": 161.852
     }
   ],
   "runtime": {
-    "avgMs": 113.442,
-    "bestMs": 113.442,
-    "maxMs": 113.442,
-    "minMs": 113.442,
+    "avgMs": 161.852,
+    "bestMs": 161.852,
+    "maxMs": 161.852,
+    "minMs": 161.852,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

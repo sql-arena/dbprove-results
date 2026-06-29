@@ -1,6 +1,99 @@
 {
+  "config": "M5 Macbook Pro",
   "engine": "ClickHouse",
-  "queries": [],
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": -1,
+        "distribute": 0,
+        "hash": -1,
+        "join": -1,
+        "scan": 9795591,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       -         ∞  PROJECT a1 AS from_company, a2 AS production_note, a3 AS movie_based_on_book\n       -         ∞  AGGREGATE MIN(name) AS a1, MIN(note) AS a2, MIN(title) AS a3\n       -         ∞  PROJECT name, note, title\n       -         ∞  PROJECT name, note, title\n       -         ∞  INNER JOIN HASH ON PROJECTION_278.keyword_id = PROJECTION_275.id\n       -         ∞  │└PROJECT id\n       -         ∞  │ FILTER (1 AND in(keyword,__set_String_3121726789508643859_9359213533155979499)) AS a28\n       -    134170  │ TABLE SCAN keyword WHERE TRUE\n       -         0  PROJECT keyword_id, name, note, title\n       -         0  PROJECT name, note, keyword_id, title\n       -         0  INNER JOIN HASH ON tuple(PROJECTION_284.movie_id,PROJECTION_284.movie_id,PROJECTION_284.id) = tuple(PROJECTION_281.movie_id,PROJECTION_281.movie_id,PROJECTION_281.movie_id)\n       -   4523930  │└PROJECT movie_id AS movie_id_right, keyword_id\n       -   4523930  │ PROJECT movie_id, keyword_id\n       -   4523930  │ TABLE SCAN movie_keyword\n       -    102510  PROJECT movie_id_left, movie_id AS movie_id_left_2, id, name, note, title\n       -    102510  PROJECT name, note, movie_id, movie_id, title, id\n       -    102510  INNER JOIN HASH ON tuple(PROJECTION_290.movie_id,PROJECTION_290.movie_id) = tuple(PROJECTION_287.id,PROJECTION_287.id)\n       -   2287271  │└PROJECT id, title\n       -   2287271  │ FILTER (1 AND production_year > 1950_UInt16) AS a24\n       -   2287271  │ TABLE SCAN title WHERE production_year > 1950\n       -    102654  PROJECT movie_id, movie_id, name, note\n       -    102654  PROJECT name, note, movie_id, movie_id\n       -    102654  INNER JOIN HASH ON PROJECTION_296.link_type_id = PROJECTION_293.id\n       -        18  │└PROJECT id\n       -        18  │ PROJECT id\n       -        18  │ TABLE SCAN link_type\n       -    102654  PROJECT link_type_id, name, note, movie_id, movie_id\n       -    102654  PROJECT name, note, movie_id, movie_id, link_type_id\n       -    102654  INNER JOIN HASH ON PROJECTION_302.movie_id = PROJECTION_299.movie_id\n       -     29997  │└PROJECT movie_id AS movie_id_right, link_type_id\n       -     29997  │ PROJECT movie_id, link_type_id\n       -     29997  │ TABLE SCAN movie_link\n       -   1248210  PROJECT movie_id AS movie_id_left, name, note\n       -   1248210  PROJECT name, note, movie_id\n       -   1248210  INNER JOIN HASH ON PROJECTION_308.company_type_id = PROJECTION_305.id\n       -         3  │└PROJECT id\n       -         3  │ FILTER (kind <> 'production companies'_String AND 1) AS a20\n       -         3  │ TABLE SCAN company_type WHERE kind <> 'production companies'\n       -   2497734  PROJECT company_type_id, name, note, movie_id\n       -   2497734  PROJECT name, note, company_type_id, movie_id\n       -   2497734  INNER JOIN HASH ON PROJECTION_314.id = PROJECTION_311.company_id\n       -   2609129  │└PROJECT company_id, note, company_type_id, movie_id\n       -   2609129  │ PROJECT note, company_id, company_type_id, movie_id\n       -   2609129  │ TABLE SCAN movie_companies\n       -    211073  PROJECT id, name\n       -    211073  FILTER (country_code <> 'pl'_String AND 1) AS a16\n       -    211073  TABLE SCAN company_name WHERE country_code <> 'pl'\n",
+      "sql": "SELECT MIN(cn.name) AS from_company,\n       MIN(mc.note) AS production_note,\n       MIN(t.title) AS movie_based_on_book\nFROM job.company_name AS cn,\n     job.company_type AS ct,\n     job.keyword AS k,\n     job.link_type AS lt,\n     job.movie_companies AS mc,\n     job.movie_keyword AS mk,\n     job.movie_link AS ml,\n     job.title AS t\nWHERE cn.country_code !='[pl]'\n  AND ct.kind != 'production companies'\n  AND ct.kind IS NOT NULL\n  AND k.keyword IN ('sequel',\n                    'revenge',\n                    'based-on-novel')\n  AND mc.note IS NOT NULL\n  AND t.production_year > 1950\n  AND lt.id = ml.link_type_id\n  AND ml.movie_id = t.id\n  AND t.id = mk.movie_id\n  AND mk.keyword_id = k.id\n  AND t.id = mc.movie_id\n  AND mc.company_type_id = ct.id\n  AND mc.company_id = cn.id\n  AND ml.movie_id = mk.movie_id\n  AND ml.movie_id = mc.movie_id\n  AND mk.movie_id = mc.movie_id;\n",
+      "startTime": "2026-06-26T18:32:13.825850Z",
+      "status": "OK",
+      "timeMs": 392.882
+    }
+  ],
+  "runtime": {
+    "avgMs": 392.882,
+    "bestMs": 392.882,
+    "maxMs": 392.882,
+    "minMs": 392.882,
+    "stdDevMs": 0.0
+  },
   "storageVariant": "native",
   "theorem": {
     "categories": [

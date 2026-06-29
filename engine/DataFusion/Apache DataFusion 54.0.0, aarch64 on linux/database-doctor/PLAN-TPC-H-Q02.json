@@ -1,6 +1,99 @@
 {
+  "config": "M5 Macbook Pro",
   "engine": "DataFusion",
-  "queries": [],
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 2,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 2,
+          ">16x": 1
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 6,
+          ">16x": 2
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 3,
+          ">16x": 5
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 11,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 2
+        }
+      },
+      "operatorRows": {
+        "aggregate": 276382,
+        "distribute": 318926,
+        "hash": 1776762,
+        "join": 3327058,
+        "scan": 1820060,
+        "seek": 0,
+        "sort": 990
+      },
+      "plan": "Estimate    Actual  Operator\n   32000       495  SORT s_acctbal, n_name, s_name, p_partkey\n   32000       495  SORT s_acctbal, n_name, s_name, p_partkey\n   32000       495  PROJECT s_acctbal, s_name, n_name, p_partkey, p_mfgr, s_address, s_phone, s_comment\n   32000       495  INNER JOIN HASH ON p_partkey = ps_partkey AND ps_supplycost = min_cost\n   32000       689  │└DISTRIBUTE GATHER\n   32000       689  │ INNER JOIN HASH ON r_regionkey = n_regionkey\n       1         1  │ │└DISTRIBUTE GATHER\n       1         1  │ │ FILTER r_name = 'EUROPE'\n       5         5  │ │ DISTRIBUTE ROUND ROBIN\n       5         5  │ │ TABLE SCAN region WHERE r_name = 'EUROPE'\n  160000      3212  │ PROJECT ps_supplycost, p_partkey, p_mfgr, s_name, s_address, s_phone, s_acctbal, s_comment, n_name, n_regionkey\n  160000      3212  │ INNER JOIN HASH ON n_nationkey = s_nationkey\n      25        25  │ │└TABLE SCAN nation WHERE ((n_regionkey >= 3) AND (n_regionkey <= 3)) AND n_regionkey IN 3\n  160000      3212  │ PROJECT ps_supplycost, p_partkey, p_mfgr, s_name, s_address, s_nationkey, s_phone, s_acctbal, s_comment\n  160000      3212  │ INNER JOIN HASH ON s_suppkey = ps_suppkey\n   10000     10000  │ │└TABLE SCAN supplier WHERE ((s_nationkey >= 0) AND (s_nationkey <= 24)) AND s_nationkey IN(0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24)\n  160000      3212  │ PROJECT ps_suppkey, ps_supplycost, p_partkey, p_mfgr\n  160000      3212  │ INNER JOIN HASH ON p_partkey = ps_partkey\n   40000       803  │ │└DISTRIBUTE GATHER\n   40000       803  │ │ FILTER (p_size = 25) AND p_type LIKE '%BRASS'\n  200000    200000  │ │ DISTRIBUTE ROUND ROBIN\n  200000    200000  │ │ TABLE SCAN part WHERE (p_size = 25) AND p_type LIKE '%BRASS'\n  800000    800000  │ TABLE SCAN partsupp WHERE (((ps_partkey >= 74) AND (ps_partkey <= 199829)) AND TRUE) AND (((ps_suppkey >= 1) AND (ps_suppkey <= 10000)) AND TRUE)\n  160000    117422  PROJECT min_cost, ps_partkey\n  160000    117422  AGGREGATE MIN(ps_supplycost) GROUP BY HASH ps_partkey\n  160000    117422  DISTRIBUTE HASH ON ps_partkey\n  160000    117422  AGGREGATE MIN(ps_supplycost) GROUP BY HASH ps_partkey\n  160000    158960  INNER JOIN HASH ON r_regionkey = n_regionkey\n       1         1  │└DISTRIBUTE GATHER\n       1         1  │ FILTER r_name = 'EUROPE'\n       5         5  │ DISTRIBUTE ROUND ROBIN\n       5         5  │ TABLE SCAN region WHERE r_name = 'EUROPE'\n  800000    800000  PROJECT ps_partkey, ps_supplycost, n_regionkey\n  800000    800000  INNER JOIN HASH ON n_nationkey = s_nationkey\n      25        25  │└TABLE SCAN nation WHERE ((n_regionkey >= 3) AND (n_regionkey <= 3)) AND n_regionkey IN 3\n  800000    800000  PROJECT ps_partkey, ps_supplycost, s_nationkey\n  800000    800000  INNER JOIN HASH ON s_suppkey = ps_suppkey\n   10000     10000  │└TABLE SCAN supplier WHERE ((s_nationkey >= 0) AND (s_nationkey <= 24)) AND s_nationkey IN(0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24)\n  800000    800000  TABLE SCAN partsupp WHERE ((ps_suppkey >= 1) AND (ps_suppkey <= 10000)) AND TRUE\n",
+      "sql": "/* TPC-H Q02 */\nSELECT s_acctbal,\n       s_name,\n       n_name,\n       p_partkey,\n       p_mfgr,\n       s_address,\n       s_phone,\n       s_comment\nFROM tpch_sf1.partsupp\nINNER JOIN tpch_sf1.part\n    ON ps_partkey = p_partkey\nINNER JOIN tpch_sf1.supplier\n    ON ps_suppkey = s_suppkey\nINNER JOIN tpch_sf1.nation\n    ON s_nationkey = n_nationkey\nINNER JOIN tpch_sf1.region\n    ON n_regionkey = r_regionkey\nWHERE p_size = 25\n  AND p_type LIKE '%BRASS'\n  AND r_name = 'EUROPE'\n  AND ps_supplycost = (SELECT MIN(ps_supplycost) AS min_cost\n                       FROM tpch_sf1.partsupp AS ps_min\n                       INNER JOIN tpch_sf1.supplier AS s_min\n                           ON ps_suppkey = s_suppkey\n                       INNER JOIN tpch_sf1.nation AS n_min\n                           ON s_nationkey = n_nationkey\n                       INNER JOIN tpch_sf1.region AS r_min\n                           ON n_regionkey = r_regionkey\n                       WHERE ps_partkey = p_partkey\n                         AND r_name = 'EUROPE')\nORDER BY s_acctbal DESC,\n         n_name,\n         s_name,\n         p_partkey\n\n\n",
+      "startTime": "2026-06-26T23:27:50.440170Z",
+      "status": "OK",
+      "timeMs": 72.281
+    }
+  ],
+  "runtime": {
+    "avgMs": 72.281,
+    "bestMs": 72.281,
+    "maxMs": 72.281,
+    "minMs": 72.281,
+    "stdDevMs": 0.0
+  },
   "storageVariant": "iceberg",
   "theorem": {
     "categories": [

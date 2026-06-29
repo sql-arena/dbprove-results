@@ -1,6 +1,99 @@
 {
+  "config": "M5 Macbook Pro",
   "engine": "DataFusion",
-  "queries": [],
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 2
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 2,
+          ">16x": 1
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 6,
+          ">16x": 1
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 6,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 1,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 8,
+          ">16x": 2
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 2
+        }
+      },
+      "operatorRows": {
+        "aggregate": 2667,
+        "distribute": 6822812,
+        "hash": 2023427,
+        "join": 7884900,
+        "scan": 7861270,
+        "seek": 0,
+        "sort": 4
+      },
+      "plan": "Estimate    Actual  Operator\n   12002         2  SORT o_year\n   12002         2  SORT o_year\n   12002         2  PROJECT o_year, mkt_share\n   12002         2  AGGREGATE SUM(CASE WHEN (nation = 'FRANCE') THEN volume ELSE 0.0000 END), SUM(volume) GROUP BY HASH o_year\n   12002        20  DISTRIBUTE HASH ON o_year\n   12002        20  AGGREGATE SUM(CASE WHEN (nation = 'FRANCE') THEN volume ELSE 0.0000 END), SUM(volume) GROUP BY HASH o_year\n   12002      2647  PROJECT o_year, volume, nation\n   12002      2647  INNER JOIN HASH ON n_nationkey = s_nationkey\n      25        25  │└TABLE SCAN nation\n   12002      2647  INNER JOIN HASH ON r_regionkey = n_regionkey\n       1         1  │└DISTRIBUTE GATHER\n       1         1  │ FILTER r_name = 'EUROPE'\n       5         5  │ DISTRIBUTE ROUND ROBIN\n       5         5  │ TABLE SCAN region WHERE r_name = 'EUROPE'\n   60012     12905  PROJECT l_extendedprice, l_discount, o_orderdate, s_nationkey, n_regionkey\n   60012     12905  INNER JOIN HASH ON n_nationkey = c_nationkey\n      25        25  │└TABLE SCAN nation WHERE ((n_regionkey >= 3) AND (n_regionkey <= 3)) AND n_regionkey IN 3\n   60012     12905  PROJECT l_extendedprice, l_discount, o_orderdate, s_nationkey, c_nationkey\n   60012     12905  INNER JOIN HASH ON c_custkey = o_custkey\n  150000    150000  │└DISTRIBUTE HASH ON c_custkey\n  150000    150000  │ TABLE SCAN customer WHERE ((c_nationkey >= 0) AND (c_nationkey <= 24)) AND c_nationkey IN(0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24)\n   60012     12905  DISTRIBUTE HASH ON o_custkey\n   60012     12905  PROJECT l_extendedprice, l_discount, o_custkey, o_orderdate, s_nationkey\n   60012     12905  INNER JOIN HASH ON s_suppkey = l_suppkey\n   10000     10000  │└TABLE SCAN supplier WHERE ((s_nationkey >= 0) AND (s_nationkey <= 24)) AND s_nationkey IN(0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24)\n   60012     12905  INNER JOIN HASH ON p_partkey = l_partkey\n   40000      1403  │└DISTRIBUTE GATHER\n   40000      1403  │ FILTER p_type = 'SMALL POLISHED NICKEL'\n  200000    200000  │ DISTRIBUTE ROUND ROBIN\n  200000    200000  │ TABLE SCAN part WHERE p_type = 'SMALL POLISHED NICKEL'\n  300060   1829418  PROJECT l_partkey, l_suppkey, l_extendedprice, l_discount, o_custkey, o_orderdate\n  300060   1829418  INNER JOIN HASH ON o_orderkey = l_orderkey\n  300000    457263  │└DISTRIBUTE HASH ON o_orderkey\n  300000    457263  │ FILTER (o_orderdate >= DATE'1995-01-01') AND (o_orderdate <= DATE'1996-12-31')\n 1500000   1500000  │ TABLE SCAN orders WHERE ((o_orderdate >= DATE'1995-01-01') AND (o_orderdate <= DATE'1996-12-31')) AND CASE MOD(HASH_REPARTITION o_custkey,10) WHEN 0 THEN (((o_custkey >= 5) AND (o_custkey <= 149992)) AND TRUE) WHEN 1 THEN (((o_custkey >= 6) AND (o_custkey <= 149997)) AND TRUE) WHEN 2 THEN (((o_custkey >= 10) AND (o_custkey <= 149995)) AND TRUE) WHEN 3 THEN (((o_custkey >= 1) AND (o_custkey <= 150000)) AND TRUE) WHEN 4 THEN (((o_custkey >= 12) AND (o_custkey <= 149998))...\n 6001215   6001215  DISTRIBUTE HASH ON l_orderkey\n 6001215   6001215  TABLE SCAN lineitem WHERE (CASE MOD(HASH_REPARTITION l_orderkey,10) WHEN 0 THEN (((l_orderkey >= 7) AND (l_orderkey <= 5999847)) AND TRUE) WHEN 1 THEN (((l_orderkey >= 36) AND (l_orderkey <= 5999970)) AND TRUE) WHEN 2 THEN (((l_orderkey >= 39) AND (l_orderkey <= 5999972)) AND TRUE) WHEN 3 THEN (((l_orderkey >= 1) AND (l_orderkey <= 5999971)) AND TRUE) WHEN 4 THEN (((l_orderkey >= 160) AND (l_orderkey <= 5999969)) AND TRUE) WHEN 5 THEN (((l_orderkey >= 775) AND (l_orderkey ...\n",
+      "sql": "/* TPC-H Q08 */\nSELECT o_year,\n       SUM(CASE\n               WHEN nation = 'FRANCE'\n                   THEN volume\n               ELSE 0\n           END) / SUM(volume) AS mkt_share\nFROM (SELECT EXTRACT(YEAR FROM o_orderdate)     AS o_year,\n             l_extendedprice * (1 - l_discount) AS volume,\n             n2.n_name                          AS nation\n      FROM tpch_sf1.lineitem\n      INNER JOIN tpch_sf1.orders\n          ON o_orderkey = l_orderkey\n      INNER JOIN tpch_sf1.part\n          ON l_partkey = p_partkey\n      INNER JOIN tpch_sf1.supplier\n          ON l_suppkey = s_suppkey\n      INNER JOIN tpch_sf1.customer\n          ON o_custkey = c_custkey\n      INNER JOIN tpch_sf1.nation n1\n          ON c_nationkey = n1.n_nationkey\n      INNER JOIN tpch_sf1.region\n          ON n1.n_regionkey = r_regionkey\n      INNER JOIN tpch_sf1.nation n2\n          ON s_nationkey = n2.n_nationkey\n      WHERE r_name = 'EUROPE'\n        AND o_orderdate BETWEEN '1995-01-01' AND '1996-12-31'\n        AND p_type = 'SMALL POLISHED NICKEL') AS all_nations\nGROUP BY o_year\nORDER BY o_year",
+      "startTime": "2026-06-26T23:27:51.539471Z",
+      "status": "OK",
+      "timeMs": 131.499
+    }
+  ],
+  "runtime": {
+    "avgMs": 131.499,
+    "bestMs": 131.499,
+    "maxMs": 131.499,
+    "minMs": 131.499,
+    "stdDevMs": 0.0
+  },
   "storageVariant": "iceberg",
   "theorem": {
     "categories": [

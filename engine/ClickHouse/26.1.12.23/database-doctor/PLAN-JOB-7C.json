@@ -1,6 +1,99 @@
 {
+  "config": "M5 Macbook Pro",
   "engine": "ClickHouse",
-  "queries": [],
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": -1,
+        "distribute": 0,
+        "hash": -1,
+        "join": -1,
+        "scan": 41987337,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       -         ∞  PROJECT a1 AS cast_member_name, a2 AS cast_member_info\n       -         ∞  AGGREGATE MIN(name) AS a1, MIN(info) AS a2\n       -         ∞  PROJECT name, info\n       -         ∞  PROJECT name, info\n       -         ∞  INNER JOIN HASH ON tuple(PROJECTION_5424.person_id,PROJECTION_5424.person_id,PROJECTION_5424.person_id,PROJECTION_5424.person_id) = tuple(PROJECTION_5409.id,PROJECTION_5409.id,PROJECTION_5409.person_id,PROJECTION_5409.person_id)\n       -         ∞  │└PROJECT id, person_id AS person_id_right, name, info\n       -         ∞  │ PROJECT name, id, info, person_id\n       -         ∞  │ INNER JOIN HASH ON PROJECTION_5415.info_type_id = PROJECTION_5412.id\n       -         1  │ │└PROJECT id AS id_right\n       -         1  │ │ FILTER (1 AND info = 'mini biography'_String) AS a59\n       -         1  │ │ TABLE SCAN info_type WHERE info = 'mini biography'\n       -         ∞  │ PROJECT info_type_id, name, id AS id_left, info, person_id\n       -         ∞  │ PROJECT name, id, info, person_id, info_type_id\n       -         ∞  │ INNER JOIN HASH ON PROJECTION_5421.id = PROJECTION_5418.person_id\n       -   2963664  │ │└PROJECT person_id, info, info_type_id\n       -   2963664  │ │ PROJECT info, person_id, info_type_id\n       -   2963664  │ │ TABLE SCAN person_info\n       -         ∞  │ PROJECT id, name\n       -         ∞  │ FILTER (1 AND name_pcode_cf >= 'A'_String AND name_pcode_cf <= 'F'_String AND  OR ((gender = 'm'_String), AND ((gender = 'f'_String),startsWith(name,'A'_String)))) AS a35\n       -    507621  │ TABLE SCAN name WHERE (name_pcode_cf >= 'A') AND (name_pcode_cf <= 'F') AND ((gender = 'm') OR ((gender = 'f') AND startsWith(name,'A')))\n       -         ∞  PROJECT person_id_left, person_id AS person_id_left_2\n       -         ∞  PROJECT person_id, person_id\n       -         ∞  INNER JOIN HASH ON tuple(PROJECTION_5430.movie_id,PROJECTION_5430.linked_movie_id) = tuple(PROJECTION_5427.id,PROJECTION_5427.id)\n       -   1555597  │└PROJECT id\n       -   1555597  │ FILTER (1 AND production_year >= 1980_UInt16 AND production_year <= 2010_UInt16) AS a25\n       -   1555597  │ TABLE SCAN title WHERE (production_year >= 1980) AND (production_year <= 2010)\n       -         ∞  PROJECT movie_id, linked_movie_id, person_id, person_id\n       -         ∞  PROJECT person_id, person_id, movie_id, linked_movie_id\n       -         ∞  INNER JOIN HASH ON PROJECTION_5436.link_type_id = PROJECTION_5433.id\n       -         ∞  │└PROJECT id\n       -         ∞  │ FILTER (1 AND in(link,__set_String_14540212701686248675_11522973403227204873)) AS a21\n       -        18  │ TABLE SCAN link_type WHERE TRUE\n       -         ∞  PROJECT link_type_id, person_id, person_id, movie_id, linked_movie_id\n       -         ∞  PROJECT person_id, person_id, movie_id, linked_movie_id, link_type_id\n       -         ∞  INNER JOIN HASH ON PROJECTION_5442.movie_id = PROJECTION_5439.linked_movie_id\n       -     29997  │└PROJECT linked_movie_id, link_type_id\n       -     29997  │ PROJECT linked_movie_id, link_type_id\n       -     29997  │ TABLE SCAN movie_link\n       -         ∞  PROJECT movie_id, person_id, person_id\n       -         ∞  PROJECT person_id, person_id, movie_id\n       -         ∞  INNER JOIN HASH ON PROJECTION_5448.person_id = PROJECTION_5445.person_id\n       -  36244344  │└PROJECT person_id AS person_id_right, movie_id\n       -  36244344  │ PROJECT person_id, movie_id\n       -  36244344  │ TABLE SCAN cast_info\n       -         ∞  PROJECT person_id AS person_id_left\n       -         ∞  FILTER (1 AND  OR ( LIKE (name,'%a%'_String),startsWith(name,'A'_String))) AS a13\n       -    686095  TABLE SCAN aka_name WHERE name LIKE '%a%' OR startsWith(name,'A')\n",
+      "sql": "SELECT MIN(n.name) AS cast_member_name,\n       MIN(pi.info) AS cast_member_info\nFROM job.aka_name AS an,\n     job.cast_info AS ci,\n     job.info_type AS it,\n     job.link_type AS lt,\n     job.movie_link AS ml,\n     job.name AS n,\n     job.person_info AS pi,\n     job.title AS t\nWHERE an.name IS NOT NULL\n  AND (an.name LIKE '%a%'\n       OR an.name LIKE 'A%')\n  AND it.info ='mini biography'\n  AND lt.link IN ('references',\n                  'referenced in',\n                  'features',\n                  'featured in')\n  AND n.name_pcode_cf BETWEEN 'A' AND 'F'\n  AND (n.gender='m'\n       OR (n.gender = 'f'\n           AND n.name LIKE 'A%'))\n  AND pi.note IS NOT NULL\n  AND t.production_year BETWEEN 1980 AND 2010\n  AND n.id = an.person_id\n  AND n.id = pi.person_id\n  AND ci.person_id = n.id\n  AND t.id = ci.movie_id\n  AND ml.linked_movie_id = t.id\n  AND lt.id = ml.link_type_id\n  AND it.id = pi.info_type_id\n  AND pi.person_id = an.person_id\n  AND pi.person_id = ci.person_id\n  AND an.person_id = ci.person_id\n  AND ci.movie_id = ml.linked_movie_id;\n",
+      "startTime": "2026-06-26T22:54:25.865648Z",
+      "status": "OK",
+      "timeMs": 1035.471
+    }
+  ],
+  "runtime": {
+    "avgMs": 1035.471,
+    "bestMs": 1035.471,
+    "maxMs": 1035.471,
+    "minMs": 1035.471,
+    "stdDevMs": 0.0
+  },
   "storageVariant": "native",
   "theorem": {
     "categories": [

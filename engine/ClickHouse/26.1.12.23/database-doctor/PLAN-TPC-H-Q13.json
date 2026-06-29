@@ -1,4 +1,5 @@
 {
+  "config": "M5 Macbook Pro",
   "engine": "ClickHouse",
   "queries": [
     {
@@ -80,17 +81,17 @@
         "sort": 42
       },
       "plan": "Estimate    Actual  Operator\n       -        42  PROJECT c_count, a1 AS custdist\n       -        42  SORT a1, c_count\n       -        42  PROJECT a1, c_count\n       -        42  AGGREGATE COUNT() AS a1 GROUP BY HASH c_count\n       -    150000  PROJECT a2 AS c_count\n       -    150000  AGGREGATE COUNT(a5) AS a2 GROUP BY HASH c_custkey\n       -   1550004  PROJECT c_custkey, o_orderkey\n       -   1550004  PROJECT c_custkey, a5\n       -   1550004  RIGHT OUTER JOIN HASH ON PROJECTION_332.o_custkey = PROJECTION_329.c_custkey\n       -    150000  │└PROJECT c_custkey\n       -    150000  │ PROJECT c_custkey\n       -    150000  │ TABLE SCAN customer\n       -   1500000  PROJECT o_custkey, o_orderkey AS a5, o_orderkey\n       -   1500000  PROJECT o_orderkey, o_custkey\n       -   1500000  TABLE SCAN orders WHERE notLike(o_comment,' % special % requests % ')\n",
-      "sql": "/* TPC-H Q13 */\nSELECT\n  c_count,\n  COUNT(*) AS custdist\nFROM\n  (\n    SELECT\n      c_custkey,\n      COUNT(o_orderkey)\n    FROM\n      tpch_sf1.customer\n      LEFT OUTER JOIN tpch_sf1.orders ON c_custkey = o_custkey\n      AND o_comment NOT LIKE ' % special % requests % '\n    GROUP BY\n      c_custkey\n  ) AS c_orders (c_custkey, c_count)\nGROUP BY\n  c_count\nORDER BY\n  custdist DESC,\n  c_count DESC\n;",
-      "startTime": "2026-06-23T11:15:01.708715Z",
+      "sql": "/* TPC-H Q13 */\nSELECT\n  c_count,\n  COUNT(*) AS custdist\nFROM\n  (\n    SELECT\n      c_custkey,\n      COUNT(o_orderkey) AS c_count\n    FROM\n      tpch_sf1.customer\n      LEFT OUTER JOIN tpch_sf1.orders ON c_custkey = o_custkey\n      AND o_comment NOT LIKE ' % special % requests % '\n    GROUP BY\n      c_custkey\n  ) AS c_orders\nGROUP BY\n  c_count\nORDER BY\n  custdist DESC,\n  c_count DESC\n;",
+      "startTime": "2026-06-26T15:36:15.920230Z",
       "status": "OK",
-      "timeMs": 95.784
+      "timeMs": 104.821
     }
   ],
   "runtime": {
-    "avgMs": 95.784,
-    "bestMs": 95.784,
-    "maxMs": 95.784,
-    "minMs": 95.784,
+    "avgMs": 104.821,
+    "bestMs": 104.821,
+    "maxMs": 104.821,
+    "minMs": 104.821,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

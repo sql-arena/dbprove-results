@@ -1,4 +1,5 @@
 {
+  "config": "M5 Macbook Pro",
   "engine": "ClickHouse",
   "queries": [
     {
@@ -81,16 +82,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       -         4  PROJECT supp_nation, cust_nation, l_year, a1 AS revenue\n       -         4  SORT supp_nation, cust_nation, l_year\n       -         4  PROJECT supp_nation, cust_nation, l_year, a1\n       -         4  AGGREGATE SUM(volume) AS a1 GROUP BY HASH supp_nation, cust_nation, l_year\n       -      5924  PROJECT n_name AS supp_nation, n_name AS cust_nation, EXTRACT(YEAR FROM l_shipdate) AS l_year, l_extendedprice * (1 - l_discount) AS volume\n       -      5924  FILTER ((n_name_left = 'GERMANY') AND (n_name_right = 'FRANCE')) OR ((n_name_left = 'FRANCE') AND (n_name_right = 'GERMANY'))\n       -     11723  PROJECT l_shipdate, l_extendedprice, l_discount, n_name, n_name\n       -     11723  INNER JOIN HASH ON PROJECTION_167.s_suppkey = PROJECTION_146.l_suppkey\n       -    148370  │└PROJECT l_suppkey, l_shipdate, l_extendedprice, l_discount, n_name AS n_name_right\n       -    148370  │ PROJECT l_shipdate, l_extendedprice, l_discount, l_suppkey, n_name\n       -    148370  │ INNER JOIN HASH ON PROJECTION_152.c_nationkey = PROJECTION_149.n_nationkey\n       -         2  │ │└PROJECT n_nationkey, n_name\n       -         2  │ │ PROJECT n_name, n_nationkey\n       -         2  │ │ TABLE SCAN nation WHERE (n_name = 'FRANCE') OR (n_name = 'GERMANY')\n       -   1828450  │ PROJECT c_nationkey, l_shipdate, l_extendedprice, l_discount, l_suppkey\n       -   1828450  │ PROJECT l_shipdate, l_extendedprice, l_discount, l_suppkey, c_nationkey\n       -   1828450  │ INNER JOIN HASH ON PROJECTION_158.o_custkey = PROJECTION_155.c_custkey\n       -    150000  │ │└PROJECT c_custkey, c_nationkey\n       -    150000  │ │ PROJECT c_custkey, c_nationkey\n       -    150000  │ │ TABLE SCAN customer\n       -   1828450  │ PROJECT o_custkey, l_shipdate, l_extendedprice, l_discount, l_suppkey\n       -   1828450  │ PROJECT l_shipdate, l_extendedprice, l_discount, l_suppkey, o_custkey\n       -   1828450  │ INNER JOIN HASH ON PROJECTION_164.l_orderkey = PROJECTION_161.o_orderkey\n       -   1500000  │ │└PROJECT o_orderkey, o_custkey\n       -   1500000  │ │ PROJECT o_orderkey, o_custkey\n       -   1500000  │ │ TABLE SCAN orders\n       -   1828450  │ PROJECT l_orderkey, l_shipdate, l_extendedprice, l_discount, l_suppkey\n       -   1828450  │ PROJECT l_orderkey, l_shipdate, l_extendedprice, l_discount, l_suppkey\n       -   1828450  │ TABLE SCAN lineitem WHERE (l_shipdate >= '1995-01-01') AND (l_shipdate <= '1996-12-31')\n       -       798  PROJECT s_suppkey, n_name AS n_name_left\n       -       798  PROJECT s_suppkey, n_name\n       -       798  INNER JOIN HASH ON PROJECTION_173.s_nationkey = PROJECTION_170.n_nationkey\n       -         2  │└PROJECT n_nationkey, n_name\n       -         2  │ PROJECT n_nationkey, n_name\n       -         2  │ TABLE SCAN nation WHERE (n_name = 'GERMANY') OR (n_name = 'FRANCE')\n       -     10000  PROJECT s_nationkey, s_suppkey\n       -     10000  PROJECT s_suppkey, s_nationkey\n       -     10000  TABLE SCAN supplier\n",
       "sql": "/* TPC-H Q07 */\nSELECT supp_nation,\n       cust_nation,\n       l_year,\n       SUM(volume) AS revenue\nFROM (SELECT n1.n_name                          AS supp_nation,\n             n2.n_name                          AS cust_nation,\n             EXTRACT(YEAR FROM l_shipdate)      AS l_year,\n             l_extendedprice * (1 - l_discount) AS volume\n      FROM tpch_sf1.lineitem\n      INNER JOIN tpch_sf1.orders\n          ON l_orderkey = o_orderkey\n      INNER JOIN tpch_sf1.supplier\n          ON l_suppkey = s_suppkey\n      INNER JOIN tpch_sf1.customer\n          ON o_custkey = c_custkey\n      INNER JOIN tpch_sf1.nation n1\n          ON s_nationkey = n1.n_nationkey\n      INNER JOIN tpch_sf1.nation n2\n          ON c_nationkey = n2.n_nationkey\n      WHERE ((n1.n_name = 'GERMANY' AND n2.n_name = 'FRANCE')\n          OR (n1.n_name = 'FRANCE' AND n2.n_name = 'GERMANY'))\n        AND l_shipdate BETWEEN '1995-01-01' AND '1996-12-31') AS shipping\nGROUP BY supp_nation,\n         cust_nation,\n         l_year\nORDER BY supp_nation,\n         cust_nation,\n         l_year\n\n\n",
-      "startTime": "2026-06-23T11:14:28.121407Z",
+      "startTime": "2026-06-26T15:35:44.367769Z",
       "status": "OK",
-      "timeMs": 110.278
+      "timeMs": 116.165
     }
   ],
   "runtime": {
-    "avgMs": 110.278,
-    "bestMs": 110.278,
-    "maxMs": 110.278,
-    "minMs": 110.278,
+    "avgMs": 116.165,
+    "bestMs": 116.165,
+    "maxMs": 116.165,
+    "minMs": 116.165,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

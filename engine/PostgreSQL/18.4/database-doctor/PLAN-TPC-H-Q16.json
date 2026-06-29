@@ -82,16 +82,16 @@
       },
       "plan": "Estimate    Actual  Operator\n   15946     18282  SORT COUNT(DISTINCT ps_suppkey), p_brand, p_type, p_size\n   15946     18282  AGGREGATE COUNT(DISTINCT ps_suppkey) GROUP BY SORT p_brand, p_type, p_size\n   76136    119043  SORT p_brand, p_type, p_size, ps_suppkey\n   19034     29760  INNER JOIN HASH ON ps_partkey = p_partkey\n   49168     29775  │└TABLE SCAN part AS part WHERE (p_brand <> 'Brand#42') AND (p_type NOT  LIKE 'STANDARD ANODIZED%') AND (p_size IN('3','7','11','29','31','37','41','49'))\n  516128    799680  LEFT ANTI JOIN LOOP ON ps_suppkey = s_suppkey\n  516128    799680  │└TABLE SCAN partsupp AS partsupp WHERE  NOT (IN(ps_suppkey = (hashed SubPlan 1) .col1))\n       1        16  TABLE SCAN supplier AS supplier WHERE s_comment LIKE '%Customer%Complaints%'\n",
       "sql": "/* TPC-H Q16 */\nSELECT p_brand,\n       p_type,\n       p_size,\n       COUNT(DISTINCT ps_suppkey) AS supplier_cnt\nFROM tpch_sf1.partsupp\nINNER JOIN tpch_sf1.part\n    ON ps_partkey = p_partkey\n\nWHERE p_brand <> 'Brand#42'\n  AND p_type NOT LIKE 'STANDARD ANODIZED%'\n  AND p_size IN (3, 7, 11, 29, 31, 37, 41, 49)\n  AND ps_suppkey NOT IN (SELECT s_suppkey\n                         FROM tpch_sf1.supplier\n                         WHERE s_comment LIKE '%Customer%Complaints%')\nGROUP BY p_brand,\n         p_type,\n         p_size\nORDER BY supplier_cnt DESC,\n         p_brand,\n         p_type,\n         p_size",
-      "startTime": "2026-06-25T13:01:20.634919Z",
+      "startTime": "2026-06-26T15:26:49.311785Z",
       "status": "OK",
-      "timeMs": 241.14
+      "timeMs": 167.329
     }
   ],
   "runtime": {
-    "avgMs": 241.14,
-    "bestMs": 241.14,
-    "maxMs": 241.14,
-    "minMs": 241.14,
+    "avgMs": 167.329,
+    "bestMs": 167.329,
+    "maxMs": 167.329,
+    "minMs": 167.329,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

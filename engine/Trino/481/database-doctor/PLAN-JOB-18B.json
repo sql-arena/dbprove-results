@@ -1,4 +1,5 @@
 {
+  "config": "M5 Macbook Pro",
   "engine": "Trino",
   "queries": [
     {
@@ -81,16 +82,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  PROJECT min AS movie_budget, min_35 AS movie_votes, min_36 AS movie_title\n       1         1  AGGREGATE MIN(min_37) AS min, MIN(min_38) AS min_35, MIN(min_39) AS min_36\n       -         1  DISTRIBUTE GATHER\n       -         1  AGGREGATE MIN(info_11) AS min_37, MIN(info_19) AS min_38, MIN(title) AS min_39\n       -        11  INNER JOIN HASH ON movie_id = id_28\n  106023    784488  │└DISTRIBUTE HASH ON id_28\n 2528312    784488  │ PROJECT id AS id_28, title\n 2528312    784488  │ FILTER production_year BETWEEN 2008 AND 2014\n 2528312   2528312  │ TABLE SCAN title\n       -        16  INNER JOIN HASH ON person_id = id_24\n       -    961555  │└DISTRIBUTE HASH ON id_24\n 4167491    961555  │ PROJECT id AS id_24\n 4167491    961555  │ FILTER gender = 'f'\n 4167491   4167491  │ TABLE SCAN name\n       -       412  INNER JOIN HASH ON info_type_id_18 = id_4\n       -         1  │└DISTRIBUTE GATHER\n     113         1  │ PROJECT id AS id_4\n     113         1  │ FILTER info = 'rating'\n     113       113  │ TABLE SCAN info_type\n       -      2264  INNER JOIN HASH ON movie_id = movie_id_17\n 1380035     52629  │└DISTRIBUTE HASH ON movie_id_17\n 1380035     52629  │ PROJECT movie_id AS movie_id_17, info_type_id AS info_type_id_18, info AS info_19\n 1380035     52629  │ FILTER info > '8.0'\n 1380035   1380035  │ TABLE SCAN movie_info_idx\n       -     39664  INNER JOIN HASH ON info_type_id = id_0\n       -         1  │└DISTRIBUTE GATHER\n     113         1  │ PROJECT id AS id_0\n     113         1  │ FILTER info = 'genres'\n     113       113  │ TABLE SCAN info_type\n       -     40193  INNER JOIN HASH ON movie_id = movie_id_10\n12058871     73047  │└DISTRIBUTE HASH ON movie_id_10\n14835720     73047  │ PROJECT movie_id AS movie_id_10, info_type_id, info AS info_11\n14835720     73047  │ FILTER (info IN('Horror','Thriller')) AND (note IS NULL)\n14835720  14835720  │ TABLE SCAN movie_info\n36244344   1244716  FILTER note IN('(head writer)','(story editor)','(story)','(writer)','(written by)')\n36244344  36244344  TABLE SCAN cast_info\n",
       "sql": "SELECT MIN(mi.info) AS movie_budget,\n       MIN(mi_idx.info) AS movie_votes,\n       MIN(t.title) AS movie_title\nFROM job.cast_info AS ci,\n     job.info_type AS it1,\n     job.info_type AS it2,\n     job.movie_info AS mi,\n     job.movie_info_idx AS mi_idx,\n     job.name AS n,\n     job.title AS t\nWHERE ci.note IN ('(writer)',\n                  '(head writer)',\n                  '(written by)',\n                  '(story)',\n                  '(story editor)')\n  AND it1.info = 'genres'\n  AND it2.info = 'rating'\n  AND mi.info IN ('Horror',\n                  'Thriller')\n  AND mi.note IS NULL\n  AND mi_idx.info > '8.0'\n  AND n.gender IS NOT NULL\n  AND n.gender = 'f'\n  AND t.production_year BETWEEN 2008 AND 2014\n  AND t.id = mi.movie_id\n  AND t.id = mi_idx.movie_id\n  AND t.id = ci.movie_id\n  AND ci.movie_id = mi.movie_id\n  AND ci.movie_id = mi_idx.movie_id\n  AND mi.movie_id = mi_idx.movie_id\n  AND n.id = ci.person_id\n  AND it1.id = mi.info_type_id\n  AND it2.id = mi_idx.info_type_id;\n",
-      "startTime": "2026-06-23T15:22:11.738606Z",
+      "startTime": "2026-06-26T16:44:35.199362Z",
       "status": "OK",
-      "timeMs": 976.653
+      "timeMs": 532.245
     }
   ],
   "runtime": {
-    "avgMs": 976.653,
-    "bestMs": 976.653,
-    "maxMs": 976.653,
-    "minMs": 976.653,
+    "avgMs": 532.245,
+    "bestMs": 532.245,
+    "maxMs": 532.245,
+    "minMs": 532.245,
     "stdDevMs": 0.0
   },
   "storageVariant": "iceberg",

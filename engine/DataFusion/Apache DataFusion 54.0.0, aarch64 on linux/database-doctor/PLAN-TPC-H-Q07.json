@@ -1,6 +1,99 @@
 {
+  "config": "M5 Macbook Pro",
   "engine": "DataFusion",
-  "queries": [],
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 2
+        },
+        "filter": {
+          "+2x": 2,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 2,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 3,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 1,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 4,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 6,
+          ">16x": 2
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 2
+        }
+      },
+      "operatorRows": {
+        "aggregate": 5964,
+        "distribute": 5306994,
+        "hash": 5636977,
+        "join": 7459503,
+        "scan": 7661265,
+        "seek": 0,
+        "sort": 8
+      },
+      "plan": "Estimate    Actual  Operator\n   48009         4  SORT supp_nation, cust_nation, l_year\n   48009         4  SORT supp_nation, cust_nation, l_year\n   48009         4  PROJECT supp_nation, cust_nation, l_year, revenue\n   48009         4  AGGREGATE SUM(volume) GROUP BY HASH supp_nation, cust_nation, l_year\n   48009        40  DISTRIBUTE HASH ON supp_nation, cust_nation, l_year\n   48009        40  AGGREGATE SUM(volume) GROUP BY HASH supp_nation, cust_nation, l_year\n   48009      5924  PROJECT supp_nation, cust_nation, l_year, volume\n   48009      5924  INNER JOIN HASH ON n_nationkey = c_nationkey AND (((n_name = 'GERMANY') AND (n_name = 'FRANCE')) OR ((n_name = 'FRANCE') AND (n_name = 'GERMANY')))\n       5         2  │└DISTRIBUTE GATHER\n       5         2  │ FILTER (n_name = 'FRANCE') OR (n_name = 'GERMANY')\n      25        25  │ DISTRIBUTE ROUND ROBIN\n      25        25  │ TABLE SCAN nation WHERE (n_name = 'FRANCE') OR (n_name = 'GERMANY')\n  240048    145703  PROJECT l_extendedprice, l_discount, l_shipdate, c_nationkey, n_name\n  240048    145703  INNER JOIN HASH ON n_nationkey = s_nationkey\n       5         2  │└DISTRIBUTE GATHER\n       5         2  │ FILTER (n_name = 'GERMANY') OR (n_name = 'FRANCE')\n      25        25  │ DISTRIBUTE ROUND ROBIN\n      25        25  │ TABLE SCAN nation WHERE (n_name = 'GERMANY') OR (n_name = 'FRANCE')\n 1200243   1828450  PROJECT l_extendedprice, l_discount, l_shipdate, s_nationkey, c_nationkey\n 1200243   1828450  INNER JOIN HASH ON c_custkey = o_custkey\n  150000    150000  │└DISTRIBUTE HASH ON c_custkey\n  150000    150000  │ TABLE SCAN customer WHERE ((c_nationkey >= 6) AND (c_nationkey <= 7)) AND c_nationkey IN(6,7)\n 1200243   1828450  DISTRIBUTE HASH ON o_custkey\n 1200243   1828450  PROJECT l_extendedprice, l_discount, l_shipdate, o_custkey, s_nationkey\n 1200243   1828450  INNER JOIN HASH ON s_suppkey = l_suppkey\n   10000     10000  │└TABLE SCAN supplier WHERE ((s_nationkey >= 6) AND (s_nationkey <= 7)) AND s_nationkey IN(6,7)\n 1200243   1828450  PROJECT l_suppkey, l_extendedprice, l_discount, l_shipdate, o_custkey\n 1200243   1828450  INNER JOIN HASH ON o_orderkey = l_orderkey\n 1500000   1500000  │└DISTRIBUTE HASH ON o_orderkey\n 1500000   1500000  │ TABLE SCAN orders WHERE CASE MOD(HASH_REPARTITION o_custkey,10) WHEN 0 THEN (((o_custkey >= 5) AND (o_custkey <= 149992)) AND TRUE) WHEN 1 THEN (((o_custkey >= 6) AND (o_custkey <= 149997)) AND TRUE) WHEN 2 THEN (((o_custkey >= 10) AND (o_custkey <= 149995)) AND TRUE) WHEN 3 THEN (((o_custkey >= 1) AND (o_custkey <= 150000)) AND TRUE) WHEN 4 THEN (((o_custkey >= 12) AND (o_custkey <= 149998)) AND TRUE) WHEN 5 THEN (((o_custkey >= 8) AND (o_custkey <= 149988)) AND TRUE)...\n 1200243   1828450  DISTRIBUTE HASH ON l_orderkey\n 1200243   1828450  FILTER (l_shipdate >= DATE'1995-01-01') AND (l_shipdate <= DATE'1996-12-31')\n 6001215   6001215  TABLE SCAN lineitem WHERE (((l_shipdate >= DATE'1995-01-01') AND (l_shipdate <= DATE'1996-12-31')) AND CASE MOD(HASH_REPARTITION l_orderkey,10) WHEN 0 THEN (((l_orderkey >= 5) AND (l_orderkey <= 5999847)) AND TRUE) WHEN 1 THEN (((l_orderkey >= 6) AND (l_orderkey <= 5999970)) AND TRUE) WHEN 2 THEN (((l_orderkey >= 37) AND (l_orderkey <= 5999975)) AND TRUE) WHEN 3 THEN (((l_orderkey >= 1) AND (l_orderkey <= 5999971)) AND TRUE) WHEN 4 THEN (((l_orderkey >= 131) AND (l_orderke...\n",
+      "sql": "/* TPC-H Q07 */\nSELECT supp_nation,\n       cust_nation,\n       l_year,\n       SUM(volume) AS revenue\nFROM (SELECT n1.n_name                          AS supp_nation,\n             n2.n_name                          AS cust_nation,\n             EXTRACT(YEAR FROM l_shipdate)      AS l_year,\n             l_extendedprice * (1 - l_discount) AS volume\n      FROM tpch_sf1.lineitem\n      INNER JOIN tpch_sf1.orders\n          ON l_orderkey = o_orderkey\n      INNER JOIN tpch_sf1.supplier\n          ON l_suppkey = s_suppkey\n      INNER JOIN tpch_sf1.customer\n          ON o_custkey = c_custkey\n      INNER JOIN tpch_sf1.nation n1\n          ON s_nationkey = n1.n_nationkey\n      INNER JOIN tpch_sf1.nation n2\n          ON c_nationkey = n2.n_nationkey\n      WHERE ((n1.n_name = 'GERMANY' AND n2.n_name = 'FRANCE')\n          OR (n1.n_name = 'FRANCE' AND n2.n_name = 'GERMANY'))\n        AND l_shipdate BETWEEN '1995-01-01' AND '1996-12-31') AS shipping\nGROUP BY supp_nation,\n         cust_nation,\n         l_year\nORDER BY supp_nation,\n         cust_nation,\n         l_year\n\n\n",
+      "startTime": "2026-06-26T23:27:51.297476Z",
+      "status": "OK",
+      "timeMs": 167.555
+    }
+  ],
+  "runtime": {
+    "avgMs": 167.555,
+    "bestMs": 167.555,
+    "maxMs": 167.555,
+    "minMs": 167.555,
+    "stdDevMs": 0.0
+  },
   "storageVariant": "iceberg",
   "theorem": {
     "categories": [

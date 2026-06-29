@@ -82,16 +82,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       -         2  PROJECT l_shipmode, sum AS high_line_count, sum_6 AS low_line_count\n       -         2  SORT l_shipmode\n       -         2  AGGREGATE SUM(sum_7) AS sum, SUM(sum_8) AS sum_6 GROUP BY HASH l_shipmode\n       -         2  DISTRIBUTE HASH ON l_shipmode\n       -         2  AGGREGATE SUM(expr_4) AS sum_7, SUM(expr_5) AS sum_8 GROUP BY PARTIAL l_shipmode\n       -     30837  PROJECT CAST((CASE WHEN (o_orderpriority IN('1-URGENT','2-HIGH')) THEN 1 ELSE 0 END) AS bigint) AS expr_4, CAST((CASE WHEN ((o_orderpriority <> '1-URGENT') AND (o_orderpriority <> '2-HIGH')) THEN 1 ELSE 0 END) AS bigint) AS expr_5, l_shipmode\n       -     30837  INNER JOIN HASH ON o_orderkey = l_orderkey\n   61601     30837  │└DISTRIBUTE HASH ON l_orderkey\n 6001215     30837  │ FILTER (l_receiptdate >= '1994-01-01') AND (l_receiptdate < '1995-01-01') AND (l_shipmode IN('AIR','TRUCK')) AND (l_commitdate < l_receiptdate) AND (l_shipdate < l_commitdate)\n 6001215   6001215  │ TABLE SCAN lineitem\n 1500000   1500000  TABLE SCAN orders\n",
       "sql": "/* TPC-H Q12 */\nSELECT l_shipmode,\n       SUM(CASE\n               WHEN o_orderpriority = '1-URGENT'\n                   OR o_orderpriority = '2-HIGH'\n                   THEN 1\n               ELSE 0\n           END) AS high_line_count,\n       SUM(CASE\n               WHEN o_orderpriority <> '1-URGENT'\n                   AND o_orderpriority <> '2-HIGH'\n                   THEN 1\n               ELSE 0\n           END) AS low_line_count\nFROM tpch_sf1.lineitem\nINNER JOIN tpch_sf1.orders\n    ON o_orderkey = l_orderkey\nWHERE l_shipmode IN ('AIR', 'TRUCK')\n  AND l_commitdate < l_receiptdate\n  AND l_shipdate < l_commitdate\n  AND l_receiptdate >= '1994-01-01'\n  AND l_receiptdate < '1995-01-01'\nGROUP BY l_shipmode\nORDER BY l_shipmode\n\n\n",
-      "startTime": "2026-06-25T16:27:44.647456Z",
+      "startTime": "2026-06-26T16:38:02.244979Z",
       "status": "OK",
-      "timeMs": 559.655
+      "timeMs": 250.688
     }
   ],
   "runtime": {
-    "avgMs": 559.655,
-    "bestMs": 559.655,
-    "maxMs": 559.655,
-    "minMs": 559.655,
+    "avgMs": 250.688,
+    "bestMs": 250.688,
+    "maxMs": 250.688,
+    "minMs": 250.688,
     "stdDevMs": 0.0
   },
   "storageVariant": "iceberg",

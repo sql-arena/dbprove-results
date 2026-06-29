@@ -81,17 +81,17 @@
         "sort": 42
       },
       "plan": "Estimate    Actual  Operator\n     200        42  SORT COUNT(*), COUNT(o_orderkey)\n     200        42  AGGREGATE COUNT(*) GROUP BY HASH COUNT(o_orderkey)\n  150000    150000  AGGREGATE COUNT(o_orderkey) GROUP BY HASH c_custkey\n 1499850   1549963  RIGHT OUTER JOIN HASH ON o_custkey = c_custkey\n  150000    150000  │└TABLE SCAN customer AS customer\n 1499850   1499959  TABLE SCAN orders AS orders WHERE o_comment NOT  LIKE ' % special % requests % '\n",
-      "sql": "/* TPC-H Q13 */\nSELECT\n  c_count,\n  COUNT(*) AS custdist\nFROM\n  (\n    SELECT\n      c_custkey,\n      COUNT(o_orderkey)\n    FROM\n      tpch_sf1.customer\n      LEFT OUTER JOIN tpch_sf1.orders ON c_custkey = o_custkey\n      AND o_comment NOT LIKE ' % special % requests % '\n    GROUP BY\n      c_custkey\n  ) AS c_orders (c_custkey, c_count)\nGROUP BY\n  c_count\nORDER BY\n  custdist DESC,\n  c_count DESC\n;",
-      "startTime": "2026-06-25T13:01:19.339994Z",
+      "sql": "/* TPC-H Q13 */\nSELECT\n  c_count,\n  COUNT(*) AS custdist\nFROM\n  (\n    SELECT\n      c_custkey,\n      COUNT(o_orderkey) AS c_count\n    FROM\n      tpch_sf1.customer\n      LEFT OUTER JOIN tpch_sf1.orders ON c_custkey = o_custkey\n      AND o_comment NOT LIKE ' % special % requests % '\n    GROUP BY\n      c_custkey\n  ) AS c_orders\nGROUP BY\n  c_count\nORDER BY\n  custdist DESC,\n  c_count DESC\n;",
+      "startTime": "2026-06-26T15:26:48.116826Z",
       "status": "OK",
-      "timeMs": 819.664
+      "timeMs": 773.359
     }
   ],
   "runtime": {
-    "avgMs": 819.664,
-    "bestMs": 819.664,
-    "maxMs": 819.664,
-    "minMs": 819.664,
+    "avgMs": 773.359,
+    "bestMs": 773.359,
+    "maxMs": 773.359,
+    "minMs": 773.359,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

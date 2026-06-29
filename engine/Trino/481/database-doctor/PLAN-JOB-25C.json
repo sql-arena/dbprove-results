@@ -1,4 +1,5 @@
 {
+  "config": "M5 Macbook Pro",
   "engine": "Trino",
   "queries": [
     {
@@ -81,16 +82,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  PROJECT min AS movie_budget, min_45 AS movie_votes, min_46 AS male_writer, min_47 AS violent_movie_title\n       1         1  AGGREGATE MIN(min_48) AS min, MIN(min_49) AS min_45, MIN(min_50) AS min_46, MIN(min_51) AS min_47\n       -         1  DISTRIBUTE GATHER\n       -         1  AGGREGATE MIN(info_15) AS min_48, MIN(info_23) AS min_49, MIN(name) AS min_50, MIN(title) AS min_51\n       -     26153  INNER JOIN HASH ON movie_id = id_37\n 2528312   2528312  │└DISTRIBUTE HASH ON id_37\n 2528312   2528312  │ PROJECT id AS id_37, title\n 2528312   2528312  │ TABLE SCAN title\n       -     26153  INNER JOIN HASH ON person_id = id_33\n       -   1739579  │└DISTRIBUTE HASH ON id_33\n 4167491   1739579  │ PROJECT id AS id_33, name\n 4167491   1739579  │ FILTER gender = 'm'\n 4167491   4167491  │ TABLE SCAN name\n       -     42900  INNER JOIN HASH ON keyword_id = id_9\n       -         7  │└DISTRIBUTE GATHER\n  134170         7  │ PROJECT id AS id_9\n  134170         7  │ FILTER keyword IN('blood','death','female-nudity','gore','hospital','murder','violence')\n  134170    134170  │ TABLE SCAN keyword\n       -   1515077  INNER JOIN HASH ON movie_id = movie_id_29\n 4523930   4523930  │└DISTRIBUTE HASH ON movie_id_29\n 4523930   4523930  │ PROJECT movie_id AS movie_id_29, keyword_id\n 4523930   4523930  │ TABLE SCAN movie_keyword\n       -     54155  INNER JOIN HASH ON info_type_id_22 = id_4\n       -         1  │└DISTRIBUTE GATHER\n     113         1  │ PROJECT id AS id_4\n     113         1  │ FILTER info = 'votes'\n     113       113  │ TABLE SCAN info_type\n       -    162621  INNER JOIN HASH ON movie_id = movie_id_21\n 1380035   1380035  │└DISTRIBUTE HASH ON movie_id_21\n 1380035   1380035  │ PROJECT movie_id AS movie_id_21, info_type_id AS info_type_id_22, info AS info_23\n 1380035   1380035  │ TABLE SCAN movie_info_idx\n       -     93240  INNER JOIN HASH ON info_type_id = id_0\n       -         1  │└DISTRIBUTE GATHER\n     113         1  │ PROJECT id AS id_0\n     113         1  │ FILTER info = 'genres'\n     113       113  │ TABLE SCAN info_type\n       -     95066  INNER JOIN HASH ON movie_id = movie_id_14\n13352148    188971  │└DISTRIBUTE HASH ON movie_id_14\n14835720    188971  │ PROJECT movie_id AS movie_id_14, info_type_id, info AS info_15\n14835720    188971  │ FILTER info IN('Action','Crime','Horror','Sci-Fi','Thriller','War')\n14835720  14835720  │ TABLE SCAN movie_info\n36244344   1244716  FILTER note IN('(head writer)','(story editor)','(story)','(writer)','(written by)')\n36244344  36244344  TABLE SCAN cast_info\n",
       "sql": "SELECT MIN(mi.info) AS movie_budget,\n       MIN(mi_idx.info) AS movie_votes,\n       MIN(n.name) AS male_writer,\n       MIN(t.title) AS violent_movie_title\nFROM job.cast_info AS ci,\n     job.info_type AS it1,\n     job.info_type AS it2,\n     job.keyword AS k,\n     job.movie_info AS mi,\n     job.movie_info_idx AS mi_idx,\n     job.movie_keyword AS mk,\n     job.name AS n,\n     job.title AS t\nWHERE ci.note IN ('(writer)',\n                  '(head writer)',\n                  '(written by)',\n                  '(story)',\n                  '(story editor)')\n  AND it1.info = 'genres'\n  AND it2.info = 'votes'\n  AND k.keyword IN ('murder',\n                    'violence',\n                    'blood',\n                    'gore',\n                    'death',\n                    'female-nudity',\n                    'hospital')\n  AND mi.info IN ('Horror',\n                  'Action',\n                  'Sci-Fi',\n                  'Thriller',\n                  'Crime',\n                  'War')\n  AND n.gender = 'm'\n  AND t.id = mi.movie_id\n  AND t.id = mi_idx.movie_id\n  AND t.id = ci.movie_id\n  AND t.id = mk.movie_id\n  AND ci.movie_id = mi.movie_id\n  AND ci.movie_id = mi_idx.movie_id\n  AND ci.movie_id = mk.movie_id\n  AND mi.movie_id = mi_idx.movie_id\n  AND mi.movie_id = mk.movie_id\n  AND mi_idx.movie_id = mk.movie_id\n  AND n.id = ci.person_id\n  AND it1.id = mi.info_type_id\n  AND it2.id = mi_idx.info_type_id\n  AND k.id = mk.keyword_id;\n",
-      "startTime": "2026-06-23T15:25:50.411047Z",
+      "startTime": "2026-06-26T16:46:58.666151Z",
       "status": "OK",
-      "timeMs": 1538.599
+      "timeMs": 1193.8
     }
   ],
   "runtime": {
-    "avgMs": 1538.599,
-    "bestMs": 1538.599,
-    "maxMs": 1538.599,
-    "minMs": 1538.599,
+    "avgMs": 1193.8,
+    "bestMs": 1193.8,
+    "maxMs": 1193.8,
+    "minMs": 1193.8,
     "stdDevMs": 0.0
   },
   "storageVariant": "iceberg",

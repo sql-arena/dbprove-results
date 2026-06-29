@@ -1,6 +1,99 @@
 {
+  "config": "M5 Macbook Pro",
   "engine": "ClickHouse",
-  "queries": [],
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 1372,
+        "distribute": 0,
+        "hash": 44887568,
+        "join": 97880880,
+        "scan": 44052934,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       -         1  PROJECT a1 AS movie_budget, a2 AS movie_votes, a3 AS male_writer, a4 AS violent_movie_title\n       -         1  AGGREGATE MIN(info_left) AS a1, MIN(info_right) AS a2, MIN(name) AS a3, MIN(title) AS a4\n       -      1372  PROJECT info, info, name, title\n       -      1372  PROJECT info, info, name, title\n       -      1372  INNER JOIN HASH ON tuple(PROJECTION_2953.movie_id,PROJECTION_2953.movie_id,PROJECTION_2953.movie_id,PROJECTION_2953.movie_id,PROJECTION_2953.movie_id,PROJECTION_2953.movie_id) = tuple(PROJECTION_2938.movie_id,PROJECTION_2938.movie_id,PROJECTION_2938.movie_id,PROJECTION_2938.id,PROJECTION_2938.id,PROJECTION_2938.id)\n       -        16  │└PROJECT movie_id AS movie_id_right, id, info AS info_right, title\n       -        16  │ PROJECT info, movie_id, title, id\n       -        16  │ INNER JOIN HASH ON PROJECTION_2950.id = PROJECTION_2941.movie_id\n       -    459925  │ │└PROJECT movie_id, info\n       -    459925  │ │ PROJECT info, movie_id\n       -    459925  │ │ INNER JOIN HASH ON PROJECTION_2947.info_type_id = PROJECTION_2944.id\n       -         1  │ │ │└PROJECT id\n       -         1  │ │ │ PROJECT id\n       -         1  │ │ │ TABLE SCAN info_type WHERE info = 'votes'\n       -   1380035  │ │ PROJECT info_type_id, info, movie_id\n       -   1380035  │ │ PROJECT info, movie_id, info_type_id\n       -   1380035  │ │ TABLE SCAN movie_info_idx\n       -        73  │ PROJECT id, title\n       -        73  │ PROJECT id, title\n       -        73  │ TABLE SCAN title WHERE (production_year > 2010) AND startsWith(title,'Vampire')\n       -   8378116  PROJECT movie_id_left, movie_id_left_2, movie_id AS movie_id_left_3, info AS info_left, name\n       -   8378116  PROJECT movie_id, info, movie_id, movie_id, name\n       -   8378116  INNER JOIN HASH ON PROJECTION_2959.person_id = PROJECTION_2956.id\n       -   1739579  │└PROJECT id, name\n       -   1739579  │ PROJECT id, name\n       -   1739579  │ TABLE SCAN name WHERE gender = 'm'\n       -  17036235  PROJECT person_id, movie_id, info, movie_id, movie_id\n       -  17036235  PROJECT movie_id, person_id, info, movie_id, movie_id\n       -  17036235  INNER JOIN HASH ON PROJECTION_2965.keyword_id = PROJECTION_2962.id\n       -    134170  │└PROJECT id\n       -    134170  │ PROJECT id\n       -    134170  │ TABLE SCAN keyword WHERE TRUE\n       -  17036235  PROJECT keyword_id, movie_id, person_id, info, movie_id, movie_id\n       -  17036235  PROJECT movie_id, person_id, info, movie_id, movie_id, keyword_id\n       -  17036235  INNER JOIN HASH ON tuple(PROJECTION_2971.movie_id,PROJECTION_2971.movie_id) = tuple(PROJECTION_2968.movie_id,PROJECTION_2968.movie_id)\n       -   4523930  │└PROJECT movie_id AS movie_id_right, keyword_id\n       -   4523930  │ PROJECT movie_id, keyword_id\n       -   4523930  │ TABLE SCAN movie_keyword\n       -    746153  PROJECT movie_id_left, movie_id AS movie_id_left_2, person_id, info\n       -    746153  PROJECT movie_id, person_id, info, movie_id\n       -    746153  INNER JOIN HASH ON PROJECTION_2977.info_type_id = PROJECTION_2974.id\n       -         1  │└PROJECT id\n       -         1  │ PROJECT id\n       -         1  │ TABLE SCAN info_type WHERE info = 'genres'\n       -    769607  PROJECT info_type_id, movie_id, person_id, info, movie_id\n       -    769607  PROJECT movie_id, person_id, info, movie_id, info_type_id\n       -    769607  INNER JOIN HASH ON PROJECTION_2983.movie_id = PROJECTION_2980.movie_id\n       -     30801  │└PROJECT movie_id AS movie_id_right, info, info_type_id\n       -     30801  │ PROJECT movie_id, info, info_type_id\n       -     30801  │ TABLE SCAN movie_info WHERE info = 'Horror'\n       -  36244344  PROJECT movie_id AS movie_id_left, person_id\n       -  36244344  PROJECT movie_id, person_id\n       -  36244344  TABLE SCAN cast_info WHERE TRUE\n",
+      "sql": "SELECT MIN(mi.info) AS movie_budget,\n       MIN(mi_idx.info) AS movie_votes,\n       MIN(n.name) AS male_writer,\n       MIN(t.title) AS violent_movie_title\nFROM job.cast_info AS ci,\n     job.info_type AS it1,\n     job.info_type AS it2,\n     job.keyword AS k,\n     job.movie_info AS mi,\n     job.movie_info_idx AS mi_idx,\n     job.movie_keyword AS mk,\n     job.name AS n,\n     job.title AS t\nWHERE ci.note IN ('(writer)',\n                  '(head writer)',\n                  '(written by)',\n                  '(story)',\n                  '(story editor)')\n  AND it1.info = 'genres'\n  AND it2.info = 'votes'\n  AND k.keyword IN ('murder',\n                    'blood',\n                    'gore',\n                    'death',\n                    'female-nudity')\n  AND mi.info = 'Horror'\n  AND n.gender = 'm'\n  AND t.production_year > 2010\n  AND t.title LIKE 'Vampire%'\n  AND t.id = mi.movie_id\n  AND t.id = mi_idx.movie_id\n  AND t.id = ci.movie_id\n  AND t.id = mk.movie_id\n  AND ci.movie_id = mi.movie_id\n  AND ci.movie_id = mi_idx.movie_id\n  AND ci.movie_id = mk.movie_id\n  AND mi.movie_id = mi_idx.movie_id\n  AND mi.movie_id = mk.movie_id\n  AND mi_idx.movie_id = mk.movie_id\n  AND n.id = ci.person_id\n  AND it1.id = mi.info_type_id\n  AND it2.id = mi_idx.info_type_id\n  AND k.id = mk.keyword_id;\n",
+      "startTime": "2026-06-26T20:51:26.558268Z",
+      "status": "OK",
+      "timeMs": 723.477
+    }
+  ],
+  "runtime": {
+    "avgMs": 723.477,
+    "bestMs": 723.477,
+    "maxMs": 723.477,
+    "minMs": 723.477,
+    "stdDevMs": 0.0
+  },
   "storageVariant": "native",
   "theorem": {
     "categories": [

@@ -1,6 +1,99 @@
 {
+  "config": "M5 Macbook Pro",
   "engine": "DataFusion",
-  "queries": [],
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 2
+        },
+        "filter": {
+          "+2x": 1,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 1,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 4,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 3,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 1,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 6,
+          ">16x": 2
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 2
+        }
+      },
+      "operatorRows": {
+        "aggregate": 328898,
+        "distribute": 14515087,
+        "hash": 12983874,
+        "join": 18657941,
+        "scan": 8511240,
+        "seek": 0,
+        "sort": 350
+      },
+      "plan": "Estimate    Actual  Operator\n 1200242       175  SORT nation, o_year\n 1200242       175  SORT nation, o_year\n 1200242       175  PROJECT nation, o_year, sum_profit\n 1200242       175  AGGREGATE SUM(amount) GROUP BY HASH nation, o_year\n 1200242      1750  DISTRIBUTE HASH ON nation, o_year\n 1200242      1750  AGGREGATE SUM(amount) GROUP BY HASH nation, o_year\n 1200242    327148  PROJECT nation, o_year, amount\n 1200242    327148  INNER JOIN HASH ON n_nationkey = s_nationkey\n      25        25  │└TABLE SCAN nation\n 1200242    327148  PROJECT l_quantity, l_extendedprice, l_discount, o_orderdate, ps_supplycost, s_nationkey\n 1200242    327148  INNER JOIN HASH ON s_suppkey = l_suppkey\n   10000     10000  │└TABLE SCAN supplier WHERE ((s_nationkey >= 0) AND (s_nationkey <= 24)) AND s_nationkey IN(0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24)\n 1200242    327148  INNER JOIN HASH ON p_partkey = l_partkey\n   40000     10907  │└DISTRIBUTE GATHER\n   40000     10907  │ FILTER p_name LIKE '%lace%'\n  200000    200000  │ DISTRIBUTE ROUND ROBIN\n  200000    200000  │ TABLE SCAN part WHERE p_name LIKE '%lace%'\n 6001212   6001215  PROJECT l_partkey, l_suppkey, l_quantity, l_extendedprice, l_discount, o_orderdate, ps_supplycost\n 6001212   6001215  INNER JOIN HASH ON ps_suppkey = l_suppkey AND ps_partkey = l_partkey\n  800000    800000  │└DISTRIBUTE HASH ON ps_suppkey, ps_partkey\n  800000    800000  │ TABLE SCAN partsupp\n 1500303   6001215  DISTRIBUTE HASH ON l_suppkey, l_partkey\n 1500303   6001215  PROJECT l_partkey, l_suppkey, l_quantity, l_extendedprice, l_discount, o_orderdate\n 1500303   6001215  INNER JOIN HASH ON o_orderkey = l_orderkey\n 1500000   1500000  │└DISTRIBUTE HASH ON o_orderkey\n 1500000   1500000  │ TABLE SCAN orders\n 6001215   6001215  DISTRIBUTE HASH ON l_orderkey\n 6001215   6001215  TABLE SCAN lineitem WHERE ((CASE MOD(HASH_REPARTITION l_orderkey,10) WHEN 0 THEN (((l_orderkey >= 5) AND (l_orderkey <= 5999847)) AND TRUE) WHEN 1 THEN (((l_orderkey >= 6) AND (l_orderkey <= 5999970)) AND TRUE) WHEN 2 THEN (((l_orderkey >= 37) AND (l_orderkey <= 5999975)) AND TRUE) WHEN 3 THEN (((l_orderkey >= 1) AND (l_orderkey <= 5999971)) AND TRUE) WHEN 4 THEN (((l_orderkey >= 131) AND (l_orderkey <= 5999969)) AND TRUE) WHEN 5 THEN (((l_orderkey >= 66) AND (l_orderkey <...\n",
+      "sql": "/* TPC-H Q09 */\nSELECT nation,\n       o_year,\n       SUM(amount) AS sum_profit\nFROM (SELECT n_name                                                          AS nation,\n             EXTRACT(YEAR FROM o_orderdate)                                  AS o_year,\n             l_extendedprice * (1 - l_discount) - ps_supplycost * l_quantity AS amount\n      FROM tpch_sf1.lineitem\n      INNER JOIN tpch_sf1.orders\n          ON l_orderkey = o_orderkey\n      INNER JOIN tpch_sf1.partsupp\n          ON l_suppkey = ps_suppkey\n          AND l_partkey = ps_partkey\n      INNER JOIN tpch_sf1.part\n          ON l_partkey = p_partkey\n      INNER JOIN tpch_sf1.supplier\n          ON l_suppkey = s_suppkey\n      INNER JOIN tpch_sf1.nation\n          ON s_nationkey = n_nationkey\n      WHERE p_name LIKE '%lace%') AS profit\nGROUP BY nation,\n         o_year\nORDER BY nation,\n         o_year DESC",
+      "startTime": "2026-06-26T23:27:51.755445Z",
+      "status": "OK",
+      "timeMs": 256.552
+    }
+  ],
+  "runtime": {
+    "avgMs": 256.552,
+    "bestMs": 256.552,
+    "maxMs": 256.552,
+    "minMs": 256.552,
+    "stdDevMs": 0.0
+  },
   "storageVariant": "iceberg",
   "theorem": {
     "categories": [

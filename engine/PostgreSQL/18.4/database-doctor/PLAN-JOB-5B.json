@@ -82,16 +82,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(title)\n       4         4  INNER JOIN LOOP ON id = info_type_id\n       4         4  │└INNER JOIN LOOP ON movie_id = id\n       4         4  │ │└INNER JOIN LOOP ON id = movie_id\n      24         4  │ │ │└INNER JOIN LOOP ON id = company_type_id\n     100      1418  │ │ │ │└TABLE SCAN movie_companies AS mc WHERE (mc.note LIKE '%(VHS)%') AND (mc.note LIKE '%(USA)%') AND (mc.note LIKE '%(1994)%')\n       4         4  │ │ │ TABLE SEEK company_type AS ct WHERE ct.kind = 'production companies'\n       0         0  │ │ TABLE SEEK title AS t WHERE t.production_year > 2010\n       0         0  │ TABLE SEEK movie_info AS mi WHERE mi.info IN('USA','America')\n       0         0  TABLE SEEK info_type AS it\n",
       "sql": "SELECT MIN(t.title) AS american_vhs_movie\nFROM job.company_type AS ct,\n     job.info_type AS it,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.title AS t\nWHERE ct.kind = 'production companies'\n  AND mc.note LIKE '%(VHS)%'\n  AND mc.note LIKE '%(USA)%'\n  AND mc.note LIKE '%(1994)%'\n  AND mi.info IN ('USA',\n                  'America')\n  AND t.production_year > 2010\n  AND t.id = mi.movie_id\n  AND t.id = mc.movie_id\n  AND mc.movie_id = mi.movie_id\n  AND ct.id = mc.company_type_id\n  AND it.id = mi.info_type_id;\n",
-      "startTime": "2026-06-25T15:34:58.287385Z",
+      "startTime": "2026-06-26T15:34:07.939947Z",
       "status": "OK",
-      "timeMs": 95.027
+      "timeMs": 76.539
     }
   ],
   "runtime": {
-    "avgMs": 95.027,
-    "bestMs": 95.027,
-    "maxMs": 95.027,
-    "minMs": 95.027,
+    "avgMs": 76.539,
+    "bestMs": 76.539,
+    "maxMs": 76.539,
+    "minMs": 76.539,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

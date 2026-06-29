@@ -1,4 +1,5 @@
 {
+  "config": "M5 Macbook Pro",
   "engine": "ClickHouse",
   "queries": [
     {
@@ -81,16 +82,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       -         4  SEQUENCE\n       -     18282  ├─PROJECT p_brand, p_type, p_size, a1 AS supplier_cnt\n       -     18282  │ SORT a1, p_brand, p_type, p_size\n       -     18282  │ PROJECT a1, p_brand, p_type, p_size\n       -     18282  │ AGGREGATE COUNT(DISTINCT ps_suppkey) AS a1 GROUP BY HASH p_brand, p_type, p_size\n       -    119100  │ PROJECT p_brand, p_type, p_size, ps_suppkey\n       -    119100  │ PROJECT ps_suppkey, p_brand, p_type, p_size\n       -    119100  │ INNER JOIN HASH ON PROJECTION_370.ps_partkey = PROJECTION_367.p_partkey\n       -     29775  │ │└PROJECT p_partkey, p_brand, p_type, p_size\n       -     29775  │ │ PROJECT p_partkey, p_size, p_type, p_brand\n       -     29775  │ │ TABLE SCAN part WHERE (p_brand <> 'Brand#42') AND p_size IN(3,7,11,29,31,37,41,49) AND  NOT (startsWith(p_type,'STANDARD ANODIZED'))\n       -    800000  │ PROJECT ps_partkey, ps_suppkey\n       -    800000  │ PROJECT ps_partkey, ps_suppkey\n       -    800000  │ TABLE SCAN partsupp WHERE TRUE\n       -         4  └─PROJECT s_suppkey\n       -         4    PROJECT s_suppkey\n       -         4    TABLE SCAN supplier WHERE s_comment LIKE '%Customer%Complaints%'\n",
       "sql": "/* TPC-H Q16 */\nSELECT p_brand,\n       p_type,\n       p_size,\n       COUNT(DISTINCT ps_suppkey) AS supplier_cnt\nFROM tpch_sf1.partsupp\nINNER JOIN tpch_sf1.part\n    ON ps_partkey = p_partkey\n\nWHERE p_brand <> 'Brand#42'\n  AND p_type NOT LIKE 'STANDARD ANODIZED%'\n  AND p_size IN (3, 7, 11, 29, 31, 37, 41, 49)\n  AND ps_suppkey NOT IN (SELECT s_suppkey\n                         FROM tpch_sf1.supplier\n                         WHERE s_comment LIKE '%Customer%Complaints%')\nGROUP BY p_brand,\n         p_type,\n         p_size\nORDER BY supplier_cnt DESC,\n         p_brand,\n         p_type,\n         p_size",
-      "startTime": "2026-06-23T11:15:04.240416Z",
+      "startTime": "2026-06-26T15:36:18.466927Z",
       "status": "OK",
-      "timeMs": 39.076
+      "timeMs": 29.548
     }
   ],
   "runtime": {
-    "avgMs": 39.076,
-    "bestMs": 39.076,
-    "maxMs": 39.076,
-    "minMs": 39.076,
+    "avgMs": 29.548,
+    "bestMs": 29.548,
+    "maxMs": 29.548,
+    "minMs": 29.548,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

@@ -82,16 +82,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(name), MIN(name), MIN(title)\n       5         5  AGGREGATE PARTIAL MIN(name), PARTIAL MIN(name), PARTIAL MIN(title)\n      30       121  INNER JOIN LOOP ON id = person_role_id\n      30       127  │└INNER JOIN LOOP ON id = movie_id\n      60       359  │ │└INNER JOIN LOOP ON id = company_id\n     170       373  │ │ │└INNER JOIN LOOP ON movie_id = movie_id\n     102        85  │ │ │ │└INNER JOIN HASH ON role_id = id\n       1         1  │ │ │ │ │└TABLE SCAN role_type AS rt WHERE rt.role = 'actress'\n    6130       425  │ │ │ │ INNER JOIN LOOP ON person_id = person_id AND person_id = id AND (person_id = id)\n    2620      1558  │ │ │ │ │└INNER JOIN LOOP ON person_id = id\n   12125      6768  │ │ │ │ │ │└TABLE SCAN name AS n WHERE (n.name LIKE '%Ang%') AND (n.gender = 'f')\n   13536      6768  │ │ │ │ │ TABLE SEEK aka_name AS an\n   18696      1558  │ │ │ │ TABLE SEEK cast_info AS ci WHERE ci.note IN('(voice)','(voice: Japanese version)','(voice) (uncredited)','(voice: English version)')\n     425       425  │ │ │ TABLE SEEK movie_companies AS mc WHERE (mc.note IS NOT NULL) AND ((mc.note LIKE '%(USA)%') OR (mc.note LIKE '%(worldwide)%'))\n     373       373  │ │ TABLE SEEK company_name AS cn WHERE cn.country_code = 'us'\n     359       359  │ TABLE SEEK title AS t WHERE (t.production_year >= 2005) AND (t.production_year <= 2015)\n     127       127  TABLE SEEK char_name AS chn\n",
       "sql": "SELECT MIN(an.name) AS alternative_name,\n       MIN(chn.name) AS character_name,\n       MIN(t.title) AS movie\nFROM job.aka_name AS an,\n     job.char_name AS chn,\n     job.cast_info AS ci,\n     job.company_name AS cn,\n     job.movie_companies AS mc,\n     job.name AS n,\n     job.role_type AS rt,\n     job.title AS t\nWHERE ci.note IN ('(voice)',\n                  '(voice: Japanese version)',\n                  '(voice) (uncredited)',\n                  '(voice: English version)')\n  AND cn.country_code ='[us]'\n  AND mc.note IS NOT NULL\n  AND (mc.note LIKE '%(USA)%'\n       OR mc.note LIKE '%(worldwide)%')\n  AND n.gender ='f'\n  AND n.name LIKE '%Ang%'\n  AND rt.role ='actress'\n  AND t.production_year BETWEEN 2005 AND 2015\n  AND ci.movie_id = t.id\n  AND t.id = mc.movie_id\n  AND ci.movie_id = mc.movie_id\n  AND mc.company_id = cn.id\n  AND ci.role_id = rt.id\n  AND n.id = ci.person_id\n  AND chn.id = ci.person_role_id\n  AND an.person_id = n.id\n  AND an.person_id = ci.person_id;\n",
-      "startTime": "2026-06-25T15:36:12.762371Z",
+      "startTime": "2026-06-26T15:34:51.372307Z",
       "status": "OK",
-      "timeMs": 1297.112
+      "timeMs": 9082.715
     }
   ],
   "runtime": {
-    "avgMs": 1297.112,
-    "bestMs": 1297.112,
-    "maxMs": 1297.112,
-    "minMs": 1297.112,
+    "avgMs": 9082.715,
+    "bestMs": 9082.715,
+    "maxMs": 9082.715,
+    "minMs": 9082.715,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

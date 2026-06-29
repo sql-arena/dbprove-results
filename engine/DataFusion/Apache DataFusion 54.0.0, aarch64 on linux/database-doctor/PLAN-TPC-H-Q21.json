@@ -1,6 +1,99 @@
 {
+  "config": "M5 Macbook Pro",
   "engine": "DataFusion",
-  "queries": [],
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 2
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 1,
+          "+8x": 0,
+          "-2x": 3,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 1,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 3,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 1,
+          "-2x": 0,
+          "-4x": 2,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 2,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 6,
+          ">16x": 2
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 2
+        }
+      },
+      "operatorRows": {
+        "aggregate": 4331,
+        "distribute": 4666580,
+        "hash": 3874319,
+        "join": 17245629,
+        "scan": 19513670,
+        "seek": 0,
+        "sort": 792
+      },
+      "plan": "Estimate    Actual  Operator\n   60000       396  SORT numwait, s_name\n   60000       396  SORT numwait, s_name\n   60000       396  PROJECT s_name, numwait\n   60000       396  AGGREGATE COUNT(1) GROUP BY HASH s_name\n   60000       396  DISTRIBUTE HASH ON s_name\n   60000       396  AGGREGATE COUNT(1) GROUP BY HASH s_name\n   60000      3935  LEFT ANTI JOIN HASH ON l_orderkey = l_orderkey AND (l_suppkey <> l_suppkey)\n   60000     70401  │└DISTRIBUTE GATHER\n   60000     70401  │ LEFT SEMI JOIN HASH ON l_orderkey = l_orderkey AND (l_suppkey <> l_suppkey)\n   60000     73048  │ │└DISTRIBUTE GATHER\n   60000     73048  │ │ INNER JOIN HASH ON n_nationkey = s_nationkey\n       5         1  │ │ │└DISTRIBUTE GATHER\n       5         1  │ │ │ FILTER n_name = 'GERMANY'\n      25        25  │ │ │ DISTRIBUTE ROUND ROBIN\n      25        25  │ │ │ TABLE SCAN nation WHERE n_name = 'GERMANY'\n  300000   1828911  │ │ PROJECT l_orderkey, l_suppkey, s_name, s_nationkey\n  300000   1828911  │ │ INNER JOIN HASH ON s_suppkey = l_suppkey\n   10000     10000  │ │ │└TABLE SCAN supplier WHERE ((s_nationkey >= 7) AND (s_nationkey <= 7)) AND s_nationkey IN 7\n  300000   1828911  │ │ INNER JOIN HASH ON o_orderkey = l_orderkey\n  300000    729413  │ │ │└DISTRIBUTE HASH ON o_orderkey\n  300000    729413  │ │ │ FILTER o_orderstatus = 'F'\n 1500000   1500000  │ │ │ TABLE SCAN orders WHERE o_orderstatus = 'F'\n 1200243   3793296  │ │ DISTRIBUTE HASH ON l_orderkey\n 1200243   3793296  │ │ FILTER l_receiptdate > l_commitdate\n 6001215   6001215  │ │ TABLE SCAN lineitem WHERE ((l_receiptdate > l_commitdate) AND CASE MOD(HASH_REPARTITION l_orderkey,10) WHEN 0 THEN (((l_orderkey >= 5) AND (l_orderkey <= 5999813)) AND TRUE) WHEN 1 THEN (((l_orderkey >= 6) AND (l_orderkey <= 5999843)) AND TRUE) WHEN 2 THEN (((l_orderkey >= 37) AND (l_orderkey <= 5999975)) AND TRUE) WHEN 3 THEN (((l_orderkey >= 99) AND (l_orderkey <= 5999942)) AND TRUE) WHEN 4 THEN (((l_orderkey >= 131) AND (l_orderkey <= 5999685)) AND TRUE) WHEN 5 ...\n 6001215   6001215  │ TABLE SCAN lineitem\n 1200243   3793296  FILTER l_receiptdate > l_commitdate\n 6001215   6001215  TABLE SCAN lineitem WHERE l_receiptdate > l_commitdate\n",
+      "sql": "/* TPC-H Q21 */\nSELECT s_name, COUNT(*) AS numwait\nFROM tpch_sf1.lineitem l1\nINNER JOIN tpch_sf1.orders\n    ON l1.l_orderkey = o_orderkey\nINNER JOIN tpch_sf1.supplier\n    ON l1.l_suppkey = s_suppkey\nINNER JOIN tpch_sf1.nation\n    ON s_nationkey = n_nationkey\nWHERE o_orderstatus = 'F'\n  AND l1.l_receiptdate > l1.l_commitdate\n  AND EXISTS (SELECT 1\n              FROM tpch_sf1.lineitem l2\n              WHERE l2.l_orderkey = l1.l_orderkey\n                AND l2.l_suppkey <> l1.l_suppkey)\n  AND NOT EXISTS (SELECT 1\n                  FROM tpch_sf1.lineitem l3\n                  WHERE l3.l_orderkey = l1.l_orderkey\n                    AND l3.l_suppkey <> l1.l_suppkey\n                    AND l3.l_receiptdate\n                      > l3.l_commitdate)\n  AND n_name = 'GERMANY'\nGROUP BY s_name\nORDER BY numwait DESC,\n         s_name\n",
+      "startTime": "2026-06-26T23:43:59.953554Z",
+      "status": "OK",
+      "timeMs": 136.842
+    }
+  ],
+  "runtime": {
+    "avgMs": 136.842,
+    "bestMs": 136.842,
+    "maxMs": 136.842,
+    "minMs": 136.842,
+    "stdDevMs": 0.0
+  },
   "storageVariant": "iceberg",
   "theorem": {
     "categories": [

@@ -1,4 +1,5 @@
 {
+  "config": "M5 Macbook Pro",
   "engine": "DataFusion",
   "queries": [
     {
@@ -81,16 +82,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  PROJECT acress_pseudonym, japanese_anime_movie\n       1         1  AGGREGATE MIN(name), MIN(title)\n   28463        10  DISTRIBUTE GATHER\n   28463        10  AGGREGATE MIN(name), MIN(title)\n   28463         6  INNER JOIN HASH ON movie_id = id AND movie_id = id\n   28463        25  │└DISTRIBUTE GATHER\n   28463        25  │ INNER JOIN HASH ON id = role_id\n       3         1  │ │└DISTRIBUTE GATHER\n       3         1  │ │ FILTER role = 'actress'\n      12        12  │ │ DISTRIBUTE ROUND ROBIN\n      12        12  │ │ TABLE SCAN role_type WHERE role = 'actress'\n  104366        25  │ INNER JOIN HASH ON person_id = id AND person_id = id\n  104366      2754  │ │└DISTRIBUTE GATHER\n  104366      2754  │ │ INNER JOIN HASH ON id = company_id\n   47000      6752  │ │ │└DISTRIBUTE GATHER\n   47000      6752  │ │ │ FILTER country_code = 'jp'\n  234997    234997  │ │ │ TABLE SCAN company_name WHERE country_code = 'jp'\n  521826      2760  │ │ PROJECT person_id, name, person_id, movie_id, role_id, movie_id, company_id\n  521826      2760  │ │ INNER JOIN HASH ON movie_id = movie_id\n  521826      8569  │ │ │└DISTRIBUTE HASH ON movie_id\n  521826      8569  │ │ │ FILTER (note LIKE '%(Japan)%' AND note NOT  LIKE '%(USA)%') AND (note LIKE '%(2006)%' OR note LIKE '%(2007)%')\n 2609129   2609129  │ │ │ TABLE SCAN movie_companies WHERE ((note LIKE '%(Japan)%' AND note NOT  LIKE '%(USA)%') AND (note LIKE '%(2006)%' OR note LIKE '%(2007)%')) AND (((company_id >= 74) AND (company_id <= 234945)) AND TRUE)\n 1608526     75828  │ │ DISTRIBUTE HASH ON movie_id\n 1608526     75828  │ │ INNER JOIN HASH ON person_id = person_id\n  901343    901343  │ │ │└DISTRIBUTE HASH ON person_id\n  901343    901343  │ │ │ TABLE SCAN aka_name\n 7248869     35005  │ │ DISTRIBUTE HASH ON person_id\n 7248869     35005  │ │ FILTER note = '(voice: English version)'\n36244344   7533666  │ │ TABLE SCAN cast_info WHERE (((note = '(voice: English version)') AND CASE MOD(HASH_REPARTITION person_id,10) WHEN 0 THEN (((person_id >= 5) AND (person_id <= 4167489)) AND TRUE) WHEN 1 THEN (((person_id >= 15) AND (person_id <= 4167473)) AND TRUE) WHEN 2 THEN (((person_id >= 69) AND (person_id <= 4167478)) AND TRUE) WHEN 3 THEN (((person_id >= 161) AND (person_id <= 4167352)) AND TRUE) WHEN 4 THEN (((person_id >= 94) AND (person_id <= 4167420)) AND TRUE) WHEN 5 THE...\n  833499      4277  │ FILTER name LIKE '%Yo%' AND name NOT  LIKE '%Yu%'\n 4167491    983636  │ TABLE SCAN name WHERE (name LIKE '%Yo%' AND name NOT  LIKE '%Yu%') AND ((((id >= 1733848) AND (id <= 2689872)) AND ((id >= 1733848) AND (id <= 2689872))) AND TRUE)\n  505663         7  FILTER ((production_year >= 2006) AND (production_year <= 2007)) AND (title LIKE 'One Piece%' OR title LIKE 'Dragon Ball Z%')\n 2528312   2528312  TABLE SCAN title WHERE (((production_year >= 2006) AND (production_year <= 2007)) AND (title LIKE 'One Piece%' OR title LIKE 'Dragon Ball Z%')) AND ((((id >= 443156) AND (id <= 2487182)) AND ((id >= 443156) AND (id <= 2487182))) AND struct(id,id) IN( < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr > , < expr...\n",
       "sql": "SELECT MIN(an.name) AS acress_pseudonym,\n       MIN(t.title) AS japanese_anime_movie\nFROM job.aka_name AS an,\n     job.cast_info AS ci,\n     job.company_name AS cn,\n     job.movie_companies AS mc,\n     job.name AS n,\n     job.role_type AS rt,\n     job.title AS t\nWHERE ci.note ='(voice: English version)'\n  AND cn.country_code ='[jp]'\n  AND mc.note LIKE '%(Japan)%'\n  AND mc.note NOT LIKE '%(USA)%'\n  AND (mc.note LIKE '%(2006)%'\n       OR mc.note LIKE '%(2007)%')\n  AND n.name LIKE '%Yo%'\n  AND n.name NOT LIKE '%Yu%'\n  AND rt.role ='actress'\n  AND t.production_year BETWEEN 2006 AND 2007\n  AND (t.title LIKE 'One Piece%'\n       OR t.title LIKE 'Dragon Ball Z%')\n  AND an.person_id = n.id\n  AND n.id = ci.person_id\n  AND ci.movie_id = t.id\n  AND t.id = mc.movie_id\n  AND mc.company_id = cn.id\n  AND ci.role_id = rt.id\n  AND an.person_id = ci.person_id\n  AND ci.movie_id = mc.movie_id;\n",
-      "startTime": "2026-06-23T17:16:08.043419Z",
+      "startTime": "2026-06-26T23:55:10.628376Z",
       "status": "OK",
-      "timeMs": 163.665
+      "timeMs": 142.713
     }
   ],
   "runtime": {
-    "avgMs": 163.665,
-    "bestMs": 163.665,
-    "maxMs": 163.665,
-    "minMs": 163.665,
+    "avgMs": 142.713,
+    "bestMs": 142.713,
+    "maxMs": 142.713,
+    "minMs": 142.713,
     "stdDevMs": 0.0
   },
   "storageVariant": "iceberg",

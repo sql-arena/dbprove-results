@@ -82,16 +82,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(name), MIN(title)\n       5         5  AGGREGATE PARTIAL MIN(name), PARTIAL MIN(title)\n  279297         2  INNER JOIN HASH ON role_id = id\n      12        12  │└TABLE SCAN role_type AS rt\n 1396485        10  INNER JOIN LOOP ON id = person_role_id\n 1396485    782104  │└INNER JOIN LOOP ON movie_id = movie_id AND movie_id = id AND (movie_id = id)\n  164100    119250  │ │└INNER JOIN HASH ON company_type_id = id\n       4         4  │ │ │└TABLE SCAN company_type AS ct\n  164100    119250  │ │ INNER JOIN HASH ON id = movie_id\n  307315    230759  │ │ │└INNER JOIN HASH ON company_id = id\n  252370     84843  │ │ │ │└TABLE SEEK company_name AS cn\n 4208275   2609129  │ │ │ TABLE SCAN movie_companies AS mc\n 2177530   1749032  │ │ TABLE SCAN title AS t WHERE t.production_year > 1990\n 1192500    781087  │ TABLE SEEK cast_info AS ci WHERE ci.note LIKE '%(producer)%'\n      10        10  TABLE SEEK char_name AS chn\n",
       "sql": "SELECT MIN(chn.name) AS character,\n       MIN(t.title) AS movie_with_american_producer\nFROM job.char_name AS chn,\n     job.cast_info AS ci,\n     job.company_name AS cn,\n     job.company_type AS ct,\n     job.movie_companies AS mc,\n     job.role_type AS rt,\n     job.title AS t\nWHERE ci.note LIKE '%(producer)%'\n  AND cn.country_code = '[us]'\n  AND t.production_year > 1990\n  AND t.id = mc.movie_id\n  AND t.id = ci.movie_id\n  AND ci.movie_id = mc.movie_id\n  AND chn.id = ci.person_role_id\n  AND rt.id = ci.role_id\n  AND cn.id = mc.company_id\n  AND ct.id = mc.company_type_id;\n",
-      "startTime": "2026-06-25T15:21:43.060770Z",
+      "startTime": "2026-06-26T15:27:33.886770Z",
       "status": "OK",
-      "timeMs": 28548.79
+      "timeMs": 19354.82
     }
   ],
   "runtime": {
-    "avgMs": 28548.79,
-    "bestMs": 28548.79,
-    "maxMs": 28548.79,
-    "minMs": 28548.79,
+    "avgMs": 19354.82,
+    "bestMs": 19354.82,
+    "maxMs": 19354.82,
+    "minMs": 19354.82,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

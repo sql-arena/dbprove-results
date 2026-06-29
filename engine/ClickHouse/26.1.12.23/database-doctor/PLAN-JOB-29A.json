@@ -1,6 +1,99 @@
 {
+  "config": "M5 Macbook Pro",
   "engine": "ClickHouse",
-  "queries": [],
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": -1,
+        "distribute": 0,
+        "hash": -1,
+        "join": -1,
+        "scan": 47878621,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       -         ∞  PROJECT a1 AS voiced_char, a2 AS voicing_actress, a3 AS voiced_animation\n       -         ∞  AGGREGATE MIN(name_left) AS a1, MIN(name_right) AS a2, MIN(title) AS a3\n       -         ∞  PROJECT name_left, name_right, title\n       -         ∞  PROJECT name_left, name_right, title\n       -         ∞  INNER JOIN HASH ON tuple(PROJECTION_3767.movie_id,PROJECTION_3767.movie_id,PROJECTION_3767.movie_id,PROJECTION_3767.movie_id,PROJECTION_3767.movie_id,PROJECTION_3767.movie_id,PROJECTION_3767.movie_id,PROJECTION_3767.movie_id) = tuple(PROJECTION_3752.movie_id,PROJECTION_3752.movie_id,PROJECTION_3752.movie_id,PROJECTION_3752.movie_id,PROJECTION_3752.id,PROJECTION_3752.id,PROJECTION_3752.id,PROJECTION_3752.id)\n       -         1  │└PROJECT movie_id AS movie_id_right, id, title\n       -         1  │ PROJECT movie_id, title, id\n       -         1  │ INNER JOIN HASH ON PROJECTION_3764.id = PROJECTION_3755.movie_id\n       -       414  │ │└PROJECT movie_id\n       -       414  │ │ PROJECT movie_id\n       -       414  │ │ INNER JOIN HASH ON PROJECTION_3761.keyword_id = PROJECTION_3758.id\n       -         1  │ │ │└PROJECT id\n       -         1  │ │ │ FILTER (1 AND keyword = 'computer-animation'_String) AS a87\n       -         1  │ │ │ TABLE SCAN keyword WHERE keyword = 'computer-animation'\n       -   4523930  │ │ PROJECT keyword_id, movie_id\n       -   4523930  │ │ PROJECT movie_id, keyword_id\n       -   4523930  │ │ TABLE SCAN movie_keyword\n       -         3  │ PROJECT id, title\n       -         3  │ FILTER (1 AND production_year >= 2000_UInt16 AND production_year <= 2010_UInt16 AND title = 'Shrek 2'_String) AS a76\n       -         3  │ TABLE SCAN title WHERE (production_year >= 2000) AND (production_year <= 2010) AND (title = 'Shrek 2')\n       -         ∞  PROJECT movie_id_left, movie_id_left_2, movie_id_left_3, movie_id_right AS movie_id_left_4, name, name\n       -         ∞  PROJECT movie_id_left_2, movie_id_left, name, movie_id_left_3, movie_id_right, name\n       -         ∞  INNER JOIN HASH ON tuple(PROJECTION_3785.person_id,PROJECTION_3785.person_id,PROJECTION_3785.person_id) = tuple(PROJECTION_3770.id,PROJECTION_3770.id,PROJECTION_3770.person_id)\n       -         ∞  │└PROJECT id, person_id AS person_id_right, name AS name_right\n       -         ∞  │ PROJECT name, id, person_id\n       -         ∞  │ INNER JOIN HASH ON PROJECTION_3776.info_type_id = PROJECTION_3773.id\n       -         1  │ │└PROJECT id AS id_right\n       -         1  │ │ FILTER (1 AND info = 'trivia'_String) AS a71\n       -         1  │ │ TABLE SCAN info_type WHERE info = 'trivia'\n       -         ∞  │ PROJECT info_type_id, name, id AS id_left, person_id\n       -         ∞  │ PROJECT name, id, person_id, info_type_id\n       -         ∞  │ INNER JOIN HASH ON PROJECTION_3782.id = PROJECTION_3779.person_id\n       -   2963664  │ │└PROJECT person_id, info_type_id\n       -   2963664  │ │ PROJECT person_id, info_type_id\n       -   2963664  │ │ TABLE SCAN person_info\n       -         ∞  │ PROJECT id, name\n       -         ∞  │ FILTER (1 AND  LIKE (name,'%An%'_String) AND gender = 'f'_String) AS a63\n       -     50011  │ TABLE SCAN name WHERE (gender = 'f') AND name LIKE '%An%'\n       -         ∞  PROJECT person_id AS person_id_left, person_id AS person_id_left_2, movie_id, movie_id, name AS name_left, movie_id, movie_id\n       -         ∞  PROJECT person_id, person_id, movie_id, movie_id, name, movie_id, movie_id\n       -         ∞  INNER JOIN HASH ON PROJECTION_3791.role_id = PROJECTION_3788.id\n       -         1  │└PROJECT id\n       -         1  │ FILTER (1 AND role = 'actress'_String) AS a57\n       -         1  │ TABLE SCAN role_type WHERE role = 'actress'\n       -         ∞  PROJECT role_id, person_id, person_id, movie_id, movie_id, name, movie_id, movie_id\n       -         ∞  PROJECT person_id, person_id, movie_id, role_id, movie_id, name, movie_id, movie_id\n       -         ∞  INNER JOIN HASH ON PROJECTION_3797.info_type_id = PROJECTION_3794.id\n       -         1  │└PROJECT id\n       -         1  │ FILTER (1 AND info = 'release dates'_String) AS a53\n       -         1  │ TABLE SCAN info_type WHERE info = 'release dates'\n       -         ∞  PROJECT info_type_id, person_id, person_id, movie_id, role_id, movie_id, name, movie_id, movie_id\n       -         ∞  PROJECT person_id, person_id, movie_id, role_id, movie_id, name, movie_id, movie_id, info_type_id\n       -         ∞  INNER JOIN HASH ON tuple(PROJECTION_3803.movie_id,PROJECTION_3803.movie_id,PROJECTION_3803.movie_id) = tuple(PROJECTION_3800.movie_id,PROJECTION_3800.movie_id,PROJECTION_3800.movie_id)\n       -         ∞  │└PROJECT movie_id AS movie_id_right, info_type_id\n       -         ∞  │ FILTER (1 AND  OR ( LIKE (info,'Japan:%200%'_String), LIKE (info,'USA:%200%'_String))) AS a45\n       -    451104  │ TABLE SCAN movie_info WHERE info LIKE 'Japan:%200%' OR info LIKE 'USA:%200%'\n       -         ∞  PROJECT movie_id AS movie_id_left, movie_id AS movie_id_left_2, movie_id AS movie_id_left_3, person_id, person_id, role_id, name\n       -         ∞  PROJECT person_id, person_id, movie_id, role_id, movie_id, name, movie_id\n       -         ∞  INNER JOIN HASH ON tuple(PROJECTION_3821.movie_id,PROJECTION_3821.movie_id) = tuple(PROJECTION_3806.movie_id,PROJECTION_3806.movie_id)\n       -         ∞  │└PROJECT movie_id AS movie_id_right, person_id, person_id, role_id, name\n       -         ∞  │ PROJECT person_id, person_id, movie_id, role_id, name\n       -         ∞  │ INNER JOIN HASH ON PROJECTION_3818.person_id = PROJECTION_3809.person_id\n       -         ∞  │ │└PROJECT person_id AS person_id_right, movie_id, role_id, name\n       -         ∞  │ │ PROJECT person_id, movie_id, role_id, name\n       -         ∞  │ │ INNER JOIN HASH ON PROJECTION_3815.person_role_id = PROJECTION_3812.id\n       -         1  │ │ │└PROJECT id, name\n       -         1  │ │ │ FILTER (1 AND name = 'Queen'_String) AS a41\n       -         1  │ │ │ TABLE SCAN char_name WHERE name = 'Queen'\n       -         ∞  │ │ PROJECT person_role_id, person_id, movie_id, role_id\n       -         ∞  │ │ FILTER (in(note,__set_String_16465705877069739944_5412506392037353102) AND 1) AS a37\n       -  36244344  │ │ TABLE SCAN cast_info WHERE TRUE\n       -    901343  │ PROJECT person_id AS person_id_left\n       -    901343  │ PROJECT person_id\n       -    901343  │ TABLE SCAN aka_name\n       -         0  PROJECT movie_id AS movie_id_left, movie_id AS movie_id_left_2\n       -         0  PROJECT movie_id, movie_id\n       -         0  INNER JOIN HASH ON PROJECTION_3845.id = PROJECTION_3824.company_id\n       -    166506  │└PROJECT company_id, movie_id, movie_id\n       -    166506  │ PROJECT movie_id, movie_id, company_id\n       -    166506  │ INNER JOIN HASH ON PROJECTION_3842.movie_id = PROJECTION_3827.movie_id\n       -     17879  │ │└PROJECT movie_id AS movie_id_right\n       -     17879  │ │ PROJECT movie_id\n       -     17879  │ │ INNER JOIN HASH ON PROJECTION_3833.status_id = PROJECTION_3830.id\n       -         1  │ │ │└PROJECT id\n       -         1  │ │ │ FILTER (1 AND kind = 'complete+verified'_String) AS a31\n       -         1  │ │ │ TABLE SCAN comp_cast_type WHERE kind = 'complete+verified'\n       -     85941  │ │ PROJECT status_id, movie_id\n       -     85941  │ │ PROJECT movie_id, status_id\n       -     85941  │ │ INNER JOIN HASH ON PROJECTION_3839.subject_id = PROJECTION_3836.id\n       -         1  │ │ │└PROJECT id\n       -         1  │ │ │ FILTER (1 AND kind = 'cast'_String) AS a27\n       -         1  │ │ │ TABLE SCAN comp_cast_type WHERE kind = 'cast'\n       -    135086  │ │ PROJECT subject_id, movie_id, status_id\n       -    135086  │ │ PROJECT movie_id, subject_id, status_id\n       -    135086  │ │ TABLE SCAN complete_cast\n       -   2609129  │ PROJECT movie_id AS movie_id_left, company_id\n       -   2609129  │ PROJECT movie_id, company_id\n       -   2609129  │ TABLE SCAN movie_companies\n       -         0  PROJECT id\n       -         0  FILTER (1 AND country_code = 'us'_String) AS a20\n       -         0  TABLE SCAN company_name WHERE country_code = 'us'\n",
+      "sql": "SELECT MIN(chn.name) AS voiced_char,\n       MIN(n.name) AS voicing_actress,\n       MIN(t.title) AS voiced_animation\nFROM job.aka_name AS an,\n     job.complete_cast AS cc,\n     job.comp_cast_type AS cct1,\n     job.comp_cast_type AS cct2,\n     job.char_name AS chn,\n     job.cast_info AS ci,\n     job.company_name AS cn,\n     job.info_type AS it,\n     job.info_type AS it3,\n     job.keyword AS k,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.movie_keyword AS mk,\n     job.name AS n,\n     job.person_info AS pi,\n     job.role_type AS rt,\n     job.title AS t\nWHERE cct1.kind ='cast'\n  AND cct2.kind ='complete+verified'\n  AND chn.name = 'Queen'\n  AND ci.note IN ('(voice)',\n                  '(voice) (uncredited)',\n                  '(voice: English version)')\n  AND cn.country_code ='[us]'\n  AND it.info = 'release dates'\n  AND it3.info = 'trivia'\n  AND k.keyword = 'computer-animation'\n  AND mi.info IS NOT NULL\n  AND (mi.info LIKE 'Japan:%200%'\n       OR mi.info LIKE 'USA:%200%')\n  AND n.gender ='f'\n  AND n.name LIKE '%An%'\n  AND rt.role ='actress'\n  AND t.title = 'Shrek 2'\n  AND t.production_year BETWEEN 2000 AND 2010\n  AND t.id = mi.movie_id\n  AND t.id = mc.movie_id\n  AND t.id = ci.movie_id\n  AND t.id = mk.movie_id\n  AND t.id = cc.movie_id\n  AND mc.movie_id = ci.movie_id\n  AND mc.movie_id = mi.movie_id\n  AND mc.movie_id = mk.movie_id\n  AND mc.movie_id = cc.movie_id\n  AND mi.movie_id = ci.movie_id\n  AND mi.movie_id = mk.movie_id\n  AND mi.movie_id = cc.movie_id\n  AND ci.movie_id = mk.movie_id\n  AND ci.movie_id = cc.movie_id\n  AND mk.movie_id = cc.movie_id\n  AND cn.id = mc.company_id\n  AND it.id = mi.info_type_id\n  AND n.id = ci.person_id\n  AND rt.id = ci.role_id\n  AND n.id = an.person_id\n  AND ci.person_id = an.person_id\n  AND chn.id = ci.person_role_id\n  AND n.id = pi.person_id\n  AND ci.person_id = pi.person_id\n  AND it3.id = pi.info_type_id\n  AND k.id = mk.keyword_id\n  AND cct1.id = cc.subject_id\n  AND cct2.id = cc.status_id;\n",
+      "startTime": "2026-06-26T21:13:17.080477Z",
+      "status": "OK",
+      "timeMs": 905407.955
+    }
+  ],
+  "runtime": {
+    "avgMs": 905407.955,
+    "bestMs": 905407.955,
+    "maxMs": 905407.955,
+    "minMs": 905407.955,
+    "stdDevMs": 0.0
+  },
   "storageVariant": "native",
   "theorem": {
     "categories": [

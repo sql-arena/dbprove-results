@@ -82,16 +82,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(title)\n       4         4  AGGREGATE PARTIAL MIN(title)\n      40         0  INNER JOIN HASH ON info_type_id = id\n     113         0  │└TABLE SCAN info_type AS it\n     160         4  INNER JOIN LOOP ON movie_id = id\n     600         4  │└INNER JOIN LOOP ON id = movie_id\n     378         0  │ │└INNER JOIN HASH ON company_type_id = id\n       1         1  │ │ │└TABLE SCAN company_type AS ct WHERE ct.kind = 'production companies'\n    6056     24025  │ │ TABLE SCAN movie_companies AS mc WHERE (mc.note LIKE '%(theatrical)%') AND (mc.note LIKE '%(France)%')\n       0         0  │ TABLE SEEK title AS t WHERE t.production_year > 2005\n       0         0  TABLE SEEK movie_info AS mi WHERE mi.info IN('Sweden','Norway','Germany','Denmark','Swedish','Denish','Norwegian','German')\n",
       "sql": "SELECT MIN(t.title) AS typical_european_movie\nFROM job.company_type AS ct,\n     job.info_type AS it,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.title AS t\nWHERE ct.kind = 'production companies'\n  AND mc.note LIKE '%(theatrical)%'\n  AND mc.note LIKE '%(France)%'\n  AND mi.info IN ('Sweden',\n                  'Norway',\n                  'Germany',\n                  'Denmark',\n                  'Swedish',\n                  'Denish',\n                  'Norwegian',\n                  'German')\n  AND t.production_year > 2005\n  AND t.id = mi.movie_id\n  AND t.id = mc.movie_id\n  AND mc.movie_id = mi.movie_id\n  AND ct.id = mc.company_type_id\n  AND it.id = mi.info_type_id;\n",
-      "startTime": "2026-06-25T15:34:57.969725Z",
+      "startTime": "2026-06-26T15:34:07.752302Z",
       "status": "OK",
-      "timeMs": 295.425
+      "timeMs": 166.647
     }
   ],
   "runtime": {
-    "avgMs": 295.425,
-    "bestMs": 295.425,
-    "maxMs": 295.425,
-    "minMs": 295.425,
+    "avgMs": 166.647,
+    "bestMs": 166.647,
+    "maxMs": 166.647,
+    "minMs": 166.647,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

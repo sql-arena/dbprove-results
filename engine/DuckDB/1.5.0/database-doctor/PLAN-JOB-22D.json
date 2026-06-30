@@ -1,7 +1,110 @@
 {
   "config": "M5 Macbook Pro",
   "engine": "DuckDB",
-  "queries": [],
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 3,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 3
+        },
+        "hash": {
+          "+2x": 2,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 1,
+          "<16x": 7,
+          "=": 0,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 10,
+          "=": 0,
+          ">16x": 1
+        },
+        "scan": {
+          "+2x": 4,
+          "+4x": 0,
+          "+8x": 2,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 3,
+          ">16x": 1
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 46281,
+        "distribute": 0,
+        "hash": 12754704,
+        "join": 6864084,
+        "scan": 1470047,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       -         1  AGGREGATE MIN(#0), MIN(#1), MIN(#2)\n       0     46281  PROJECT name, info, title\n       0     46281  INNER JOIN HASH ON id = company_type_id\n       0     46281  │└INNER JOIN HASH ON id = keyword_id\n       1   5536051  │ │└INNER JOIN HASH ON movie_id = movie_id\n       0     99935  │ │ │└INNER JOIN HASH ON id = company_id\n       3    189157  │ │ │ │└INNER JOIN HASH ON movie_id = movie_id\n       3     44414  │ │ │ │ │└INNER JOIN HASH ON info_type_id = id\n       2         1  │ │ │ │ │ │└FILTER id <= 110\n       2         1  │ │ │ │ │ │ TABLE SCAN info_type WHERE info = 'countries'\n     169     44414  │ │ │ │ │ INNER JOIN HASH ON movie_id = movie_id\n     142    106968  │ │ │ │ │ │└INNER JOIN HASH ON kind_id = id\n       1         2  │ │ │ │ │ │ │└FILTER (kind = 'movie') OR (kind = 'episode')\n       7         7  │ │ │ │ │ │ │ TABLE SCAN kind_type WHERE kind IN('movie','episode')\n     994    140451  │ │ │ │ │ │ INNER JOIN HASH ON id = movie_id\n    4885    454222  │ │ │ │ │ │ │└INNER JOIN HASH ON info_type_id = id\n       2         1  │ │ │ │ │ │ │ │└FILTER id >= 99\n       2         1  │ │ │ │ │ │ │ │ TABLE SCAN info_type WHERE info = 'rating'\n  276007    454222  │ │ │ │ │ │ │ FILTER movie_id <= 2525745\n  276007    454230  │ │ │ │ │ │ │ TABLE SCAN movie_info_idx WHERE info < '8.5'\n  505662    143657  │ │ │ │ │ │ FILTER id BETWEEN 2 AND 2525745\n  505662    143658  │ │ │ │ │ │ TABLE SCAN title WHERE production_year > 2005\n 2967144     46127  │ │ │ │ │ FILTER movie_id BETWEEN 2 AND 2525745\n 2967144     46127  │ │ │ │ │ FILTER IN ...\n14835720     91213  │ │ │ │ │ INNER JOIN HASH ON info = #0\n       0        10  │ │ │ │ │ │└SCAN MATERIALISED\n14835720     91213  │ │ │ │ │ TABLE SCAN movie_info WHERE info IN('Sweden','Norway','Germany','Denmark','Swedish','Danish','Norwegian','German','USA','American')\n 2609129    182311  │ │ │ │ TABLE SCAN movie_companies\n   46999    126230  │ │ │ TABLE SCAN company_name WHERE country_code != 'us'\n 4523930    338396  │ │ TABLE SCAN movie_keyword WHERE movie_id <= 2525745\n   26834         3  │ FILTER (keyword = 'murder') OR (keyword = 'murder-in-title') OR (keyword = 'blood') OR (keyword = 'violence')\n  134170    133988  │ TABLE SCAN keyword WHERE keyword IN('murder','murder-in-title','blood','violence')\n       4         2  TABLE SCAN company_type WHERE id <= 2\n",
+      "sql": "SELECT MIN(cn.name) AS movie_company,\n       MIN(mi_idx.info) AS rating,\n       MIN(t.title) AS western_violent_movie\nFROM job.company_name AS cn,\n     job.company_type AS ct,\n     job.info_type AS it1,\n     job.info_type AS it2,\n     job.keyword AS k,\n     job.kind_type AS kt,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.movie_info_idx AS mi_idx,\n     job.movie_keyword AS mk,\n     job.title AS t\nWHERE cn.country_code != '[us]'\n  AND it1.info = 'countries'\n  AND it2.info = 'rating'\n  AND k.keyword IN ('murder',\n                    'murder-in-title',\n                    'blood',\n                    'violence')\n  AND kt.kind IN ('movie',\n                  'episode')\n  AND mi.info IN ('Sweden',\n                  'Norway',\n                  'Germany',\n                  'Denmark',\n                  'Swedish',\n                  'Danish',\n                  'Norwegian',\n                  'German',\n                  'USA',\n                  'American')\n  AND mi_idx.info < '8.5'\n  AND t.production_year > 2005\n  AND kt.id = t.kind_id\n  AND t.id = mi.movie_id\n  AND t.id = mk.movie_id\n  AND t.id = mi_idx.movie_id\n  AND t.id = mc.movie_id\n  AND mk.movie_id = mi.movie_id\n  AND mk.movie_id = mi_idx.movie_id\n  AND mk.movie_id = mc.movie_id\n  AND mi.movie_id = mi_idx.movie_id\n  AND mi.movie_id = mc.movie_id\n  AND mc.movie_id = mi_idx.movie_id\n  AND k.id = mk.keyword_id\n  AND it1.id = mi.info_type_id\n  AND it2.id = mi_idx.info_type_id\n  AND ct.id = mc.company_type_id\n  AND cn.id = mc.company_id;\n",
+      "startTime": "2026-06-30T17:43:12.539989Z",
+      "status": "OK",
+      "timeMs": 110.886
+    }
+  ],
+  "runtime": {
+    "avgMs": 110.886,
+    "bestMs": 110.886,
+    "maxMs": 110.886,
+    "minMs": 110.886,
+    "stdDevMs": 0.0
+  },
   "storageVariant": "native",
   "theorem": {
     "categories": [

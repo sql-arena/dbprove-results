@@ -1,7 +1,110 @@
 {
   "config": "M5 Macbook Pro",
   "engine": "DuckDB",
-  "queries": [],
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 2,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 5
+        },
+        "hash": {
+          "+2x": 2,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 3,
+          "-8x": 1,
+          "<16x": 7,
+          "=": 0,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 1,
+          "<16x": 8,
+          "=": 1,
+          ">16x": 2
+        },
+        "scan": {
+          "+2x": 3,
+          "+4x": 1,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 6
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 2825,
+        "distribute": 0,
+        "hash": 3422409,
+        "join": 2413214,
+        "scan": 1941368,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       -         1  AGGREGATE MIN(#0), MIN(#1), MIN(#2), MIN(#3)\n     140      2825  PROJECT info, info, name, title\n     140      2825  INNER JOIN HASH ON id = person_id\n     120      2825  │└INNER JOIN HASH ON movie_id = id\n      41      2840  │ │└INNER JOIN HASH ON id = movie_id\n      40      2840  │ │ │└INNER JOIN HASH ON id = keyword_id\n     197    110436  │ │ │ │└INNER JOIN HASH ON movie_id = movie_id\n     108      1235  │ │ │ │ │└INNER JOIN HASH ON id = company_id\n     542    574510  │ │ │ │ │ │└INNER JOIN HASH ON movie_id = movie_id\n     516    102513  │ │ │ │ │ │ │└INNER JOIN HASH ON info_type_id = id\n       2         1  │ │ │ │ │ │ │ │└FILTER id <= 110\n       2         1  │ │ │ │ │ │ │ │ TABLE SCAN info_type WHERE info = 'genres'\n   29178    102513  │ │ │ │ │ │ │ INNER JOIN HASH ON movie_id = movie_id\n   24425    459917  │ │ │ │ │ │ │ │└INNER JOIN HASH ON info_type_id = id\n       2         1  │ │ │ │ │ │ │ │ │└FILTER id >= 99\n       2         1  │ │ │ │ │ │ │ │ │ TABLE SCAN info_type WHERE info = 'votes'\n 1380035    459917  │ │ │ │ │ │ │ │ TABLE SCAN movie_info_idx WHERE movie_id <= 2525745\n 2967144    131608  │ │ │ │ │ │ │ FILTER movie_id BETWEEN 2 AND 2525745\n 2967144    131609  │ │ │ │ │ │ │ FILTER IN ...\n14835720    862633  │ │ │ │ │ │ │ INNER JOIN HASH ON info = #0\n       0         6  │ │ │ │ │ │ │ │└SCAN MATERIALISED\n14835720    862633  │ │ │ │ │ │ │ TABLE SCAN movie_info WHERE info IN('Horror','Action','Sci-Fi','Thriller','Crime','War')\n 2609129    429566  │ │ │ │ │ │ TABLE SCAN movie_companies\n   46999        10  │ │ │ │ │ TABLE SCAN company_name WHERE name >= 'Lionsgate' AND name < 'Lionsgatf'\n 4523930     29645  │ │ │ │ TABLE SCAN movie_keyword WHERE movie_id <= 2525745\n   26834         7  │ │ │ FILTER IN ...\n  134170    133568  │ │ │ INNER JOIN HASH ON keyword = #0\n       0         7  │ │ │ │└SCAN MATERIALISED\n  134170    133568  │ │ │ TABLE SCAN keyword WHERE keyword IN('murder','violence','blood','gore','death','female-nudity','hospital')\n 2528312       291  │ │ TABLE SCAN title WHERE id >= 2 AND id <= 2525745\n 7248868       246  │ FILTER movie_id BETWEEN 2 AND 2525745\n 7248868       246  │ FILTER IN ...\n36244344     25464  │ INNER JOIN HASH ON note = #0\n       0         5  │ │└SCAN MATERIALISED\n36244344     25464  │ TABLE SCAN cast_info WHERE note IN('(writer)','(head writer)','(written by)','(story)','(story editor)')\n 4167491       254  TABLE SCAN \"name\" WHERE id <= 4061926\n",
+      "sql": "SELECT MIN(mi.info) AS movie_budget,\n       MIN(mi_idx.info) AS movie_votes,\n       MIN(n.name) AS writer,\n       MIN(t.title) AS violent_liongate_movie\nFROM job.cast_info AS ci,\n     job.company_name AS cn,\n     job.info_type AS it1,\n     job.info_type AS it2,\n     job.keyword AS k,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.movie_info_idx AS mi_idx,\n     job.movie_keyword AS mk,\n     job.name AS n,\n     job.title AS t\nWHERE ci.note IN ('(writer)',\n                  '(head writer)',\n                  '(written by)',\n                  '(story)',\n                  '(story editor)')\n  AND cn.name LIKE 'Lionsgate%'\n  AND it1.info = 'genres'\n  AND it2.info = 'votes'\n  AND k.keyword IN ('murder',\n                    'violence',\n                    'blood',\n                    'gore',\n                    'death',\n                    'female-nudity',\n                    'hospital')\n  AND mi.info IN ('Horror',\n                  'Action',\n                  'Sci-Fi',\n                  'Thriller',\n                  'Crime',\n                  'War')\n  AND t.id = mi.movie_id\n  AND t.id = mi_idx.movie_id\n  AND t.id = ci.movie_id\n  AND t.id = mk.movie_id\n  AND t.id = mc.movie_id\n  AND ci.movie_id = mi.movie_id\n  AND ci.movie_id = mi_idx.movie_id\n  AND ci.movie_id = mk.movie_id\n  AND ci.movie_id = mc.movie_id\n  AND mi.movie_id = mi_idx.movie_id\n  AND mi.movie_id = mk.movie_id\n  AND mi.movie_id = mc.movie_id\n  AND mi_idx.movie_id = mk.movie_id\n  AND mi_idx.movie_id = mc.movie_id\n  AND mk.movie_id = mc.movie_id\n  AND n.id = ci.person_id\n  AND it1.id = mi.info_type_id\n  AND it2.id = mi_idx.info_type_id\n  AND k.id = mk.keyword_id\n  AND cn.id = mc.company_id;\n",
+      "startTime": "2026-06-30T17:43:14.755469Z",
+      "status": "OK",
+      "timeMs": 82.151
+    }
+  ],
+  "runtime": {
+    "avgMs": 82.151,
+    "bestMs": 82.151,
+    "maxMs": 82.151,
+    "minMs": 82.151,
+    "stdDevMs": 0.0
+  },
   "storageVariant": "native",
   "theorem": {
     "categories": [

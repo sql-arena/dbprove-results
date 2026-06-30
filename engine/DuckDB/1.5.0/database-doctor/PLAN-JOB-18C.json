@@ -1,7 +1,110 @@
 {
   "config": "M5 Macbook Pro",
   "engine": "DuckDB",
-  "queries": [],
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 2,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 5
+        },
+        "hash": {
+          "+2x": 2,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 2,
+          "-8x": 0,
+          "<16x": 4,
+          "=": 0,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 1,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 5,
+          "=": 0,
+          ">16x": 1
+        },
+        "scan": {
+          "+2x": 3,
+          "+4x": 0,
+          "+8x": 1,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 3
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 28073,
+        "distribute": 0,
+        "hash": 4861050,
+        "join": 4450446,
+        "scan": 4130223,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       -         1  AGGREGATE MIN(#0), MIN(#1), MIN(#2)\n     889     28073  PROJECT info, info, title\n     889     28073  INNER JOIN HASH ON id = person_id\n    1534     54155  │└INNER JOIN HASH ON movie_id = id\n     525    102516  │ │└INNER JOIN HASH ON id = movie_id\n     516    102516  │ │ │└INNER JOIN HASH ON info_type_id = id\n       2         1  │ │ │ │└FILTER id <= 110\n       2         1  │ │ │ │ TABLE SCAN info_type WHERE info = 'genres'\n   29178    102516  │ │ │ INNER JOIN HASH ON movie_id = movie_id\n   24425    459925  │ │ │ │└INNER JOIN HASH ON info_type_id = id\n       2         1  │ │ │ │ │└FILTER id >= 99\n       2         1  │ │ │ │ │ TABLE SCAN info_type WHERE info = 'votes'\n 1380035    459925  │ │ │ │ TABLE SCAN movie_info_idx\n 2967144    123764  │ │ │ FILTER movie_id BETWEEN 2 AND 2525793\n 2967144    123765  │ │ │ FILTER IN ...\n14835720    774535  │ │ │ INNER JOIN HASH ON info = #0\n       0         6  │ │ │ │└SCAN MATERIALISED\n14835720    774535  │ │ │ TABLE SCAN movie_info WHERE info IN('Horror','Action','Sci-Fi','Thriller','Crime','War')\n 2528312     78521  │ │ TABLE SCAN title WHERE id >= 2 AND id <= 2525793\n 7248868     39691  │ FILTER movie_id BETWEEN 2 AND 2525793\n 7248868     39691  │ FILTER IN ...\n36244344   2804962  │ INNER JOIN HASH ON note = #0\n       0         5  │ │└SCAN MATERIALISED\n36244344   2804962  │ TABLE SCAN cast_info WHERE note IN('(writer)','(head writer)','(written by)','(story)','(story editor)')\n 2083746     12267  FILTER id <= 4061926\n 2083746     12267  TABLE SCAN \"name\" WHERE gender = 'm'\n",
+      "sql": "SELECT MIN(mi.info) AS movie_budget,\n       MIN(mi_idx.info) AS movie_votes,\n       MIN(t.title) AS movie_title\nFROM job.cast_info AS ci,\n     job.info_type AS it1,\n     job.info_type AS it2,\n     job.movie_info AS mi,\n     job.movie_info_idx AS mi_idx,\n     job.name AS n,\n     job.title AS t\nWHERE ci.note IN ('(writer)',\n                  '(head writer)',\n                  '(written by)',\n                  '(story)',\n                  '(story editor)')\n  AND it1.info = 'genres'\n  AND it2.info = 'votes'\n  AND mi.info IN ('Horror',\n                  'Action',\n                  'Sci-Fi',\n                  'Thriller',\n                  'Crime',\n                  'War')\n  AND n.gender = 'm'\n  AND t.id = mi.movie_id\n  AND t.id = mi_idx.movie_id\n  AND t.id = ci.movie_id\n  AND ci.movie_id = mi.movie_id\n  AND ci.movie_id = mi_idx.movie_id\n  AND mi.movie_id = mi_idx.movie_id\n  AND n.id = ci.person_id\n  AND it1.id = mi.info_type_id\n  AND it2.id = mi_idx.info_type_id;\n",
+      "startTime": "2026-06-30T17:43:11.287783Z",
+      "status": "OK",
+      "timeMs": 77.822
+    }
+  ],
+  "runtime": {
+    "avgMs": 77.822,
+    "bestMs": 77.822,
+    "maxMs": 77.822,
+    "minMs": 77.822,
+    "stdDevMs": 0.0
+  },
   "storageVariant": "native",
   "theorem": {
     "categories": [

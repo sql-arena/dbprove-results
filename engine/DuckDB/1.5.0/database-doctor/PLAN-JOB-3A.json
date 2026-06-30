@@ -1,7 +1,110 @@
 {
   "config": "M5 Macbook Pro",
   "engine": "DuckDB",
-  "queries": [],
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 2
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 1,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 2
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 3
+        },
+        "scan": {
+          "+2x": 1,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 2
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 206,
+        "distribute": 0,
+        "hash": 1329367,
+        "join": 2567740,
+        "scan": 2353939,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       -         1  AGGREGATE MIN(#0)\n  226672       206  PROJECT title\n  226672       206  INNER JOIN HASH ON movie_id = movie_id\n  189748      2235  │└INNER JOIN HASH ON keyword_id = id\n   26834        30  │ │└TABLE SCAN keyword WHERE contains(keyword,'sequel')\n  920995   1226226  │ INNER JOIN HASH ON movie_id = id\n  505662   1012683  │ │└FILTER id BETWEEN 2 AND 2525971\n  505662   1012920  │ │ TABLE SCAN title WHERE production_year > 2005\n 4523930   1242310  │ TABLE SCAN movie_keyword\n 2967144       533  FILTER movie_id BETWEEN 2 AND 2525971\n 2967144       533  FILTER IN ...\n14835720     98671  INNER JOIN HASH ON info = #0\n       0         8  │└SCAN MATERIALISED\n14835720     98671  TABLE SCAN movie_info WHERE info IN('Sweden','Norway','Germany','Denmark','Swedish','Denish','Norwegian','German')\n",
+      "sql": "SELECT MIN(t.title) AS movie_title\nFROM job.keyword AS k,\n     job.movie_info AS mi,\n     job.movie_keyword AS mk,\n     job.title AS t\nWHERE k.keyword LIKE '%sequel%'\n  AND mi.info IN ('Sweden',\n                  'Norway',\n                  'Germany',\n                  'Denmark',\n                  'Swedish',\n                  'Denish',\n                  'Norwegian',\n                  'German')\n  AND t.production_year > 2005\n  AND t.id = mi.movie_id\n  AND t.id = mk.movie_id\n  AND mk.movie_id = mi.movie_id\n  AND k.id = mk.keyword_id;\n",
+      "startTime": "2026-06-30T17:43:15.022130Z",
+      "status": "OK",
+      "timeMs": 49.841
+    }
+  ],
+  "runtime": {
+    "avgMs": 49.841,
+    "bestMs": 49.841,
+    "maxMs": 49.841,
+    "minMs": 49.841,
+    "stdDevMs": 0.0
+  },
   "storageVariant": "native",
   "theorem": {
     "categories": [

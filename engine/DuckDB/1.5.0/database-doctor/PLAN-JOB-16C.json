@@ -1,7 +1,110 @@
 {
   "config": "M5 Macbook Pro",
   "engine": "DuckDB",
-  "queries": [],
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 2
+        },
+        "hash": {
+          "+2x": 1,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 6,
+          "=": 0,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 7,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 1,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 1,
+          "=": 0,
+          ">16x": 6
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 319932,
+        "distribute": 0,
+        "hash": 967961,
+        "join": 978845,
+        "scan": 274838,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       -         1  AGGREGATE MIN(#0), MIN(#1)\n       0    319932  PROJECT name, title\n       0    319932  INNER JOIN HASH ON id = person_id\n       0    319932  │└INNER JOIN HASH ON person_id = person_id\n       1    221609  │ │└INNER JOIN HASH ON movie_id = id\n       0      8538  │ │ │└INNER JOIN HASH ON id = company_id\n      14     11406  │ │ │ │└INNER JOIN HASH ON movie_id = movie_id\n      14      6926  │ │ │ │ │└INNER JOIN HASH ON id = movie_id\n      69     41838  │ │ │ │ │ │└INNER JOIN HASH ON keyword_id = id\n       2         1  │ │ │ │ │ │ │└TABLE SCAN keyword WHERE keyword = 'character-name-in-title'\n 4523930     41838  │ │ │ │ │ │ TABLE SCAN movie_keyword WHERE movie_id <= 2525745\n  505662     16458  │ │ │ │ │ FILTER id BETWEEN 2 AND 2525745\n  505662     16464  │ │ │ │ │ TABLE SCAN title WHERE episode_nr < 100\n 2609129     14232  │ │ │ │ TABLE SCAN movie_companies\n    1644     44844  │ │ │ TABLE SCAN company_name WHERE country_code = 'us'\n36244344    108162  │ │ FILTER person_id >= 4\n36244344    108162  │ │ TABLE SCAN cast_info WHERE movie_id >= 2 AND movie_id <= 2525745\n  901343     33049  │ TABLE SCAN aka_name WHERE person_id <= 4061926\n 4167491     16248  TABLE SCAN \"name\" WHERE id >= 4 AND id <= 4061926\n",
+      "sql": "SELECT MIN(an.name) AS cool_actor_pseudonym,\n       MIN(t.title) AS series_named_after_char\nFROM job.aka_name AS an,\n     job.cast_info AS ci,\n     job.company_name AS cn,\n     job.keyword AS k,\n     job.movie_companies AS mc,\n     job.movie_keyword AS mk,\n     job.name AS n,\n     job.title AS t\nWHERE cn.country_code ='[us]'\n  AND k.keyword ='character-name-in-title'\n  AND t.episode_nr < 100\n  AND an.person_id = n.id\n  AND n.id = ci.person_id\n  AND ci.movie_id = t.id\n  AND t.id = mk.movie_id\n  AND mk.keyword_id = k.id\n  AND t.id = mc.movie_id\n  AND mc.company_id = cn.id\n  AND an.person_id = ci.person_id\n  AND ci.movie_id = mc.movie_id\n  AND ci.movie_id = mk.movie_id\n  AND mc.movie_id = mk.movie_id;\n",
+      "startTime": "2026-06-30T17:43:10.073566Z",
+      "status": "OK",
+      "timeMs": 63.192
+    }
+  ],
+  "runtime": {
+    "avgMs": 63.192,
+    "bestMs": 63.192,
+    "maxMs": 63.192,
+    "minMs": 63.192,
+    "stdDevMs": 0.0
+  },
   "storageVariant": "native",
   "theorem": {
     "categories": [

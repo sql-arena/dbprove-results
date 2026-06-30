@@ -1,7 +1,110 @@
 {
   "config": "M5 Macbook Pro",
   "engine": "DuckDB",
-  "queries": [],
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 1
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 1,
+          "<16x": 4,
+          "=": 1,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 1,
+          "<16x": 4,
+          "=": 1,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 1,
+          "=": 2,
+          ">16x": 4
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 323005,
+        "distribute": 0,
+        "hash": 3562149,
+        "join": 4149220,
+        "scan": 2858586,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       -         1  AGGREGATE MIN(#0), MIN(#1)\n    6570    323005  PROJECT name, title\n    6570    323005  INNER JOIN HASH ON id = person_id\n    5666    323005  │└INNER JOIN HASH ON id = movie_id\n    5566    323005  │ │└INNER JOIN HASH ON person_id = person_id\n   22196    285538  │ │ │└INNER JOIN HASH ON role_id = id\n       1         1  │ │ │ │└FILTER id <= 11\n       1         1  │ │ │ │ TABLE SCAN role_type WHERE role = 'costume designer'\n  266352    285538  │ │ │ INNER JOIN HASH ON movie_id = movie_id\n   18253   1153798  │ │ │ │└INNER JOIN HASH ON company_id = id\n    1644     84843  │ │ │ │ │└TABLE SCAN company_name WHERE country_code = 'us'\n 2609129   2609129  │ │ │ │ TABLE SCAN movie_companies\n36244344    100382  │ │ │ FILTER person_id >= 4\n36244344    100382  │ │ │ TABLE SCAN cast_info WHERE movie_id >= 2 AND movie_id <= 2525745\n  901343      7991  │ │ TABLE SCAN aka_name WHERE person_id <= 4061926\n 2528312     51796  │ TABLE SCAN title WHERE id >= 2 AND id <= 2525745\n 4167491      4444  TABLE SCAN \"name\" WHERE id >= 4 AND id <= 4061926\n",
+      "sql": "SELECT MIN(an1.name) AS costume_designer_pseudo,\n       MIN(t.title) AS movie_with_costumes\nFROM job.aka_name AS an1,\n     job.cast_info AS ci,\n     job.company_name AS cn,\n     job.movie_companies AS mc,\n     job.name AS n1,\n     job.role_type AS rt,\n     job.title AS t\nWHERE cn.country_code ='[us]'\n  AND rt.role ='costume designer'\n  AND an1.person_id = n1.id\n  AND n1.id = ci.person_id\n  AND ci.movie_id = t.id\n  AND t.id = mc.movie_id\n  AND mc.company_id = cn.id\n  AND ci.role_id = rt.id\n  AND an1.person_id = ci.person_id\n  AND ci.movie_id = mc.movie_id;\n",
+      "startTime": "2026-06-30T17:43:17.207648Z",
+      "status": "OK",
+      "timeMs": 46.055
+    }
+  ],
+  "runtime": {
+    "avgMs": 46.055,
+    "bestMs": 46.055,
+    "maxMs": 46.055,
+    "minMs": 46.055,
+    "stdDevMs": 0.0
+  },
   "storageVariant": "native",
   "theorem": {
     "categories": [

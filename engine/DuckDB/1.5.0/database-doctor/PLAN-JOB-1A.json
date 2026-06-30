@@ -1,7 +1,110 @@
 {
   "config": "M5 Macbook Pro",
   "engine": "DuckDB",
-  "queries": [],
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 1,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 1,
+          "+4x": 0,
+          "+8x": 1,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 1
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 2,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 2
+        },
+        "scan": {
+          "+2x": 1,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 3
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 142,
+        "distribute": 0,
+        "hash": 784,
+        "join": 26993,
+        "scan": 26853,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       -         1  AGGREGATE MIN(#0), MIN(#1), MIN(#2)\n    1305       142  PROJECT note, title, production_year\n    1305       142  INNER JOIN HASH ON id = movie_id\n    1282       142  │└INNER JOIN HASH ON company_type_id = id\n       1         1  │ │└FILTER id <= 2\n       1         1  │ │ TABLE SCAN company_type WHERE kind = 'production companies'\n    5131       142  │ INNER JOIN HASH ON movie_id = movie_id\n   24425       250  │ │└INNER JOIN HASH ON info_type_id = id\n       2         1  │ │ │└FILTER id >= 99\n       2         1  │ │ │ TABLE SCAN info_type WHERE info = 'top 250 rank'\n 1380035       250  │ │ TABLE SCAN movie_info_idx WHERE movie_id <= 2525745\n  521825     24653  │ TABLE SCAN movie_companies WHERE ( NOT contains(note,'(as Metro-Goldwyn-Mayer Pictures)')) AND (contains(note,'(co-production)') OR contains(note,'(presents)'))\n 2528312      1948  TABLE SCAN title WHERE id >= 2 AND id <= 2525745\n",
+      "sql": "SELECT MIN(mc.note) AS production_note,\n       MIN(t.title) AS movie_title,\n       MIN(t.production_year) AS movie_year\nFROM job.company_type AS ct,\n     job.info_type AS it,\n     job.movie_companies AS mc,\n     job.movie_info_idx AS mi_idx,\n     job.title AS t\nWHERE ct.kind = 'production companies'\n  AND it.info = 'top 250 rank'\n  AND mc.note NOT LIKE '%(as Metro-Goldwyn-Mayer Pictures)%'\n  AND (mc.note LIKE '%(co-production)%'\n       OR mc.note LIKE '%(presents)%')\n  AND ct.id = mc.company_type_id\n  AND t.id = mc.movie_id\n  AND t.id = mi_idx.movie_id\n  AND mc.movie_id = mi_idx.movie_id\n  AND it.id = mi_idx.info_type_id;\n",
+      "startTime": "2026-06-30T17:43:11.850371Z",
+      "status": "OK",
+      "timeMs": 6.27
+    }
+  ],
+  "runtime": {
+    "avgMs": 6.27,
+    "bestMs": 6.27,
+    "maxMs": 6.27,
+    "minMs": 6.27,
+    "stdDevMs": 0.0
+  },
   "storageVariant": "native",
   "theorem": {
     "categories": [

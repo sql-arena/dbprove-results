@@ -1,7 +1,110 @@
 {
   "config": "M5 Macbook Pro",
   "engine": "DuckDB",
-  "queries": [],
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 3
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 1,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 4
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 4
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 4
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 12,
+        "distribute": 0,
+        "hash": 134896,
+        "join": 144393,
+        "scan": 144177,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       -         1  AGGREGATE MIN(#0), MIN(#1), MIN(#2)\n  642135        12  PROJECT keyword, name, title\n  642135        12  INNER JOIN HASH ON person_id = id\n  833498         2  │└FILTER id <= 4061926\n  833498         2  │ TABLE SCAN \"name\" WHERE name LIKE '%Downey%Robert%'\n 2768855        12  INNER JOIN HASH ON movie_id = id\n  189748        36  │└INNER JOIN HASH ON keyword_id = id\n   26834         8  │ │└FILTER IN ...\n  134170    134170  │ │ INNER JOIN HASH ON keyword = #0\n       0         8  │ │ │└SCAN MATERIALISED\n  134170    134170  │ │ TABLE SCAN keyword WHERE keyword IN('superhero','sequel','second-part','marvel-comics','based-on-comic','tv-special','fight','violence')\n  920995       642  │ INNER JOIN HASH ON movie_id = id\n  505662       438  │ │└FILTER id BETWEEN 2 AND 2525971\n  505662       438  │ │ TABLE SCAN title WHERE production_year > 2014\n 4523930      9557  │ TABLE SCAN movie_keyword\n36244344         2  TABLE SCAN cast_info WHERE movie_id >= 2 AND movie_id <= 2525971\n",
+      "sql": "SELECT MIN(k.keyword) AS movie_keyword,\n       MIN(n.name) AS actor_name,\n       MIN(t.title) AS hero_movie\nFROM job.cast_info AS ci,\n     job.keyword AS k,\n     job.movie_keyword AS mk,\n     job.name AS n,\n     job.title AS t\nWHERE k.keyword IN ('superhero',\n                    'sequel',\n                    'second-part',\n                    'marvel-comics',\n                    'based-on-comic',\n                    'tv-special',\n                    'fight',\n                    'violence')\n  AND n.name LIKE '%Downey%Robert%'\n  AND t.production_year > 2014\n  AND k.id = mk.keyword_id\n  AND t.id = mk.movie_id\n  AND t.id = ci.movie_id\n  AND ci.movie_id = mk.movie_id\n  AND n.id = ci.person_id;\n",
+      "startTime": "2026-06-30T17:43:15.579447Z",
+      "status": "OK",
+      "timeMs": 22.006
+    }
+  ],
+  "runtime": {
+    "avgMs": 22.006,
+    "bestMs": 22.006,
+    "maxMs": 22.006,
+    "minMs": 22.006,
+    "stdDevMs": 0.0
+  },
   "storageVariant": "native",
   "theorem": {
     "categories": [

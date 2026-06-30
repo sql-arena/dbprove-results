@@ -1,7 +1,110 @@
 {
   "config": "M5 Macbook Pro",
   "engine": "DuckDB",
-  "queries": [],
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 2
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 1,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 1,
+          "<16x": 4,
+          "=": 3,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 2,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 1,
+          "<16x": 5,
+          "=": 2,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 5,
+          ">16x": 4
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 33,
+        "distribute": 0,
+        "hash": 3385041,
+        "join": 4516940,
+        "scan": 4384277,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       -         1  AGGREGATE MIN(#0)\n     311        33  PROJECT title\n     311        33  INNER JOIN HASH ON id = person_id\n     268        33  │└INNER JOIN HASH ON id = person_role_id\n    1344    532809  │ │└INNER JOIN HASH ON movie_id = movie_id\n      92      6016  │ │ │└INNER JOIN HASH ON id = keyword_id\n     447    978322  │ │ │ │└INNER JOIN HASH ON movie_id = movie_id\n     245     27939  │ │ │ │ │└INNER JOIN HASH ON status_id = id\n       1         2  │ │ │ │ │ │└FILTER id >= 3\n       1         2  │ │ │ │ │ │ TABLE SCAN comp_cast_type WHERE contains(kind,'complete')\n     982     27939  │ │ │ │ │ INNER JOIN HASH ON subject_id = id\n       1         1  │ │ │ │ │ │└FILTER id <= 2\n       1         1  │ │ │ │ │ │ TABLE SCAN comp_cast_type WHERE kind = 'cast'\n    3928     40293  │ │ │ │ │ INNER JOIN HASH ON kind_id = id\n       1         1  │ │ │ │ │ │└TABLE SCAN kind_type WHERE kind = 'movie'\n   27501     40293  │ │ │ │ │ INNER JOIN HASH ON id = movie_id\n  135086    132439  │ │ │ │ │ │└TABLE SCAN complete_cast WHERE movie_id <= 2525971\n  505662     29923  │ │ │ │ │ FILTER id BETWEEN 285 AND 2525971\n  505662     29926  │ │ │ │ │ TABLE SCAN title WHERE production_year > 1950\n 4523930   3695095  │ │ │ │ TABLE SCAN movie_keyword WHERE movie_id >= 285\n   26834         8  │ │ │ FILTER IN ...\n  134170    134136  │ │ │ INNER JOIN HASH ON keyword = #0\n       0         8  │ │ │ │└SCAN MATERIALISED\n  134170    134136  │ │ │ TABLE SCAN keyword WHERE keyword IN('superhero','sequel','second-part','marvel-comics','based-on-comic','tv-special','fight','violence')\n36244344    392659  │ │ TABLE SCAN cast_info WHERE movie_id >= 285 AND movie_id <= 2525971\n  628067         5  │ TABLE SCAN char_name WHERE ( NOT contains(name,'Sherlock')) AND ((name LIKE '%Tony%Stark%') OR (name LIKE '%Iron%Man%'))\n 4167491         5  TABLE SCAN \"name\" WHERE id <= 4061926\n",
+      "sql": "SELECT MIN(t.title) AS complete_downey_ironman_movie\nFROM job.complete_cast AS cc,\n     job.comp_cast_type AS cct1,\n     job.comp_cast_type AS cct2,\n     job.char_name AS chn,\n     job.cast_info AS ci,\n     job.keyword AS k,\n     job.kind_type AS kt,\n     job.movie_keyword AS mk,\n     job.name AS n,\n     job.title AS t\nWHERE cct1.kind = 'cast'\n  AND cct2.kind LIKE '%complete%'\n  AND chn.name NOT LIKE '%Sherlock%'\n  AND (chn.name LIKE '%Tony%Stark%'\n       OR chn.name LIKE '%Iron%Man%')\n  AND k.keyword IN ('superhero',\n                    'sequel',\n                    'second-part',\n                    'marvel-comics',\n                    'based-on-comic',\n                    'tv-special',\n                    'fight',\n                    'violence')\n  AND kt.kind = 'movie'\n  AND t.production_year > 1950\n  AND kt.id = t.kind_id\n  AND t.id = mk.movie_id\n  AND t.id = ci.movie_id\n  AND t.id = cc.movie_id\n  AND mk.movie_id = ci.movie_id\n  AND mk.movie_id = cc.movie_id\n  AND ci.movie_id = cc.movie_id\n  AND chn.id = ci.person_role_id\n  AND n.id = ci.person_id\n  AND k.id = mk.keyword_id\n  AND cct1.id = cc.subject_id\n  AND cct2.id = cc.status_id;\n",
+      "startTime": "2026-06-30T17:43:11.945046Z",
+      "status": "OK",
+      "timeMs": 79.963
+    }
+  ],
+  "runtime": {
+    "avgMs": 79.963,
+    "bestMs": 79.963,
+    "maxMs": 79.963,
+    "minMs": 79.963,
+    "stdDevMs": 0.0
+  },
   "storageVariant": "native",
   "theorem": {
     "categories": [

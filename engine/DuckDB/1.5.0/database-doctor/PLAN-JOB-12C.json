@@ -1,7 +1,110 @@
 {
   "config": "M5 Macbook Pro",
   "engine": "DuckDB",
-  "queries": [],
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 3,
+          "+4x": 0,
+          "+8x": 1,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 2
+        },
+        "hash": {
+          "+2x": 2,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 4,
+          "=": 1,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 7,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 3,
+          "+4x": 0,
+          "+8x": 2,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 1,
+          "=": 1,
+          ">16x": 1
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 4711,
+        "distribute": 0,
+        "hash": 670831,
+        "join": 522093,
+        "scan": 456999,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       -         1  AGGREGATE MIN(#0), MIN(#1), MIN(#2)\n       0      4711  PROJECT name, info, title\n       0      4711  INNER JOIN HASH ON info_type_id = id\n       2         1  │└FILTER id <= 110\n       2         1  │ TABLE SCAN info_type WHERE info = 'genres'\n       2      4711  INNER JOIN HASH ON movie_id = movie_id\n       1     42332  │└INNER JOIN HASH ON company_type_id = id\n       1         1  │ │└FILTER id <= 2\n       1         1  │ │ TABLE SCAN company_type WHERE kind = 'production companies'\n       7     73295  │ INNER JOIN HASH ON id = company_id\n    1044    169157  │ │└INNER JOIN HASH ON movie_id = movie_id\n     994     52303  │ │ │└INNER JOIN HASH ON id = movie_id\n    4885    121571  │ │ │ │└INNER JOIN HASH ON info_type_id = id\n       2         1  │ │ │ │ │└FILTER id >= 99\n       2         1  │ │ │ │ │ TABLE SCAN info_type WHERE info = 'rating'\n  276007    121571  │ │ │ │ FILTER movie_id <= 2525745\n  276007    121572  │ │ │ │ TABLE SCAN movie_info_idx WHERE info > '7.0'\n  505662     56627  │ │ │ FILTER id BETWEEN 2 AND 2525745\n  505662     56628  │ │ │ TABLE SCAN title WHERE production_year >= 2000 AND production_year <= 2010\n 2609129    176335  │ │ TABLE SCAN movie_companies\n    1644     84843  │ TABLE SCAN company_name WHERE country_code = 'us'\n 2967144      3348  FILTER movie_id BETWEEN 2 AND 2525745\n 2967144      3348  FILTER (info = 'Drama') OR (info = 'Horror') OR (info = 'Western') OR (info = 'Family')\n14835720     17618  TABLE SCAN movie_info WHERE info IN('Drama','Horror','Western','Family')\n",
+      "sql": "SELECT MIN(cn.name) AS movie_company,\n       MIN(mi_idx.info) AS rating,\n       MIN(t.title) AS mainstream_movie\nFROM job.company_name AS cn,\n     job.company_type AS ct,\n     job.info_type AS it1,\n     job.info_type AS it2,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.movie_info_idx AS mi_idx,\n     job.title AS t\nWHERE cn.country_code = '[us]'\n  AND ct.kind = 'production companies'\n  AND it1.info = 'genres'\n  AND it2.info = 'rating'\n  AND mi.info IN ('Drama',\n                  'Horror',\n                  'Western',\n                  'Family')\n  AND mi_idx.info > '7.0'\n  AND t.production_year BETWEEN 2000 AND 2010\n  AND t.id = mi.movie_id\n  AND t.id = mi_idx.movie_id\n  AND mi.info_type_id = it1.id\n  AND mi_idx.info_type_id = it2.id\n  AND t.id = mc.movie_id\n  AND ct.id = mc.company_type_id\n  AND cn.id = mc.company_id\n  AND mc.movie_id = mi.movie_id\n  AND mc.movie_id = mi_idx.movie_id\n  AND mi.movie_id = mi_idx.movie_id;\n",
+      "startTime": "2026-06-30T17:43:08.995975Z",
+      "status": "OK",
+      "timeMs": 30.173
+    }
+  ],
+  "runtime": {
+    "avgMs": 30.173,
+    "bestMs": 30.173,
+    "maxMs": 30.173,
+    "minMs": 30.173,
+    "stdDevMs": 0.0
+  },
   "storageVariant": "native",
   "theorem": {
     "categories": [

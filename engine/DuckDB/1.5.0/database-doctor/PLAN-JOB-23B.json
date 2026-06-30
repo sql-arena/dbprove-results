@@ -1,7 +1,110 @@
 {
   "config": "M5 Macbook Pro",
   "engine": "DuckDB",
-  "queries": [],
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 1,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 5
+        },
+        "hash": {
+          "+2x": 1,
+          "+4x": 1,
+          "+8x": 1,
+          "-2x": 0,
+          "-4x": 1,
+          "-8x": 0,
+          "<16x": 2,
+          "=": 4,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 1,
+          "+4x": 1,
+          "+8x": 1,
+          "-2x": 1,
+          "-4x": 1,
+          "-8x": 0,
+          "<16x": 3,
+          "=": 2,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 1,
+          "+4x": 1,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 2,
+          ">16x": 7
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 16,
+        "distribute": 0,
+        "hash": 4882,
+        "join": 3312,
+        "scan": 8559,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       -         1  AGGREGATE MIN(#0), MIN(#1)\n       0        16  PROJECT kind, title\n       0        16  INNER JOIN HASH ON id = company_type_id\n       0        16  │└INNER JOIN HASH ON id = keyword_id\n       0       618  │ │└INNER JOIN HASH ON movie_id = movie_id\n       0         6  │ │ │└INNER JOIN HASH ON id = company_id\n       4         6  │ │ │ │└INNER JOIN HASH ON movie_id = movie_id\n       4         5  │ │ │ │ │└INNER JOIN HASH ON status_id = id\n       1         1  │ │ │ │ │ │└FILTER id >= 3\n       1         1  │ │ │ │ │ │ TABLE SCAN comp_cast_type WHERE kind = 'complete+verified'\n      16        32  │ │ │ │ │ INNER JOIN HASH ON kind_id = id\n       1         1  │ │ │ │ │ │└TABLE SCAN kind_type WHERE kind = 'movie'\n     116        32  │ │ │ │ │ INNER JOIN HASH ON id = movie_id\n     571        39  │ │ │ │ │ │└INNER JOIN HASH ON movie_id = movie_id\n   10503      1771  │ │ │ │ │ │ │└INNER JOIN HASH ON info_type_id = id\n       2         1  │ │ │ │ │ │ │ │└FILTER id <= 110\n       2         1  │ │ │ │ │ │ │ │ TABLE SCAN info_type WHERE info = 'release dates'\n  593428      1771  │ │ │ │ │ │ │ FILTER movie_id BETWEEN 285 AND 2525745\n  593428      1771  │ │ │ │ │ │ │ FILTER info LIKE 'USA:% 200%'\n 2967144      7380  │ │ │ │ │ │ │ TABLE SCAN movie_info WHERE contains(note,'internet') AND info >= 'USA:' AND info < 'USA;'\n  135086       584  │ │ │ │ │ │ FILTER movie_id <= 2525745\n  135086       584  │ │ │ │ │ │ TABLE SCAN complete_cast WHERE movie_id <= 2526430\n  505662       231  │ │ │ │ │ FILTER id BETWEEN 285 AND 2525745\n  505662       231  │ │ │ │ │ TABLE SCAN title WHERE production_year > 2000\n 2609129         3  │ │ │ │ TABLE SCAN movie_companies WHERE movie_id >= 285\n    1644         3  │ │ │ TABLE SCAN company_name WHERE country_code = 'us'\n 4523930       156  │ │ TABLE SCAN movie_keyword WHERE movie_id >= 285 AND movie_id <= 2525745\n   26834         4  │ FILTER (keyword = 'nerd') OR (keyword = 'loner') OR (keyword = 'alienation') OR (keyword = 'dignity')\n  134170       198  │ TABLE SCAN keyword WHERE keyword IN('nerd','loner','alienation','dignity')\n       4         1  TABLE SCAN company_type WHERE id <= 2\n",
+      "sql": "SELECT MIN(kt.kind) AS movie_kind,\n       MIN(t.title) AS complete_nerdy_internet_movie\nFROM job.complete_cast AS cc,\n     job.comp_cast_type AS cct1,\n     job.company_name AS cn,\n     job.company_type AS ct,\n     job.info_type AS it1,\n     job.keyword AS k,\n     job.kind_type AS kt,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.movie_keyword AS mk,\n     job.title AS t\nWHERE cct1.kind = 'complete+verified'\n  AND cn.country_code = '[us]'\n  AND it1.info = 'release dates'\n  AND k.keyword IN ('nerd',\n                    'loner',\n                    'alienation',\n                    'dignity')\n  AND kt.kind IN ('movie')\n  AND mi.note LIKE '%internet%'\n  AND mi.info LIKE 'USA:% 200%'\n  AND t.production_year > 2000\n  AND kt.id = t.kind_id\n  AND t.id = mi.movie_id\n  AND t.id = mk.movie_id\n  AND t.id = mc.movie_id\n  AND t.id = cc.movie_id\n  AND mk.movie_id = mi.movie_id\n  AND mk.movie_id = mc.movie_id\n  AND mk.movie_id = cc.movie_id\n  AND mi.movie_id = mc.movie_id\n  AND mi.movie_id = cc.movie_id\n  AND mc.movie_id = cc.movie_id\n  AND k.id = mk.keyword_id\n  AND it1.id = mi.info_type_id\n  AND cn.id = mc.company_id\n  AND ct.id = mc.company_type_id\n  AND cct1.id = cc.status_id;\n",
+      "startTime": "2026-06-30T17:43:12.732495Z",
+      "status": "OK",
+      "timeMs": 29.611
+    }
+  ],
+  "runtime": {
+    "avgMs": 29.611,
+    "bestMs": 29.611,
+    "maxMs": 29.611,
+    "minMs": 29.611,
+    "stdDevMs": 0.0
+  },
   "storageVariant": "native",
   "theorem": {
     "categories": [

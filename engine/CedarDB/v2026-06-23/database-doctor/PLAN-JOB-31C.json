@@ -93,16 +93,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE min, min, min, min\n       5      2825  INNER JOIN HASH ON id82 = person_id\n       4      2825  │└INNER JOIN HASH ON id = info_type_id76\n       1         1  │ │└TABLE SCAN info_type WHERE info = votes\n      11      8607  │ INNER JOIN HASH ON movie_id75 = movie_id42\n       5      2827  │ │└INNER JOIN HASH ON id59 = movie_id42\n       5      2827  │ │ │└INNER JOIN HASH ON id6 = info_type_id\n       1         1  │ │ │ │└TABLE SCAN info_type WHERE info = genres\n       5      3009  │ │ │ INNER JOIN HASH ON movie_id51 = movie_id42\n      12      3057  │ │ │ │└INNER JOIN HASH ON movie_id42 = movie_id36\n      24      1551  │ │ │ │ │└INNER JOIN HASH ON movie_id36 = movie_id\n    1680      1814  │ │ │ │ │ │└INNER JOIN HASH ON id11 = company_id\n     159        10  │ │ │ │ │ │ │└TABLE SCAN company_name WHERE name) Lionsgate\n 2609129   2609129  │ │ │ │ │ │ TABLE SCAN movie_companies\n    4236     76714  │ │ │ │ │ INNER JOIN HASH ON id29 = keyword_id\n     131         7  │ │ │ │ │ │└TABLE SCAN keyword WHERE keyword BETWEEN blood AND violence\n 4523930   4523930  │ │ │ │ │ TABLE SCAN movie_keyword\n  246296       574  │ │ │ │ TABLE SCAN movie_info WHERE info BETWEEN Action AND War\n 1274215       242  │ │ │ TABLE SCAN cast_info WHERE note BETWEEN (head writer) AND (written by)\n 2528312   2528312  │ │ TABLE SCAN title\n 1380035   1380035  │ TABLE SCAN movie_info_idx\n 4167491   4167491  TABLE SCAN name\n",
       "sql": "SELECT MIN(mi.info) AS movie_budget,\n       MIN(mi_idx.info) AS movie_votes,\n       MIN(n.name) AS writer,\n       MIN(t.title) AS violent_liongate_movie\nFROM job.cast_info AS ci,\n     job.company_name AS cn,\n     job.info_type AS it1,\n     job.info_type AS it2,\n     job.keyword AS k,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.movie_info_idx AS mi_idx,\n     job.movie_keyword AS mk,\n     job.name AS n,\n     job.title AS t\nWHERE ci.note IN ('(writer)',\n                  '(head writer)',\n                  '(written by)',\n                  '(story)',\n                  '(story editor)')\n  AND cn.name LIKE 'Lionsgate%'\n  AND it1.info = 'genres'\n  AND it2.info = 'votes'\n  AND k.keyword IN ('murder',\n                    'violence',\n                    'blood',\n                    'gore',\n                    'death',\n                    'female-nudity',\n                    'hospital')\n  AND mi.info IN ('Horror',\n                  'Action',\n                  'Sci-Fi',\n                  'Thriller',\n                  'Crime',\n                  'War')\n  AND t.id = mi.movie_id\n  AND t.id = mi_idx.movie_id\n  AND t.id = ci.movie_id\n  AND t.id = mk.movie_id\n  AND t.id = mc.movie_id\n  AND ci.movie_id = mi.movie_id\n  AND ci.movie_id = mi_idx.movie_id\n  AND ci.movie_id = mk.movie_id\n  AND ci.movie_id = mc.movie_id\n  AND mi.movie_id = mi_idx.movie_id\n  AND mi.movie_id = mk.movie_id\n  AND mi.movie_id = mc.movie_id\n  AND mi_idx.movie_id = mk.movie_id\n  AND mi_idx.movie_id = mc.movie_id\n  AND mk.movie_id = mc.movie_id\n  AND n.id = ci.person_id\n  AND it1.id = mi.info_type_id\n  AND it2.id = mi_idx.info_type_id\n  AND k.id = mk.keyword_id\n  AND cn.id = mc.company_id;\n",
-      "startTime": "2026-06-30T12:19:09.253085Z",
+      "startTime": "2026-06-30T15:50:37.632953Z",
       "status": "OK",
-      "timeMs": 67.475
+      "timeMs": 334.147
     }
   ],
   "runtime": {
-    "avgMs": 67.475,
-    "bestMs": 67.475,
-    "maxMs": 67.475,
-    "minMs": 67.475,
+    "avgMs": 334.147,
+    "bestMs": 334.147,
+    "maxMs": 334.147,
+    "minMs": 334.147,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

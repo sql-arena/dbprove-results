@@ -93,16 +93,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE min, min\n       7       184  INNER JOIN HASH ON person_id = person_id85\n       7       162  │└INNER JOIN HASH ON id = info_type_id\n       1         1  │ │└TABLE SCAN info_type WHERE info = release dates\n       7       162  │ INNER JOIN HASH ON id74 = person_role_id\n       7       162  │ │└INNER JOIN HASH ON movie_id67 = movie_id34\n      19        65  │ │ │└INNER JOIN HASH ON id51 = movie_id34\n      27       305  │ │ │ │└INNER JOIN HASH ON id41 = company_id\n      74       322  │ │ │ │ │└INNER JOIN HASH ON movie_id34 = movie_id\n     271       630  │ │ │ │ │ │└INNER JOIN HASH ON id6 = role_id\n       1         1  │ │ │ │ │ │ │└TABLE SCAN role_type WHERE role = actress\n    2576       630  │ │ │ │ │ │ INNER JOIN HASH ON id11 = person_id\n   12209      6768  │ │ │ │ │ │ │└TABLE SCAN name WHERE gender = f\n  707897       630  │ │ │ │ │ │ TABLE SCAN cast_info\n  634446       304  │ │ │ │ │ TABLE SCAN movie_companies\n   90648       132  │ │ │ │ TABLE SCAN company_name WHERE country_code = us\n  634547        33  │ │ │ TABLE SCAN title WHERE production_year BETWEEN 2005 AND 2009\n  376688        75  │ │ TABLE SCAN movie_info\n 3140339   3140339  │ TABLE SCAN char_name\n  901343    901343  TABLE SCAN aka_name\n",
       "sql": "SELECT MIN(n.name) AS voicing_actress,\n       MIN(t.title) AS voiced_movie\nFROM job.aka_name AS an,\n     job.char_name AS chn,\n     job.cast_info AS ci,\n     job.company_name AS cn,\n     job.info_type AS it,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.name AS n,\n     job.role_type AS rt,\n     job.title AS t\nWHERE ci.note IN ('(voice)',\n                  '(voice: Japanese version)',\n                  '(voice) (uncredited)',\n                  '(voice: English version)')\n  AND cn.country_code ='[us]'\n  AND it.info = 'release dates'\n  AND mc.note IS NOT NULL\n  AND (mc.note LIKE '%(USA)%'\n       OR mc.note LIKE '%(worldwide)%')\n  AND mi.info IS NOT NULL\n  AND (mi.info LIKE 'Japan:%200%'\n       OR mi.info LIKE 'USA:%200%')\n  AND n.gender ='f'\n  AND n.name LIKE '%Ang%'\n  AND rt.role ='actress'\n  AND t.production_year BETWEEN 2005 AND 2009\n  AND t.id = mi.movie_id\n  AND t.id = mc.movie_id\n  AND t.id = ci.movie_id\n  AND mc.movie_id = ci.movie_id\n  AND mc.movie_id = mi.movie_id\n  AND mi.movie_id = ci.movie_id\n  AND cn.id = mc.company_id\n  AND it.id = mi.info_type_id\n  AND n.id = ci.person_id\n  AND rt.id = ci.role_id\n  AND n.id = an.person_id\n  AND ci.person_id = an.person_id\n  AND chn.id = ci.person_role_id;\n",
-      "startTime": "2026-06-30T12:19:06.630894Z",
+      "startTime": "2026-06-30T15:50:16.594006Z",
       "status": "OK",
-      "timeMs": 38.871
+      "timeMs": 99.528
     }
   ],
   "runtime": {
-    "avgMs": 38.871,
-    "bestMs": 38.871,
-    "maxMs": 38.871,
-    "minMs": 38.871,
+    "avgMs": 99.528,
+    "bestMs": 99.528,
+    "maxMs": 99.528,
+    "minMs": 99.528,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

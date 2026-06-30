@@ -93,16 +93,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE min, min\n    2768     68185  INNER JOIN HASH ON person_id65 = id14\n   19149     12595  │└INNER JOIN HASH ON id14 = person_id27\n   11062     13063  │ │└INNER JOIN HASH ON id = info_type_id\n       1         1  │ │ │└TABLE SCAN info_type WHERE info = mini biography\n   11062     13063  │ │ INNER JOIN HASH ON id14 = person_id\n   78143     84183  │ │ │└TABLE SCAN person_info\n  533145    242783  │ │ TABLE SCAN name WHERE name_pcode_cf BETWEEN A AND F\n  700653     12016  │ TABLE SCAN aka_name\n  470379   1097209  INNER JOIN HASH ON id49 = movie_id66\n   31449     14194  │└INNER JOIN HASH ON linked_movie_id = id49\n   11575     21505  │ │└INNER JOIN HASH ON id37 = link_type_id\n       4         4  │ │ │└TABLE SCAN link_type\n   29997     29997  │ │ TABLE SCAN movie_link\n 1604885      8007  │ TABLE SCAN title WHERE production_year BETWEEN 1980 AND 2010\n36244344  36244344  TABLE SCAN cast_info\n",
       "sql": "SELECT MIN(n.name) AS cast_member_name,\n       MIN(pi.info) AS cast_member_info\nFROM job.aka_name AS an,\n     job.cast_info AS ci,\n     job.info_type AS it,\n     job.link_type AS lt,\n     job.movie_link AS ml,\n     job.name AS n,\n     job.person_info AS pi,\n     job.title AS t\nWHERE an.name IS NOT NULL\n  AND (an.name LIKE '%a%'\n       OR an.name LIKE 'A%')\n  AND it.info ='mini biography'\n  AND lt.link IN ('references',\n                  'referenced in',\n                  'features',\n                  'featured in')\n  AND n.name_pcode_cf BETWEEN 'A' AND 'F'\n  AND (n.gender='m'\n       OR (n.gender = 'f'\n           AND n.name LIKE 'A%'))\n  AND pi.note IS NOT NULL\n  AND t.production_year BETWEEN 1980 AND 2010\n  AND n.id = an.person_id\n  AND n.id = pi.person_id\n  AND ci.person_id = n.id\n  AND t.id = ci.movie_id\n  AND ml.linked_movie_id = t.id\n  AND lt.id = ml.link_type_id\n  AND it.id = pi.info_type_id\n  AND pi.person_id = an.person_id\n  AND pi.person_id = ci.person_id\n  AND an.person_id = ci.person_id\n  AND ci.movie_id = ml.linked_movie_id;\n",
-      "startTime": "2026-06-30T12:19:10.487575Z",
+      "startTime": "2026-06-30T15:50:39.912955Z",
       "status": "OK",
-      "timeMs": 75.748
+      "timeMs": 130.347
     }
   ],
   "runtime": {
-    "avgMs": 75.748,
-    "bestMs": 75.748,
-    "maxMs": 75.748,
-    "minMs": 75.748,
+    "avgMs": 130.347,
+    "bestMs": 130.347,
+    "maxMs": 130.347,
+    "minMs": 130.347,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

@@ -93,16 +93,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       2         2  SORT o_year\n       2         2  AGGREGATE sum, sum GROUP BY HASH EXTRACT(YEAR FROM o_orderdate)\n    3014      2647  INNER JOIN HASH ON s_nationkey = n_nationkey\n      25        25  │└TABLE SCAN nation\n    3042      2647  INNER JOIN HASH ON l_suppkey = s_suppkey\n    3007      2647  │└INNER JOIN HASH ON c_nationkey = n_nationkey14\n       5         5  │ │└INNER JOIN HASH ON n_regionkey16 = r_regionkey\n       1         1  │ │ │└TABLE SCAN region WHERE r_name = EUROPE\n      25        25  │ │ TABLE SCAN nation\n   15134     12905  │ INNER JOIN HASH ON o_custkey = c_custkey\n   15134     12905  │ │└INNER JOIN HASH ON o_orderkey = l_orderkey\n   44732     42054  │ │ │└INNER JOIN HASH ON l_partkey = p_partkey\n    1562      1403  │ │ │ │└TABLE SCAN part WHERE p_type = SMALL POLISHED NICKEL\n 6001215   6001215  │ │ │ TABLE SCAN lineitem\n  498046    222101  │ │ TABLE SCAN orders WHERE o_orderdate BETWEEN 2449719 AND 2450449\n  150000    150000  │ TABLE SCAN customer\n   10000     10000  TABLE SCAN supplier\n",
       "sql": "/* TPC-H Q08 */\nSELECT o_year,\n       SUM(CASE\n               WHEN nation = 'FRANCE'\n                   THEN volume\n               ELSE 0\n           END) / SUM(volume) AS mkt_share\nFROM (SELECT EXTRACT(YEAR FROM o_orderdate)     AS o_year,\n             l_extendedprice * (1 - l_discount) AS volume,\n             n2.n_name                          AS nation\n      FROM tpch_sf1.lineitem\n      INNER JOIN tpch_sf1.orders\n          ON o_orderkey = l_orderkey\n      INNER JOIN tpch_sf1.part\n          ON l_partkey = p_partkey\n      INNER JOIN tpch_sf1.supplier\n          ON l_suppkey = s_suppkey\n      INNER JOIN tpch_sf1.customer\n          ON o_custkey = c_custkey\n      INNER JOIN tpch_sf1.nation n1\n          ON c_nationkey = n1.n_nationkey\n      INNER JOIN tpch_sf1.region\n          ON n1.n_regionkey = r_regionkey\n      INNER JOIN tpch_sf1.nation n2\n          ON s_nationkey = n2.n_nationkey\n      WHERE r_name = 'EUROPE'\n        AND o_orderdate BETWEEN '1995-01-01' AND '1996-12-31'\n        AND p_type = 'SMALL POLISHED NICKEL') AS all_nations\nGROUP BY o_year\nORDER BY o_year",
-      "startTime": "2026-06-30T12:19:27.777099Z",
+      "startTime": "2026-06-30T15:51:10.544165Z",
       "status": "OK",
-      "timeMs": 27.008
+      "timeMs": 22.651
     }
   ],
   "runtime": {
-    "avgMs": 27.008,
-    "bestMs": 27.008,
-    "maxMs": 27.008,
-    "minMs": 27.008,
+    "avgMs": 22.651,
+    "bestMs": 22.651,
+    "maxMs": 22.651,
+    "minMs": 22.651,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

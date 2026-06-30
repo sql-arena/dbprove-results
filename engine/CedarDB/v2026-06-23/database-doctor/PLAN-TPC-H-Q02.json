@@ -93,16 +93,16 @@
       },
       "plan": "Estimate    Actual  Operator\n     168       495  SORT s_acctbal62, n_name15, s_name58, p_partkey\n     168       495  INNER JOIN HASH ON s_nationkey60 = n_nationkey14\n       5         5  │└INNER JOIN HASH ON n_regionkey = r_regionkey\n       1         1  │ │└TABLE SCAN region WHERE r_name = EUROPE\n      25        25  │ TABLE SCAN nation\n     846       495  INNER JOIN HASH ON ps_suppkey50 = s_suppkey57\n     837       495  │└INNER JOIN HASH ON ps_partkey49 = p_partkey AND ps_supplycost52 = MIN(ps_supplycost)\n       5       495  │ │└INNER JOIN HASH ON p_partkey = ps_partkey47\n    1367       803  │ │ │└TABLE SCAN part WHERE p_size = 25\n     834       495  │ │ AGGREGATE min GROUP BY HASH ps_partkey\n     927       689  │ │ INNER JOIN HASH ON ps_suppkey = s_suppkey\n    1987      1987  │ │ │└INNER JOIN HASH ON s_nationkey = n_nationkey28\n       5         5  │ │ │ │└TABLE SCAN  < temp > \n   10000     10000  │ │ │ TABLE SCAN supplier\n    4612      1603  │ │ TABLE SCAN partsupp\n  800000    800000  │ TABLE SCAN partsupp\n   10000     10000  TABLE SCAN supplier\n",
       "sql": "/* TPC-H Q02 */\nSELECT s_acctbal,\n       s_name,\n       n_name,\n       p_partkey,\n       p_mfgr,\n       s_address,\n       s_phone,\n       s_comment\nFROM tpch_sf1.partsupp\nINNER JOIN tpch_sf1.part\n    ON ps_partkey = p_partkey\nINNER JOIN tpch_sf1.supplier\n    ON ps_suppkey = s_suppkey\nINNER JOIN tpch_sf1.nation\n    ON s_nationkey = n_nationkey\nINNER JOIN tpch_sf1.region\n    ON n_regionkey = r_regionkey\nWHERE p_size = 25\n  AND p_type LIKE '%BRASS'\n  AND r_name = 'EUROPE'\n  AND ps_supplycost = (SELECT MIN(ps_supplycost) AS min_cost\n                       FROM tpch_sf1.partsupp AS ps_min\n                       INNER JOIN tpch_sf1.supplier AS s_min\n                           ON ps_suppkey = s_suppkey\n                       INNER JOIN tpch_sf1.nation AS n_min\n                           ON s_nationkey = n_nationkey\n                       INNER JOIN tpch_sf1.region AS r_min\n                           ON n_regionkey = r_regionkey\n                       WHERE ps_partkey = p_partkey\n                         AND r_name = 'EUROPE')\nORDER BY s_acctbal DESC,\n         n_name,\n         s_name,\n         p_partkey\n\n\n",
-      "startTime": "2026-06-30T12:19:27.627682Z",
+      "startTime": "2026-06-30T15:51:10.430120Z",
       "status": "OK",
-      "timeMs": 16.194
+      "timeMs": 8.111
     }
   ],
   "runtime": {
-    "avgMs": 16.194,
-    "bestMs": 16.194,
-    "maxMs": 16.194,
-    "minMs": 16.194,
+    "avgMs": 8.111,
+    "bestMs": 8.111,
+    "maxMs": 8.111,
+    "minMs": 8.111,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

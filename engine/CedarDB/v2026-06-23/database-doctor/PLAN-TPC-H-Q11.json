@@ -93,16 +93,16 @@
       },
       "plan": "Estimate    Actual  Operator\n    7503      1225  SORT SUM() 33\n    7503      1225  INNER JOIN LOOP ON SUM() 33 > SUM() * 1\n       1         1  │└AGGREGATE sum\n   32316     30160  │ INNER JOIN HASH ON ps_suppkey = s_suppkey\n     399       377  │ │└INNER JOIN HASH ON s_nationkey = n_nationkey\n       1         1  │ │ │└TABLE SCAN nation WHERE n_name = JAPAN\n   10000     10000  │ │ TABLE SCAN supplier\n  800000    800000  │ TABLE SCAN partsupp\n   29084     28515  AGGREGATE sum GROUP BY HASH ps_partkey29\n   32316     30160  TABLE SCAN  < temp > \n",
       "sql": "/* TPC-H Q11 */\nSELECT ps_partkey,\n       SUM(ps_supplycost * ps_availqty) AS v\nFROM tpch_sf1.partsupp\nINNER JOIN tpch_sf1.supplier\n    ON ps_suppkey = s_suppkey\nINNER JOIN tpch_sf1.nation\n    ON s_nationkey = n_nationkey\nWHERE n_name = 'JAPAN'\nGROUP BY ps_partkey\nHAVING SUM(ps_supplycost * ps_availqty)\n           > (SELECT SUM(ps_supplycost * ps_availqty) * 0.0001\n              FROM tpch_sf1.partsupp\n              INNER JOIN tpch_sf1.supplier\n                  ON ps_suppkey = s_suppkey\n              INNER JOIN tpch_sf1.nation\n                  ON s_nationkey = n_nationkey\n              WHERE n_name = 'JAPAN')\nORDER BY v DESC\n",
-      "startTime": "2026-06-30T12:19:27.927082Z",
+      "startTime": "2026-06-30T15:51:10.700659Z",
       "status": "OK",
-      "timeMs": 8.069
+      "timeMs": 12.623
     }
   ],
   "runtime": {
-    "avgMs": 8.069,
-    "bestMs": 8.069,
-    "maxMs": 8.069,
-    "minMs": 8.069,
+    "avgMs": 12.623,
+    "bestMs": 12.623,
+    "maxMs": 12.623,
+    "minMs": 12.623,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

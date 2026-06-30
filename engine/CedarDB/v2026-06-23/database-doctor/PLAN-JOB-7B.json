@@ -93,16 +93,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE min, min\n       1        16  INNER JOIN HASH ON person_id64 = person_id32\n       1         8  │└INNER JOIN HASH ON id = link_type_id\n       1         1  │ │└TABLE SCAN link_type WHERE link = features\n       1        23  │ INNER JOIN HASH ON linked_movie_id = id41\n       1        22  │ │└INNER JOIN HASH ON id41 = movie_id\n      76       276  │ │ │└INNER JOIN HASH ON person_id = person_id32\n       1         3  │ │ │ │└INNER JOIN HASH ON id19 = person_id\n       5        64  │ │ │ │ │└INNER JOIN HASH ON id6 = info_type_id\n       1         1  │ │ │ │ │ │└TABLE SCAN info_type WHERE info = mini biography\n      58        64  │ │ │ │ │ TABLE SCAN person_info WHERE note = Volker Boehm\n   93605         3  │ │ │ │ TABLE SCAN name WHERE name_pcode_cf) D AND gender = m\n36244344  36244344  │ │ │ TABLE SCAN cast_info\n   69133        10  │ │ TABLE SCAN title WHERE production_year BETWEEN 1980 AND 1984\n   29997     29997  │ TABLE SCAN movie_link\n  684809         2  TABLE SCAN aka_name\n",
       "sql": "SELECT MIN(n.name) AS of_person,\n       MIN(t.title) AS biography_movie\nFROM job.aka_name AS an,\n     job.cast_info AS ci,\n     job.info_type AS it,\n     job.link_type AS lt,\n     job.movie_link AS ml,\n     job.name AS n,\n     job.person_info AS pi,\n     job.title AS t\nWHERE an.name LIKE '%a%'\n  AND it.info ='mini biography'\n  AND lt.link ='features'\n  AND n.name_pcode_cf LIKE 'D%'\n  AND n.gender='m'\n  AND pi.note ='Volker Boehm'\n  AND t.production_year BETWEEN 1980 AND 1984\n  AND n.id = an.person_id\n  AND n.id = pi.person_id\n  AND ci.person_id = n.id\n  AND t.id = ci.movie_id\n  AND ml.linked_movie_id = t.id\n  AND lt.id = ml.link_type_id\n  AND it.id = pi.info_type_id\n  AND pi.person_id = an.person_id\n  AND pi.person_id = ci.person_id\n  AND an.person_id = ci.person_id\n  AND ci.movie_id = ml.linked_movie_id;\n",
-      "startTime": "2026-06-30T12:19:10.449053Z",
+      "startTime": "2026-06-30T15:50:39.901402Z",
       "status": "OK",
-      "timeMs": 25.528
+      "timeMs": 3.384
     }
   ],
   "runtime": {
-    "avgMs": 25.528,
-    "bestMs": 25.528,
-    "maxMs": 25.528,
-    "minMs": 25.528,
+    "avgMs": 3.384,
+    "bestMs": 3.384,
+    "maxMs": 3.384,
+    "minMs": 3.384,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

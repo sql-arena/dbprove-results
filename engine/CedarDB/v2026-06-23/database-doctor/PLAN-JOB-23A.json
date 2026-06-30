@@ -93,16 +93,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE min, min\n     200       618  INNER JOIN HASH ON id75 = keyword_id\n     208       618  │└INNER JOIN HASH ON id36 = movie_id70\n     111         6  │ │└INNER JOIN HASH ON id = company_type_id\n       4         4  │ │ │└TABLE SCAN company_type\n     107         6  │ │ INNER JOIN HASH ON id59 = company_id\n     293         6  │ │ │└INNER JOIN HASH ON movie_id52 = id36\n      93         5  │ │ │ │└INNER JOIN HASH ON id6 = info_type_id\n       1         1  │ │ │ │ │└TABLE SCAN info_type WHERE info = release dates\n      93         5  │ │ │ │ INNER JOIN HASH ON id11 = kind_id\n       1         1  │ │ │ │ │└TABLE SCAN kind_type WHERE kind = movie\n     176         5  │ │ │ │ INNER JOIN HASH ON id36 = movie_id30\n     301         6  │ │ │ │ │└INNER JOIN HASH ON id16 = status_id\n       1         1  │ │ │ │ │ │└TABLE SCAN comp_cast_type WHERE kind = complete + verified\n    1205         6  │ │ │ │ │ INNER JOIN HASH ON movie_id = movie_id30\n    5154      1783  │ │ │ │ │ │└TABLE SCAN movie_info WHERE info) USA : \n  135086      4786  │ │ │ │ │ TABLE SCAN complete_cast\n 1402423         2  │ │ │ │ TABLE SCAN title WHERE production_year >= 2001\n 2076277         3  │ │ │ TABLE SCAN movie_companies\n   90648         3  │ │ TABLE SCAN company_name WHERE country_code = us\n 4523930   4523930  │ TABLE SCAN movie_keyword\n  134170    134170  TABLE SCAN keyword\n",
       "sql": "SELECT MIN(kt.kind) AS movie_kind,\n       MIN(t.title) AS complete_us_internet_movie\nFROM job.complete_cast AS cc,\n     job.comp_cast_type AS cct1,\n     job.company_name AS cn,\n     job.company_type AS ct,\n     job.info_type AS it1,\n     job.keyword AS k,\n     job.kind_type AS kt,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.movie_keyword AS mk,\n     job.title AS t\nWHERE cct1.kind = 'complete+verified'\n  AND cn.country_code = '[us]'\n  AND it1.info = 'release dates'\n  AND kt.kind IN ('movie')\n  AND mi.note LIKE '%internet%'\n  AND mi.info IS NOT NULL\n  AND (mi.info LIKE 'USA:% 199%'\n       OR mi.info LIKE 'USA:% 200%')\n  AND t.production_year > 2000\n  AND kt.id = t.kind_id\n  AND t.id = mi.movie_id\n  AND t.id = mk.movie_id\n  AND t.id = mc.movie_id\n  AND t.id = cc.movie_id\n  AND mk.movie_id = mi.movie_id\n  AND mk.movie_id = mc.movie_id\n  AND mk.movie_id = cc.movie_id\n  AND mi.movie_id = mc.movie_id\n  AND mi.movie_id = cc.movie_id\n  AND mc.movie_id = cc.movie_id\n  AND k.id = mk.keyword_id\n  AND it1.id = mi.info_type_id\n  AND cn.id = mc.company_id\n  AND ct.id = mc.company_type_id\n  AND cct1.id = cc.status_id;\n",
-      "startTime": "2026-06-30T12:19:07.626112Z",
+      "startTime": "2026-06-30T15:50:19.570790Z",
       "status": "OK",
-      "timeMs": 23.735
+      "timeMs": 12.734
     }
   ],
   "runtime": {
-    "avgMs": 23.735,
-    "bestMs": 23.735,
-    "maxMs": 23.735,
-    "minMs": 23.735,
+    "avgMs": 12.734,
+    "bestMs": 12.734,
+    "maxMs": 12.734,
+    "minMs": 12.734,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

@@ -93,16 +93,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE min, min, min\n       6      5400  INNER JOIN HASH ON id83 = person_id\n       5      5400  │└INNER JOIN HASH ON id73 = person_role_id\n      87     74106  │ │└INNER JOIN HASH ON movie_id65 = movie_id49\n       2      1261  │ │ │└INNER JOIN HASH ON id = info_type_id\n       1         1  │ │ │ │└TABLE SCAN info_type WHERE info = rating\n       8      3831  │ │ │ INNER JOIN HASH ON movie_id49 = movie_id56\n      15      1267  │ │ │ │└INNER JOIN HASH ON id6 = status_id\n       2         2  │ │ │ │ │└TABLE SCAN comp_cast_type\n       2      1267  │ │ │ │ INNER JOIN HASH ON id11 = subject_id\n       1         1  │ │ │ │ │└TABLE SCAN comp_cast_type WHERE kind = cast\n       3      1485  │ │ │ │ INNER JOIN HASH ON id33 = movie_id49\n      45      5032  │ │ │ │ │└INNER JOIN HASH ON id16 = kind_id\n       1         1  │ │ │ │ │ │└TABLE SCAN kind_type WHERE kind = movie\n     178      5528  │ │ │ │ │ INNER JOIN HASH ON id33 = movie_id\n     308     24091  │ │ │ │ │ │└INNER JOIN HASH ON id21 = keyword_id\n      10        10  │ │ │ │ │ │ │└TABLE SCAN keyword WHERE keyword BETWEEN based - on - comic AND web\n 4523930   4523930  │ │ │ │ │ │ TABLE SCAN movie_keyword\n 1402423      4555  │ │ │ │ │ TABLE SCAN title WHERE production_year >= 2001\n  135086      1098  │ │ │ │ TABLE SCAN complete_cast\n 1380035   1380035  │ │ │ TABLE SCAN movie_info_idx\n17485064     51840  │ │ TABLE SCAN cast_info\n  196271      2524  │ TABLE SCAN char_name\n 4167491   4167491  TABLE SCAN name\n",
       "sql": "SELECT MIN(chn.name) AS character_name,\n       MIN(mi_idx.info) AS rating,\n       MIN(t.title) AS complete_hero_movie\nFROM job.complete_cast AS cc,\n     job.comp_cast_type AS cct1,\n     job.comp_cast_type AS cct2,\n     job.char_name AS chn,\n     job.cast_info AS ci,\n     job.info_type AS it2,\n     job.keyword AS k,\n     job.kind_type AS kt,\n     job.movie_info_idx AS mi_idx,\n     job.movie_keyword AS mk,\n     job.name AS n,\n     job.title AS t\nWHERE cct1.kind = 'cast'\n  AND cct2.kind LIKE '%complete%'\n  AND chn.name IS NOT NULL\n  AND (chn.name LIKE '%man%'\n       OR chn.name LIKE '%Man%')\n  AND it2.info = 'rating'\n  AND k.keyword IN ('superhero',\n                    'marvel-comics',\n                    'based-on-comic',\n                    'tv-special',\n                    'fight',\n                    'violence',\n                    'magnet',\n                    'web',\n                    'claw',\n                    'laser')\n  AND kt.kind = 'movie'\n  AND t.production_year > 2000\n  AND kt.id = t.kind_id\n  AND t.id = mk.movie_id\n  AND t.id = ci.movie_id\n  AND t.id = cc.movie_id\n  AND t.id = mi_idx.movie_id\n  AND mk.movie_id = ci.movie_id\n  AND mk.movie_id = cc.movie_id\n  AND mk.movie_id = mi_idx.movie_id\n  AND ci.movie_id = cc.movie_id\n  AND ci.movie_id = mi_idx.movie_id\n  AND cc.movie_id = mi_idx.movie_id\n  AND chn.id = ci.person_role_id\n  AND n.id = ci.person_id\n  AND k.id = mk.keyword_id\n  AND cct1.id = cc.subject_id\n  AND cct2.id = cc.status_id\n  AND it2.id = mi_idx.info_type_id;\n",
-      "startTime": "2026-06-30T12:19:08.255047Z",
+      "startTime": "2026-06-30T15:50:25.959498Z",
       "status": "OK",
-      "timeMs": 61.58
+      "timeMs": 67.895
     }
   ],
   "runtime": {
-    "avgMs": 61.58,
-    "bestMs": 61.58,
-    "maxMs": 61.58,
-    "minMs": 61.58,
+    "avgMs": 67.895,
+    "bestMs": 67.895,
+    "maxMs": 67.895,
+    "minMs": 67.895,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

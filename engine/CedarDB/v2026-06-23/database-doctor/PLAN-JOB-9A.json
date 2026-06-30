@@ -93,16 +93,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE min, min, min\n       9       121  INNER JOIN HASH ON person_id72 = id6\n      38       115  │└INNER JOIN HASH ON id61 = person_role_id\n      40       115  │ │└INNER JOIN HASH ON movie_id = id46\n      55       305  │ │ │└INNER JOIN HASH ON company_id = id36\n     149       322  │ │ │ │└INNER JOIN HASH ON movie_id = movie_id29\n     298       630  │ │ │ │ │└INNER JOIN HASH ON role_id = id\n       1         1  │ │ │ │ │ │└TABLE SCAN role_type WHERE role = actress\n    2833       630  │ │ │ │ │ INNER JOIN HASH ON id6 = person_id\n   12209      6768  │ │ │ │ │ │└TABLE SCAN name WHERE gender = f\n  707897       630  │ │ │ │ │ TABLE SCAN cast_info\n  634446       304  │ │ │ │ TABLE SCAN movie_companies\n   90648       132  │ │ │ TABLE SCAN company_name WHERE country_code = us\n 1140703        64  │ │ TABLE SCAN title WHERE production_year BETWEEN 2005 AND 2015\n 3140339   3140339  │ TABLE SCAN char_name\n  901343    901343  TABLE SCAN aka_name\n",
       "sql": "SELECT MIN(an.name) AS alternative_name,\n       MIN(chn.name) AS character_name,\n       MIN(t.title) AS movie\nFROM job.aka_name AS an,\n     job.char_name AS chn,\n     job.cast_info AS ci,\n     job.company_name AS cn,\n     job.movie_companies AS mc,\n     job.name AS n,\n     job.role_type AS rt,\n     job.title AS t\nWHERE ci.note IN ('(voice)',\n                  '(voice: Japanese version)',\n                  '(voice) (uncredited)',\n                  '(voice: English version)')\n  AND cn.country_code ='[us]'\n  AND mc.note IS NOT NULL\n  AND (mc.note LIKE '%(USA)%'\n       OR mc.note LIKE '%(worldwide)%')\n  AND n.gender ='f'\n  AND n.name LIKE '%Ang%'\n  AND rt.role ='actress'\n  AND t.production_year BETWEEN 2005 AND 2015\n  AND ci.movie_id = t.id\n  AND t.id = mc.movie_id\n  AND ci.movie_id = mc.movie_id\n  AND mc.company_id = cn.id\n  AND ci.role_id = rt.id\n  AND n.id = ci.person_id\n  AND chn.id = ci.person_role_id\n  AND an.person_id = n.id\n  AND an.person_id = ci.person_id;\n",
-      "startTime": "2026-06-30T12:19:11.003342Z",
+      "startTime": "2026-06-30T15:50:40.470790Z",
       "status": "OK",
-      "timeMs": 35.697
+      "timeMs": 34.542
     }
   ],
   "runtime": {
-    "avgMs": 35.697,
-    "bestMs": 35.697,
-    "maxMs": 35.697,
-    "minMs": 35.697,
+    "avgMs": 34.542,
+    "bestMs": 34.542,
+    "maxMs": 34.542,
+    "minMs": 34.542,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

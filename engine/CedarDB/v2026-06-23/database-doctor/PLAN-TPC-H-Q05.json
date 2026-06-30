@@ -1,0 +1,121 @@
+{
+  "config": "M5 Macbook Pro",
+  "engine": "CedarDB",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 5,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 4,
+          ">16x": 1
+        },
+        "scan": {
+          "+2x": 1,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 6,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 7403,
+        "distribute": 0,
+        "hash": 270783,
+        "join": 6449546,
+        "scan": 6275163,
+        "seek": 0,
+        "sort": 5
+      },
+      "plan": "Estimate    Actual  Operator\n       5         5  SORT SUM()\n       5         5  AGGREGATE sum GROUP BY HASH n_name\n  383368      7403  INNER JOIN HASH ON l_suppkey = s_suppkey AND s_nationkey = n_nationkey\n   10000     10000  │└TABLE SCAN supplier\n  200856    184384  INNER JOIN HASH ON l_orderkey = o_orderkey\n   45992     46197  │└INNER JOIN HASH ON o_custkey = c_custkey\n   29808     30197  │ │└INNER JOIN HASH ON n_nationkey = c_nationkey\n       5         5  │ │ │└INNER JOIN HASH ON n_regionkey = r_regionkey\n       1         1  │ │ │ │└TABLE SCAN region WHERE r_name = EUROPE\n      25        25  │ │ │ TABLE SCAN nation\n  150000    150000  │ │ TABLE SCAN customer\n  231445    113922  │ TABLE SCAN orders WHERE o_orderdate BETWEEN 2449719 AND 2450083\n 6001215   6001215  TABLE SCAN lineitem\n",
+      "sql": "/* TPC-H Q05 */\nSELECT n_name,\n       SUM(l_extendedprice * (1 - l_discount)) AS revenue\nFROM tpch_sf1.lineitem\nINNER JOIN tpch_sf1.orders\n    ON l_orderkey = o_orderkey\nINNER JOIN tpch_sf1.customer\n    ON o_custkey = c_custkey\nINNER JOIN tpch_sf1.supplier\n    ON l_suppkey = s_suppkey\nINNER JOIN tpch_sf1.nation\n    ON s_nationkey = n_nationkey\nINNER JOIN tpch_sf1.region\n    ON n_regionkey = r_regionkey\nWHERE r_name = 'EUROPE'\n  AND o_orderdate >= '1995-01-01'\n  AND o_orderdate < '1996-01-01'\n  AND s_nationkey = c_nationkey\nGROUP BY n_name\nORDER BY revenue DESC\n",
+      "startTime": "2026-06-30T12:19:27.705232Z",
+      "status": "OK",
+      "timeMs": 27.069
+    }
+  ],
+  "runtime": {
+    "avgMs": 27.069,
+    "bestMs": 27.069,
+    "maxMs": 27.069,
+    "minMs": 27.069,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "TPC-H Q05 Analysis",
+    "displayName": "TPCH-Q05",
+    "name": "PLAN-TPC-H-Q05",
+    "tags": [
+      "TPC-H"
+    ]
+  },
+  "version": "v2026-06-23"
+}

@@ -1,0 +1,122 @@
+{
+  "config": "M5 Macbook Pro",
+  "engine": "CedarDB",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 6,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 1,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 3,
+          ">16x": 2
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 8,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 323005,
+        "distribute": 0,
+        "hash": 5540483,
+        "join": 46157819,
+        "scan": 46535463,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE min, min\n15576107    323005  INNER JOIN HASH ON person_id = person_id63\n 1053984    901343  │└INNER JOIN HASH ON person_id = id12\n  901343    901343  │ │└TABLE SCAN aka_name\n 4167491   4167491  │ TABLE SCAN name\n15697930    285538  INNER JOIN HASH ON movie_id64 = movie_id\n  999148   1153798  │└INNER JOIN HASH ON id42 = movie_id\n  957641   1153798  │ │└INNER JOIN HASH ON company_id = id24\n   90648     84843  │ │ │└TABLE SCAN company_name WHERE country_code = us\n 2609129   2609129  │ │ TABLE SCAN movie_companies\n 2528312   2528312  │ TABLE SCAN title\n 3339341    276403  INNER JOIN HASH ON role_id = id57\n       1         1  │└TABLE SCAN role_type WHERE role = costume designer\n36244344  36244344  TABLE SCAN cast_info\n",
+      "sql": "SELECT MIN(an1.name) AS costume_designer_pseudo,\n       MIN(t.title) AS movie_with_costumes\nFROM job.aka_name AS an1,\n     job.cast_info AS ci,\n     job.company_name AS cn,\n     job.movie_companies AS mc,\n     job.name AS n1,\n     job.role_type AS rt,\n     job.title AS t\nWHERE cn.country_code ='[us]'\n  AND rt.role ='costume designer'\n  AND an1.person_id = n1.id\n  AND n1.id = ci.person_id\n  AND ci.movie_id = t.id\n  AND t.id = mc.movie_id\n  AND mc.company_id = cn.id\n  AND ci.role_id = rt.id\n  AND an1.person_id = ci.person_id\n  AND ci.movie_id = mc.movie_id;\n",
+      "startTime": "2026-06-30T12:19:10.839173Z",
+      "status": "OK",
+      "timeMs": 151.891
+    }
+  ],
+  "runtime": {
+    "avgMs": 151.891,
+    "bestMs": 151.891,
+    "maxMs": 151.891,
+    "minMs": 151.891,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 8D Analysis",
+    "displayName": "JOB-8D",
+    "name": "PLAN-JOB-8D",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "v2026-06-23"
+}

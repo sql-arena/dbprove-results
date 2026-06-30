@@ -1,0 +1,122 @@
+{
+  "config": "M5 Macbook Pro",
+  "engine": "CedarDB",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 3,
+          "-8x": 0,
+          "<16x": 2,
+          "=": 1,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 4,
+          "-8x": 0,
+          "<16x": 2,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 1,
+          "=": 3,
+          ">16x": 4
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 6,
+        "distribute": 0,
+        "hash": 69769,
+        "join": 994509,
+        "scan": 994451,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE min, min\n       1         6  INNER JOIN HASH ON person_id62 = person_id\n       1         4  │└INNER JOIN HASH ON company_id = id51\n       1         4  │ │└INNER JOIN HASH ON movie_id = movie_id44\n       1         7  │ │ │└INNER JOIN HASH ON id31 = person_id\n       1        56  │ │ │ │└INNER JOIN HASH ON movie_id = id16\n       7     34848  │ │ │ │ │└INNER JOIN HASH ON role_id = id\n       1         1  │ │ │ │ │ │└TABLE SCAN role_type WHERE role = actress\n      59     93095  │ │ │ │ │ TABLE SCAN cast_info WHERE note = (voice : English version)\n     950         5  │ │ │ │ TABLE SCAN title WHERE production_year BETWEEN 2006 AND 2007\n    8139         2  │ │ │ TABLE SCAN name\n    2547         3  │ │ TABLE SCAN movie_companies\n    6655         2  │ TABLE SCAN company_name WHERE country_code = jp\n  901343    901343  TABLE SCAN aka_name\n",
+      "sql": "SELECT MIN(an.name) AS acress_pseudonym,\n       MIN(t.title) AS japanese_anime_movie\nFROM job.aka_name AS an,\n     job.cast_info AS ci,\n     job.company_name AS cn,\n     job.movie_companies AS mc,\n     job.name AS n,\n     job.role_type AS rt,\n     job.title AS t\nWHERE ci.note ='(voice: English version)'\n  AND cn.country_code ='[jp]'\n  AND mc.note LIKE '%(Japan)%'\n  AND mc.note NOT LIKE '%(USA)%'\n  AND (mc.note LIKE '%(2006)%'\n       OR mc.note LIKE '%(2007)%')\n  AND n.name LIKE '%Yo%'\n  AND n.name NOT LIKE '%Yu%'\n  AND rt.role ='actress'\n  AND t.production_year BETWEEN 2006 AND 2007\n  AND (t.title LIKE 'One Piece%'\n       OR t.title LIKE 'Dragon Ball Z%')\n  AND an.person_id = n.id\n  AND n.id = ci.person_id\n  AND ci.movie_id = t.id\n  AND t.id = mc.movie_id\n  AND mc.company_id = cn.id\n  AND ci.role_id = rt.id\n  AND an.person_id = ci.person_id\n  AND ci.movie_id = mc.movie_id;\n",
+      "startTime": "2026-06-30T12:19:10.608971Z",
+      "status": "OK",
+      "timeMs": 10.607
+    }
+  ],
+  "runtime": {
+    "avgMs": 10.607,
+    "bestMs": 10.607,
+    "maxMs": 10.607,
+    "minMs": 10.607,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 8B Analysis",
+    "displayName": "JOB-8B",
+    "name": "PLAN-JOB-8B",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "v2026-06-23"
+}

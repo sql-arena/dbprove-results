@@ -1,0 +1,122 @@
+{
+  "config": "M5 Macbook Pro",
+  "engine": "CedarDB",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 3,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 4,
+          ">16x": 1
+        },
+        "join": {
+          "+2x": 3,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 3
+        },
+        "scan": {
+          "+2x": 2,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 5,
+          ">16x": 3
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 2271,
+        "distribute": 0,
+        "hash": 151068,
+        "join": 4560818,
+        "scan": 4689840,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE min, min\n  127215      2271  INNER JOIN HASH ON id = keyword_id\n  134170    134170  │└TABLE SCAN keyword\n  132655      2271  INNER JOIN HASH ON movie_id74 = movie_id41\n    8720       284  │└INNER JOIN HASH ON movie_id41 = movie_id59\n    6740      2647  │ │└INNER JOIN HASH ON id7 = company_type_id\n       4         4  │ │ │└TABLE SCAN company_type\n    1318      2647  │ │ INNER JOIN HASH ON id48 = company_id\n    3590      2884  │ │ │└INNER JOIN HASH ON id25 = movie_id41\n    4190      1782  │ │ │ │└INNER JOIN HASH ON id12 = info_type_id\n       1         1  │ │ │ │ │└TABLE SCAN info_type WHERE info = release dates\n    4190      1782  │ │ │ │ INNER JOIN HASH ON id25 = movie_id\n    5154      1783  │ │ │ │ │└TABLE SCAN movie_info WHERE info) USA : \n 1757966      1766  │ │ │ │ TABLE SCAN title WHERE production_year >= 1991\n 2076277      2842  │ │ │ TABLE SCAN movie_companies\n   90648     25238  │ │ TABLE SCAN company_name WHERE country_code = us\n  361379       106  │ TABLE SCAN aka_title\n 4523930   4523930  TABLE SCAN movie_keyword\n",
+      "sql": "SELECT MIN(mi.info) AS release_date,\n       MIN(t.title) AS modern_american_internet_movie\nFROM job.aka_title AS aka_t,\n     job.company_name AS cn,\n     job.company_type AS ct,\n     job.info_type AS it1,\n     job.keyword AS k,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.movie_keyword AS mk,\n     job.title AS t\nWHERE cn.country_code = '[us]'\n  AND it1.info = 'release dates'\n  AND mi.note LIKE '%internet%'\n  AND mi.info IS NOT NULL\n  AND (mi.info LIKE 'USA:% 199%'\n       OR mi.info LIKE 'USA:% 200%')\n  AND t.production_year > 1990\n  AND t.id = aka_t.movie_id\n  AND t.id = mi.movie_id\n  AND t.id = mk.movie_id\n  AND t.id = mc.movie_id\n  AND mk.movie_id = mi.movie_id\n  AND mk.movie_id = mc.movie_id\n  AND mk.movie_id = aka_t.movie_id\n  AND mi.movie_id = mc.movie_id\n  AND mi.movie_id = aka_t.movie_id\n  AND mc.movie_id = aka_t.movie_id\n  AND k.id = mk.keyword_id\n  AND it1.id = mi.info_type_id\n  AND cn.id = mc.company_id\n  AND ct.id = mc.company_type_id;\n",
+      "startTime": "2026-06-30T12:19:04.969474Z",
+      "status": "OK",
+      "timeMs": 29.137
+    }
+  ],
+  "runtime": {
+    "avgMs": 29.137,
+    "bestMs": 29.137,
+    "maxMs": 29.137,
+    "minMs": 29.137,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 15C Analysis",
+    "displayName": "JOB-15C",
+    "name": "PLAN-JOB-15C",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "v2026-06-23"
+}

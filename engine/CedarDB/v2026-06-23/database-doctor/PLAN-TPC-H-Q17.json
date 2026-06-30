@@ -1,0 +1,121 @@
+{
+  "config": "M5 Macbook Pro",
+  "engine": "CedarDB",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 1
+        },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 2,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 1,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 4,
+          ">16x": 1
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 6566,
+        "distribute": 0,
+        "hash": 735,
+        "join": 6001413,
+        "scan": 6007442,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE sum\n    2987       537  INNER JOIN HASH ON l_partkey35 = p_partkey AND l_quantity38 < 2 * AVG(l_quantity)\n     190       198  │└INNER JOIN HASH ON p_partkey = l_partkey32\n     195       198  │ │└TABLE SCAN part WHERE p_container = MED CAN AND p_brand = Brand#13\n    4894       198  │ AGGREGATE avg GROUP BY HASH l_partkey\n    5438      6029  │ TABLE SCAN lineitem\n 6001215   6001215  TABLE SCAN lineitem\n",
+      "sql": "/* TPC-H Q17 */\nSELECT SUM(l_extendedprice) / 7.0 AS avg_yearly\nFROM tpch_sf1.lineitem\nINNER JOIN tpch_sf1.part\n    ON l_partkey = p_partkey\nWHERE p_brand = 'Brand#13'\n  AND p_container = 'MED CAN'\n  AND l_quantity < (SELECT 0.2 * AVG(l_quantity) AS l_avg\n                    FROM tpch_sf1.lineitem li\n                    WHERE l_partkey = p_partkey)",
+      "startTime": "2026-06-30T12:19:28.051094Z",
+      "status": "OK",
+      "timeMs": 16.529
+    }
+  ],
+  "runtime": {
+    "avgMs": 16.529,
+    "bestMs": 16.529,
+    "maxMs": 16.529,
+    "minMs": 16.529,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "TPC-H Q17 Analysis",
+    "displayName": "TPCH-Q17",
+    "name": "PLAN-TPC-H-Q17",
+    "tags": [
+      "TPC-H"
+    ]
+  },
+  "version": "v2026-06-23"
+}

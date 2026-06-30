@@ -1,0 +1,122 @@
+{
+  "config": "M5 Macbook Pro",
+  "engine": "CedarDB",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 2,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 4,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 4,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 2,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 2,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 6,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 28073,
+        "distribute": 0,
+        "hash": 636990,
+        "join": 5379555,
+        "scan": 5224050,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE min, min, min\n   63921     28073  INNER JOIN HASH ON id49 = movie_id29\n   60595     28073  │└INNER JOIN HASH ON id = info_type_id\n       1         1  │ │└TABLE SCAN info_type WHERE info = genres\n   60595     29399  │ INNER JOIN HASH ON id37 = person_id\n  128316     55981  │ │└INNER JOIN HASH ON movie_id29 = movie_id20\n  144458    104892  │ │ │└INNER JOIN HASH ON id6 = info_type_id21\n       1         1  │ │ │ │└TABLE SCAN info_type WHERE info = votes\n  346185    315079  │ │ │ INNER JOIN HASH ON movie_id = movie_id20\n  246296    188971  │ │ │ │└TABLE SCAN movie_info WHERE info BETWEEN Action AND War\n 1380035   1380035  │ │ │ TABLE SCAN movie_info_idx\n 1274215    567218  │ │ TABLE SCAN cast_info WHERE note BETWEEN (head writer) AND (written by)\n 1778509    559512  │ TABLE SCAN name WHERE gender = m\n 2528312   2528312  TABLE SCAN title\n",
+      "sql": "SELECT MIN(mi.info) AS movie_budget,\n       MIN(mi_idx.info) AS movie_votes,\n       MIN(t.title) AS movie_title\nFROM job.cast_info AS ci,\n     job.info_type AS it1,\n     job.info_type AS it2,\n     job.movie_info AS mi,\n     job.movie_info_idx AS mi_idx,\n     job.name AS n,\n     job.title AS t\nWHERE ci.note IN ('(writer)',\n                  '(head writer)',\n                  '(written by)',\n                  '(story)',\n                  '(story editor)')\n  AND it1.info = 'genres'\n  AND it2.info = 'votes'\n  AND mi.info IN ('Horror',\n                  'Action',\n                  'Sci-Fi',\n                  'Thriller',\n                  'Crime',\n                  'War')\n  AND n.gender = 'm'\n  AND t.id = mi.movie_id\n  AND t.id = mi_idx.movie_id\n  AND t.id = ci.movie_id\n  AND ci.movie_id = mi.movie_id\n  AND ci.movie_id = mi_idx.movie_id\n  AND mi.movie_id = mi_idx.movie_id\n  AND n.id = ci.person_id\n  AND it1.id = mi.info_type_id\n  AND it2.id = mi_idx.info_type_id;\n",
+      "startTime": "2026-06-30T12:19:06.506342Z",
+      "status": "OK",
+      "timeMs": 110.924
+    }
+  ],
+  "runtime": {
+    "avgMs": 110.924,
+    "bestMs": 110.924,
+    "maxMs": 110.924,
+    "minMs": 110.924,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 18C Analysis",
+    "displayName": "JOB-18C",
+    "name": "PLAN-JOB-18C",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "v2026-06-23"
+}

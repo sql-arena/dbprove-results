@@ -1,0 +1,121 @@
+{
+  "config": "M5 Macbook Pro",
+  "engine": "CedarDB",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 2,
+          ">16x": 0
+        },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 2,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 1,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 2,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 6,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 1,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 60320,
+        "distribute": 0,
+        "hash": 31762,
+        "join": 838515,
+        "scan": 840161,
+        "seek": 0,
+        "sort": 1225
+      },
+      "plan": "Estimate    Actual  Operator\n    7503      1225  SORT SUM() 33\n    7503      1225  INNER JOIN LOOP ON SUM() 33 > SUM() * 1\n       1         1  │└AGGREGATE sum\n   32316     30160  │ INNER JOIN HASH ON ps_suppkey = s_suppkey\n     399       377  │ │└INNER JOIN HASH ON s_nationkey = n_nationkey\n       1         1  │ │ │└TABLE SCAN nation WHERE n_name = JAPAN\n   10000     10000  │ │ TABLE SCAN supplier\n  800000    800000  │ TABLE SCAN partsupp\n   29084     28515  AGGREGATE sum GROUP BY HASH ps_partkey29\n   32316     30160  TABLE SCAN  < temp > \n",
+      "sql": "/* TPC-H Q11 */\nSELECT ps_partkey,\n       SUM(ps_supplycost * ps_availqty) AS v\nFROM tpch_sf1.partsupp\nINNER JOIN tpch_sf1.supplier\n    ON ps_suppkey = s_suppkey\nINNER JOIN tpch_sf1.nation\n    ON s_nationkey = n_nationkey\nWHERE n_name = 'JAPAN'\nGROUP BY ps_partkey\nHAVING SUM(ps_supplycost * ps_availqty)\n           > (SELECT SUM(ps_supplycost * ps_availqty) * 0.0001\n              FROM tpch_sf1.partsupp\n              INNER JOIN tpch_sf1.supplier\n                  ON ps_suppkey = s_suppkey\n              INNER JOIN tpch_sf1.nation\n                  ON s_nationkey = n_nationkey\n              WHERE n_name = 'JAPAN')\nORDER BY v DESC\n",
+      "startTime": "2026-06-30T12:19:27.927082Z",
+      "status": "OK",
+      "timeMs": 8.069
+    }
+  ],
+  "runtime": {
+    "avgMs": 8.069,
+    "bestMs": 8.069,
+    "maxMs": 8.069,
+    "minMs": 8.069,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "TPC-H Q11 Analysis",
+    "displayName": "TPCH-Q11",
+    "name": "PLAN-TPC-H-Q11",
+    "tags": [
+      "TPC-H"
+    ]
+  },
+  "version": "v2026-06-23"
+}

@@ -1,0 +1,122 @@
+{
+  "config": "M5 Macbook Pro",
+  "engine": "CedarDB",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 1,
+          "-8x": 0,
+          "<16x": 5,
+          "=": 5,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 2,
+          "-8x": 1,
+          "<16x": 8,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 8,
+          ">16x": 5
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 93,
+        "distribute": 0,
+        "hash": 22547,
+        "join": 8693143,
+        "scan": 8692263,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE min, min, min\n       1        93  INNER JOIN HASH ON id83 = person_id\n       1        93  │└INNER JOIN HASH ON id73 = person_role_id\n       5       893  │ │└INNER JOIN HASH ON id41 = movie_id65\n       1         6  │ │ │└INNER JOIN HASH ON id = status_id\n       2         2  │ │ │ │└TABLE SCAN comp_cast_type\n       1         6  │ │ │ INNER JOIN HASH ON id6 = subject_id\n       1         1  │ │ │ │└TABLE SCAN comp_cast_type WHERE kind = cast\n       1        10  │ │ │ INNER JOIN HASH ON movie_id57 = id41\n       1        31  │ │ │ │└INNER JOIN HASH ON id11 = kind_id\n       1         1  │ │ │ │ │└TABLE SCAN kind_type WHERE kind = movie\n       2        42  │ │ │ │ INNER JOIN HASH ON id41 = movie_id34\n       5       313  │ │ │ │ │└INNER JOIN HASH ON id16 = info_type_id\n       1         1  │ │ │ │ │ │└TABLE SCAN info_type WHERE info = rating\n      11       313  │ │ │ │ │ INNER JOIN HASH ON movie_id = movie_id34\n     129      9984  │ │ │ │ │ │└INNER JOIN HASH ON id21 = keyword_id\n       4         4  │ │ │ │ │ │ │└TABLE SCAN keyword\n 4523930   4523930  │ │ │ │ │ │ TABLE SCAN movie_keyword\n   53907       287  │ │ │ │ │ TABLE SCAN movie_info_idx WHERE info > 8.0\n 1049348        31  │ │ │ │ TABLE SCAN title WHERE production_year >= 2006\n  135086         6  │ │ │ TABLE SCAN complete_cast\n17485064       471  │ │ TABLE SCAN cast_info\n  196271        38  │ TABLE SCAN char_name\n 4167491   4167491  TABLE SCAN name\n",
+      "sql": "SELECT MIN(chn.name) AS character_name,\n       MIN(mi_idx.info) AS rating,\n       MIN(t.title) AS complete_hero_movie\nFROM job.complete_cast AS cc,\n     job.comp_cast_type AS cct1,\n     job.comp_cast_type AS cct2,\n     job.char_name AS chn,\n     job.cast_info AS ci,\n     job.info_type AS it2,\n     job.keyword AS k,\n     job.kind_type AS kt,\n     job.movie_info_idx AS mi_idx,\n     job.movie_keyword AS mk,\n     job.name AS n,\n     job.title AS t\nWHERE cct1.kind = 'cast'\n  AND cct2.kind LIKE '%complete%'\n  AND chn.name IS NOT NULL\n  AND (chn.name LIKE '%man%'\n       OR chn.name LIKE '%Man%')\n  AND it2.info = 'rating'\n  AND k.keyword IN ('superhero',\n                    'marvel-comics',\n                    'based-on-comic',\n                    'fight')\n  AND kt.kind = 'movie'\n  AND mi_idx.info > '8.0'\n  AND t.production_year > 2005\n  AND kt.id = t.kind_id\n  AND t.id = mk.movie_id\n  AND t.id = ci.movie_id\n  AND t.id = cc.movie_id\n  AND t.id = mi_idx.movie_id\n  AND mk.movie_id = ci.movie_id\n  AND mk.movie_id = cc.movie_id\n  AND mk.movie_id = mi_idx.movie_id\n  AND ci.movie_id = cc.movie_id\n  AND ci.movie_id = mi_idx.movie_id\n  AND cc.movie_id = mi_idx.movie_id\n  AND chn.id = ci.person_role_id\n  AND n.id = ci.person_id\n  AND k.id = mk.keyword_id\n  AND cct1.id = cc.subject_id\n  AND cct2.id = cc.status_id\n  AND it2.id = mi_idx.info_type_id;\n",
+      "startTime": "2026-06-30T12:19:08.192414Z",
+      "status": "OK",
+      "timeMs": 44.756
+    }
+  ],
+  "runtime": {
+    "avgMs": 44.756,
+    "bestMs": 44.756,
+    "maxMs": 44.756,
+    "minMs": 44.756,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 26B Analysis",
+    "displayName": "JOB-26B",
+    "name": "PLAN-JOB-26B",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "v2026-06-23"
+}

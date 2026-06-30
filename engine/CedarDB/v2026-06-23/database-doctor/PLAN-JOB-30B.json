@@ -1,0 +1,122 @@
+{
+  "config": "M5 Macbook Pro",
+  "engine": "CedarDB",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 1,
+          "+4x": 2,
+          "+8x": 1,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 1,
+          "=": 6,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 3,
+          "+8x": 2,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 3,
+          "=": 2,
+          ">16x": 1
+        },
+        "scan": {
+          "+2x": 1,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 7,
+          ">16x": 5
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 28,
+        "distribute": 0,
+        "hash": 2714,
+        "join": 5904053,
+        "scan": 5904523,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE min, min, min, min\n       1        28  INNER JOIN HASH ON id = info_type_id\n       1         1  │└TABLE SCAN info_type WHERE info = genres\n       1        28  INNER JOIN HASH ON id87 = keyword_id\n      10      1060  │└INNER JOIN HASH ON movie_id52 = movie_id82\n       6         7  │ │└INNER JOIN HASH ON id69 = person_id\n      12         7  │ │ │└INNER JOIN HASH ON movie_id61 = movie_id52\n      18         3  │ │ │ │└INNER JOIN HASH ON id6 = info_type_id53\n       1         1  │ │ │ │ │└TABLE SCAN info_type WHERE info = votes\n      42         9  │ │ │ │ INNER JOIN HASH ON movie_id52 = movie_id\n      18         3  │ │ │ │ │└INNER JOIN HASH ON movie_id44 = movie_id\n      16         2  │ │ │ │ │ │└INNER JOIN HASH ON id11 = subject_id\n       2         2  │ │ │ │ │ │ │└TABLE SCAN comp_cast_type\n      19         2  │ │ │ │ │ │ INNER JOIN HASH ON id16 = status_id\n       1         1  │ │ │ │ │ │ │└TABLE SCAN comp_cast_type WHERE kind = complete + verified\n      75         2  │ │ │ │ │ │ INNER JOIN HASH ON id21 = movie_id\n    1330       533  │ │ │ │ │ │ │└TABLE SCAN title WHERE production_year >= 2001\n  135086         2  │ │ │ │ │ │ TABLE SCAN complete_cast\n  144880         3  │ │ │ │ │ TABLE SCAN movie_info\n 1380035   1380035  │ │ │ │ TABLE SCAN movie_info_idx\n 1274215         5  │ │ │ TABLE SCAN cast_info WHERE note BETWEEN (head writer) AND (written by)\n 1778509         4  │ │ TABLE SCAN name WHERE gender = m\n 4523930   4523930  │ TABLE SCAN movie_keyword\n     131         6  TABLE SCAN keyword WHERE keyword BETWEEN blood AND violence\n",
+      "sql": "SELECT MIN(mi.info) AS movie_budget,\n       MIN(mi_idx.info) AS movie_votes,\n       MIN(n.name) AS writer,\n       MIN(t.title) AS complete_gore_movie\nFROM job.complete_cast AS cc,\n     job.comp_cast_type AS cct1,\n     job.comp_cast_type AS cct2,\n     job.cast_info AS ci,\n     job.info_type AS it1,\n     job.info_type AS it2,\n     job.keyword AS k,\n     job.movie_info AS mi,\n     job.movie_info_idx AS mi_idx,\n     job.movie_keyword AS mk,\n     job.name AS n,\n     job.title AS t\nWHERE cct1.kind IN ('cast',\n                    'crew')\n  AND cct2.kind ='complete+verified'\n  AND ci.note IN ('(writer)',\n                  '(head writer)',\n                  '(written by)',\n                  '(story)',\n                  '(story editor)')\n  AND it1.info = 'genres'\n  AND it2.info = 'votes'\n  AND k.keyword IN ('murder',\n                    'violence',\n                    'blood',\n                    'gore',\n                    'death',\n                    'female-nudity',\n                    'hospital')\n  AND mi.info IN ('Horror',\n                  'Thriller')\n  AND n.gender = 'm'\n  AND t.production_year > 2000\n  AND (t.title LIKE '%Freddy%'\n       OR t.title LIKE '%Jason%'\n       OR t.title LIKE 'Saw%')\n  AND t.id = mi.movie_id\n  AND t.id = mi_idx.movie_id\n  AND t.id = ci.movie_id\n  AND t.id = mk.movie_id\n  AND t.id = cc.movie_id\n  AND ci.movie_id = mi.movie_id\n  AND ci.movie_id = mi_idx.movie_id\n  AND ci.movie_id = mk.movie_id\n  AND ci.movie_id = cc.movie_id\n  AND mi.movie_id = mi_idx.movie_id\n  AND mi.movie_id = mk.movie_id\n  AND mi.movie_id = cc.movie_id\n  AND mi_idx.movie_id = mk.movie_id\n  AND mi_idx.movie_id = cc.movie_id\n  AND mk.movie_id = cc.movie_id\n  AND n.id = ci.person_id\n  AND it1.id = mi.info_type_id\n  AND it2.id = mi_idx.info_type_id\n  AND k.id = mk.keyword_id\n  AND cct1.id = cc.subject_id\n  AND cct2.id = cc.status_id;\n",
+      "startTime": "2026-06-30T12:19:08.955520Z",
+      "status": "OK",
+      "timeMs": 48.929
+    }
+  ],
+  "runtime": {
+    "avgMs": 48.929,
+    "bestMs": 48.929,
+    "maxMs": 48.929,
+    "minMs": 48.929,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 30B Analysis",
+    "displayName": "JOB-30B",
+    "name": "PLAN-JOB-30B",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "v2026-06-23"
+}

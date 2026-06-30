@@ -1,0 +1,122 @@
+{
+  "config": "M5 Macbook Pro",
+  "engine": "CedarDB",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 1,
+          "<16x": 2,
+          "=": 5,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 2,
+          "-8x": 3,
+          "<16x": 3,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 10,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 670390,
+        "distribute": 0,
+        "hash": 20991626,
+        "join": 43656929,
+        "scan": 21438043,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE min, min, min\n  121829    670390  INNER JOIN HASH ON id = company_type_id\n       1         1  │└TABLE SCAN company_type WHERE kind = production companies\n  259200   2131169  INNER JOIN HASH ON id6 = company_id\n   90648     84843  │└TABLE SCAN company_name WHERE country_code = us\n  706200   8123586  INNER JOIN HASH ON movie_id63 = id39\n   61930    724731  │└INNER JOIN HASH ON id16 = info_type_id56\n       1         1  │ │└TABLE SCAN info_type WHERE info = rating\n  286839   2184715  │ INNER JOIN HASH ON movie_id55 = id39\n   38656   1083597  │ │└INNER JOIN HASH ON id21 = kind_id\n       1         1  │ │ │└TABLE SCAN kind_type WHERE kind = movie\n  153502   3036719  │ │ INNER JOIN HASH ON movie_id = id39\n  131290   3036719  │ │ │└INNER JOIN HASH ON id26 = info_type_id\n       1         1  │ │ │ │└TABLE SCAN info_type WHERE info = release dates\n14835720  14835720  │ │ │ TABLE SCAN movie_info\n 2528312   2528312  │ │ TABLE SCAN title\n 1380035   1380035  │ TABLE SCAN movie_info_idx\n 2609129   2609129  TABLE SCAN movie_companies\n",
+      "sql": "SELECT MIN(cn.name) AS producing_company,\n       MIN(miidx.info) AS rating,\n       MIN(t.title) AS movie\nFROM job.company_name AS cn,\n     job.company_type AS ct,\n     job.info_type AS it,\n     job.info_type AS it2,\n     job.kind_type AS kt,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.movie_info_idx AS miidx,\n     job.title AS t\nWHERE cn.country_code ='[us]'\n  AND ct.kind ='production companies'\n  AND it.info ='rating'\n  AND it2.info ='release dates'\n  AND kt.kind ='movie'\n  AND mi.movie_id = t.id\n  AND it2.id = mi.info_type_id\n  AND kt.id = t.kind_id\n  AND mc.movie_id = t.id\n  AND cn.id = mc.company_id\n  AND ct.id = mc.company_type_id\n  AND miidx.movie_id = t.id\n  AND it.id = miidx.info_type_id\n  AND mi.movie_id = miidx.movie_id\n  AND mi.movie_id = mc.movie_id\n  AND miidx.movie_id = mc.movie_id;\n",
+      "startTime": "2026-06-30T12:19:04.625432Z",
+      "status": "OK",
+      "timeMs": 139.734
+    }
+  ],
+  "runtime": {
+    "avgMs": 139.734,
+    "bestMs": 139.734,
+    "maxMs": 139.734,
+    "minMs": 139.734,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 13D Analysis",
+    "displayName": "JOB-13D",
+    "name": "PLAN-JOB-13D",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "v2026-06-23"
+}

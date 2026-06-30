@@ -1,0 +1,122 @@
+{
+  "config": "M5 Macbook Pro",
+  "engine": "CedarDB",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 5,
+          "=": 3,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 8,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 6,
+          ">16x": 4
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 1874,
+        "distribute": 0,
+        "hash": 25804,
+        "join": 4558116,
+        "scan": 4554107,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE min, min, min\n       1      1874  INNER JOIN HASH ON movie_id46 = movie_id64\n       1       402  │└INNER JOIN HASH ON company_type_id = id\n       1         1  │ │└TABLE SCAN company_type WHERE kind = production companies\n       1       422  │ INNER JOIN HASH ON company_id = id53\n       1      1021  │ │└INNER JOIN HASH ON id30 = movie_id46\n       1       199  │ │ │└INNER JOIN HASH ON id30 = movie_id\n       1       199  │ │ │ │└INNER JOIN HASH ON id6 = link_type_id\n       2         2  │ │ │ │ │└TABLE SCAN link_type\n       2       251  │ │ │ │ INNER JOIN HASH ON movie_id24 = movie_id\n      32     10544  │ │ │ │ │└INNER JOIN HASH ON keyword_id = id11\n       1         1  │ │ │ │ │ │└TABLE SCAN keyword WHERE keyword = sequel\n 4523930   4523930  │ │ │ │ │ TABLE SCAN movie_keyword\n   29997     29997  │ │ │ │ TABLE SCAN movie_link\n 1923393        29  │ │ │ TABLE SCAN title WHERE production_year BETWEEN 1950 AND 2010\n 1203251        91  │ │ TABLE SCAN movie_companies WHERE note IS NULL\n   51405        13  │ TABLE SCAN company_name\n  898256        43  TABLE SCAN movie_info WHERE info BETWEEN Denish AND Swedish\n",
+      "sql": "SELECT MIN(cn.name) AS company_name,\n       MIN(lt.link) AS link_type,\n       MIN(t.title) AS western_follow_up\nFROM job.company_name AS cn,\n     job.company_type AS ct,\n     job.keyword AS k,\n     job.link_type AS lt,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.movie_keyword AS mk,\n     job.movie_link AS ml,\n     job.title AS t\nWHERE cn.country_code !='[pl]'\n  AND (cn.name LIKE '%Film%'\n       OR cn.name LIKE '%Warner%')\n  AND ct.kind ='production companies'\n  AND k.keyword ='sequel'\n  AND lt.link LIKE '%follow%'\n  AND mc.note IS NULL\n  AND mi.info IN ('Sweden',\n                  'Norway',\n                  'Germany',\n                  'Denmark',\n                  'Swedish',\n                  'Denish',\n                  'Norwegian',\n                  'German',\n                  'English')\n  AND t.production_year BETWEEN 1950 AND 2010\n  AND lt.id = ml.link_type_id\n  AND ml.movie_id = t.id\n  AND t.id = mk.movie_id\n  AND mk.keyword_id = k.id\n  AND t.id = mc.movie_id\n  AND mc.company_type_id = ct.id\n  AND mc.company_id = cn.id\n  AND mi.movie_id = t.id\n  AND ml.movie_id = mk.movie_id\n  AND ml.movie_id = mc.movie_id\n  AND mk.movie_id = mc.movie_id\n  AND ml.movie_id = mi.movie_id\n  AND mk.movie_id = mi.movie_id\n  AND mc.movie_id = mi.movie_id;\n",
+      "startTime": "2026-06-30T12:19:07.457090Z",
+      "status": "OK",
+      "timeMs": 18.291
+    }
+  ],
+  "runtime": {
+    "avgMs": 18.291,
+    "bestMs": 18.291,
+    "maxMs": 18.291,
+    "minMs": 18.291,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 21C Analysis",
+    "displayName": "JOB-21C",
+    "name": "PLAN-JOB-21C",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "v2026-06-23"
+}

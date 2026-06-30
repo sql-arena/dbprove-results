@@ -1,0 +1,122 @@
+{
+  "config": "M5 Macbook Pro",
+  "engine": "CedarDB",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 5,
+          "=": 1,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 6,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 1,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 7,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 52306,
+        "distribute": 0,
+        "hash": 2275544,
+        "join": 46147354,
+        "scan": 46143968,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE min\n      16     52306  INNER JOIN HASH ON id53 = movie_id36\n      15     52306  │└INNER JOIN HASH ON company_id = id43\n      16     52306  │ │└INNER JOIN HASH ON movie_id15 = movie_id36\n       8      6642  │ │ │└INNER JOIN HASH ON id23 = person_id\n    1017   1038393  │ │ │ │└INNER JOIN HASH ON movie_id15 = movie_id\n      32     41840  │ │ │ │ │└INNER JOIN HASH ON keyword_id = id\n       1         1  │ │ │ │ │ │└TABLE SCAN keyword WHERE keyword = character - name - in - title\n 4523930   4523930  │ │ │ │ │ TABLE SCAN movie_keyword\n36244344  36244344  │ │ │ │ TABLE SCAN cast_info\n   28488      3255  │ │ │ TABLE SCAN name WHERE name) Z\n 2609129   2609129  │ │ TABLE SCAN movie_companies\n  234997    234997  │ TABLE SCAN company_name\n 2528312   2528312  TABLE SCAN title\n",
+      "sql": "SELECT MIN(n.name) AS member_in_charnamed_movie,\n       MIN(n.name) AS a1\nFROM job.cast_info AS ci,\n     job.company_name AS cn,\n     job.keyword AS k,\n     job.movie_companies AS mc,\n     job.movie_keyword AS mk,\n     job.name AS n,\n     job.title AS t\nWHERE k.keyword ='character-name-in-title'\n  AND n.name LIKE 'Z%'\n  AND n.id = ci.person_id\n  AND ci.movie_id = t.id\n  AND t.id = mk.movie_id\n  AND mk.keyword_id = k.id\n  AND t.id = mc.movie_id\n  AND mc.company_id = cn.id\n  AND ci.movie_id = mc.movie_id\n  AND ci.movie_id = mk.movie_id\n  AND mc.movie_id = mk.movie_id;\n",
+      "startTime": "2026-06-30T12:19:05.741719Z",
+      "status": "OK",
+      "timeMs": 89.85
+    }
+  ],
+  "runtime": {
+    "avgMs": 89.85,
+    "bestMs": 89.85,
+    "maxMs": 89.85,
+    "minMs": 89.85,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 17B Analysis",
+    "displayName": "JOB-17B",
+    "name": "PLAN-JOB-17B",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "v2026-06-23"
+}

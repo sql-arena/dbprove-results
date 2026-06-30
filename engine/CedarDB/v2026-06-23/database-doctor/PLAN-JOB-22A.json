@@ -1,0 +1,122 @@
+{
+  "config": "M5 Macbook Pro",
+  "engine": "CedarDB",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 5,
+          "=": 5,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 10,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 7,
+          ">16x": 5
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 2851,
+        "distribute": 0,
+        "hash": 100524,
+        "join": 4552109,
+        "scan": 4532756,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE min, min, min\n       3      2851  INNER JOIN HASH ON id = company_type_id\n       4         4  │└TABLE SCAN company_type\n       1      2851  INNER JOIN HASH ON id72 = company_id\n       1      3223  │└INNER JOIN HASH ON movie_id65 = movie_id57\n       2      1507  │ │└INNER JOIN HASH ON id6 = info_type_id58\n       1         1  │ │ │└TABLE SCAN info_type WHERE info = rating\n       2      1507  │ │ INNER JOIN HASH ON id33 = movie_id57\n       3      2937  │ │ │└INNER JOIN HASH ON id11 = info_type_id\n       1         1  │ │ │ │└TABLE SCAN info_type WHERE info = countries\n       3      3106  │ │ │ INNER JOIN HASH ON id33 = movie_id49\n      11      4832  │ │ │ │└INNER JOIN HASH ON id16 = kind_id\n       2         2  │ │ │ │ │└TABLE SCAN kind_type\n      34      5014  │ │ │ │ INNER JOIN HASH ON id33 = movie_id\n     129     37091  │ │ │ │ │└INNER JOIN HASH ON id21 = keyword_id\n       4         3  │ │ │ │ │ │└TABLE SCAN keyword\n 4523930   4523930  │ │ │ │ │ TABLE SCAN movie_keyword\n  639485      3694  │ │ │ │ TABLE SCAN title WHERE production_year >= 2009\n  565032      2216  │ │ │ TABLE SCAN movie_info\n 1180576       948  │ │ TABLE SCAN movie_info_idx WHERE info < 7.0\n  248981      1470  │ TABLE SCAN movie_companies\n  120711       487  TABLE SCAN company_name\n",
+      "sql": "SELECT MIN(cn.name) AS movie_company,\n       MIN(mi_idx.info) AS rating,\n       MIN(t.title) AS western_violent_movie\nFROM job.company_name AS cn,\n     job.company_type AS ct,\n     job.info_type AS it1,\n     job.info_type AS it2,\n     job.keyword AS k,\n     job.kind_type AS kt,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.movie_info_idx AS mi_idx,\n     job.movie_keyword AS mk,\n     job.title AS t\nWHERE cn.country_code != '[us]'\n  AND it1.info = 'countries'\n  AND it2.info = 'rating'\n  AND k.keyword IN ('murder',\n                    'murder-in-title',\n                    'blood',\n                    'violence')\n  AND kt.kind IN ('movie',\n                  'episode')\n  AND mc.note NOT LIKE '%(USA)%'\n  AND mc.note LIKE '%(200%)%'\n  AND mi.info IN ('Germany',\n                  'German',\n                  'USA',\n                  'American')\n  AND mi_idx.info < '7.0'\n  AND t.production_year > 2008\n  AND kt.id = t.kind_id\n  AND t.id = mi.movie_id\n  AND t.id = mk.movie_id\n  AND t.id = mi_idx.movie_id\n  AND t.id = mc.movie_id\n  AND mk.movie_id = mi.movie_id\n  AND mk.movie_id = mi_idx.movie_id\n  AND mk.movie_id = mc.movie_id\n  AND mi.movie_id = mi_idx.movie_id\n  AND mi.movie_id = mc.movie_id\n  AND mc.movie_id = mi_idx.movie_id\n  AND k.id = mk.keyword_id\n  AND it1.id = mi.info_type_id\n  AND it2.id = mi_idx.info_type_id\n  AND ct.id = mc.company_type_id\n  AND cn.id = mc.company_id;\n",
+      "startTime": "2026-06-30T12:19:07.484343Z",
+      "status": "OK",
+      "timeMs": 23.997
+    }
+  ],
+  "runtime": {
+    "avgMs": 23.997,
+    "bestMs": 23.997,
+    "maxMs": 23.997,
+    "minMs": 23.997,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 22A Analysis",
+    "displayName": "JOB-22A",
+    "name": "PLAN-JOB-22A",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "v2026-06-23"
+}

@@ -1,0 +1,121 @@
+{
+  "config": "M5 Macbook Pro",
+  "engine": "CedarDB",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 1
+        },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 1
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 3
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 3
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 5,
+          ">16x": 1
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 1
+        }
+      },
+      "operatorRows": {
+        "aggregate": 6001278,
+        "distribute": 0,
+        "hash": 81,
+        "join": 7651215,
+        "scan": 13652430,
+        "seek": 0,
+        "sort": 9
+      },
+      "plan": "Estimate    Actual  Operator\n   29943         9  SORT o_totalprice68, o_orderdate67\n   29943         9  AGGREGATE sum GROUP BY HASH c_name, c_custkey, o_orderkey, o_orderdate, o_totalprice\n   33270        63  INNER JOIN HASH ON o_orderkey = l_orderkey45\n    6892         9  │└INNER JOIN HASH ON o_custkey = c_custkey\n    6892         9  │ │└INNER JOIN HASH ON o_orderkey = l_orderkey20\n   28189         9  │ │ │└FILTER \n 1472074   1500000  │ │ │ AGGREGATE sum GROUP BY HASH l_orderkey\n 6001215   6001215  │ │ │ TABLE SCAN lineitem\n 1500000   1500000  │ │ TABLE SCAN orders\n  150000    150000  │ TABLE SCAN customer\n 6001215   6001215  TABLE SCAN lineitem\n",
+      "sql": "/* TPC-H Q18 */\nSELECT c_name,\n       c_custkey,\n       o_orderkey,\n       o_orderdate,\n       o_totalprice,\n       SUM(l_quantity)\nFROM tpch_sf1.lineitem\nINNER JOIN tpch_sf1.orders\n    ON l_orderkey = o_orderkey\nINNER JOIN tpch_sf1.customer\n    ON o_custkey = c_custkey\nWHERE o_orderkey IN (SELECT l_orderkey\n                     FROM tpch_sf1.lineitem\n                     GROUP BY l_orderkey\n                     HAVING SUM(l_quantity) > 314)\nGROUP BY c_name,\n         c_custkey,\n         o_orderkey,\n         o_orderdate,\n         o_totalprice\nORDER BY o_totalprice DESC,\n         o_orderdate",
+      "startTime": "2026-06-30T12:19:28.072267Z",
+      "status": "OK",
+      "timeMs": 50.171
+    }
+  ],
+  "runtime": {
+    "avgMs": 50.171,
+    "bestMs": 50.171,
+    "maxMs": 50.171,
+    "minMs": 50.171,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "TPC-H Q18 Analysis",
+    "displayName": "TPCH-Q18",
+    "name": "PLAN-TPC-H-Q18",
+    "tags": [
+      "TPC-H"
+    ]
+  },
+  "version": "v2026-06-23"
+}

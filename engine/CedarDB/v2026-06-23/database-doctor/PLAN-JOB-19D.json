@@ -1,0 +1,122 @@
+{
+  "config": "M5 Macbook Pro",
+  "engine": "CedarDB",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 6,
+          "=": 2,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 8,
+          "=": 0,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 8,
+          ">16x": 3
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 1760645,
+        "distribute": 0,
+        "hash": 13347883,
+        "join": 28430665,
+        "scan": 22357952,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE min, min\n     161   1760645  INNER JOIN HASH ON id29 = person_id85\n     636    787043  │└INNER JOIN HASH ON id74 = company_id\n     658   3229056  │ │└INNER JOIN HASH ON id41 = movie_id67\n     552    341836  │ │ │└INNER JOIN HASH ON id56 = person_role_id\n     578    341836  │ │ │ │└INNER JOIN HASH ON id41 = movie_id22\n    1994    498048  │ │ │ │ │└INNER JOIN HASH ON id29 = person_id\n    8058    498436  │ │ │ │ │ │└INNER JOIN HASH ON movie_id22 = movie_id\n   74487    255651  │ │ │ │ │ │ │└INNER JOIN HASH ON id = role_id\n       1         1  │ │ │ │ │ │ │ │└TABLE SCAN role_type WHERE role = actress\n  707897    801259  │ │ │ │ │ │ │ TABLE SCAN cast_info\n  131290   3036719  │ │ │ │ │ │ INNER JOIN HASH ON id16 = info_type_id\n       1         1  │ │ │ │ │ │ │└TABLE SCAN info_type WHERE info = release dates\n14835720  14835720  │ │ │ │ │ │ TABLE SCAN movie_info\n  931987     23428  │ │ │ │ │ TABLE SCAN name WHERE gender = f\n 1402423     42260  │ │ │ │ TABLE SCAN title WHERE production_year >= 2001\n 3140339   3140339  │ │ │ TABLE SCAN char_name\n 2609129   2609129  │ │ TABLE SCAN movie_companies\n   90648      4472  │ TABLE SCAN company_name WHERE country_code = us\n  901343    901343  TABLE SCAN aka_name\n",
+      "sql": "SELECT MIN(n.name) AS voicing_actress,\n       MIN(t.title) AS jap_engl_voiced_movie\nFROM job.aka_name AS an,\n     job.char_name AS chn,\n     job.cast_info AS ci,\n     job.company_name AS cn,\n     job.info_type AS it,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.name AS n,\n     job.role_type AS rt,\n     job.title AS t\nWHERE ci.note IN ('(voice)',\n                  '(voice: Japanese version)',\n                  '(voice) (uncredited)',\n                  '(voice: English version)')\n  AND cn.country_code ='[us]'\n  AND it.info = 'release dates'\n  AND n.gender ='f'\n  AND rt.role ='actress'\n  AND t.production_year > 2000\n  AND t.id = mi.movie_id\n  AND t.id = mc.movie_id\n  AND t.id = ci.movie_id\n  AND mc.movie_id = ci.movie_id\n  AND mc.movie_id = mi.movie_id\n  AND mi.movie_id = ci.movie_id\n  AND cn.id = mc.company_id\n  AND it.id = mi.info_type_id\n  AND n.id = ci.person_id\n  AND rt.id = ci.role_id\n  AND n.id = an.person_id\n  AND ci.person_id = an.person_id\n  AND chn.id = ci.person_role_id;\n",
+      "startTime": "2026-06-30T12:19:06.832543Z",
+      "status": "OK",
+      "timeMs": 256.518
+    }
+  ],
+  "runtime": {
+    "avgMs": 256.518,
+    "bestMs": 256.518,
+    "maxMs": 256.518,
+    "minMs": 256.518,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 19D Analysis",
+    "displayName": "JOB-19D",
+    "name": "PLAN-JOB-19D",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "v2026-06-23"
+}

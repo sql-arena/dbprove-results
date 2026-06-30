@@ -1,0 +1,122 @@
+{
+  "config": "M5 Macbook Pro",
+  "engine": "CedarDB",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 2,
+          "+4x": 0,
+          "+8x": 1,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 1
+        },
+        "join": {
+          "+2x": 2,
+          "+4x": 0,
+          "+8x": 1,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 2
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 4,
+          ">16x": 3
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 0,
+        "distribute": 0,
+        "hash": 2,
+        "join": 4553927,
+        "scan": 4553928,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE min, min, min\n      55         0  INNER JOIN HASH ON id40 = movie_id\n       9         0  │└INNER JOIN HASH ON linked_movie_id = id25\n       2         0  │ │└INNER JOIN HASH ON id20 = link_type_id\n       2         0  │ │ │└INNER JOIN HASH ON movie_id = movie_id14\n      32         1  │ │ │ │└INNER JOIN HASH ON keyword_id = id\n       1         1  │ │ │ │ │└TABLE SCAN keyword WHERE keyword = 10,000 - mile - club\n 4523930   4523930  │ │ │ │ TABLE SCAN movie_keyword\n   29997     29997  │ │ │ TABLE SCAN movie_link\n      18         0  │ │ TABLE SCAN link_type\n 2528312         0  │ TABLE SCAN title\n 2528312         0  TABLE SCAN title\n",
+      "sql": "SELECT MIN(lt.link) AS link_type,\n       MIN(t1.title) AS first_movie,\n       MIN(t2.title) AS second_movie\nFROM job.keyword AS k,\n     job.link_type AS lt,\n     job.movie_keyword AS mk,\n     job.movie_link AS ml,\n     job.title AS t1,\n     job.title AS t2\nWHERE k.keyword ='10,000-mile-club'\n  AND mk.keyword_id = k.id\n  AND t1.id = mk.movie_id\n  AND ml.movie_id = t1.id\n  AND ml.linked_movie_id = t2.id\n  AND lt.id = ml.link_type_id\n  AND mk.movie_id = t1.id;\n",
+      "startTime": "2026-06-30T12:19:09.340117Z",
+      "status": "OK",
+      "timeMs": 12.909
+    }
+  ],
+  "runtime": {
+    "avgMs": 12.909,
+    "bestMs": 12.909,
+    "maxMs": 12.909,
+    "minMs": 12.909,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "Join Order Benchmark 32A Analysis",
+    "displayName": "JOB-32A",
+    "name": "PLAN-JOB-32A",
+    "tags": [
+      "IMDB",
+      "JOB"
+    ]
+  },
+  "version": "v2026-06-23"
+}

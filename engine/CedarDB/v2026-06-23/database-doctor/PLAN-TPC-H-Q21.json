@@ -1,0 +1,121 @@
+{
+  "config": "M5 Macbook Pro",
+  "engine": "CedarDB",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 4,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 4,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 6,
+          ">16x": 1
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 3935,
+        "distribute": 0,
+        "hash": 322016,
+        "join": 9937133,
+        "scan": 9937134,
+        "seek": 0,
+        "sort": 396
+      },
+      "plan": "Estimate    Actual  Operator\n     402       396  SORT count_star *, s_name87\n     402       396  AGGREGATE countstar GROUP BY HASH s_name\n    3298      3935  LEFT SEMI JOIN HASH ON l_orderkey68 = l_orderkey AND l_suppkey70 <> l_suppkey\n    3317      6582  │└INNER JOIN HASH ON l_orderkey = o_orderkey\n    6125     13450  │ │└LEFT ANTI JOIN HASH ON l_orderkey37 = l_orderkey AND l_suppkey39 <> l_suppkey\n  150674    150794  │ │ │└INNER JOIN HASH ON l_suppkey = s_suppkey\n     402       396  │ │ │ │└INNER JOIN HASH ON s_nationkey = n_nationkey\n       1         1  │ │ │ │ │└TABLE SCAN nation WHERE n_name = GERMANY\n   10000     10000  │ │ │ │ TABLE SCAN supplier\n 3709735   2028506  │ │ │ TABLE SCAN lineitem\n 3709735   1890830  │ │ TABLE SCAN lineitem\n  744140      6582  │ TABLE SCAN orders WHERE o_orderstatus = F\n 6001215   6001215  TABLE SCAN lineitem\n",
+      "sql": "/* TPC-H Q21 */\nSELECT s_name, COUNT(*) AS numwait\nFROM tpch_sf1.lineitem l1\nINNER JOIN tpch_sf1.orders\n    ON l1.l_orderkey = o_orderkey\nINNER JOIN tpch_sf1.supplier\n    ON l1.l_suppkey = s_suppkey\nINNER JOIN tpch_sf1.nation\n    ON s_nationkey = n_nationkey\nWHERE o_orderstatus = 'F'\n  AND l1.l_receiptdate > l1.l_commitdate\n  AND EXISTS (SELECT 1\n              FROM tpch_sf1.lineitem l2\n              WHERE l2.l_orderkey = l1.l_orderkey\n                AND l2.l_suppkey <> l1.l_suppkey)\n  AND NOT EXISTS (SELECT 1\n                  FROM tpch_sf1.lineitem l3\n                  WHERE l3.l_orderkey = l1.l_orderkey\n                    AND l3.l_suppkey <> l1.l_suppkey\n                    AND l3.l_receiptdate\n                      > l3.l_commitdate)\n  AND n_name = 'GERMANY'\nGROUP BY s_name\nORDER BY numwait DESC,\n         s_name\n",
+      "startTime": "2026-06-30T12:19:28.160179Z",
+      "status": "OK",
+      "timeMs": 63.302
+    }
+  ],
+  "runtime": {
+    "avgMs": 63.302,
+    "bestMs": 63.302,
+    "maxMs": 63.302,
+    "minMs": 63.302,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "TPC-H Q21 Analysis",
+    "displayName": "TPCH-Q21",
+    "name": "PLAN-TPC-H-Q21",
+    "tags": [
+      "TPC-H"
+    ]
+  },
+  "version": "v2026-06-23"
+}

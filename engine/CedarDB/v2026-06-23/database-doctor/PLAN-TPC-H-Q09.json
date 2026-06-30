@@ -1,0 +1,121 @@
+{
+  "config": "M5 Macbook Pro",
+  "engine": "CedarDB",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 5,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 1,
+          "=": 4,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 6,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 327148,
+        "distribute": 0,
+        "hash": 1035072,
+        "join": 8250039,
+        "scan": 7933823,
+        "seek": 0,
+        "sort": 175
+      },
+      "plan": "Estimate    Actual  Operator\n      84       175  SORT n_name69, o_year\n      84       175  AGGREGATE sum GROUP BY HASH n_name, EXTRACT(YEAR FROM o_orderdate)\n   19225    327148  INNER JOIN HASH ON l_suppkey = s_suppkey\n    9909     10000  │└INNER JOIN HASH ON s_nationkey = n_nationkey\n      25        25  │ │└TABLE SCAN nation\n   10000     10000  │ TABLE SCAN supplier\n  250075    327148  INNER JOIN HASH ON l_orderkey = o_orderkey\n  229095    327148  │└INNER JOIN HASH ON l_suppkey = ps_suppkey AND l_partkey = ps_partkey\n   23424     43628  │ │└INNER JOIN HASH ON p_partkey = ps_partkey\n    8984     10907  │ │ │└TABLE SCAN part\n  546373    411676  │ │ TABLE SCAN partsupp\n 4098631   6001215  │ TABLE SCAN lineitem\n 1500000   1500000  TABLE SCAN orders\n",
+      "sql": "/* TPC-H Q09 */\nSELECT nation,\n       o_year,\n       SUM(amount) AS sum_profit\nFROM (SELECT n_name                                                          AS nation,\n             EXTRACT(YEAR FROM o_orderdate)                                  AS o_year,\n             l_extendedprice * (1 - l_discount) - ps_supplycost * l_quantity AS amount\n      FROM tpch_sf1.lineitem\n      INNER JOIN tpch_sf1.orders\n          ON l_orderkey = o_orderkey\n      INNER JOIN tpch_sf1.partsupp\n          ON l_suppkey = ps_suppkey\n          AND l_partkey = ps_partkey\n      INNER JOIN tpch_sf1.part\n          ON l_partkey = p_partkey\n      INNER JOIN tpch_sf1.supplier\n          ON l_suppkey = s_suppkey\n      INNER JOIN tpch_sf1.nation\n          ON s_nationkey = n_nationkey\n      WHERE p_name LIKE '%lace%') AS profit\nGROUP BY nation,\n         o_year\nORDER BY nation,\n         o_year DESC",
+      "startTime": "2026-06-30T12:19:27.814156Z",
+      "status": "OK",
+      "timeMs": 46.056
+    }
+  ],
+  "runtime": {
+    "avgMs": 46.056,
+    "bestMs": 46.056,
+    "maxMs": 46.056,
+    "minMs": 46.056,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "TPC-H Q09 Analysis",
+    "displayName": "TPCH-Q09",
+    "name": "PLAN-TPC-H-Q09",
+    "tags": [
+      "TPC-H"
+    ]
+  },
+  "version": "v2026-06-23"
+}

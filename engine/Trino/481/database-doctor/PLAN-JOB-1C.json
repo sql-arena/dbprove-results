@@ -12,19 +12,30 @@
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
-          "=": 0,
+          "=": 1,
           ">16x": 0
         },
-        "filter": {
+        "distribute": {
           "+2x": 0,
-          "+4x": 2,
+          "+4x": 0,
           "+8x": 0,
-          "-2x": 0,
+          "-2x": 1,
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
           "=": 0,
-          ">16x": 2
+          ">16x": 3
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 3
         },
         "hash": {
           "+2x": 0,
@@ -35,7 +46,7 @@
           "-8x": 0,
           "<16x": 0,
           "=": 0,
-          ">16x": 0
+          ">16x": 2
         },
         "join": {
           "+2x": 0,
@@ -46,18 +57,18 @@
           "-8x": 0,
           "<16x": 0,
           "=": 0,
-          ">16x": 0
+          ">16x": 2
         },
         "scan": {
           "+2x": 0,
           "+4x": 0,
           "+8x": 0,
-          "-2x": 0,
+          "-2x": 1,
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
-          "=": 5,
-          ">16x": 0
+          "=": 1,
+          ">16x": 4
         },
         "sort": {
           "+2x": 0,
@@ -72,26 +83,26 @@
         }
       },
       "operatorRows": {
-        "aggregate": -1,
-        "distribute": -1,
-        "hash": -1,
-        "join": -1,
-        "scan": 6517593,
+        "aggregate": 19,
+        "distribute": 392183,
+        "hash": 392189,
+        "join": 773,
+        "scan": 392417,
         "seek": 0,
         "sort": 0
       },
-      "plan": "Estimate    Actual  Operator\n       1         ∞  PROJECT min AS production_note, min_19 AS movie_title, min_20 AS movie_year\n       1         ∞  AGGREGATE MIN(min_21) AS min, MIN(min_22) AS min_19, MIN(min_23) AS min_20\n       -         ∞  DISTRIBUTE GATHER\n       -         ∞  AGGREGATE MIN(note) AS min_21, MIN(title) AS min_22, MIN(production_year) AS min_23\n       -         ∞  INNER JOIN HASH ON movie_id = id_15\n  159035    391666  │└DISTRIBUTE HASH ON id_15\n 2528312    391666  │ PROJECT id AS id_15, title, production_year\n 2528312    391666  │ FILTER production_year > 2010\n 2528312   2528312  │ TABLE SCAN title\n       -         ∞  INNER JOIN HASH ON info_type_id = id_0\n       -         1  │└DISTRIBUTE GATHER\n     113         1  │ PROJECT id AS id_0\n     113         1  │ FILTER info = 'top 250 rank'\n     113       113  │ TABLE SCAN info_type\n       -         ∞  INNER JOIN HASH ON movie_id = movie_id_9\n 1380035   1380035  │└DISTRIBUTE HASH ON movie_id_9\n 1380035   1380035  │ PROJECT movie_id AS movie_id_9, info_type_id\n 1380035   1380035  │ TABLE SCAN movie_info_idx\n       -         ∞  INNER JOIN HASH ON id = company_type_id\n 2348216     17816  │└DISTRIBUTE HASH ON company_type_id\n 2609129     17816  │ FILTER  NOT (note LIKE '%(as Metro-Goldwyn-Mayer Pictures)%') AND (note LIKE '%(co-production)%')\n 2609129   2609129  │ TABLE SCAN movie_companies\n       4         1  FILTER kind = 'production companies'\n       4         4  TABLE SCAN company_type\n",
+      "plan": "Estimate    Actual  Operator\n       1         ∞  PROJECT min AS production_note, min_19 AS movie_title, min_20 AS movie_year\n       1         1  AGGREGATE MIN(min_21) AS min, MIN(min_22) AS min_19, MIN(min_23) AS min_20\n       -        16  DISTRIBUTE GATHER\n       -        16  AGGREGATE MIN(note) AS min_21, MIN(title) AS min_22, MIN(production_year) AS min_23\n       -         3  INNER JOIN HASH ON movie_id = id_15\n  159036    391666  │└DISTRIBUTE HASH ON id_15\n  159036    391666  │ PROJECT id AS id_15, title, production_year\n  159036    391666  │ FILTER production_year > 2010\n  159036    391666  │ TABLE SCAN title\n       -        23  INNER JOIN HASH ON info_type_id = id_0\n     113         1  │└DISTRIBUTE GATHER\n     113         1  │ PROJECT id AS id_0\n     113         1  │ FILTER info = 'top 250 rank'\n     113         1  │ TABLE SCAN info_type\n 1380035       250  INNER JOIN HASH ON movie_id = movie_id_9\n 1380035       250  │└DISTRIBUTE HASH ON movie_id_9\n 1380035       250  │ PROJECT movie_id AS movie_id_9, info_type_id\n 1380035       250  │ TABLE SCAN movie_info_idx\n 1380035       250  INNER JOIN HASH ON id = company_type_id\n 1380035       250  │└DISTRIBUTE HASH ON company_type_id\n 1380035       250  │ FILTER  NOT (note LIKE '%(as Metro-Goldwyn-Mayer Pictures)%') AND (note LIKE '%(co-production)%')\n 1380035       250  │ TABLE SCAN movie_companies\n 1380035       250  FILTER kind = 'production companies'\n 1380035       250  TABLE SCAN company_type\n",
       "sql": "SELECT MIN(mc.note) AS production_note,\n       MIN(t.title) AS movie_title,\n       MIN(t.production_year) AS movie_year\nFROM job.company_type AS ct,\n     job.info_type AS it,\n     job.movie_companies AS mc,\n     job.movie_info_idx AS mi_idx,\n     job.title AS t\nWHERE ct.kind = 'production companies'\n  AND it.info = 'top 250 rank'\n  AND mc.note NOT LIKE '%(as Metro-Goldwyn-Mayer Pictures)%'\n  AND (mc.note LIKE '%(co-production)%')\n  AND t.production_year >2010\n  AND ct.id = mc.company_type_id\n  AND t.id = mc.movie_id\n  AND t.id = mi_idx.movie_id\n  AND mc.movie_id = mi_idx.movie_id\n  AND it.id = mi_idx.info_type_id;\n",
-      "startTime": "2026-06-26T16:45:25.675173Z",
+      "startTime": "2026-06-30T11:21:06.831356Z",
       "status": "OK",
-      "timeMs": 259.615
+      "timeMs": 270.448
     }
   ],
   "runtime": {
-    "avgMs": 259.615,
-    "bestMs": 259.615,
-    "maxMs": 259.615,
-    "minMs": 259.615,
+    "avgMs": 270.448,
+    "bestMs": 270.448,
+    "maxMs": 270.448,
+    "minMs": 270.448,
     "stdDevMs": 0.0
   },
   "storageVariant": "iceberg",

@@ -15,6 +15,17 @@
           "=": 0,
           ">16x": 0
         },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 5,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
         "filter": {
           "+2x": 0,
           "+4x": 2,
@@ -28,7 +39,7 @@
         },
         "hash": {
           "+2x": 0,
-          "+4x": 0,
+          "+4x": 4,
           "+8x": 0,
           "-2x": 0,
           "-4x": 0,
@@ -39,7 +50,7 @@
         },
         "join": {
           "+2x": 0,
-          "+4x": 0,
+          "+4x": 4,
           "+8x": 0,
           "-2x": 0,
           "-4x": 0,
@@ -50,13 +61,13 @@
         },
         "scan": {
           "+2x": 0,
-          "+4x": 0,
+          "+4x": 6,
           "+8x": 0,
           "-2x": 0,
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
-          "=": 6,
+          "=": 0,
           ">16x": 0
         },
         "sort": {
@@ -72,26 +83,26 @@
         }
       },
       "operatorRows": {
-        "aggregate": 7408,
-        "distribute": 388668,
-        "hash": 1908421,
-        "join": 7902233,
-        "scan": 7661245,
+        "aggregate": 7413,
+        "distribute": 31,
+        "hash": 7423,
+        "join": 7423,
+        "scan": 26,
         "seek": 0,
         "sort": 5
       },
-      "plan": "Estimate    Actual  Operator\n       -         5  PROJECT n_name, sum AS revenue\n       -         5  SORT sum\n       -         5  AGGREGATE SUM(sum_15) AS sum GROUP BY HASH n_name\n       -         5  DISTRIBUTE HASH ON n_name\n       -         5  AGGREGATE SUM(expr) AS sum_15 GROUP BY PARTIAL n_name\n       -      7403  PROJECT l_extendedprice * (1 - l_discount) AS expr, n_name\n       -      7403  INNER JOIN HASH ON n_regionkey = r_regionkey\n       -         1  │└DISTRIBUTE GATHER\n       5         1  │ FILTER r_name = 'EUROPE'\n       5         5  │ TABLE SCAN region\n       -     36582  INNER JOIN HASH ON c_nationkey = n_nationkey\n      25        25  │└DISTRIBUTE GATHER\n      25        25  │ TABLE SCAN nation\n       -     36582  INNER JOIN HASH ON (l_suppkey = s_suppkey) AND (c_nationkey = s_nationkey)\n   10000     10000  │└DISTRIBUTE GATHER\n   10000     10000  │ TABLE SCAN supplier\n       -    913927  INNER JOIN HASH ON o_custkey = c_custkey\n  150000    150000  │└DISTRIBUTE GATHER\n  150000    150000  │ TABLE SCAN customer\n       -    913927  INNER JOIN HASH ON l_orderkey = o_orderkey\n  227650    228637  │└DISTRIBUTE HASH ON o_orderkey\n 1500000    228637  │ FILTER (o_orderdate >= '1995-01-01') AND (o_orderdate < '1996-01-01')\n 1500000   1500000  │ TABLE SCAN orders\n 6001215   6001215  TABLE SCAN lineitem\n",
+      "plan": "Estimate    Actual  Operator\n       -         5  PROJECT n_name, sum AS revenue\n       -         5  SORT sum\n       -         5  AGGREGATE SUM(sum_15) AS sum GROUP BY HASH n_name\n       -        10  DISTRIBUTE HASH ON n_name\n       -        10  AGGREGATE SUM(expr) AS sum_15 GROUP BY PARTIAL n_name\n       -      7403  PROJECT l_extendedprice * (1 - l_discount) AS expr, n_name\n       -      7403  INNER JOIN HASH ON n_regionkey = r_regionkey\n       5         1  │└DISTRIBUTE GATHER\n       5         1  │ FILTER r_name = 'EUROPE'\n       5         1  │ TABLE SCAN region\n      25         5  INNER JOIN HASH ON c_nationkey = n_nationkey\n      25         5  │└DISTRIBUTE GATHER\n      25         5  │ TABLE SCAN nation\n      25         5  INNER JOIN HASH ON (l_suppkey = s_suppkey) AND (c_nationkey = s_nationkey)\n      25         5  │└DISTRIBUTE GATHER\n      25         5  │ TABLE SCAN supplier\n      25         5  INNER JOIN HASH ON o_custkey = c_custkey\n      25         5  │└DISTRIBUTE GATHER\n      25         5  │ TABLE SCAN customer\n      25         5  INNER JOIN HASH ON l_orderkey = o_orderkey\n      25         5  │└DISTRIBUTE HASH ON o_orderkey\n      25         5  │ FILTER (o_orderdate >= '1995-01-01') AND (o_orderdate < '1996-01-01')\n      25         5  │ TABLE SCAN orders\n      25         5  TABLE SCAN lineitem\n",
       "sql": "/* TPC-H Q05 */\nSELECT n_name,\n       SUM(l_extendedprice * (1 - l_discount)) AS revenue\nFROM tpch_sf1.lineitem\nINNER JOIN tpch_sf1.orders\n    ON l_orderkey = o_orderkey\nINNER JOIN tpch_sf1.customer\n    ON o_custkey = c_custkey\nINNER JOIN tpch_sf1.supplier\n    ON l_suppkey = s_suppkey\nINNER JOIN tpch_sf1.nation\n    ON s_nationkey = n_nationkey\nINNER JOIN tpch_sf1.region\n    ON n_regionkey = r_regionkey\nWHERE r_name = 'EUROPE'\n  AND o_orderdate >= '1995-01-01'\n  AND o_orderdate < '1996-01-01'\n  AND s_nationkey = c_nationkey\nGROUP BY n_name\nORDER BY revenue DESC\n",
-      "startTime": "2026-06-26T16:37:27.476413Z",
+      "startTime": "2026-06-30T10:06:05.086639Z",
       "status": "OK",
-      "timeMs": 505.66
+      "timeMs": 443.358
     }
   ],
   "runtime": {
-    "avgMs": 505.66,
-    "bestMs": 505.66,
-    "maxMs": 505.66,
-    "minMs": 505.66,
+    "avgMs": 443.358,
+    "bestMs": 443.358,
+    "maxMs": 443.358,
+    "minMs": 443.358,
     "stdDevMs": 0.0
   },
   "storageVariant": "iceberg",

@@ -15,6 +15,17 @@
           "=": 2,
           ">16x": 0
         },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
         "filter": {
           "+2x": 0,
           "+4x": 0,
@@ -80,18 +91,18 @@
         "seek": 0,
         "sort": 0
       },
-      "plan": "Estimate    Actual  Operator\n       1         1  PROJECT count AS _col0\n       1         1  AGGREGATE COUNT(count_3) AS count\n       -         1  DISTRIBUTE GATHER\n       -         1  AGGREGATE COUNT(o_orderkey) AS count_3\n       -   1500000  INNER JOIN HASH ON o_custkey = c_custkey\n       -    150000  │└DISTRIBUTE GATHER\n       -    150000  │ GROUP BY HASH c_custkey\n  150000    150000  │ DISTRIBUTE HASH ON c_custkey\n  150000    150000  │ GROUP BY PARTIAL c_custkey\n  150000    150000  │ TABLE SCAN customer\n 1500000   1500000  TABLE SCAN orders\n",
+      "plan": "Estimate    Actual  Operator\n       1         ∞  PROJECT count AS _col0\n       1         1  AGGREGATE COUNT(count_3) AS count\n       -         1  DISTRIBUTE GATHER\n       -         1  AGGREGATE COUNT(o_orderkey) AS count_3\n       -   1500000  INNER JOIN HASH ON o_custkey = c_custkey\n       -    150000  │└DISTRIBUTE GATHER\n       -    150000  │ GROUP BY HASH c_custkey\n  150000    150000  │ DISTRIBUTE HASH ON c_custkey\n  150000    150000  │ GROUP BY PARTIAL c_custkey\n  150000    150000  │ TABLE SCAN customer\n 1500000   1500000  TABLE SCAN orders\n",
       "sql": "SELECT COUNT(o.o_orderkey)\nFROM tpch_sf1.orders AS o\nWHERE EXISTS (\n  SELECT 1\n  FROM tpch_sf1.customer AS c\n  WHERE c.c_custkey = o.o_custkey\n);\n",
-      "startTime": "2026-06-25T11:43:08.094674Z",
+      "startTime": "2026-06-30T10:06:02.578483Z",
       "status": "OK",
-      "timeMs": 342.586
+      "timeMs": 277.75
     }
   ],
   "runtime": {
-    "avgMs": 342.586,
-    "bestMs": 342.586,
-    "maxMs": 342.586,
-    "minMs": 342.586,
+    "avgMs": 277.75,
+    "bestMs": 277.75,
+    "maxMs": 277.75,
+    "minMs": 277.75,
     "stdDevMs": 0.0
   },
   "storageVariant": "iceberg",

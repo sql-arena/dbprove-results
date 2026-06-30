@@ -15,6 +15,17 @@
           "=": 1,
           ">16x": 0
         },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 4
+        },
         "filter": {
           "+2x": 0,
           "+4x": 0,
@@ -35,7 +46,7 @@
           "-8x": 0,
           "<16x": 0,
           "=": 0,
-          ">16x": 0
+          ">16x": 1
         },
         "join": {
           "+2x": 0,
@@ -46,7 +57,7 @@
           "-8x": 0,
           "<16x": 0,
           "=": 0,
-          ">16x": 0
+          ">16x": 1
         },
         "scan": {
           "+2x": 0,
@@ -56,8 +67,8 @@
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
-          "=": 6,
-          ">16x": 0
+          "=": 1,
+          ">16x": 5
         },
         "sort": {
           "+2x": 0,
@@ -72,26 +83,26 @@
         }
       },
       "operatorRows": {
-        "aggregate": 13,
-        "distribute": 4524379,
-        "hash": 217330332,
-        "join": 433095371,
-        "scan": 47598247,
+        "aggregate": 28,
+        "distribute": 500,
+        "hash": 498,
+        "join": 96,
+        "scan": 520,
         "seek": 0,
         "sort": 0
       },
-      "plan": "Estimate    Actual  Operator\n       1         1  PROJECT min AS movie_keyword, min_21 AS actor_name, min_22 AS hero_movie\n       1         1  AGGREGATE MIN(min_23) AS min, MIN(min_24) AS min_21, MIN(min_25) AS min_22\n       -         1  DISTRIBUTE GATHER\n       -         1  AGGREGATE MIN(keyword) AS min_23, MIN(name) AS min_24, MIN(title) AS min_25\n       -        12  INNER JOIN HASH ON movie_id = id_13\n   88353       438  │└DISTRIBUTE HASH ON id_13\n 2528312       438  │ PROJECT id AS id_13, title\n 2528312       438  │ FILTER production_year > 2014\n 2528312   2528312  │ TABLE SCAN title\n       -       112  INNER JOIN HASH ON person_id = id_9\n       -         2  │└DISTRIBUTE HASH ON id_9\n 4167491         2  │ PROJECT id AS id_9, name\n 4167491         2  │ FILTER name LIKE '%Downey%Robert%'\n 4167491   4167491  │ TABLE SCAN name\n       -   1564305  INNER JOIN HASH ON keyword_id = id_0\n       -         8  │└DISTRIBUTE GATHER\n  134170         8  │ PROJECT id AS id_0, keyword\n  134170         8  │ FILTER keyword IN('based-on-comic','fight','marvel-comics','second-part','sequel','superhero','tv-special','violence')\n  134170    134170  │ TABLE SCAN keyword\n       -      215M  INNER JOIN HASH ON movie_id = movie_id_5\n 4523930   4523930  │└DISTRIBUTE HASH ON movie_id_5\n 4523930   4523930  │ PROJECT movie_id AS movie_id_5, keyword_id\n 4523930   4523930  │ TABLE SCAN movie_keyword\n36244344  36244344  TABLE SCAN cast_info\n",
+      "plan": "Estimate    Actual  Operator\n       1         ∞  PROJECT min AS movie_keyword, min_21 AS actor_name, min_22 AS hero_movie\n       1         1  AGGREGATE MIN(min_23) AS min, MIN(min_24) AS min_21, MIN(min_25) AS min_22\n       -        16  DISTRIBUTE GATHER\n       -        16  AGGREGATE MIN(keyword) AS min_23, MIN(name) AS min_24, MIN(title) AS min_25\n       -        12  INNER JOIN HASH ON movie_id = id_13\n   88353       438  │└DISTRIBUTE HASH ON id_13\n   88353       438  │ PROJECT id AS id_13, title\n   88353       438  │ FILTER production_year > 2014\n   88353       438  │ TABLE SCAN title\n       -        12  INNER JOIN HASH ON person_id = id_9\n 4167491         2  │└DISTRIBUTE HASH ON id_9\n 4167491         2  │ PROJECT id AS id_9, name\n 4167491         2  │ FILTER name LIKE '%Downey%Robert%'\n 4167491         2  │ TABLE SCAN name\n       -        12  INNER JOIN HASH ON keyword_id = id_0\n  134170         8  │└DISTRIBUTE GATHER\n  134170         8  │ PROJECT id AS id_0, keyword\n  134170         8  │ FILTER keyword IN('based-on-comic','fight','marvel-comics','second-part','sequel','superhero','tv-special','violence')\n  134170         8  │ TABLE SCAN keyword\n 4523930        36  INNER JOIN HASH ON movie_id = movie_id_5\n 4523930        36  │└DISTRIBUTE HASH ON movie_id_5\n 4523930        36  │ PROJECT movie_id AS movie_id_5, keyword_id\n 4523930        36  │ TABLE SCAN movie_keyword\n 4523930        36  TABLE SCAN cast_info\n",
       "sql": "SELECT MIN(k.keyword) AS movie_keyword,\n       MIN(n.name) AS actor_name,\n       MIN(t.title) AS hero_movie\nFROM job.cast_info AS ci,\n     job.keyword AS k,\n     job.movie_keyword AS mk,\n     job.name AS n,\n     job.title AS t\nWHERE k.keyword IN ('superhero',\n                    'sequel',\n                    'second-part',\n                    'marvel-comics',\n                    'based-on-comic',\n                    'tv-special',\n                    'fight',\n                    'violence')\n  AND n.name LIKE '%Downey%Robert%'\n  AND t.production_year > 2014\n  AND k.id = mk.keyword_id\n  AND t.id = mk.movie_id\n  AND t.id = ci.movie_id\n  AND ci.movie_id = mk.movie_id\n  AND n.id = ci.person_id;\n",
-      "startTime": "2026-06-26T16:53:42.584279Z",
+      "startTime": "2026-06-30T11:21:47.675756Z",
       "status": "OK",
-      "timeMs": 481.919
+      "timeMs": 281.75
     }
   ],
   "runtime": {
-    "avgMs": 481.919,
-    "bestMs": 481.919,
-    "maxMs": 481.919,
-    "minMs": 481.919,
+    "avgMs": 281.75,
+    "bestMs": 281.75,
+    "maxMs": 281.75,
+    "minMs": 281.75,
     "stdDevMs": 0.0
   },
   "storageVariant": "iceberg",

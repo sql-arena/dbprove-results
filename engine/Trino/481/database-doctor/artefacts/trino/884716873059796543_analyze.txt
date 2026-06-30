@@ -1,0 +1,184 @@
+Trino version: 481
+Queued: 167.25us, Analysis: 13.91ms, Planning: 67.78ms, Execution: 619.10ms, Finishing: 0.00ns
+Fragment 1 [SINGLE]
+    CPU: 5.83ms, Scheduled: 5.84ms, Blocked 537.87ms (Input: 537.87ms, Output: 0.00ns), Input: 38182 rows (7.33MB); per task: avg.: 38182.00 std.dev.: 0.00, Output: 38182 rows (7.33MB)
+    Peak Memory: 409.39kB, Tasks count: 1; per task: max: 409.39kB
+    Output layout: [o_custkey, c_name, c_acctbal, c_phone, n_name, c_address, c_comment, sum]
+    Output partitioning: SINGLE []
+    RemoteMerge[sourceFragmentIds = [2]]
+        Layout: [o_custkey:integer, c_name:varchar, c_acctbal:decimal(38,0), c_phone:varchar, n_name:varchar, c_address:varchar, c_comment:varchar, sum:decimal(38,4)]
+        CPU: 5.00ms (1.16%), Scheduled: 5.00ms (0.88%), Blocked: 538.00ms (1.35%), Output: 38182 rows (7.33MB)
+        Input avg.: 38182.00 rows, Input std.dev.: 0.00%
+
+Fragment 2 [ROUND_ROBIN]
+    CPU: 27.55ms, Scheduled: 28.53ms, Blocked 8.99s (Input: 8.45s, Output: 0.00ns), Input: 38182 rows (7.33MB); per task: avg.: 38182.00 std.dev.: 0.00, Output: 38182 rows (7.33MB)
+    Peak Memory: 1.60MB, Tasks count: 1; per task: max: 1.60MB
+    Output layout: [o_custkey, c_name, c_acctbal, c_phone, n_name, c_address, c_comment, sum]
+    Output partitioning: SINGLE []
+    LocalMerge[orderBy = [sum DESC NULLS LAST]]
+    │   Layout: [o_custkey:integer, c_name:varchar, c_acctbal:decimal(38,0), c_phone:varchar, n_name:varchar, c_address:varchar, c_comment:varchar, sum:decimal(38,4)]
+    │   Estimates: {rows: ? (?), cpu: 0, memory: 0B, network: 0B}
+    │   CPU: 9.00ms (2.08%), Scheduled: 9.00ms (1.58%), Blocked: 534.00ms (1.34%), Output: 38182 rows (7.33MB)
+    │   Input avg.: 2386.38 rows, Input std.dev.: 158.79%
+    └─ PartialSort[orderBy = [sum DESC NULLS LAST]]
+       │   Layout: [o_custkey:integer, c_name:varchar, c_acctbal:decimal(38,0), c_phone:varchar, n_name:varchar, c_address:varchar, c_comment:varchar, sum:decimal(38,4)]
+       │   CPU: 17.00ms (3.94%), Scheduled: 18.00ms (3.16%), Blocked: 0.00ns (0.00%), Output: 38182 rows (7.33MB)
+       │   Input avg.: 2386.38 rows, Input std.dev.: 158.79%
+       └─ RemoteSource[sourceFragmentIds = [3]]
+              Layout: [o_custkey:integer, c_name:varchar, c_acctbal:decimal(38,0), c_phone:varchar, n_name:varchar, c_address:varchar, c_comment:varchar, sum:decimal(38,4)]
+              CPU: 1.00ms (0.23%), Scheduled: 1.00ms (0.18%), Blocked: 8.45s (21.14%), Output: 38182 rows (7.33MB)
+              Input avg.: 2386.38 rows, Input std.dev.: 158.79%
+
+Fragment 3 [HASH]
+    CPU: 50.48ms, Scheduled: 57.80ms, Blocked 16.51s (Input: 8.27s, Output: 0.00ns), Input: 42643 rows (8.03MB); per task: avg.: 42643.00 std.dev.: 0.00, Output: 38182 rows (7.33MB)
+    Peak Memory: 8.25MB, Tasks count: 1; per task: max: 8.25MB
+    Output layout: [o_custkey, c_name, c_acctbal, c_phone, n_name, c_address, c_comment, sum]
+    Output partitioning: ROUND_ROBIN []
+    Aggregate[type = FINAL, keys = [o_custkey, c_name, c_acctbal, c_phone, n_name, c_address, c_comment]]
+    │   Layout: [o_custkey:integer, c_name:varchar, c_acctbal:decimal(38,0), c_phone:varchar, n_name:varchar, c_address:varchar, c_comment:varchar, sum:decimal(38,4)]
+    │   Estimates: {rows: ? (?), cpu: ?, memory: ?, network: 0B}
+    │   CPU: 40.00ms (9.26%), Scheduled: 46.00ms (8.07%), Blocked: 0.00ns (0.00%), Output: 38182 rows (7.33MB)
+    │   Input avg.: 2665.19 rows, Input std.dev.: 2.55%
+    │   sum := sum(sum_9)
+    └─ LocalExchange[partitioning = HASH, arguments = [o_custkey::integer, c_name::varchar, c_acctbal::decimal(38,0), c_phone::varchar, n_name::varchar, c_address::varchar, c_comment::varchar]]
+       │   Layout: [o_custkey:integer, c_name:varchar, c_acctbal:decimal(38,0), c_phone:varchar, n_name:varchar, c_address:varchar, c_comment:varchar, sum_9:varbinary]
+       │   Estimates: {rows: ? (?), cpu: ?, memory: 0B, network: 0B}
+       │   CPU: 8.00ms (1.85%), Scheduled: 9.00ms (1.58%), Blocked: 8.24s (20.61%), Output: 42643 rows (8.03MB)
+       │   Input avg.: 2665.19 rows, Input std.dev.: 94.98%
+       └─ RemoteSource[sourceFragmentIds = [4]]
+              Layout: [o_custkey:integer, c_name:varchar, c_acctbal:decimal(38,0), c_phone:varchar, n_name:varchar, c_address:varchar, c_comment:varchar, sum_9:varbinary]
+              CPU: 1.00ms (0.23%), Scheduled: 1.00ms (0.18%), Blocked: 8.27s (20.69%), Output: 42643 rows (8.03MB)
+              Input avg.: 2665.19 rows, Input std.dev.: 94.98%
+
+Fragment 4 [SOURCE]
+    CPU: 281.91ms, Scheduled: 382.36ms, Blocked 13.94s (Input: 5.04s, Output: 0.00ns), Input: 6208714 rows (214.81MB); per task: avg.: 6208714.00 std.dev.: 0.00, Output: 42643 rows (8.03MB)
+    Peak Memory: 34.06MB, Tasks count: 1; per task: max: 34.06MB
+    Output layout: [o_custkey, c_name, c_acctbal, c_phone, n_name, c_address, c_comment, sum_9]
+    Output partitioning: HASH [o_custkey, c_name, c_acctbal, c_phone, n_name, c_address, c_comment]
+    Aggregate[type = PARTIAL, keys = [o_custkey, c_name, c_acctbal, c_phone, n_name, c_address, c_comment]]
+    │   Layout: [o_custkey:integer, c_name:varchar, c_acctbal:decimal(38,0), c_phone:varchar, n_name:varchar, c_address:varchar, c_comment:varchar, sum_9:varbinary]
+    │   CPU: 22.00ms (5.09%), Scheduled: 52.00ms (9.12%), Blocked: 0.00ns (0.00%), Output: 42643 rows (8.03MB)
+    │   Input avg.: 57525.00 rows, Input std.dev.: 35.13%
+    │   sum_9 := sum(expr)
+    └─ Project[]
+       │   Layout: [expr:decimal(31,4), o_custkey:integer, c_name:varchar, c_acctbal:decimal(38,0), c_phone:varchar, n_name:varchar, c_address:varchar, c_comment:varchar]
+       │   Estimates: {rows: ? (?), cpu: ?, memory: 0B, network: 0B}
+       │   CPU: 2.00ms (0.46%), Scheduled: 2.00ms (0.35%), Blocked: 0.00ns (0.00%), Output: 115050 rows (22.11MB)
+       │   Input avg.: 57525.00 rows, Input std.dev.: 35.13%
+       │   expr := $operator$multiply(l_extendedprice, $operator$subtract(decimal(10,0) '1', l_discount))
+       └─ InnerJoin[criteria = (c_nationkey = n_nationkey), distribution = REPLICATED]
+          │   Layout: [l_extendedprice:decimal(15,2), l_discount:decimal(15,2), o_custkey:integer, c_name:varchar, c_address:varchar, c_phone:varchar, c_acctbal:decimal(38,0), c_comment:varchar, n_name:varchar]
+          │   Estimates: {rows: ? (?), cpu: ?, memory: 987B, network: 0B}
+          │   CPU: 4.00ms (0.93%), Scheduled: 4.00ms (0.70%), Blocked: 507.00ms (1.27%), Output: 115050 rows (22.22MB)
+          │   Left (probe) Input avg.: 57525.00 rows, Input std.dev.: 35.13%
+          │   Right (build) Input avg.: 25.00 rows, Input std.dev.: 0.00%
+          │   Distribution: REPLICATED
+          │   dynamicFilterAssignments = {n_nationkey -> #df_1060}
+          ├─ InnerJoin[criteria = (o_custkey = c_custkey), distribution = REPLICATED]
+          │  │   Layout: [l_extendedprice:decimal(15,2), l_discount:decimal(15,2), o_custkey:integer, c_name:varchar, c_address:varchar, c_nationkey:integer, c_phone:varchar, c_acctbal:decimal(38,0), c_comment:varchar]
+          │  │   Estimates: {rows: ? (?), cpu: ?, memory: 34.60MB, network: 0B}
+          │  │   CPU: 69.00ms (15.97%), Scheduled: 69.00ms (12.11%), Blocked: 426.00ms (1.07%), Output: 115050 rows (21.44MB)
+          │  │   Left (probe) Input avg.: 57525.00 rows, Input std.dev.: 35.13%
+          │  │   Right (build) Input avg.: 150000.00 rows, Input std.dev.: 0.00%
+          │  │   Distribution: REPLICATED
+          │  │   dynamicFilterAssignments = {c_custkey -> #df_1061}
+          │  ├─ InnerJoin[criteria = (l_orderkey = o_orderkey), distribution = REPLICATED]
+          │  │  │   Layout: [l_extendedprice:decimal(15,2), l_discount:decimal(15,2), o_custkey:integer]
+          │  │  │   Estimates: {rows: ? (?), cpu: ?, memory: 560.36kB, network: 0B}
+          │  │  │   CPU: 48.00ms (11.11%), Scheduled: 86.00ms (15.09%), Blocked: 3.69s (9.23%), Output: 115050 rows (2.52MB)
+          │  │  │   Left (probe) Input avg.: 57525.00 rows, Input std.dev.: 35.13%
+          │  │  │   Right (build) Input avg.: 3592.13 rows, Input std.dev.: 1.14%
+          │  │  │   Distribution: REPLICATED
+          │  │  │   dynamicFilterAssignments = {o_orderkey -> #df_1062}
+          │  │  ├─ ScanFilterProject[table = tpch:tpch_sf1.lineitem$data@5233088789119929409, filterPredicate = (l_returnflag = varchar 'R'), dynamicFilters = {l_orderkey = #df_1062}]
+          │  │  │      Layout: [l_orderkey:integer, l_extendedprice:decimal(15,2), l_discount:decimal(15,2)]
+          │  │  │      Estimates: {rows: 6001215 (131.63MB), cpu: 163.88M, memory: 0B, network: 0B}/{rows: 5401094 (118.47MB), cpu: 163.88M, memory: 0B, network: 0B}/{rows: 5401094 (118.47MB), cpu: 118.47M, memory: 0B, network: 0B}
+          │  │  │      CPU: 115.00ms (26.62%), Scheduled: 143.00ms (25.09%), Blocked: 0.00ns (0.00%), Output: 115050 rows (2.52MB)
+          │  │  │      Input avg.: 3000607.50 rows, Input std.dev.: 35.14%
+          │  │  │      l_discount := 7:l_discount:decimal(15,2)
+          │  │  │      l_orderkey := 1:l_orderkey:integer
+          │  │  │      l_extendedprice := 6:l_extendedprice:decimal(15,2)
+          │  │  │      l_returnflag := 9:l_returnflag:varchar
+          │  │  │      Input: 6001215 rows (188.86MB), Filtered: 98.08%, Physical input: 90.32MB, Physical input time: 54.92ms, Splits: 2, Splits generation wait time: 195.16ms
+          │  │  │      Dynamic filters: 
+          │  │  │          - df_1062, [ SortedRangeSet[type=integer, ranges=57474, {[5], ..., [5999940]}] ], collection time=297.55ms
+          │  │  └─ LocalExchange[partitioning = HASH, arguments = [o_orderkey::integer]]
+          │  │     │   Layout: [o_orderkey:integer, o_custkey:integer]
+          │  │     │   Estimates: {rows: 57380 (560.36kB), cpu: 560.36k, memory: 0B, network: 0B}
+          │  │     │   CPU: 10.00ms (2.31%), Scheduled: 17.00ms (2.98%), Blocked: 4.24s (10.61%), Output: 57474 rows (561.27kB)
+          │  │     │   Input avg.: 3592.13 rows, Input std.dev.: 47.58%
+          │  │     └─ RemoteSource[sourceFragmentIds = [5]]
+          │  │            Layout: [o_orderkey:integer, o_custkey:integer]
+          │  │            CPU: 2.00ms (0.46%), Scheduled: 2.00ms (0.35%), Blocked: 4.34s (10.86%), Output: 57474 rows (561.27kB)
+          │  │            Input avg.: 3592.13 rows, Input std.dev.: 47.58%
+          │  └─ LocalExchange[partitioning = SINGLE]
+          │     │   Layout: [c_custkey:integer, c_name:varchar, c_address:varchar, c_nationkey:integer, c_phone:varchar, c_acctbal:decimal(38,0), c_comment:varchar]
+          │     │   Estimates: {rows: 150000 (34.60MB), cpu: 0, memory: 0B, network: 0B}
+          │     │   CPU: 0.00ns (0.00%), Scheduled: 0.00ns (0.00%), Blocked: 40.00ms (0.10%), Output: 150000 rows (25.40MB)
+          │     │   Input avg.: 9375.00 rows, Input std.dev.: 148.71%
+          │     └─ RemoteSource[sourceFragmentIds = [6]]
+          │            Layout: [c_custkey:integer, c_name:varchar, c_address:varchar, c_nationkey:integer, c_phone:varchar, c_acctbal:decimal(38,0), c_comment:varchar]
+          │            CPU: 2.00ms (0.46%), Scheduled: 2.00ms (0.35%), Blocked: 681.00ms (1.70%), Output: 150000 rows (25.40MB)
+          │            Input avg.: 9375.00 rows, Input std.dev.: 148.71%
+          └─ LocalExchange[partitioning = SINGLE]
+             │   Layout: [n_nationkey:integer, n_name:varchar]
+             │   Estimates: {rows: 25 (987B), cpu: 0, memory: 0B, network: 0B}
+             │   CPU: 0.00ns (0.00%), Scheduled: 0.00ns (0.00%), Blocked: 1.00ms (0.00%), Output: 25 rows (427B)
+             │   Input avg.: 1.56 rows, Input std.dev.: 295.86%
+             └─ RemoteSource[sourceFragmentIds = [7]]
+                    Layout: [n_nationkey:integer, n_name:varchar]
+                    CPU: 0.00ns (0.00%), Scheduled: 0.00ns (0.00%), Blocked: 17.00ms (0.04%), Output: 25 rows (427B)
+                    Input avg.: 1.56 rows, Input std.dev.: 295.86%
+
+Fragment 5 [SOURCE]
+    CPU: 52.88ms, Scheduled: 77.64ms, Blocked 0.00ns (Input: 0.00ns, Output: 0.00ns), Input: 1500000 rows (27.18MB); per task: avg.: 1500000.00 std.dev.: 0.00, Output: 57474 rows (561.27kB)
+    Peak Memory: 684.70kB, Tasks count: 1; per task: max: 684.70kB
+    Output layout: [o_orderkey, o_custkey]
+    Output partitioning: BROADCAST []
+    ScanFilterProject[table = tpch:tpch_sf1.orders$data@294298809982972030, filterPredicate = ((o_orderdate >= date '1994-06-01') AND (o_orderdate < date '1994-09-01')), dynamicFilters = {o_custkey = #df_1061}]
+        Layout: [o_orderkey:integer, o_custkey:integer]
+        Estimates: {rows: 1500000 (14.31MB), cpu: 21.46M, memory: 0B, network: 0B}/{rows: 57380 (560.36kB), cpu: 21.46M, memory: 0B, network: 0B}/{rows: 57380 (560.36kB), cpu: 560.36k, memory: 0B, network: 0B}
+        CPU: 53.00ms (12.27%), Scheduled: 77.00ms (13.51%), Blocked: 0.00ns (0.00%), Output: 57474 rows (561.27kB)
+        Input avg.: 1500000.00 rows, Input std.dev.: 0.00%
+        o_orderkey := 1:o_orderkey:integer
+        o_custkey := 2:o_custkey:integer
+        o_orderdate := 5:o_orderdate:date
+        Input: 1500000 rows (27.18MB), Filtered: 96.17%, Physical input: 23.08MB, Physical input time: 15.93ms, Splits: 1, Splits generation wait time: 127.62ms
+        Dynamic filters: 
+            - df_1061, [ SortedRangeSet[type=integer, ranges=150000, {[1], ..., [150000]}] ], collection time=97.97ms
+
+Fragment 6 [SOURCE]
+    CPU: 23.56ms, Scheduled: 26.36ms, Blocked 0.00ns (Input: 0.00ns, Output: 0.00ns), Input: 150000 rows (25.40MB); per task: avg.: 150000.00 std.dev.: 0.00, Output: 150000 rows (25.40MB)
+    Peak Memory: 30.48MB, Tasks count: 1; per task: max: 30.48MB
+    Output layout: [c_custkey, c_name, c_address, c_nationkey, c_phone, c_acctbal, c_comment]
+    Output partitioning: BROADCAST []
+    ScanFilter[table = tpch:tpch_sf1.customer$data@8101627990853036618, dynamicFilters = {c_nationkey = #df_1060}]
+        Layout: [c_custkey:integer, c_name:varchar, c_address:varchar, c_nationkey:integer, c_phone:varchar, c_acctbal:decimal(38,0), c_comment:varchar]
+        Estimates: {rows: 150000 (34.60MB), cpu: 34.60M, memory: 0B, network: 0B}/{rows: 150000 (34.60MB), cpu: 34.60M, memory: 0B, network: 0B}
+        CPU: 24.00ms (5.56%), Scheduled: 27.00ms (4.74%), Blocked: 0.00ns (0.00%), Output: 150000 rows (25.40MB)
+        Input avg.: 150000.00 rows, Input std.dev.: 0.00%
+        c_name := 2:c_name:varchar
+        c_address := 3:c_address:varchar
+        c_acctbal := 6:c_acctbal:decimal(38,0)
+        c_nationkey := 4:c_nationkey:integer
+        c_phone := 5:c_phone:varchar
+        c_custkey := 1:c_custkey:integer
+        c_comment := 8:c_comment:varchar
+        Input: 150000 rows (25.40MB), Filtered: 0.00%, Physical input: 11.75MB, Physical input time: 6.66ms, Splits: 1, Splits generation wait time: 8.81ms
+        Dynamic filters: 
+            - df_1060, [ SortedRangeSet[type=integer, ranges=25, {[0], ..., [24]}] ], collection time=10.03ms
+
+Fragment 7 [SOURCE]
+    CPU: 440.04us, Scheduled: 441.88us, Blocked 0.00ns (Input: 0.00ns, Output: 0.00ns), Input: 25 rows (427B); per task: avg.: 25.00 std.dev.: 0.00, Output: 25 rows (427B)
+    Peak Memory: 1.20kB, Tasks count: 1; per task: max: 1.20kB
+    Output layout: [n_nationkey, n_name]
+    Output partitioning: BROADCAST []
+    TableScan[table = tpch:tpch_sf1.nation$data@2123731905896313860]
+        Layout: [n_nationkey:integer, n_name:varchar]
+        Estimates: {rows: 25 (987B), cpu: 987, memory: 0B, network: 0B}
+        CPU: 0.00ns (0.00%), Scheduled: 0.00ns (0.00%), Blocked: 0.00ns (0.00%), Output: 25 rows (427B)
+        Input avg.: 25.00 rows, Input std.dev.: 0.00%
+        n_nationkey := 1:n_nationkey:integer
+        n_name := 2:n_name:varchar
+        Input: 25 rows (427B), Physical input: 2.26kB, Physical input time: 2.00us, Splits: 1, Splits generation wait time: 1.21ms
+

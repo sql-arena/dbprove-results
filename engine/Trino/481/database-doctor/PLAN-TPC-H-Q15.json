@@ -7,13 +7,24 @@
         "aggregate": {
           "+2x": 0,
           "+4x": 0,
-          "+8x": 0,
+          "+8x": 1,
           "-2x": 0,
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
-          "=": 1,
-          ">16x": 2
+          "=": 3,
+          ">16x": 0
+        },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 1,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 3,
+          ">16x": 0
         },
         "filter": {
           "+2x": 0,
@@ -23,8 +34,8 @@
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
-          "=": 0,
-          ">16x": 2
+          "=": 2,
+          ">16x": 0
         },
         "hash": {
           "+2x": 0,
@@ -34,7 +45,7 @@
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
-          "=": 0,
+          "=": 1,
           ">16x": 0
         },
         "join": {
@@ -45,19 +56,19 @@
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
-          "=": 0,
+          "=": 1,
           ">16x": 0
         },
         "scan": {
           "+2x": 0,
           "+4x": 0,
-          "+8x": 0,
+          "+8x": 1,
           "-2x": 0,
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
-          "=": 4,
-          ">16x": 2
+          "=": 6,
+          ">16x": 0
         },
         "sort": {
           "+2x": 0,
@@ -72,26 +83,26 @@
         }
       },
       "operatorRows": {
-        "aggregate": 482595,
-        "distribute": 30002,
+        "aggregate": 276307,
+        "distribute": 40011,
         "hash": 10001,
         "join": 20000,
-        "scan": 12012430,
+        "scan": 246297,
         "seek": 0,
         "sort": 1
       },
-      "plan": "Estimate    Actual  Operator\n       -         1  PROJECT l_suppkey AS s_suppkey, s_name, s_address, s_phone, sum AS total_revenue\n       -         1  SORT l_suppkey\n       -         1  INNER JOIN HASH ON sum = max\n       1         1  │└DISTRIBUTE HASH ON max\n       1         1  │ AGGREGATE MAX(max_25) AS max\n       -         1  │ DISTRIBUTE GATHER\n       -         1  │ AGGREGATE MAX(sum_23) AS max_25\n       -     10000  │ AGGREGATE SUM(sum_26) AS sum_23 GROUP BY HASH l_suppkey_5\n  216281     10000  │ DISTRIBUTE HASH ON l_suppkey_5\n  216281     10000  │ AGGREGATE SUM(expr_22) AS sum_26 GROUP BY PARTIAL l_suppkey_5\n 6001215    226297  │ PROJECT l_extendedprice * (1 - l_discount) AS expr_22, l_suppkey AS l_suppkey_5\n 6001215    226297  │ FILTER (l_shipdate >= '1997-09-01') AND (l_shipdate < '1997-12-01')\n 6001215   6001215  │ TABLE SCAN lineitem\n       -     10000  INNER JOIN HASH ON l_suppkey = s_suppkey\n   10000     10000  │└DISTRIBUTE GATHER\n   10000     10000  │ TABLE SCAN supplier\n       -     10000  AGGREGATE SUM(sum_24) AS sum GROUP BY HASH l_suppkey\n  216281     10000  DISTRIBUTE HASH ON l_suppkey\n  216281     10000  AGGREGATE SUM(expr) AS sum_24 GROUP BY PARTIAL l_suppkey\n 6001215    226297  PROJECT l_extendedprice * (1 - l_discount) AS expr, l_suppkey\n 6001215    226297  FILTER (l_shipdate >= '1997-09-01') AND (l_shipdate < '1997-12-01')\n 6001215   6001215  TABLE SCAN lineitem\n",
+      "plan": "Estimate    Actual  Operator\n       -         1  PROJECT l_suppkey AS s_suppkey, s_name, s_address, s_phone, sum AS total_revenue\n       -         1  SORT l_suppkey\n       -         1  INNER JOIN HASH ON sum = max\n       1         1  │└DISTRIBUTE HASH ON max\n       1         1  │ AGGREGATE MAX(max_25) AS max\n       -        16  │ DISTRIBUTE GATHER\n       -        16  │ AGGREGATE MAX(sum_23) AS max_25\n       -     10000  │ AGGREGATE SUM(sum_26) AS sum_23 GROUP BY HASH l_suppkey_5\n  216281     19994  │ DISTRIBUTE HASH ON l_suppkey_5\n  216281     19994  │ AGGREGATE SUM(expr_22) AS sum_26 GROUP BY PARTIAL l_suppkey_5\n  216281    226297  │ PROJECT l_extendedprice * (1 - l_discount) AS expr_22, l_suppkey AS l_suppkey_5\n  216281    226297  │ FILTER (l_shipdate >= '1997-09-01') AND (l_shipdate < '1997-12-01')\n  216281    226297  │ TABLE SCAN lineitem\n   10000     10000  INNER JOIN HASH ON l_suppkey = s_suppkey\n   10000     10000  │└DISTRIBUTE GATHER\n   10000     10000  │ TABLE SCAN supplier\n   10000     10000  AGGREGATE SUM(sum_24) AS sum GROUP BY HASH l_suppkey\n   10000     10000  DISTRIBUTE HASH ON l_suppkey\n   10000     10000  AGGREGATE SUM(expr) AS sum_24 GROUP BY PARTIAL l_suppkey\n   10000     10000  PROJECT l_extendedprice * (1 - l_discount) AS expr, l_suppkey\n   10000     10000  FILTER (l_shipdate >= '1997-09-01') AND (l_shipdate < '1997-12-01')\n   10000     10000  TABLE SCAN lineitem\n",
       "sql": "/* TPC-H Q15 */\nWITH revenue AS (SELECT l_suppkey                               AS supplier_no,\n                        SUM(l_extendedprice * (1 - l_discount)) AS total_revenue\n                 FROM tpch_sf1.lineitem\n                 WHERE l_shipdate >= '1997-09-01'\n                   AND l_shipdate < '1997-12-01'\n                 GROUP BY l_suppkey)\nSELECT s_suppkey,\n       s_name,\n       s_address,\n       s_phone,\n       total_revenue\nFROM tpch_sf1.supplier\nINNER JOIN revenue\n    ON s_suppkey = supplier_no\nWHERE total_revenue = (SELECT MAX(total_revenue)\n                       FROM revenue)\nORDER BY s_suppkey\n",
-      "startTime": "2026-06-26T16:38:08.122065Z",
+      "startTime": "2026-06-30T10:06:09.694111Z",
       "status": "OK",
-      "timeMs": 260.031
+      "timeMs": 244.776
     }
   ],
   "runtime": {
-    "avgMs": 260.031,
-    "bestMs": 260.031,
-    "maxMs": 260.031,
-    "minMs": 260.031,
+    "avgMs": 244.776,
+    "bestMs": 244.776,
+    "maxMs": 244.776,
+    "minMs": 244.776,
     "stdDevMs": 0.0
   },
   "storageVariant": "iceberg",

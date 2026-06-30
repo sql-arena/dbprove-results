@@ -15,6 +15,17 @@
           "=": 1,
           ">16x": 0
         },
+        "distribute": {
+          "+2x": 1,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 6
+        },
         "filter": {
           "+2x": 1,
           "+4x": 0,
@@ -35,7 +46,7 @@
           "-8x": 0,
           "<16x": 0,
           "=": 0,
-          ">16x": 0
+          ">16x": 5
         },
         "join": {
           "+2x": 0,
@@ -46,18 +57,18 @@
           "-8x": 0,
           "<16x": 0,
           "=": 0,
-          ">16x": 0
+          ">16x": 5
         },
         "scan": {
-          "+2x": 0,
+          "+2x": 1,
           "+4x": 0,
           "+8x": 0,
           "-2x": 0,
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
-          "=": 10,
-          ">16x": 0
+          "=": 2,
+          ">16x": 7
         },
         "sort": {
           "+2x": 0,
@@ -72,26 +83,26 @@
         }
       },
       "operatorRows": {
-        "aggregate": 4408,
-        "distribute": 10202665,
-        "hash": 10234316,
-        "join": 1738501,
-        "scan": 63814228,
+        "aggregate": 4423,
+        "distribute": 4578392,
+        "hash": 4585483,
+        "join": 384095,
+        "scan": 4640472,
         "seek": 0,
         "sort": 0
       },
-      "plan": "Estimate    Actual  Operator\n       1         1  PROJECT min AS movie_budget, min_45 AS movie_votes, min_46 AS male_writer, min_47 AS violent_movie_title\n       1         1  AGGREGATE MIN(min_48) AS min, MIN(min_49) AS min_45, MIN(min_50) AS min_46, MIN(min_51) AS min_47\n       -         1  DISTRIBUTE GATHER\n       -         1  AGGREGATE MIN(info_15) AS min_48, MIN(info_23) AS min_49, MIN(name) AS min_50, MIN(title) AS min_51\n       -      4407  INNER JOIN HASH ON movie_id = id_37\n 2528312   2528312  │└DISTRIBUTE HASH ON id_37\n 2528312   2528312  │ PROJECT id AS id_37, title\n 2528312   2528312  │ TABLE SCAN title\n       -      4407  INNER JOIN HASH ON person_id = id_33\n       -   1739579  │└DISTRIBUTE HASH ON id_33\n 4167491   1739579  │ PROJECT id AS id_33, name\n 4167491   1739579  │ FILTER gender = 'm'\n 4167491   4167491  │ TABLE SCAN name\n       -      7112  INNER JOIN HASH ON keyword_id = id_9\n       -         5  │└DISTRIBUTE GATHER\n  134170         5  │ PROJECT id AS id_9\n  134170         5  │ FILTER keyword IN('blood','death','female-nudity','gore','murder')\n  134170    134170  │ TABLE SCAN keyword\n       -    207091  INNER JOIN HASH ON movie_id = movie_id_29\n 4523930   4523930  │└DISTRIBUTE HASH ON movie_id_29\n 4523930   4523930  │ PROJECT movie_id AS movie_id_29, keyword_id\n 4523930   4523930  │ TABLE SCAN movie_keyword\n       -      8650  INNER JOIN HASH ON info_type_id_22 = id_4\n       -         1  │└DISTRIBUTE GATHER\n     113         1  │ PROJECT id AS id_4\n     113         1  │ FILTER info = 'votes'\n     113       113  │ TABLE SCAN info_type\n       -     25956  INNER JOIN HASH ON movie_id = movie_id_21\n 1380035   1380035  │└DISTRIBUTE HASH ON movie_id_21\n 1380035   1380035  │ PROJECT movie_id AS movie_id_21, info_type_id AS info_type_id_22, info AS info_23\n 1380035   1380035  │ TABLE SCAN movie_info_idx\n       -     15897  INNER JOIN HASH ON info_type_id = id_0\n       -         1  │└DISTRIBUTE GATHER\n     113         1  │ PROJECT id AS id_0\n     113         1  │ FILTER info = 'genres'\n     113       113  │ TABLE SCAN info_type\n       -     16172  INNER JOIN HASH ON movie_id = movie_id_14\n13352148     30801  │└DISTRIBUTE HASH ON movie_id_14\n14835720     30801  │ PROJECT movie_id AS movie_id_14, info_type_id, info AS info_15\n14835720     30801  │ FILTER info = 'Horror'\n14835720  14835720  │ TABLE SCAN movie_info\n36244344   1244716  FILTER note IN('(head writer)','(story editor)','(story)','(writer)','(written by)')\n36244344  36244344  TABLE SCAN cast_info\n",
+      "plan": "Estimate    Actual  Operator\n       1         ∞  PROJECT min AS movie_budget, min_45 AS movie_votes, min_46 AS male_writer, min_47 AS violent_movie_title\n       1         1  AGGREGATE MIN(min_48) AS min, MIN(min_49) AS min_45, MIN(min_50) AS min_46, MIN(min_51) AS min_47\n       -        16  DISTRIBUTE GATHER\n       -        16  AGGREGATE MIN(info_15) AS min_48, MIN(info_23) AS min_49, MIN(name) AS min_50, MIN(title) AS min_51\n       -      4407  INNER JOIN HASH ON movie_id = id_37\n 2528312   2528312  │└DISTRIBUTE HASH ON id_37\n 2528312   2528312  │ PROJECT id AS id_37, title\n 2528312   2528312  │ TABLE SCAN title\n       -      4407  INNER JOIN HASH ON person_id = id_33\n 4167491   1739579  │└DISTRIBUTE HASH ON id_33\n 4167491   1739579  │ PROJECT id AS id_33, name\n 4167491   1739579  │ FILTER gender = 'm'\n 4167491   1739579  │ TABLE SCAN name\n       -      7112  INNER JOIN HASH ON keyword_id = id_9\n  134170         5  │└DISTRIBUTE GATHER\n  134170         5  │ PROJECT id AS id_9\n  134170         5  │ FILTER keyword IN('blood','death','female-nudity','gore','murder')\n  134170         5  │ TABLE SCAN keyword\n 4523930     62096  INNER JOIN HASH ON movie_id = movie_id_29\n 4523930     62096  │└DISTRIBUTE HASH ON movie_id_29\n 4523930     62096  │ PROJECT movie_id AS movie_id_29, keyword_id\n 4523930     62096  │ TABLE SCAN movie_keyword\n 4523930     62096  INNER JOIN HASH ON info_type_id_22 = id_4\n 4523930     62096  │└DISTRIBUTE GATHER\n 4523930     62096  │ PROJECT id AS id_4\n 4523930     62096  │ FILTER info = 'votes'\n 4523930     62096  │ TABLE SCAN info_type\n 4523930     62096  INNER JOIN HASH ON movie_id = movie_id_21\n 4523930     62096  │└DISTRIBUTE HASH ON movie_id_21\n 4523930     62096  │ PROJECT movie_id AS movie_id_21, info_type_id AS info_type_id_22, info AS info_23\n 4523930     62096  │ TABLE SCAN movie_info_idx\n 4523930     62096  INNER JOIN HASH ON info_type_id = id_0\n 4523930     62096  │└DISTRIBUTE GATHER\n 4523930     62096  │ PROJECT id AS id_0\n 4523930     62096  │ FILTER info = 'genres'\n 4523930     62096  │ TABLE SCAN info_type\n 4523930     62096  INNER JOIN HASH ON movie_id = movie_id_14\n 4523930     62096  │└DISTRIBUTE HASH ON movie_id_14\n 4523930     62096  │ PROJECT movie_id AS movie_id_14, info_type_id, info AS info_15\n 4523930     62096  │ FILTER info = 'Horror'\n 4523930     62096  │ TABLE SCAN movie_info\n 4523930     62096  FILTER note IN('(head writer)','(story editor)','(story)','(writer)','(written by)')\n 4523930     62096  TABLE SCAN cast_info\n",
       "sql": "SELECT MIN(mi.info) AS movie_budget,\n       MIN(mi_idx.info) AS movie_votes,\n       MIN(n.name) AS male_writer,\n       MIN(t.title) AS violent_movie_title\nFROM job.cast_info AS ci,\n     job.info_type AS it1,\n     job.info_type AS it2,\n     job.keyword AS k,\n     job.movie_info AS mi,\n     job.movie_info_idx AS mi_idx,\n     job.movie_keyword AS mk,\n     job.name AS n,\n     job.title AS t\nWHERE ci.note IN ('(writer)',\n                  '(head writer)',\n                  '(written by)',\n                  '(story)',\n                  '(story editor)')\n  AND it1.info = 'genres'\n  AND it2.info = 'votes'\n  AND k.keyword IN ('murder',\n                    'blood',\n                    'gore',\n                    'death',\n                    'female-nudity')\n  AND mi.info = 'Horror'\n  AND n.gender = 'm'\n  AND t.id = mi.movie_id\n  AND t.id = mi_idx.movie_id\n  AND t.id = ci.movie_id\n  AND t.id = mk.movie_id\n  AND ci.movie_id = mi.movie_id\n  AND ci.movie_id = mi_idx.movie_id\n  AND ci.movie_id = mk.movie_id\n  AND mi.movie_id = mi_idx.movie_id\n  AND mi.movie_id = mk.movie_id\n  AND mi_idx.movie_id = mk.movie_id\n  AND n.id = ci.person_id\n  AND it1.id = mi.info_type_id\n  AND it2.id = mi_idx.info_type_id\n  AND k.id = mk.keyword_id;\n",
-      "startTime": "2026-06-26T16:46:46.364089Z",
+      "startTime": "2026-06-30T11:21:19.507316Z",
       "status": "OK",
-      "timeMs": 705.936
+      "timeMs": 686.446
     }
   ],
   "runtime": {
-    "avgMs": 705.936,
-    "bestMs": 705.936,
-    "maxMs": 705.936,
-    "minMs": 705.936,
+    "avgMs": 686.446,
+    "bestMs": 686.446,
+    "maxMs": 686.446,
+    "minMs": 686.446,
     "stdDevMs": 0.0
   },
   "storageVariant": "iceberg",

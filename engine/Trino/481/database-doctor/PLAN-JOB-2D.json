@@ -12,8 +12,19 @@
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
-          "=": 0,
+          "=": 1,
           ">16x": 0
+        },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 3
         },
         "filter": {
           "+2x": 0,
@@ -35,7 +46,7 @@
           "-8x": 0,
           "<16x": 0,
           "=": 0,
-          ">16x": 0
+          ">16x": 2
         },
         "join": {
           "+2x": 0,
@@ -46,7 +57,7 @@
           "-8x": 0,
           "<16x": 0,
           "=": 0,
-          ">16x": 0
+          ">16x": 2
         },
         "scan": {
           "+2x": 0,
@@ -56,8 +67,8 @@
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
-          "=": 5,
-          ">16x": 0
+          "=": 2,
+          ">16x": 4
         },
         "sort": {
           "+2x": 0,
@@ -72,26 +83,26 @@
         }
       },
       "operatorRows": {
-        "aggregate": -1,
-        "distribute": -1,
-        "hash": -1,
-        "join": -1,
-        "scan": 10030538,
+        "aggregate": 68332,
+        "distribute": 2612009,
+        "hash": 2680308,
+        "join": 220312,
+        "scan": 2653833,
         "seek": 0,
         "sort": 0
       },
-      "plan": "Estimate    Actual  Operator\n       1         ∞  PROJECT min AS movie_title\n       1         ∞  AGGREGATE MIN(min_20) AS min\n       -         ∞  DISTRIBUTE GATHER\n       -         ∞  AGGREGATE MIN(title) AS min_20\n       -         ∞  INNER JOIN HASH ON movie_id = id_13\n 2528312   2528312  │└DISTRIBUTE HASH ON id_13\n 2528312   2528312  │ PROJECT id AS id_13, title\n 2528312   2528312  │ TABLE SCAN title\n       -         ∞  INNER JOIN HASH ON keyword_id = id_0\n       -         1  │└DISTRIBUTE GATHER\n  134170         1  │ PROJECT id AS id_0\n  134170         1  │ FILTER keyword = 'character-name-in-title'\n  134170    134170  │ TABLE SCAN keyword\n       -         ∞  INNER JOIN HASH ON movie_id = movie_id_9\n 4523930   4523930  │└DISTRIBUTE HASH ON movie_id_9\n 4523930   4523930  │ PROJECT movie_id AS movie_id_9, keyword_id\n 4523930   4523930  │ TABLE SCAN movie_keyword\n       -         ∞  INNER JOIN HASH ON id = company_id\n 2609129   2609129  │└DISTRIBUTE HASH ON company_id\n 2609129   2609129  │ TABLE SCAN movie_companies\n  234997         0  FILTER country_code = 'us'\n  234997    234997  TABLE SCAN company_name\n",
+      "plan": "Estimate    Actual  Operator\n       1         ∞  PROJECT min AS movie_title\n       1         1  AGGREGATE MIN(min_20) AS min\n       -        16  DISTRIBUTE GATHER\n       -        16  AGGREGATE MIN(title) AS min_20\n       -     68316  INNER JOIN HASH ON movie_id = id_13\n 2528312   2528312  │└DISTRIBUTE HASH ON id_13\n 2528312   2528312  │ PROJECT id AS id_13, title\n 2528312   2528312  │ TABLE SCAN title\n       -     68316  INNER JOIN HASH ON keyword_id = id_0\n  134170         1  │└DISTRIBUTE GATHER\n  134170         1  │ PROJECT id AS id_0\n  134170         1  │ FILTER keyword = 'character-name-in-title'\n  134170         1  │ TABLE SCAN keyword\n 4523930     41840  INNER JOIN HASH ON movie_id = movie_id_9\n 4523930     41840  │└DISTRIBUTE HASH ON movie_id_9\n 4523930     41840  │ PROJECT movie_id AS movie_id_9, keyword_id\n 4523930     41840  │ TABLE SCAN movie_keyword\n 4523930     41840  INNER JOIN HASH ON id = company_id\n 4523930     41840  │└DISTRIBUTE HASH ON company_id\n 4523930     41840  │ TABLE SCAN movie_companies\n 4523930     41840  FILTER country_code = 'us'\n 4523930     41840  TABLE SCAN company_name\n",
       "sql": "SELECT MIN(t.title) AS movie_title\nFROM job.company_name AS cn,\n     job.keyword AS k,\n     job.movie_companies AS mc,\n     job.movie_keyword AS mk,\n     job.title AS t\nWHERE cn.country_code ='[us]'\n  AND k.keyword ='character-name-in-title'\n  AND cn.id = mc.company_id\n  AND mc.movie_id = t.id\n  AND t.id = mk.movie_id\n  AND mk.keyword_id = k.id\n  AND mc.movie_id = mk.movie_id;\n",
-      "startTime": "2026-06-26T16:49:44.055232Z",
+      "startTime": "2026-06-30T11:21:33.973522Z",
       "status": "OK",
-      "timeMs": 313.973
+      "timeMs": 331.528
     }
   ],
   "runtime": {
-    "avgMs": 313.973,
-    "bestMs": 313.973,
-    "maxMs": 313.973,
-    "minMs": 313.973,
+    "avgMs": 331.528,
+    "bestMs": 331.528,
+    "maxMs": 331.528,
+    "minMs": 331.528,
     "stdDevMs": 0.0
   },
   "storageVariant": "iceberg",

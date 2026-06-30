@@ -15,6 +15,17 @@
           "=": 1,
           ">16x": 0
         },
+        "distribute": {
+          "+2x": 1,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 8
+        },
         "filter": {
           "+2x": 1,
           "+4x": 0,
@@ -35,7 +46,7 @@
           "-8x": 0,
           "<16x": 0,
           "=": 0,
-          ">16x": 0
+          ">16x": 7
         },
         "join": {
           "+2x": 0,
@@ -46,18 +57,18 @@
           "-8x": 0,
           "<16x": 0,
           "=": 0,
-          ">16x": 0
+          ">16x": 7
         },
         "scan": {
-          "+2x": 0,
+          "+2x": 1,
           "+4x": 0,
           "+8x": 0,
           "-2x": 0,
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
-          "=": 12,
-          ">16x": 0
+          "=": 2,
+          ">16x": 9
         },
         "sort": {
           "+2x": 0,
@@ -72,26 +83,26 @@
         }
       },
       "operatorRows": {
-        "aggregate": 1274,
-        "distribute": 12854052,
-        "hash": 12858224,
-        "join": 3239507,
-        "scan": 66658354,
+        "aggregate": 1289,
+        "distribute": 4804912,
+        "hash": 4806445,
+        "join": 616541,
+        "scan": 4881610,
         "seek": 0,
         "sort": 0
       },
-      "plan": "Estimate    Actual  Operator\n       1         1  PROJECT min AS movie_budget, min_59 AS movie_votes, min_60 AS writer, min_61 AS violent_liongate_movie\n       1         1  AGGREGATE MIN(min_62) AS min, MIN(min_63) AS min_59, MIN(min_64) AS min_60, MIN(min_65) AS min_61\n       -         1  DISTRIBUTE GATHER\n       -         1  AGGREGATE MIN(info_25) AS min_62, MIN(info_33) AS min_63, MIN(name_44) AS min_64, MIN(title) AS min_65\n       -      1273  INNER JOIN HASH ON movie_id = id_51\n 2528312   2528312  │└DISTRIBUTE HASH ON id_51\n 2528312   2528312  │ PROJECT id AS id_51, title\n 2528312   2528312  │ TABLE SCAN title\n       -      1273  INNER JOIN HASH ON person_id = id_43\n       -   1739579  │└DISTRIBUTE HASH ON id_43\n 4167491   1739579  │ PROJECT id AS id_43, name AS name_44\n 4167491   1739579  │ FILTER gender = 'm'\n 4167491   4167491  │ TABLE SCAN name\n       -      1556  INNER JOIN HASH ON keyword_id = id_13\n       -         7  │└DISTRIBUTE GATHER\n  134170         7  │ PROJECT id AS id_13\n  134170         7  │ FILTER keyword IN('blood','death','female-nudity','gore','hospital','murder','violence')\n  134170    134170  │ TABLE SCAN keyword\n       -     58294  INNER JOIN HASH ON movie_id = movie_id_39\n 4523930   4523930  │└DISTRIBUTE HASH ON movie_id_39\n 4523930   4523930  │ PROJECT movie_id AS movie_id_39, keyword_id\n 4523930   4523930  │ TABLE SCAN movie_keyword\n       -       588  INNER JOIN HASH ON info_type_id_32 = id_8\n       -         1  │└DISTRIBUTE GATHER\n     113         1  │ PROJECT id AS id_8\n     113         1  │ FILTER info = 'votes'\n     113       113  │ TABLE SCAN info_type\n       -      1780  INNER JOIN HASH ON movie_id = movie_id_31\n 1380035   1380035  │└DISTRIBUTE HASH ON movie_id_31\n 1380035   1380035  │ PROJECT movie_id AS movie_id_31, info_type_id AS info_type_id_32, info AS info_33\n 1380035   1380035  │ TABLE SCAN movie_info_idx\n       -       594  INNER JOIN HASH ON info_type_id = id_4\n       -         1  │└DISTRIBUTE GATHER\n     113         1  │ PROJECT id AS id_4\n     113         1  │ FILTER info = 'genres'\n     113       113  │ TABLE SCAN info_type\n       -       608  INNER JOIN HASH ON movie_id = movie_id_24\n13352148     73047  │└DISTRIBUTE HASH ON movie_id_24\n14835720     73047  │ PROJECT movie_id AS movie_id_24, info_type_id, info AS info_25\n14835720     73047  │ FILTER info IN('Horror','Thriller')\n14835720  14835720  │ TABLE SCAN movie_info\n       -      1454  INNER JOIN HASH ON company_id = id_0\n  211497        10  │└DISTRIBUTE GATHER\n  234997        10  │ PROJECT id AS id_0\n  234997        10  │ FILTER (name >= 'Lionsgate') AND (name < 'Lionsgatf') AND (name LIKE 'Lionsgate%')\n  234997    234997  │ TABLE SCAN company_name\n       -   1557234  INNER JOIN HASH ON movie_id = movie_id_18\n 2609129   2609129  │└DISTRIBUTE HASH ON movie_id_18\n 2609129   2609129  │ PROJECT movie_id AS movie_id_18, company_id\n 2609129   2609129  │ TABLE SCAN movie_companies\n36244344   1244716  FILTER note IN('(head writer)','(story editor)','(story)','(writer)','(written by)')\n36244344  36244344  TABLE SCAN cast_info\n",
+      "plan": "Estimate    Actual  Operator\n       1         ∞  PROJECT min AS movie_budget, min_59 AS movie_votes, min_60 AS writer, min_61 AS violent_liongate_movie\n       1         1  AGGREGATE MIN(min_62) AS min, MIN(min_63) AS min_59, MIN(min_64) AS min_60, MIN(min_65) AS min_61\n       -        16  DISTRIBUTE GATHER\n       -        16  AGGREGATE MIN(info_25) AS min_62, MIN(info_33) AS min_63, MIN(name_44) AS min_64, MIN(title) AS min_65\n       -      1273  INNER JOIN HASH ON movie_id = id_51\n 2528312   2528312  │└DISTRIBUTE HASH ON id_51\n 2528312   2528312  │ PROJECT id AS id_51, title\n 2528312   2528312  │ TABLE SCAN title\n       -      1273  INNER JOIN HASH ON person_id = id_43\n 4167491   1739579  │└DISTRIBUTE HASH ON id_43\n 4167491   1739579  │ PROJECT id AS id_43, name AS name_44\n 4167491   1739579  │ FILTER gender = 'm'\n 4167491   1739579  │ TABLE SCAN name\n       -      1556  INNER JOIN HASH ON keyword_id = id_13\n  134170         7  │└DISTRIBUTE GATHER\n  134170         7  │ PROJECT id AS id_13\n  134170         7  │ FILTER keyword IN('blood','death','female-nudity','gore','hospital','murder','violence')\n  134170         7  │ TABLE SCAN keyword\n 4523930     76714  INNER JOIN HASH ON movie_id = movie_id_39\n 4523930     76714  │└DISTRIBUTE HASH ON movie_id_39\n 4523930     76714  │ PROJECT movie_id AS movie_id_39, keyword_id\n 4523930     76714  │ TABLE SCAN movie_keyword\n 4523930     76714  INNER JOIN HASH ON info_type_id_32 = id_8\n 4523930     76714  │└DISTRIBUTE GATHER\n 4523930     76714  │ PROJECT id AS id_8\n 4523930     76714  │ FILTER info = 'votes'\n 4523930     76714  │ TABLE SCAN info_type\n 4523930     76714  INNER JOIN HASH ON movie_id = movie_id_31\n 4523930     76714  │└DISTRIBUTE HASH ON movie_id_31\n 4523930     76714  │ PROJECT movie_id AS movie_id_31, info_type_id AS info_type_id_32, info AS info_33\n 4523930     76714  │ TABLE SCAN movie_info_idx\n 4523930     76714  INNER JOIN HASH ON info_type_id = id_4\n 4523930     76714  │└DISTRIBUTE GATHER\n 4523930     76714  │ PROJECT id AS id_4\n 4523930     76714  │ FILTER info = 'genres'\n 4523930     76714  │ TABLE SCAN info_type\n 4523930     76714  INNER JOIN HASH ON movie_id = movie_id_24\n 4523930     76714  │└DISTRIBUTE HASH ON movie_id_24\n 4523930     76714  │ PROJECT movie_id AS movie_id_24, info_type_id, info AS info_25\n 4523930     76714  │ FILTER info IN('Horror','Thriller')\n 4523930     76714  │ TABLE SCAN movie_info\n 4523930     76714  INNER JOIN HASH ON company_id = id_0\n 4523930     76714  │└DISTRIBUTE GATHER\n 4523930     76714  │ PROJECT id AS id_0\n 4523930     76714  │ FILTER (name >= 'Lionsgate') AND (name < 'Lionsgatf') AND (name LIKE 'Lionsgate%')\n 4523930     76714  │ TABLE SCAN company_name\n 4523930     76714  INNER JOIN HASH ON movie_id = movie_id_18\n 4523930     76714  │└DISTRIBUTE HASH ON movie_id_18\n 4523930     76714  │ PROJECT movie_id AS movie_id_18, company_id\n 4523930     76714  │ TABLE SCAN movie_companies\n 4523930     76714  FILTER note IN('(head writer)','(story editor)','(story)','(writer)','(written by)')\n 4523930     76714  TABLE SCAN cast_info\n",
       "sql": "SELECT MIN(mi.info) AS movie_budget,\n       MIN(mi_idx.info) AS movie_votes,\n       MIN(n.name) AS writer,\n       MIN(t.title) AS violent_liongate_movie\nFROM job.cast_info AS ci,\n     job.company_name AS cn,\n     job.info_type AS it1,\n     job.info_type AS it2,\n     job.keyword AS k,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.movie_info_idx AS mi_idx,\n     job.movie_keyword AS mk,\n     job.name AS n,\n     job.title AS t\nWHERE ci.note IN ('(writer)',\n                  '(head writer)',\n                  '(written by)',\n                  '(story)',\n                  '(story editor)')\n  AND cn.name LIKE 'Lionsgate%'\n  AND it1.info = 'genres'\n  AND it2.info = 'votes'\n  AND k.keyword IN ('murder',\n                    'violence',\n                    'blood',\n                    'gore',\n                    'death',\n                    'female-nudity',\n                    'hospital')\n  AND mi.info IN ('Horror',\n                  'Thriller')\n  AND n.gender = 'm'\n  AND t.id = mi.movie_id\n  AND t.id = mi_idx.movie_id\n  AND t.id = ci.movie_id\n  AND t.id = mk.movie_id\n  AND t.id = mc.movie_id\n  AND ci.movie_id = mi.movie_id\n  AND ci.movie_id = mi_idx.movie_id\n  AND ci.movie_id = mk.movie_id\n  AND ci.movie_id = mc.movie_id\n  AND mi.movie_id = mi_idx.movie_id\n  AND mi.movie_id = mk.movie_id\n  AND mi.movie_id = mc.movie_id\n  AND mi_idx.movie_id = mk.movie_id\n  AND mi_idx.movie_id = mc.movie_id\n  AND mk.movie_id = mc.movie_id\n  AND n.id = ci.person_id\n  AND it1.id = mi.info_type_id\n  AND it2.id = mi_idx.info_type_id\n  AND k.id = mk.keyword_id\n  AND cn.id = mc.company_id;\n",
-      "startTime": "2026-06-26T16:50:42.698371Z",
+      "startTime": "2026-06-30T11:21:37.151171Z",
       "status": "OK",
-      "timeMs": 1222.173
+      "timeMs": 861.297
     }
   ],
   "runtime": {
-    "avgMs": 1222.173,
-    "bestMs": 1222.173,
-    "maxMs": 1222.173,
-    "minMs": 1222.173,
+    "avgMs": 861.297,
+    "bestMs": 861.297,
+    "maxMs": 861.297,
+    "minMs": 861.297,
     "stdDevMs": 0.0
   },
   "storageVariant": "iceberg",

@@ -12,11 +12,11 @@
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
-          "=": 0,
+          "=": 1,
           ">16x": 0
         },
-        "filter": {
-          "+2x": 1,
+        "distribute": {
+          "+2x": 0,
           "+4x": 0,
           "+8x": 0,
           "-2x": 0,
@@ -24,7 +24,18 @@
           "-8x": 0,
           "<16x": 0,
           "=": 0,
-          ">16x": 4
+          ">16x": 7
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 5
         },
         "hash": {
           "+2x": 0,
@@ -35,7 +46,7 @@
           "-8x": 0,
           "<16x": 0,
           "=": 0,
-          ">16x": 0
+          ">16x": 6
         },
         "join": {
           "+2x": 0,
@@ -46,7 +57,7 @@
           "-8x": 0,
           "<16x": 0,
           "=": 0,
-          ">16x": 0
+          ">16x": 6
         },
         "scan": {
           "+2x": 0,
@@ -56,8 +67,8 @@
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
-          "=": 8,
-          ">16x": 0
+          "=": 1,
+          ">16x": 8
         },
         "sort": {
           "+2x": 0,
@@ -72,26 +83,26 @@
         }
       },
       "operatorRows": {
-        "aggregate": -1,
-        "distribute": -1,
-        "hash": -1,
-        "join": -1,
-        "scan": 21588423,
+        "aggregate": 26,
+        "distribute": 2558,
+        "hash": 2542,
+        "join": 16,
+        "scan": 2543,
         "seek": 0,
         "sort": 0
       },
-      "plan": "Estimate    Actual  Operator\n       1         ∞  PROJECT min AS budget, min_38 AS unsuccsessful_movie\n       1         ∞  AGGREGATE MIN(min_39) AS min, MIN(min_40) AS min_38\n       -         ∞  DISTRIBUTE GATHER\n       -         ∞  AGGREGATE MIN(info_19) AS min_39, MIN(title) AS min_40\n       -         ∞  INNER JOIN HASH ON movie_id = id_32\n  302167      2536  │└DISTRIBUTE HASH ON id_32\n 2528312      2536  │ PROJECT id AS id_32, title\n 2528312      2536  │ FILTER (production_year > 2000) AND ((title LIKE 'Birdemic%') OR (title LIKE '%Movie%'))\n 2528312   2528312  │ TABLE SCAN title\n       -         ∞  INNER JOIN HASH ON info_type_id_26 = id_8\n       -         1  │└DISTRIBUTE GATHER\n     113         1  │ PROJECT id AS id_8\n     113         1  │ FILTER info = 'bottom 10 rank'\n     113       113  │ TABLE SCAN info_type\n       -         ∞  INNER JOIN HASH ON movie_id = movie_id_25\n 1380035   1380035  │└DISTRIBUTE HASH ON movie_id_25\n 1380035   1380035  │ PROJECT movie_id AS movie_id_25, info_type_id AS info_type_id_26\n 1380035   1380035  │ TABLE SCAN movie_info_idx\n       -         ∞  INNER JOIN HASH ON info_type_id = id_4\n       -         1  │└DISTRIBUTE GATHER\n     113         1  │ PROJECT id AS id_4\n     113         1  │ FILTER info = 'budget'\n     113       113  │ TABLE SCAN info_type\n       -         ∞  INNER JOIN HASH ON movie_id = movie_id_18\n14835720  14835720  │└DISTRIBUTE HASH ON movie_id_18\n14835720  14835720  │ PROJECT movie_id AS movie_id_18, info_type_id, info AS info_19\n14835720  14835720  │ TABLE SCAN movie_info\n       -         ∞  INNER JOIN HASH ON company_type_id = id_0\n       -         2  │└DISTRIBUTE GATHER\n       4         2  │ PROJECT id AS id_0\n       4         2  │ FILTER kind IN('distributors','production companies')\n       4         4  │ TABLE SCAN company_type\n       -         ∞  INNER JOIN HASH ON id = company_id\n 2609129   2609129  │└DISTRIBUTE HASH ON company_id\n 2609129   2609129  │ TABLE SCAN movie_companies\n  234997         0  FILTER country_code = 'us'\n  234997    234997  TABLE SCAN company_name\n",
+      "plan": "Estimate    Actual  Operator\n       1         ∞  PROJECT min AS budget, min_38 AS unsuccsessful_movie\n       1         1  AGGREGATE MIN(min_39) AS min, MIN(min_40) AS min_38\n       -        16  DISTRIBUTE GATHER\n       -        16  AGGREGATE MIN(info_19) AS min_39, MIN(title) AS min_40\n       -        10  INNER JOIN HASH ON movie_id = id_32\n  302168      2536  │└DISTRIBUTE HASH ON id_32\n  302168      2536  │ PROJECT id AS id_32, title\n  302168      2536  │ FILTER (production_year > 2000) AND ((title LIKE 'Birdemic%') OR (title LIKE '%Movie%'))\n  302168      2536  │ TABLE SCAN title\n 1380035         1  INNER JOIN HASH ON info_type_id_26 = id_8\n 1380035         1  │└DISTRIBUTE GATHER\n 1380035         1  │ PROJECT id AS id_8\n 1380035         1  │ FILTER info = 'bottom 10 rank'\n 1380035         1  │ TABLE SCAN info_type\n 1380035         1  INNER JOIN HASH ON movie_id = movie_id_25\n 1380035         1  │└DISTRIBUTE HASH ON movie_id_25\n 1380035         1  │ PROJECT movie_id AS movie_id_25, info_type_id AS info_type_id_26\n 1380035         1  │ TABLE SCAN movie_info_idx\n 1380035         1  INNER JOIN HASH ON info_type_id = id_4\n 1380035         1  │└DISTRIBUTE GATHER\n 1380035         1  │ PROJECT id AS id_4\n 1380035         1  │ FILTER info = 'budget'\n 1380035         1  │ TABLE SCAN info_type\n 1380035         1  INNER JOIN HASH ON movie_id = movie_id_18\n 1380035         1  │└DISTRIBUTE HASH ON movie_id_18\n 1380035         1  │ PROJECT movie_id AS movie_id_18, info_type_id, info AS info_19\n 1380035         1  │ TABLE SCAN movie_info\n 1380035         1  INNER JOIN HASH ON company_type_id = id_0\n 1380035         1  │└DISTRIBUTE GATHER\n 1380035         1  │ PROJECT id AS id_0\n 1380035         1  │ FILTER kind IN('distributors','production companies')\n 1380035         1  │ TABLE SCAN company_type\n 1380035         1  INNER JOIN HASH ON id = company_id\n 1380035         1  │└DISTRIBUTE HASH ON company_id\n 1380035         1  │ TABLE SCAN movie_companies\n 1380035         1  FILTER country_code = 'us'\n 1380035         1  TABLE SCAN company_name\n",
       "sql": "SELECT MIN(mi.info) AS budget,\n       MIN(t.title) AS unsuccsessful_movie\nFROM job.company_name AS cn,\n     job.company_type AS ct,\n     job.info_type AS it1,\n     job.info_type AS it2,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.movie_info_idx AS mi_idx,\n     job.title AS t\nWHERE cn.country_code ='[us]'\n  AND ct.kind IS NOT NULL\n  AND (ct.kind ='production companies'\n       OR ct.kind = 'distributors')\n  AND it1.info ='budget'\n  AND it2.info ='bottom 10 rank'\n  AND t.production_year >2000\n  AND (t.title LIKE 'Birdemic%'\n       OR t.title LIKE '%Movie%')\n  AND t.id = mi.movie_id\n  AND t.id = mi_idx.movie_id\n  AND mi.info_type_id = it1.id\n  AND mi_idx.info_type_id = it2.id\n  AND t.id = mc.movie_id\n  AND ct.id = mc.company_type_id\n  AND cn.id = mc.company_id\n  AND mc.movie_id = mi.movie_id\n  AND mc.movie_id = mi_idx.movie_id\n  AND mi.movie_id = mi_idx.movie_id;\n",
-      "startTime": "2026-06-26T16:40:12.456067Z",
+      "startTime": "2026-06-30T11:20:42.903303Z",
       "status": "OK",
-      "timeMs": 586.463
+      "timeMs": 502.422
     }
   ],
   "runtime": {
-    "avgMs": 586.463,
-    "bestMs": 586.463,
-    "maxMs": 586.463,
-    "minMs": 586.463,
+    "avgMs": 502.422,
+    "bestMs": 502.422,
+    "maxMs": 502.422,
+    "minMs": 502.422,
     "stdDevMs": 0.0
   },
   "storageVariant": "iceberg",

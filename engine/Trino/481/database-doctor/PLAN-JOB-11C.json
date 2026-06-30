@@ -12,7 +12,18 @@
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
-          "=": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 7,
           ">16x": 0
         },
         "filter": {
@@ -23,8 +34,8 @@
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
-          "=": 3,
-          ">16x": 2
+          "=": 5,
+          ">16x": 0
         },
         "hash": {
           "+2x": 0,
@@ -34,7 +45,7 @@
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
-          "=": 0,
+          "=": 5,
           ">16x": 0
         },
         "join": {
@@ -45,7 +56,7 @@
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
-          "=": 0,
+          "=": 5,
           ">16x": 0
         },
         "scan": {
@@ -56,7 +67,7 @@
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
-          "=": 8,
+          "=": 9,
           ">16x": 0
         },
         "sort": {
@@ -72,26 +83,26 @@
         }
       },
       "operatorRows": {
-        "aggregate": -1,
-        "distribute": -1,
-        "hash": -1,
-        "join": -1,
-        "scan": 10060557,
+        "aggregate": 6962,
+        "distribute": 2437290,
+        "hash": 2444202,
+        "join": 186928,
+        "scan": 2467271,
         "seek": 0,
         "sort": 0
       },
-      "plan": "Estimate    Actual  Operator\n       1         ∞  PROJECT min AS from_company, min_33 AS production_note, min_34 AS movie_based_on_book\n       1         ∞  AGGREGATE MIN(min_35) AS min, MIN(min_36) AS min_33, MIN(min_37) AS min_34\n       -         ∞  DISTRIBUTE GATHER\n       -         ∞  AGGREGATE MIN(name) AS min_35, MIN(note) AS min_36, MIN(title) AS min_37\n       -         ∞  INNER JOIN HASH ON movie_id = id_26\n 1219273   2287271  │└DISTRIBUTE HASH ON id_26\n 2528312   2287271  │ PROJECT id AS id_26, title\n 2528312   2287271  │ FILTER production_year > 1950\n 2528312   2528312  │ TABLE SCAN title\n       -         ∞  INNER JOIN HASH ON link_type_id = id_8\n      18        18  │└DISTRIBUTE GATHER\n      18        18  │ PROJECT id AS id_8\n      18        18  │ TABLE SCAN link_type\n       -         ∞  INNER JOIN HASH ON movie_id = movie_id_22\n   29997     29997  │└DISTRIBUTE GATHER\n   29997     29997  │ PROJECT movie_id AS movie_id_22, link_type_id\n   29997     29997  │ TABLE SCAN movie_link\n       -         ∞  INNER JOIN HASH ON keyword_id = id_4\n       -         3  │└DISTRIBUTE GATHER\n  134170         3  │ PROJECT id AS id_4\n  134170         3  │ FILTER keyword IN('based-on-novel','revenge','sequel')\n  134170    134170  │ TABLE SCAN keyword\n       -         ∞  INNER JOIN HASH ON movie_id = movie_id_17\n 4523930   4523930  │└DISTRIBUTE HASH ON movie_id_17\n 4523930   4523930  │ PROJECT movie_id AS movie_id_17, keyword_id\n 4523930   4523930  │ TABLE SCAN movie_keyword\n       -         ∞  INNER JOIN HASH ON company_type_id = id_0\n       2         3  │└DISTRIBUTE GATHER\n       4         3  │ PROJECT id AS id_0\n       4         3  │ FILTER kind <> 'production companies'\n       4         4  │ TABLE SCAN company_type\n       -         ∞  INNER JOIN HASH ON company_id = id\n   94982        89  │└DISTRIBUTE GATHER\n  234997        89  │ FILTER (country_code <> 'pl') AND (((name >= '20th Century Fox') AND (name < '20th Century Foy')) OR ((name >= 'Twentieth Century Fox') AND (name < 'Twentieth Century Foy'))) AND ((name LIKE '20th Century Fox%') OR (name LIKE 'Twentieth Century Fox%'))\n  234997    234997  │ TABLE SCAN company_name\n 2609129   1337140  FILTER  NOT (note IS NULL)\n 2609129   2609129  TABLE SCAN movie_companies\n",
+      "plan": "Estimate    Actual  Operator\n       1         ∞  PROJECT min AS from_company, min_33 AS production_note, min_34 AS movie_based_on_book\n       1         1  AGGREGATE MIN(min_35) AS min, MIN(min_36) AS min_33, MIN(min_37) AS min_34\n       -        16  DISTRIBUTE GATHER\n       -        16  AGGREGATE MIN(name) AS min_35, MIN(note) AS min_36, MIN(title) AS min_37\n       -      6946  INNER JOIN HASH ON movie_id = id_26\n 1219274   2287271  │└DISTRIBUTE HASH ON id_26\n 1219274   2287271  │ PROJECT id AS id_26, title\n 1219274   2287271  │ FILTER production_year > 1950\n 1219274   2287271  │ TABLE SCAN title\n       -      6946  INNER JOIN HASH ON link_type_id = id_8\n      18        18  │└DISTRIBUTE GATHER\n      18        18  │ PROJECT id AS id_8\n      18        18  │ TABLE SCAN link_type\n   29997     29997  INNER JOIN HASH ON movie_id = movie_id_22\n   29997     29997  │└DISTRIBUTE GATHER\n   29997     29997  │ PROJECT movie_id AS movie_id_22, link_type_id\n   29997     29997  │ TABLE SCAN movie_link\n   29997     29997  INNER JOIN HASH ON keyword_id = id_4\n   29997     29997  │└DISTRIBUTE GATHER\n   29997     29997  │ PROJECT id AS id_4\n   29997     29997  │ FILTER keyword IN('based-on-novel','revenge','sequel')\n   29997     29997  │ TABLE SCAN keyword\n   29997     29997  INNER JOIN HASH ON movie_id = movie_id_17\n   29997     29997  │└DISTRIBUTE HASH ON movie_id_17\n   29997     29997  │ PROJECT movie_id AS movie_id_17, keyword_id\n   29997     29997  │ TABLE SCAN movie_keyword\n   29997     29997  INNER JOIN HASH ON company_type_id = id_0\n   29997     29997  │└DISTRIBUTE GATHER\n   29997     29997  │ PROJECT id AS id_0\n   29997     29997  │ FILTER kind <> 'production companies'\n   29997     29997  │ TABLE SCAN company_type\n   29997     29997  INNER JOIN HASH ON company_id = id\n   29997     29997  │└DISTRIBUTE GATHER\n   29997     29997  │ FILTER (country_code <> 'pl') AND (((name >= '20th Century Fox') AND (name < '20th Century Foy')) OR ((name >= 'Twentieth Century Fox') AND (name < 'Twentieth Century Foy'))) AND ((name LIKE '20th Century Fox%') OR (name LIKE 'Twentieth Century Fox%'))\n   29997     29997  │ TABLE SCAN company_name\n   29997     29997  FILTER  NOT (note IS NULL)\n   29997     29997  TABLE SCAN movie_companies\n",
       "sql": "SELECT MIN(cn.name) AS from_company,\n       MIN(mc.note) AS production_note,\n       MIN(t.title) AS movie_based_on_book\nFROM job.company_name AS cn,\n     job.company_type AS ct,\n     job.keyword AS k,\n     job.link_type AS lt,\n     job.movie_companies AS mc,\n     job.movie_keyword AS mk,\n     job.movie_link AS ml,\n     job.title AS t\nWHERE cn.country_code !='[pl]'\n  AND (cn.name LIKE '20th Century Fox%'\n       OR cn.name LIKE 'Twentieth Century Fox%')\n  AND ct.kind != 'production companies'\n  AND ct.kind IS NOT NULL\n  AND k.keyword IN ('sequel',\n                    'revenge',\n                    'based-on-novel')\n  AND mc.note IS NOT NULL\n  AND t.production_year > 1950\n  AND lt.id = ml.link_type_id\n  AND ml.movie_id = t.id\n  AND t.id = mk.movie_id\n  AND mk.keyword_id = k.id\n  AND t.id = mc.movie_id\n  AND mc.company_type_id = ct.id\n  AND mc.company_id = cn.id\n  AND ml.movie_id = mk.movie_id\n  AND ml.movie_id = mc.movie_id\n  AND mk.movie_id = mc.movie_id;\n",
-      "startTime": "2026-06-26T16:40:05.891416Z",
+      "startTime": "2026-06-30T11:20:41.258840Z",
       "status": "OK",
-      "timeMs": 413.918
+      "timeMs": 470.629
     }
   ],
   "runtime": {
-    "avgMs": 413.918,
-    "bestMs": 413.918,
-    "maxMs": 413.918,
-    "minMs": 413.918,
+    "avgMs": 470.629,
+    "bestMs": 470.629,
+    "maxMs": 470.629,
+    "minMs": 470.629,
     "stdDevMs": 0.0
   },
   "storageVariant": "iceberg",

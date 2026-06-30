@@ -15,6 +15,17 @@
           "=": 1,
           ">16x": 0
         },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
         "filter": {
           "+2x": 0,
           "+4x": 0,
@@ -56,8 +67,8 @@
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
-          "=": 3,
-          ">16x": 0
+          "=": 1,
+          ">16x": 2
         },
         "sort": {
           "+2x": 0,
@@ -76,22 +87,22 @@
         "distribute": 3,
         "hash": 6,
         "join": 6,
-        "scan": 1650000,
+        "scan": 7,
         "seek": 0,
         "sort": 0
       },
-      "plan": "Estimate    Actual  Operator\n       1         1  PROJECT count AS _col0\n       1         1  AGGREGATE COUNT(count_3) AS count\n       -         1  DISTRIBUTE GATHER\n       -         1  AGGREGATE COUNT(o_orderkey) AS count_3\n       -         6  CROSS JOIN LOOP\n 1500000         6  │└FILTER o_custkey = 1\n 1500000   1500000  │ TABLE SCAN orders\n       -         1  DISTRIBUTE GATHER\n       -         1  GROUP BY HASH c_custkey\n       -         1  DISTRIBUTE HASH ON c_custkey\n       -         1  GROUP BY PARTIAL c_custkey\n  150000         1  FILTER c_custkey = 1\n  150000    150000  TABLE SCAN customer\n",
+      "plan": "Estimate    Actual  Operator\n       1         ∞  PROJECT count AS _col0\n       1         1  AGGREGATE COUNT(count_3) AS count\n       -         1  DISTRIBUTE GATHER\n       -         1  AGGREGATE COUNT(o_orderkey) AS count_3\n       -         6  CROSS JOIN LOOP\n 1500000         6  │└FILTER o_custkey = 1\n 1500000         6  │ TABLE SCAN orders\n       -         1  DISTRIBUTE GATHER\n       -         1  GROUP BY HASH c_custkey\n       -         1  DISTRIBUTE HASH ON c_custkey\n       -         1  GROUP BY PARTIAL c_custkey\n  150000         1  FILTER c_custkey = 1\n  150000         1  TABLE SCAN customer\n",
       "sql": "SELECT COUNT(o.o_orderkey)\nFROM tpch_sf1.orders AS o\nWHERE EXISTS (\n  SELECT 1\n  FROM tpch_sf1.customer AS c\n  WHERE c.c_custkey = o.o_custkey\n    AND c.c_custkey = 1\n);\n",
-      "startTime": "2026-06-25T11:43:09.115882Z",
+      "startTime": "2026-06-30T10:06:02.870635Z",
       "status": "OK",
-      "timeMs": 101.164
+      "timeMs": 73.552
     }
   ],
   "runtime": {
-    "avgMs": 101.164,
-    "bestMs": 101.164,
-    "maxMs": 101.164,
-    "minMs": 101.164,
+    "avgMs": 73.552,
+    "bestMs": 73.552,
+    "maxMs": 73.552,
+    "minMs": 73.552,
     "stdDevMs": 0.0
   },
   "storageVariant": "iceberg",

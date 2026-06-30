@@ -15,6 +15,17 @@
           "=": 1,
           ">16x": 0
         },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 1,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
         "filter": {
           "+2x": 0,
           "+4x": 0,
@@ -75,23 +86,23 @@
         "aggregate": 1699993,
         "distribute": 199993,
         "hash": 99996,
-        "join": 150000,
-        "scan": 1650000,
+        "join": 99996,
+        "scan": 1599996,
         "seek": 0,
         "sort": 0
       },
-      "plan": "Estimate    Actual  Operator\n       1         1  PROJECT count AS _col0\n       1         1  AGGREGATE COUNT(count_3) AS count\n       -         1  DISTRIBUTE GATHER\n       -         1  AGGREGATE COUNT(c_custkey) AS count_3\n       -     99996  INNER JOIN HASH ON c_custkey = o_custkey\n       -     99996  │└DISTRIBUTE HASH ON o_custkey\n       -     99996  │ GROUP BY HASH o_custkey\n 1500000     99996  │ DISTRIBUTE HASH ON o_custkey\n 1500000     99996  │ GROUP BY PARTIAL o_custkey\n 1500000   1500000  │ TABLE SCAN orders\n  150000    150000  TABLE SCAN customer\n",
+      "plan": "Estimate    Actual  Operator\n       1         ∞  PROJECT count AS _col0\n       1         1  AGGREGATE COUNT(count_3) AS count\n       -         1  DISTRIBUTE GATHER\n       -         1  AGGREGATE COUNT(c_custkey) AS count_3\n       -     99996  INNER JOIN HASH ON c_custkey = o_custkey\n       -     99996  │└DISTRIBUTE HASH ON o_custkey\n       -     99996  │ GROUP BY HASH o_custkey\n 1500000     99996  │ DISTRIBUTE HASH ON o_custkey\n 1500000     99996  │ GROUP BY PARTIAL o_custkey\n 1500000   1500000  │ TABLE SCAN orders\n  150000     99996  TABLE SCAN customer\n",
       "sql": "SELECT COUNT(c.c_custkey)\nFROM tpch_sf1.customer AS c\nWHERE EXISTS (\n  SELECT 1\n  FROM tpch_sf1.orders AS o\n  WHERE o.o_custkey = c.c_custkey\n);\n",
-      "startTime": "2026-06-25T11:43:09.707700Z",
+      "startTime": "2026-06-30T10:06:02.958456Z",
       "status": "OK",
-      "timeMs": 270.623
+      "timeMs": 182.958
     }
   ],
   "runtime": {
-    "avgMs": 270.623,
-    "bestMs": 270.623,
-    "maxMs": 270.623,
-    "minMs": 270.623,
+    "avgMs": 182.958,
+    "bestMs": 182.958,
+    "maxMs": 182.958,
+    "minMs": 182.958,
     "stdDevMs": 0.0
   },
   "storageVariant": "iceberg",

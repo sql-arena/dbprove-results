@@ -15,8 +15,19 @@
           "=": 0,
           ">16x": 0
         },
+        "distribute": {
+          "+2x": 1,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
         "filter": {
-          "+2x": 0,
+          "+2x": 1,
           "+4x": 0,
           "+8x": 0,
           "-2x": 0,
@@ -24,7 +35,7 @@
           "-8x": 0,
           "<16x": 0,
           "=": 1,
-          ">16x": 1
+          ">16x": 0
         },
         "hash": {
           "+2x": 0,
@@ -72,26 +83,26 @@
         }
       },
       "operatorRows": {
-        "aggregate": 5219942,
+        "aggregate": 2802011,
         "distribute": 2750735,
         "hash": 1375365,
         "join": 55935,
-        "scan": 7501215,
+        "scan": 3849231,
         "seek": 0,
         "sort": 5
       },
-      "plan": "Estimate    Actual  Operator\n       -         5  PROJECT o_orderpriority, count AS order_count\n       -         5  SORT o_orderpriority\n       -         5  AGGREGATE COUNT(count_3) AS count GROUP BY HASH o_orderpriority\n       -         5  DISTRIBUTE HASH ON o_orderpriority\n       -         5  AGGREGATE COUNT(*) AS count_3 GROUP BY PARTIAL o_orderpriority\n       -     51276  INNER JOIN HASH ON o_orderkey = l_orderkey\n       -   1375365  │└DISTRIBUTE HASH ON l_orderkey\n       -   1375365  │ GROUP BY HASH l_orderkey\n 3040568   1375365  │ DISTRIBUTE HASH ON l_orderkey\n 3040568   1375365  │ GROUP BY PARTIAL l_orderkey\n 6001215   3793296  │ FILTER l_commitdate < l_receiptdate\n 6001215   6001215  │ TABLE SCAN lineitem\n 1500000     55935  FILTER (o_orderdate >= '1995-02-01') AND (o_orderdate < '1995-05-01')\n 1500000   1500000  TABLE SCAN orders\n",
+      "plan": "Estimate    Actual  Operator\n       -         5  PROJECT o_orderpriority, count AS order_count\n       -         5  SORT o_orderpriority\n       -         5  AGGREGATE COUNT(count_3) AS count GROUP BY HASH o_orderpriority\n       -         5  DISTRIBUTE HASH ON o_orderpriority\n       -         5  AGGREGATE COUNT(*) AS count_3 GROUP BY PARTIAL o_orderpriority\n       -     51276  INNER JOIN HASH ON o_orderkey = l_orderkey\n       -   1375365  │└DISTRIBUTE HASH ON l_orderkey\n       -   1375365  │ GROUP BY HASH l_orderkey\n 3040569   1375365  │ DISTRIBUTE HASH ON l_orderkey\n 3040569   1375365  │ GROUP BY PARTIAL l_orderkey\n 3040569   1375365  │ FILTER l_commitdate < l_receiptdate\n 3040569   3793296  │ TABLE SCAN lineitem\n   55509     55935  FILTER (o_orderdate >= '1995-02-01') AND (o_orderdate < '1995-05-01')\n   55509     55935  TABLE SCAN orders\n",
       "sql": "/* TPC-H Q04 */\nSELECT o_orderpriority,\n       COUNT(*) AS order_count\nFROM tpch_sf1.orders\nWHERE o_orderdate >= '1995-02-01'\n  AND o_orderdate < '1995-05-01'\n  AND EXISTS (SELECT *\n              FROM tpch_sf1.lineitem\n              WHERE l_orderkey = o_orderkey\n                AND l_commitdate < l_receiptdate)\nGROUP BY o_orderpriority\nORDER BY o_orderpriority\n",
-      "startTime": "2026-06-26T16:37:24.710319Z",
+      "startTime": "2026-06-30T10:06:04.657566Z",
       "status": "OK",
-      "timeMs": 400.138
+      "timeMs": 409.944
     }
   ],
   "runtime": {
-    "avgMs": 400.138,
-    "bestMs": 400.138,
-    "maxMs": 400.138,
-    "minMs": 400.138,
+    "avgMs": 409.944,
+    "bestMs": 409.944,
+    "maxMs": 409.944,
+    "minMs": 409.944,
     "stdDevMs": 0.0
   },
   "storageVariant": "iceberg",

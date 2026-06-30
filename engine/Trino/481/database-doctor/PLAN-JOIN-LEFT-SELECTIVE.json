@@ -15,6 +15,17 @@
           "=": 1,
           ">16x": 0
         },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 1
+        },
         "filter": {
           "+2x": 0,
           "+4x": 0,
@@ -56,8 +67,8 @@
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
-          "=": 3,
-          ">16x": 0
+          "=": 1,
+          ">16x": 2
         },
         "sort": {
           "+2x": 0,
@@ -72,26 +83,26 @@
         }
       },
       "operatorRows": {
-        "aggregate": 32,
-        "distribute": 2,
+        "aggregate": 33,
+        "distribute": 3,
         "hash": 31,
         "join": 31,
-        "scan": 6201215,
+        "scan": 32,
         "seek": 0,
         "sort": 0
       },
-      "plan": "Estimate    Actual  Operator\n       1         1  PROJECT count AS _col0, count_3 AS _col1\n       1         1  AGGREGATE COUNT(count_4) AS count, COUNT(count_5) AS count_3\n       -         1  DISTRIBUTE GATHER\n       -         1  AGGREGATE COUNT(l_partkey) AS count_4, COUNT(l_partkey) AS count_5\n       -        31  CROSS JOIN LOOP\n 6001215        31  │└FILTER l_partkey = 1\n 6001215   6001215  │ TABLE SCAN lineitem\n       -         1  DISTRIBUTE GATHER\n  200000         1  FILTER p_partkey = 1\n  200000    200000  TABLE SCAN part\n",
+      "plan": "Estimate    Actual  Operator\n       1         ∞  PROJECT count AS _col0, count_3 AS _col1\n       1         1  AGGREGATE COUNT(count_4) AS count, COUNT(count_5) AS count_3\n       -         2  DISTRIBUTE GATHER\n       -         2  AGGREGATE COUNT(l_partkey) AS count_4, COUNT(l_partkey) AS count_5\n       -        31  CROSS JOIN LOOP\n 6001215        31  │└FILTER l_partkey = 1\n 6001215        31  │ TABLE SCAN lineitem\n  200000         1  DISTRIBUTE GATHER\n  200000         1  FILTER p_partkey = 1\n  200000         1  TABLE SCAN part\n",
       "sql": "SELECT COUNT(l.l_partkey), COUNT(p.p_partkey)\nFROM tpch_sf1.lineitem AS l\nJOIN (\n  SELECT *\n  FROM tpch_sf1.part\n  WHERE p_partkey = 1\n) AS p\n  ON l.l_partkey = p.p_partkey;\n",
-      "startTime": "2026-06-25T11:43:07.471810Z",
+      "startTime": "2026-06-30T10:06:02.429798Z",
       "status": "OK",
-      "timeMs": 141.944
+      "timeMs": 133.744
     }
   ],
   "runtime": {
-    "avgMs": 141.944,
-    "bestMs": 141.944,
-    "maxMs": 141.944,
-    "minMs": 141.944,
+    "avgMs": 133.744,
+    "bestMs": 133.744,
+    "maxMs": 133.744,
+    "minMs": 133.744,
     "stdDevMs": 0.0
   },
   "storageVariant": "iceberg",

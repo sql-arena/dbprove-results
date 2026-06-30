@@ -15,6 +15,17 @@
           "=": 0,
           ">16x": 0
         },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
         "filter": {
           "+2x": 0,
           "+4x": 0,
@@ -72,26 +83,26 @@
         }
       },
       "operatorRows": {
-        "aggregate": 1850005,
-        "distribute": 1650001,
+        "aggregate": 1850565,
+        "distribute": 1650561,
         "hash": 1549963,
         "join": 1549963,
-        "scan": 1650000,
+        "scan": 1649959,
         "seek": 0,
         "sort": 42
       },
-      "plan": "Estimate    Actual  Operator\n       -        42  PROJECT count AS c_count, count_3 AS custdist\n       -        42  SORT count_3, count\n       -        42  AGGREGATE COUNT(count_4) AS count_3 GROUP BY HASH count\n       -        42  DISTRIBUTE HASH ON count\n       -        42  AGGREGATE COUNT(*) AS count_4 GROUP BY PARTIAL count\n       -    150000  AGGREGATE COUNT(count_5) AS count GROUP BY HASH c_custkey\n       -    150000  DISTRIBUTE HASH ON c_custkey\n       -    150000  AGGREGATE COUNT(o_orderkey) AS count_5 GROUP BY PARTIAL c_custkey\n       -   1549963  LEFT OUTER JOIN HASH ON c_custkey = o_custkey\n       -   1499959  │└DISTRIBUTE HASH ON o_custkey\n 1500000   1499959  │ FILTER  NOT (o_comment LIKE ' % special % requests % ')\n 1500000   1500000  │ TABLE SCAN orders\n  150000    150000  TABLE SCAN customer\n",
+      "plan": "Estimate    Actual  Operator\n       -        42  PROJECT count AS c_count, count_3 AS custdist\n       -        42  SORT count_3, count\n       -        42  AGGREGATE COUNT(count_4) AS count_3 GROUP BY HASH count\n       -       602  DISTRIBUTE HASH ON count\n       -       602  AGGREGATE COUNT(*) AS count_4 GROUP BY PARTIAL count\n       -    150000  AGGREGATE COUNT(count_5) AS count GROUP BY HASH c_custkey\n       -    150000  DISTRIBUTE HASH ON c_custkey\n       -    150000  AGGREGATE COUNT(o_orderkey) AS count_5 GROUP BY PARTIAL c_custkey\n       -   1549963  LEFT OUTER JOIN HASH ON c_custkey = o_custkey\n 1500000   1499959  │└DISTRIBUTE HASH ON o_custkey\n 1500000   1499959  │ FILTER  NOT (o_comment LIKE ' % special % requests % ')\n 1500000   1499959  │ TABLE SCAN orders\n  150000    150000  TABLE SCAN customer\n",
       "sql": "/* TPC-H Q13 */\nSELECT\n  c_count,\n  COUNT(*) AS custdist\nFROM\n  (\n    SELECT\n      c_custkey,\n      COUNT(o_orderkey) AS c_count\n    FROM\n      tpch_sf1.customer\n      LEFT OUTER JOIN tpch_sf1.orders ON c_custkey = o_custkey\n      AND o_comment NOT LIKE ' % special % requests % '\n    GROUP BY\n      c_custkey\n  ) AS c_orders\nGROUP BY\n  c_count\nORDER BY\n  custdist DESC,\n  c_count DESC\n;",
-      "startTime": "2026-06-26T16:38:03.953708Z",
+      "startTime": "2026-06-30T10:06:09.002114Z",
       "status": "OK",
-      "timeMs": 555.524
+      "timeMs": 365.819
     }
   ],
   "runtime": {
-    "avgMs": 555.524,
-    "bestMs": 555.524,
-    "maxMs": 555.524,
-    "minMs": 555.524,
+    "avgMs": 365.819,
+    "bestMs": 365.819,
+    "maxMs": 365.819,
+    "minMs": 365.819,
     "stdDevMs": 0.0
   },
   "storageVariant": "iceberg",

@@ -15,6 +15,17 @@
           "=": 1,
           ">16x": 0
         },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 1,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
         "filter": {
           "+2x": 0,
           "+4x": 0,
@@ -72,26 +83,26 @@
         }
       },
       "operatorRows": {
-        "aggregate": 1650001,
+        "aggregate": 1749997,
         "distribute": 199993,
-        "hash": 99996,
+        "hash": 150000,
         "join": 150000,
         "scan": 1650000,
         "seek": 0,
         "sort": 0
       },
-      "plan": "Estimate    Actual  Operator\n       1         1  PROJECT count AS _col0\n       1         1  AGGREGATE COUNT(count_3) AS count\n       -         1  DISTRIBUTE GATHER\n       -         1  AGGREGATE COUNT(c_custkey) AS count_3\n       -     50004  LEFT ANTI JOIN HASH ON c_custkey = o_custkey\n       -     99996  │└DISTRIBUTE HASH ON o_custkey\n       -     99996  │ PROJECT true AS subquerytrue, o_custkey\n       -     99996  │ GROUP BY HASH o_custkey\n 1500000     99996  │ DISTRIBUTE HASH ON o_custkey\n 1500000     99996  │ GROUP BY PARTIAL o_custkey\n 1500000   1500000  │ TABLE SCAN orders\n  150000    150000  TABLE SCAN customer\n",
+      "plan": "Estimate    Actual  Operator\n       1         ∞  PROJECT count AS _col0\n       1         1  AGGREGATE COUNT(count_3) AS count\n       -         1  DISTRIBUTE GATHER\n       -         1  AGGREGATE COUNT(c_custkey) AS count_3\n       -    150000  LEFT ANTI JOIN HASH ON c_custkey = o_custkey\n       -     99996  │└DISTRIBUTE HASH ON o_custkey\n       -     99996  │ PROJECT true AS subquerytrue, o_custkey\n       -     99996  │ GROUP BY HASH o_custkey\n 1500000     99996  │ DISTRIBUTE HASH ON o_custkey\n 1500000     99996  │ GROUP BY PARTIAL o_custkey\n 1500000   1500000  │ TABLE SCAN orders\n  150000    150000  TABLE SCAN customer\n",
       "sql": "SELECT COUNT(c.c_custkey)\nFROM tpch_sf1.customer AS c\nWHERE NOT EXISTS (\n  SELECT 1\n  FROM tpch_sf1.orders AS o\n  WHERE o.o_custkey = c.c_custkey\n);\n",
-      "startTime": "2026-06-25T11:42:59.264644Z",
+      "startTime": "2026-06-30T10:06:00.435262Z",
       "status": "OK",
-      "timeMs": 149.559
+      "timeMs": 151.674
     }
   ],
   "runtime": {
-    "avgMs": 149.559,
-    "bestMs": 149.559,
-    "maxMs": 149.559,
-    "minMs": 149.559,
+    "avgMs": 151.674,
+    "bestMs": 151.674,
+    "maxMs": 151.674,
+    "minMs": 151.674,
     "stdDevMs": 0.0
   },
   "storageVariant": "iceberg",

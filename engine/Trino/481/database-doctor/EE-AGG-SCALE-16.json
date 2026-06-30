@@ -3,10 +3,19 @@
   "engine": "Trino",
   "queries": [
     {
-      "errorMessage": "Query exceeded distributed total memory limit of 2.44GB",
-      "status": "ERROR"
+      "sql": "SELECT COUNT(*) AS agg_group_count,\n       SUM(CAST(group_rows AS BIGINT)) AS sum_group_rows,\n       SUM(sum_o_custkey) AS sum_o_custkey,\n       COUNT(o_orderkey) AS count_o_orderkey,\n       COUNT(orders_replica_id) AS count_orders_replica_id,\n       COUNT(o_orderstatus) AS count_o_orderstatus,\n       COUNT(o_orderpriority) AS count_o_orderpriority,\n       COUNT(o_clerk) AS count_o_clerk,\n       COUNT(o_shippriority) AS count_o_shippriority\nFROM (\n  SELECT o_orderkey,\n         orders_replica_id,\n         o_orderstatus,\n         o_orderpriority,\n         o_clerk,\n         o_shippriority,\n         COUNT(*) AS group_rows,\n         SUM(CAST(o_custkey AS BIGINT)) AS sum_o_custkey\n  FROM scale.orders_scale_16\n  GROUP BY o_orderkey,\n           orders_replica_id,\n           o_orderstatus,\n           o_orderpriority,\n           o_clerk,\n           o_shippriority\n) grouped_orders",
+      "startTime": "2026-06-29T17:14:11.054400Z",
+      "status": "OK",
+      "timeMs": 4240.967
     }
   ],
+  "runtime": {
+    "avgMs": 4475.851,
+    "bestMs": 4240.967,
+    "maxMs": 4713.297,
+    "minMs": 4240.967,
+    "stdDevMs": 192.836
+  },
   "storageVariant": "iceberg",
   "theorem": {
     "categories": [

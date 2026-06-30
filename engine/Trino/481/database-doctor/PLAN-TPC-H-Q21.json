@@ -15,16 +15,27 @@
           "=": 0,
           ">16x": 0
         },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 1,
+          "-8x": 0,
+          "<16x": 1,
+          "=": 1,
+          ">16x": 2
+        },
         "filter": {
-          "+2x": 1,
+          "+2x": 0,
           "+4x": 0,
           "+8x": 0,
           "-2x": 0,
           "-4x": 0,
           "-8x": 0,
-          "<16x": 0,
-          "=": 2,
-          ">16x": 1
+          "<16x": 1,
+          "=": 1,
+          ">16x": 2
         },
         "hash": {
           "+2x": 0,
@@ -53,11 +64,11 @@
           "+4x": 0,
           "+8x": 0,
           "-2x": 0,
-          "-4x": 0,
+          "-4x": 1,
           "-8x": 0,
-          "<16x": 0,
-          "=": 6,
-          ">16x": 0
+          "<16x": 1,
+          "=": 1,
+          ">16x": 3
         },
         "sort": {
           "+2x": 0,
@@ -72,26 +83,26 @@
         }
       },
       "operatorRows": {
-        "aggregate": 484245,
-        "distribute": 10534321,
-        "hash": 13525381,
-        "join": 7931032,
-        "scan": 19513670,
+        "aggregate": 263708,
+        "distribute": 4076166,
+        "hash": 4074900,
+        "join": 469710,
+        "scan": 4145301,
         "seek": 0,
         "sort": 396
       },
-      "plan": "Estimate    Actual  Operator\n       -       396  PROJECT s_name, count AS numwait\n       -       396  SORT count, s_name\n       -       396  AGGREGATE COUNT(count_54) AS count GROUP BY HASH s_name\n       -       396  DISTRIBUTE HASH ON s_name\n       -       396  AGGREGATE COUNT(*) AS count_54 GROUP BY PARTIAL s_name\n       -      3935  FILTER  NOT (COALESCE(aggrbool,false))\n       -     70401  AGGREGATE BOOL_OR(subquerytrue_49) AS aggrbool GROUP BY HASH l_orderkey, l_suppkey, l_commitdate, l_receiptdate, o_orderstatus, s_name, n_name, exists_value, unique_value\n       -    188106  LEFT OUTER JOIN HASH ON (l_orderkey = l_orderkey_29) AND (l_suppkey_31 <> l_suppkey)\n 3040568   3793296  │└DISTRIBUTE HASH ON l_orderkey_29\n 3040568   3793296  │ PROJECT true AS subquerytrue_49, l_orderkey_29, l_suppkey_31\n 6001215   3793296  │ PROJECT l_orderkey AS l_orderkey_29, l_suppkey AS l_suppkey_31\n 6001215   3793296  │ FILTER l_receiptdate > l_commitdate\n 6001215   6001215  │ TABLE SCAN lineitem\n       -     70401  PROJECT l_orderkey, l_suppkey, l_commitdate, l_receiptdate, o_orderstatus, s_name, n_name, exists_value, row_number() OVER() AS unique_value\n       -     70401  PROJECT l_orderkey, l_suppkey, l_commitdate, l_receiptdate, o_orderstatus, s_name, n_name, true AS exists_value\n       -     70401  GROUP BY HASH l_orderkey, l_suppkey, l_commitdate, l_receiptdate, o_orderstatus, s_name, n_name, unique_53\n       -    291808  INNER JOIN HASH ON (l_orderkey = l_orderkey_9) AND (l_suppkey_11 <> l_suppkey)\n 6001215   6001215  │└DISTRIBUTE HASH ON l_orderkey_9\n 6001215   6001215  │ PROJECT l_orderkey AS l_orderkey_9, l_suppkey AS l_suppkey_11\n 6001215   6001215  │ TABLE SCAN lineitem\n       -     73048  PROJECT l_orderkey, l_suppkey, l_commitdate, l_receiptdate, o_orderstatus, s_name, n_name, row_number() OVER() AS unique_53\n       -     73048  INNER JOIN HASH ON s_nationkey = n_nationkey\n       -         1  │└DISTRIBUTE GATHER\n      25         1  │ FILTER n_name = 'GERMANY'\n      25        25  │ TABLE SCAN nation\n       -   1828911  INNER JOIN HASH ON l_suppkey = s_suppkey\n   10000     10000  │└DISTRIBUTE GATHER\n   10000     10000  │ TABLE SCAN supplier\n       -   1828911  INNER JOIN HASH ON l_orderkey = o_orderkey\n 1350000    729413  │└DISTRIBUTE HASH ON o_orderkey\n 1500000    729413  │ FILTER o_orderstatus = 'F'\n 1500000   1500000  │ TABLE SCAN orders\n 6001215   3793296  FILTER l_receiptdate > l_commitdate\n 6001215   6001215  TABLE SCAN lineitem\n",
+      "plan": "Estimate    Actual  Operator\n       -       396  PROJECT s_name, count AS numwait\n       -       396  SORT count, s_name\n       -       396  AGGREGATE COUNT(count_54) AS count GROUP BY HASH s_name\n       -      1266  DISTRIBUTE HASH ON s_name\n       -      1266  AGGREGATE COUNT(*) AS count_54 GROUP BY PARTIAL s_name\n       -      3935  FILTER  NOT (COALESCE(aggrbool,false))\n       -     70401  AGGREGATE BOOL_OR(subquerytrue_49) AS aggrbool GROUP BY HASH l_orderkey, l_suppkey, l_commitdate, l_receiptdate, o_orderstatus, s_name, n_name, exists_value, unique_value\n       -    188106  LEFT OUTER JOIN HASH ON (l_orderkey = l_orderkey_29) AND (l_suppkey_31 <> l_suppkey)\n 3040569   3793296  │└DISTRIBUTE HASH ON l_orderkey_29\n 3040569   3793296  │ PROJECT true AS subquerytrue_49, l_orderkey_29, l_suppkey_31\n 3040569   3793296  │ PROJECT l_orderkey AS l_orderkey_29, l_suppkey AS l_suppkey_31\n 3040569   3793296  │ FILTER l_receiptdate > l_commitdate\n 3040569   3793296  │ TABLE SCAN lineitem\n       -     70401  PROJECT l_orderkey, l_suppkey, l_commitdate, l_receiptdate, o_orderstatus, s_name, n_name, exists_value, row_number() OVER() AS unique_value\n       -     70401  PROJECT l_orderkey, l_suppkey, l_commitdate, l_receiptdate, o_orderstatus, s_name, n_name, true AS exists_value\n       -     70401  GROUP BY HASH l_orderkey, l_suppkey, l_commitdate, l_receiptdate, o_orderstatus, s_name, n_name, unique_53\n       -     70401  INNER JOIN HASH ON (l_orderkey = l_orderkey_9) AND (l_suppkey_11 <> l_suppkey)\n 6001215     70401  │└DISTRIBUTE HASH ON l_orderkey_9\n 6001215     70401  │ PROJECT l_orderkey AS l_orderkey_9, l_suppkey AS l_suppkey_11\n 6001215     70401  │ TABLE SCAN lineitem\n       -     70401  PROJECT l_orderkey, l_suppkey, l_commitdate, l_receiptdate, o_orderstatus, s_name, n_name, row_number() OVER() AS unique_53\n       -     70401  INNER JOIN HASH ON s_nationkey = n_nationkey\n      25     70401  │└DISTRIBUTE GATHER\n      25     70401  │ FILTER n_name = 'GERMANY'\n      25     70401  │ TABLE SCAN nation\n       -     70401  INNER JOIN HASH ON l_suppkey = s_suppkey\n   10000     70401  │└DISTRIBUTE GATHER\n   10000     70401  │ TABLE SCAN supplier\n       -     70401  INNER JOIN HASH ON l_orderkey = o_orderkey\n 1500000     70401  │└DISTRIBUTE HASH ON o_orderkey\n 1500000     70401  │ FILTER o_orderstatus = 'F'\n 1500000     70401  │ TABLE SCAN orders\n 6001215     70401  FILTER l_receiptdate > l_commitdate\n 6001215     70401  TABLE SCAN lineitem\n",
       "sql": "/* TPC-H Q21 */\nSELECT s_name, COUNT(*) AS numwait\nFROM tpch_sf1.lineitem l1\nINNER JOIN tpch_sf1.orders\n    ON l1.l_orderkey = o_orderkey\nINNER JOIN tpch_sf1.supplier\n    ON l1.l_suppkey = s_suppkey\nINNER JOIN tpch_sf1.nation\n    ON s_nationkey = n_nationkey\nWHERE o_orderstatus = 'F'\n  AND l1.l_receiptdate > l1.l_commitdate\n  AND EXISTS (SELECT 1\n              FROM tpch_sf1.lineitem l2\n              WHERE l2.l_orderkey = l1.l_orderkey\n                AND l2.l_suppkey <> l1.l_suppkey)\n  AND NOT EXISTS (SELECT 1\n                  FROM tpch_sf1.lineitem l3\n                  WHERE l3.l_orderkey = l1.l_orderkey\n                    AND l3.l_suppkey <> l1.l_suppkey\n                    AND l3.l_receiptdate\n                      > l3.l_commitdate)\n  AND n_name = 'GERMANY'\nGROUP BY s_name\nORDER BY numwait DESC,\n         s_name\n",
-      "startTime": "2026-06-26T16:38:23.769706Z",
+      "startTime": "2026-06-30T10:06:12.404897Z",
       "status": "OK",
-      "timeMs": 1025.196
+      "timeMs": 845.395
     }
   ],
   "runtime": {
-    "avgMs": 1025.196,
-    "bestMs": 1025.196,
-    "maxMs": 1025.196,
-    "minMs": 1025.196,
+    "avgMs": 845.395,
+    "bestMs": 845.395,
+    "maxMs": 845.395,
+    "minMs": 845.395,
     "stdDevMs": 0.0
   },
   "storageVariant": "iceberg",

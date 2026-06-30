@@ -15,9 +15,20 @@
           "=": 0,
           ">16x": 0
         },
+        "distribute": {
+          "+2x": 1,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 1
+        },
         "filter": {
-          "+2x": 0,
-          "+4x": 1,
+          "+2x": 1,
+          "+4x": 0,
           "+8x": 0,
           "-2x": 0,
           "-4x": 0,
@@ -27,7 +38,7 @@
           ">16x": 1
         },
         "hash": {
-          "+2x": 0,
+          "+2x": 1,
           "+4x": 0,
           "+8x": 0,
           "-2x": 0,
@@ -38,7 +49,7 @@
           ">16x": 0
         },
         "join": {
-          "+2x": 0,
+          "+2x": 1,
           "+4x": 0,
           "+8x": 0,
           "-2x": 0,
@@ -49,15 +60,15 @@
           ">16x": 0
         },
         "scan": {
-          "+2x": 0,
+          "+2x": 2,
           "+4x": 0,
           "+8x": 0,
           "-2x": 0,
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
-          "=": 3,
-          ">16x": 0
+          "=": 0,
+          ">16x": 1
         },
         "sort": {
           "+2x": 0,
@@ -72,26 +83,26 @@
         }
       },
       "operatorRows": {
-        "aggregate": 375351,
-        "distribute": 167074,
-        "hash": 238143,
-        "join": 919100,
-        "scan": 1010000,
+        "aggregate": 453336,
+        "distribute": 245002,
+        "hash": 148875,
+        "join": 148875,
+        "scan": 59554,
         "seek": 0,
         "sort": 18282
       },
-      "plan": "Estimate    Actual  Operator\n       -     18282  PROJECT p_brand, p_type, p_size, count AS supplier_cnt\n       -     18282  SORT count, p_brand, p_type, p_size\n       -     18282  AGGREGATE COUNT(count_9) AS count GROUP BY HASH p_brand, p_type, p_size\n       -     18282  DISTRIBUTE HASH ON p_brand, p_type, p_size\n       -     18282  AGGREGATE COUNT(ps_suppkey) AS count_9 GROUP BY PARTIAL p_brand, p_type, p_size\n       -    119013  GROUP BY HASH p_brand, p_type, p_size, ps_suppkey\n       -    119013  DISTRIBUTE HASH ON p_brand, p_type, p_size, ps_suppkey\n       -    119013  GROUP BY PARTIAL p_brand, p_type, p_size, ps_suppkey\n       -    119043  LEFT ANTI JOIN HASH ON ps_suppkey = s_suppkey\n       -         4  │└DISTRIBUTE GATHER\n   10000         4  │ FILTER s_comment LIKE '%Customer%Complaints%'\n   10000     10000  │ TABLE SCAN supplier\n       -    119100  INNER JOIN HASH ON ps_partkey = p_partkey\n   90000     29775  │└DISTRIBUTE GATHER\n  200000     29775  │ FILTER (p_brand <> 'Brand#42') AND (p_size IN(3,7,11,29,31,37,41,49)) AND  NOT (p_type LIKE 'STANDARD ANODIZED%')\n  200000    200000  │ TABLE SCAN part\n  800000    800000  TABLE SCAN partsupp\n",
+      "plan": "Estimate    Actual  Operator\n       -     18282  PROJECT p_brand, p_type, p_size, count AS supplier_cnt\n       -     18282  SORT count, p_brand, p_type, p_size\n       -     18282  AGGREGATE COUNT(count_9) AS count GROUP BY HASH p_brand, p_type, p_size\n       -     96210  DISTRIBUTE HASH ON p_brand, p_type, p_size\n       -     96210  AGGREGATE COUNT(ps_suppkey) AS count_9 GROUP BY PARTIAL p_brand, p_type, p_size\n       -    119013  GROUP BY HASH p_brand, p_type, p_size, ps_suppkey\n       -    119013  DISTRIBUTE HASH ON p_brand, p_type, p_size, ps_suppkey\n       -    119013  GROUP BY PARTIAL p_brand, p_type, p_size, ps_suppkey\n       -    119100  LEFT ANTI JOIN HASH ON ps_suppkey = s_suppkey\n   10000         4  │└DISTRIBUTE GATHER\n   10000         4  │ FILTER s_comment LIKE '%Customer%Complaints%'\n   10000         4  │ TABLE SCAN supplier\n   90000     29775  INNER JOIN HASH ON ps_partkey = p_partkey\n   90000     29775  │└DISTRIBUTE GATHER\n   90000     29775  │ FILTER (p_brand <> 'Brand#42') AND (p_size IN(3,7,11,29,31,37,41,49)) AND  NOT (p_type LIKE 'STANDARD ANODIZED%')\n   90000     29775  │ TABLE SCAN part\n   90000     29775  TABLE SCAN partsupp\n",
       "sql": "/* TPC-H Q16 */\nSELECT p_brand,\n       p_type,\n       p_size,\n       COUNT(DISTINCT ps_suppkey) AS supplier_cnt\nFROM tpch_sf1.partsupp\nINNER JOIN tpch_sf1.part\n    ON ps_partkey = p_partkey\n\nWHERE p_brand <> 'Brand#42'\n  AND p_type NOT LIKE 'STANDARD ANODIZED%'\n  AND p_size IN (3, 7, 11, 29, 31, 37, 41, 49)\n  AND ps_suppkey NOT IN (SELECT s_suppkey\n                         FROM tpch_sf1.supplier\n                         WHERE s_comment LIKE '%Customer%Complaints%')\nGROUP BY p_brand,\n         p_type,\n         p_size\nORDER BY supplier_cnt DESC,\n         p_brand,\n         p_type,\n         p_size",
-      "startTime": "2026-06-26T16:38:10.133945Z",
+      "startTime": "2026-06-30T10:06:09.965595Z",
       "status": "OK",
-      "timeMs": 439.505
+      "timeMs": 428.437
     }
   ],
   "runtime": {
-    "avgMs": 439.505,
-    "bestMs": 439.505,
-    "maxMs": 439.505,
-    "minMs": 439.505,
+    "avgMs": 428.437,
+    "bestMs": 428.437,
+    "maxMs": 428.437,
+    "minMs": 428.437,
     "stdDevMs": 0.0
   },
   "storageVariant": "iceberg",

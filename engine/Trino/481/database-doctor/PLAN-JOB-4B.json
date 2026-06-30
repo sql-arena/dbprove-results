@@ -15,11 +15,22 @@
           "=": 1,
           ">16x": 0
         },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 3
+        },
         "filter": {
           "+2x": 0,
-          "+4x": 1,
+          "+4x": 0,
           "+8x": 0,
-          "-2x": 0,
+          "-2x": 1,
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
@@ -35,7 +46,7 @@
           "-8x": 0,
           "<16x": 0,
           "=": 0,
-          ">16x": 0
+          ">16x": 2
         },
         "join": {
           "+2x": 0,
@@ -46,18 +57,18 @@
           "-8x": 0,
           "<16x": 0,
           "=": 0,
-          ">16x": 0
+          ">16x": 2
         },
         "scan": {
           "+2x": 0,
           "+4x": 0,
           "+8x": 0,
-          "-2x": 0,
+          "-2x": 1,
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
-          "=": 6,
-          ">16x": 0
+          "=": 1,
+          ">16x": 4
         },
         "sort": {
           "+2x": 0,
@@ -72,26 +83,26 @@
         }
       },
       "operatorRows": {
-        "aggregate": 7,
-        "distribute": 4923949,
-        "hash": 4923948,
-        "join": 12390,
-        "scan": 8566560,
+        "aggregate": 22,
+        "distribute": 417614,
+        "hash": 417598,
+        "join": 38874,
+        "scan": 430549,
         "seek": 0,
         "sort": 0
       },
-      "plan": "Estimate    Actual  Operator\n       1         1  PROJECT min AS rating, min_19 AS movie_title\n       1         1  AGGREGATE MIN(min_20) AS min, MIN(min_21) AS min_19\n       -         1  DISTRIBUTE GATHER\n       -         1  AGGREGATE MIN(info_5) AS min_20, MIN(title) AS min_21\n       -         6  INNER JOIN HASH ON movie_id = id_14\n  159035    391666  │└DISTRIBUTE HASH ON id_14\n 2528312    391666  │ PROJECT id AS id_14, title\n 2528312    391666  │ FILTER production_year > 2010\n 2528312   2528312  │ TABLE SCAN title\n       -        21  INNER JOIN HASH ON keyword_id = id_0\n       -        30  │└DISTRIBUTE GATHER\n  134170        30  │ PROJECT id AS id_0\n  134170        30  │ FILTER keyword LIKE '%sequel%'\n  134170    134170  │ TABLE SCAN keyword\n       -      6032  INNER JOIN HASH ON movie_id = movie_id_10\n 4523930   4523930  │└DISTRIBUTE HASH ON movie_id_10\n 4523930   4523930  │ PROJECT movie_id AS movie_id_10, keyword_id\n 4523930   4523930  │ TABLE SCAN movie_keyword\n       -       305  INNER JOIN HASH ON id = info_type_id\n 1380035      8322  │└DISTRIBUTE HASH ON info_type_id\n 1380035      8322  │ PROJECT movie_id, info_type_id, info AS info_5\n 1380035      8322  │ FILTER info > '9.0'\n 1380035   1380035  │ TABLE SCAN movie_info_idx\n     113         1  FILTER info = 'rating'\n     113       113  TABLE SCAN info_type\n",
+      "plan": "Estimate    Actual  Operator\n       1         ∞  PROJECT min AS rating, min_19 AS movie_title\n       1         1  AGGREGATE MIN(min_20) AS min, MIN(min_21) AS min_19\n       -        16  DISTRIBUTE GATHER\n       -        16  AGGREGATE MIN(info_5) AS min_20, MIN(title) AS min_21\n       -         6  INNER JOIN HASH ON movie_id = id_14\n  159036    391666  │└DISTRIBUTE HASH ON id_14\n  159036    391666  │ PROJECT id AS id_14, title\n  159036    391666  │ FILTER production_year > 2010\n  159036    391666  │ TABLE SCAN title\n       -        21  INNER JOIN HASH ON keyword_id = id_0\n  134170        30  │└DISTRIBUTE GATHER\n  134170        30  │ PROJECT id AS id_0\n  134170        30  │ FILTER keyword LIKE '%sequel%'\n  134170        30  │ TABLE SCAN keyword\n 4523930     12951  INNER JOIN HASH ON movie_id = movie_id_10\n 4523930     12951  │└DISTRIBUTE HASH ON movie_id_10\n 4523930     12951  │ PROJECT movie_id AS movie_id_10, keyword_id\n 4523930     12951  │ TABLE SCAN movie_keyword\n 4523930     12951  INNER JOIN HASH ON id = info_type_id\n 4523930     12951  │└DISTRIBUTE HASH ON info_type_id\n 4523930     12951  │ PROJECT movie_id, info_type_id, info AS info_5\n 4523930     12951  │ FILTER info > '9.0'\n 4523930     12951  │ TABLE SCAN movie_info_idx\n 4523930     12951  FILTER info = 'rating'\n 4523930     12951  TABLE SCAN info_type\n",
       "sql": "SELECT MIN(mi_idx.info) AS rating,\n       MIN(t.title) AS movie_title\nFROM job.info_type AS it,\n     job.keyword AS k,\n     job.movie_info_idx AS mi_idx,\n     job.movie_keyword AS mk,\n     job.title AS t\nWHERE it.info ='rating'\n  AND k.keyword LIKE '%sequel%'\n  AND mi_idx.info > '9.0'\n  AND t.production_year > 2010\n  AND t.id = mi_idx.movie_id\n  AND t.id = mk.movie_id\n  AND mk.movie_id = mi_idx.movie_id\n  AND k.id = mk.keyword_id\n  AND it.id = mi_idx.info_type_id;\n",
-      "startTime": "2026-06-26T16:52:08.432805Z",
+      "startTime": "2026-06-30T11:21:44.885900Z",
       "status": "OK",
-      "timeMs": 991.588
+      "timeMs": 294.945
     }
   ],
   "runtime": {
-    "avgMs": 991.588,
-    "bestMs": 991.588,
-    "maxMs": 991.588,
-    "minMs": 991.588,
+    "avgMs": 294.945,
+    "bestMs": 294.945,
+    "maxMs": 294.945,
+    "minMs": 294.945,
     "stdDevMs": 0.0
   },
   "storageVariant": "iceberg",

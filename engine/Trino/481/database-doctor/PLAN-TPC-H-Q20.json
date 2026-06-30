@@ -12,19 +12,30 @@
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
-          "=": 2,
-          ">16x": 1
+          "=": 5,
+          ">16x": 0
         },
-        "filter": {
+        "distribute": {
           "+2x": 0,
-          "+4x": 1,
+          "+4x": 0,
           "+8x": 0,
           "-2x": 0,
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
-          "=": 0,
-          ">16x": 2
+          "=": 4,
+          ">16x": 1
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 4,
+          ">16x": 1
         },
         "hash": {
           "+2x": 0,
@@ -34,7 +45,7 @@
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
-          "=": 0,
+          "=": 2,
           ">16x": 0
         },
         "join": {
@@ -45,7 +56,7 @@
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
-          "=": 0,
+          "=": 2,
           ">16x": 0
         },
         "scan": {
@@ -56,8 +67,8 @@
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
-          "=": 7,
-          ">16x": 1
+          "=": 8,
+          ">16x": 2
         },
         "sort": {
           "+2x": 0,
@@ -72,26 +83,26 @@
         }
       },
       "operatorRows": {
-        "aggregate": 1466696,
-        "distribute": 551949,
-        "hash": 565667,
-        "join": 828168,
-        "scan": 7011240,
+        "aggregate": 2710575,
+        "distribute": 2029551,
+        "hash": 2029707,
+        "join": 1359206,
+        "scan": 2025150,
         "seek": 0,
         "sort": 158
       },
-      "plan": "Estimate    Actual  Operator\n       -       158  SORT s_name\n       -       158  INNER JOIN HASH ON s_suppkey = ps_suppkey\n       -      4558  │└GROUP BY HASH ps_suppkey\n       -      4558  │ DISTRIBUTE HASH ON ps_suppkey\n       -      4558  │ GROUP BY PARTIAL ps_suppkey\n       -      6028  │ FILTER CAST(ps_availqty AS decimal(38,3)) > (COALESCE(sum,sum_26) * 0.5)\n       -      8896  │ CROSS JOIN LOOP\n       -      8896  │ │└LEFT OUTER JOIN HASH ON (ps_partkey = l_partkey) AND (ps_suppkey = l_suppkey)\n       -    542941  │ │ │└AGGREGATE SUM(sum_27) AS sum GROUP BY HASH l_partkey, l_suppkey\n  867502    542941  │ │ │ DISTRIBUTE HASH ON l_partkey, l_suppkey\n  867502    542941  │ │ │ AGGREGATE SUM(l_quantity) AS sum_27 GROUP BY PARTIAL l_partkey, l_suppkey\n       -    908721  │ │ │ FILTER non_null\n  867502    908721  │ │ │ PROJECT l_quantity, l_partkey, l_suppkey, true AS non_null\n 6001215    908721  │ │ │ FILTER (l_shipdate >= '1993-01-01') AND (l_shipdate < '1994-01-01')\n 6001215   6001215  │ │ │ TABLE SCAN lineitem\n       -      8896  │ │ INNER JOIN HASH ON ps_partkey = p_partkey\n       -      2224  │ │ │└DISTRIBUTE GATHER\n       -      2224  │ │ │ GROUP BY HASH p_partkey\n  180000      2224  │ │ │ DISTRIBUTE HASH ON p_partkey\n  180000      2224  │ │ │ GROUP BY PARTIAL p_partkey\n  200000      2224  │ │ │ FILTER (p_name >= 'almond') AND (p_name < 'almone') AND (p_name LIKE 'almond%')\n  200000    200000  │ │ │ TABLE SCAN part\n  800000    800000  │ │ TABLE SCAN partsupp\n       1         1  │ DISTRIBUTE GATHER\n       1         1  │ AGGREGATE SUM(null_value) AS sum_26\n       -         0  │ FILTER null_25\n       1         1  │ PROJECT 0.0 AS null_value, false AS null_25\n       1         1  │ SELECT\n       -       376  INNER JOIN HASH ON s_nationkey = n_nationkey\n       -         1  │└DISTRIBUTE GATHER\n      25         1  │ FILTER n_name = 'KENYA'\n      25        25  │ TABLE SCAN nation\n   10000     10000  TABLE SCAN supplier\n",
+      "plan": "Estimate    Actual  Operator\n       -       158  SORT s_name\n       -       158  INNER JOIN HASH ON s_suppkey = ps_suppkey\n       -      4558  │└GROUP BY HASH ps_suppkey\n       -      4558  │ DISTRIBUTE HASH ON ps_suppkey\n       -      4558  │ GROUP BY PARTIAL ps_suppkey\n       -      6028  │ FILTER CAST(ps_availqty AS decimal(38,3)) > (COALESCE(sum,sum_26) * 0.5)\n       -      8896  │ CROSS JOIN LOOP\n  867502    674997  │ │└LEFT OUTER JOIN HASH ON (ps_partkey = l_partkey) AND (ps_suppkey = l_suppkey)\n  867502    674997  │ │ │└AGGREGATE SUM(sum_27) AS sum GROUP BY HASH l_partkey, l_suppkey\n  867502    674997  │ │ │ DISTRIBUTE HASH ON l_partkey, l_suppkey\n  867502    674997  │ │ │ AGGREGATE SUM(l_quantity) AS sum_27 GROUP BY PARTIAL l_partkey, l_suppkey\n  867502    674997  │ │ │ FILTER non_null\n  867502    674997  │ │ │ PROJECT l_quantity, l_partkey, l_suppkey, true AS non_null\n  867502    674997  │ │ │ FILTER (l_shipdate >= '1993-01-01') AND (l_shipdate < '1994-01-01')\n  867502    674997  │ │ │ TABLE SCAN lineitem\n  867502    674997  │ │ INNER JOIN HASH ON ps_partkey = p_partkey\n  867502    674997  │ │ │└DISTRIBUTE GATHER\n  867502    674997  │ │ │ GROUP BY HASH p_partkey\n  867502    674997  │ │ │ DISTRIBUTE HASH ON p_partkey\n  867502    674997  │ │ │ GROUP BY PARTIAL p_partkey\n  867502    674997  │ │ │ FILTER (p_name >= 'almond') AND (p_name < 'almone') AND (p_name LIKE 'almond%')\n  867502    674997  │ │ │ TABLE SCAN part\n  867502    674997  │ │ TABLE SCAN partsupp\n       1         1  │ DISTRIBUTE GATHER\n       1         1  │ AGGREGATE SUM(null_value) AS sum_26\n       1         1  │ FILTER null_25\n       1         1  │ PROJECT 0.0 AS null_value, false AS null_25\n       1         1  │ SELECT\n       -       158  INNER JOIN HASH ON s_nationkey = n_nationkey\n      25         1  │└DISTRIBUTE GATHER\n      25         1  │ FILTER n_name = 'KENYA'\n      25         1  │ TABLE SCAN nation\n   10000       158  TABLE SCAN supplier\n",
       "sql": "/* TPC-H Q20 */\nSELECT s_name,\n       s_address\nFROM tpch_sf1.supplier\nINNER JOIN tpch_sf1.nation\n    ON s_nationkey = n_nationkey\nWHERE s_suppkey IN (SELECT ps_suppkey\n                    FROM tpch_sf1.partsupp\n                    WHERE ps_partkey IN (SELECT p_partkey\n                                         FROM tpch_sf1.part AS p_inner\n                                         WHERE p_name LIKE 'almond%')\n                      AND ps_availqty > (SELECT 0.5 * SUM(l_quantity) AS qty\n                                         FROM tpch_sf1.lineitem as li_inner\n                                         WHERE l_partkey = ps_partkey\n                                           AND l_suppkey = ps_suppkey\n                                           AND l_shipdate >= '1993-01-01'\n                                           AND l_shipdate < '1994-01-01'))\n  AND n_name = 'KENYA'\nORDER BY s_name\n\n",
-      "startTime": "2026-06-26T16:38:20.355036Z",
+      "startTime": "2026-06-30T10:06:11.962181Z",
       "status": "OK",
-      "timeMs": 364.358
+      "timeMs": 417.024
     }
   ],
   "runtime": {
-    "avgMs": 364.358,
-    "bestMs": 364.358,
-    "maxMs": 364.358,
-    "minMs": 364.358,
+    "avgMs": 417.024,
+    "bestMs": 417.024,
+    "maxMs": 417.024,
+    "minMs": 417.024,
     "stdDevMs": 0.0
   },
   "storageVariant": "iceberg",

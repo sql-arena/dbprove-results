@@ -15,19 +15,30 @@
           "=": 1,
           ">16x": 0
         },
-        "filter": {
-          "+2x": 1,
-          "+4x": 2,
+        "distribute": {
+          "+2x": 8,
+          "+4x": 1,
           "+8x": 0,
           "-2x": 0,
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
-          "=": 1,
-          ">16x": 2
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 5,
+          "+4x": 1,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
         },
         "hash": {
-          "+2x": 0,
+          "+2x": 8,
           "+4x": 0,
           "+8x": 0,
           "-2x": 0,
@@ -38,7 +49,7 @@
           ">16x": 0
         },
         "join": {
-          "+2x": 0,
+          "+2x": 8,
           "+4x": 0,
           "+8x": 0,
           "-2x": 0,
@@ -49,14 +60,14 @@
           ">16x": 0
         },
         "scan": {
-          "+2x": 0,
-          "+4x": 0,
+          "+2x": 9,
+          "+4x": 1,
           "+8x": 0,
           "-2x": 0,
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
-          "=": 11,
+          "=": 1,
           ">16x": 0
         },
         "sort": {
@@ -72,26 +83,26 @@
         }
       },
       "operatorRows": {
-        "aggregate": 34,
-        "distribute": 47223079,
-        "hash": 47395014,
-        "join": 7042924,
-        "scan": 50873687,
+        "aggregate": 49,
+        "distribute": 4063201,
+        "hash": 4063217,
+        "join": 4571082,
+        "scan": 4571083,
         "seek": 0,
         "sort": 0
       },
-      "plan": "Estimate    Actual  Operator\n       1         1  PROJECT min AS complete_downey_ironman_movie\n       1         1  AGGREGATE MIN(min_50) AS min\n       -         1  DISTRIBUTE GATHER\n       -         1  AGGREGATE MIN(title) AS min_50\n       -        33  INNER JOIN HASH ON kind_id = id_22\n       -         1  │└DISTRIBUTE GATHER\n       7         1  │ PROJECT id AS id_22\n       7         1  │ FILTER kind = 'movie'\n       7         7  │ TABLE SCAN kind_type\n       -        33  INNER JOIN HASH ON movie_id = id_42\n 1219273   2287271  │└DISTRIBUTE HASH ON id_42\n 2528312   2287271  │ PROJECT id AS id_42, title, kind_id\n 2528312   2287271  │ FILTER production_year > 1950\n 2528312   2528312  │ TABLE SCAN title\n       -        33  INNER JOIN HASH ON person_id = id_32\n 4167491   4167491  │└DISTRIBUTE HASH ON id_32\n 4167491   4167491  │ PROJECT id AS id_32\n 4167491   4167491  │ TABLE SCAN name\n       -        33  INNER JOIN HASH ON keyword_id = id_18\n       -         8  │└DISTRIBUTE GATHER\n  134170         8  │ PROJECT id AS id_18\n  134170         8  │ FILTER keyword IN('based-on-comic','fight','marvel-comics','second-part','sequel','superhero','tv-special','violence')\n  134170    134170  │ TABLE SCAN keyword\n       -      1330  INNER JOIN HASH ON movie_id = movie_id_28\n 4523930   4523930  │└DISTRIBUTE HASH ON movie_id_28\n 4523930   4523930  │ PROJECT movie_id AS movie_id_28, keyword_id\n 4523930   4523930  │ TABLE SCAN movie_keyword\n       -        24  INNER JOIN HASH ON person_role_id = id_9\n       -        30  │└DISTRIBUTE HASH ON id_9\n 3140339        30  │ PROJECT id AS id_9\n 3140339        30  │ FILTER  NOT (name LIKE '%Sherlock%') AND ((name LIKE '%Tony%Stark%') OR (name LIKE '%Iron%Man%'))\n 3140339   3140339  │ TABLE SCAN char_name\n       -   3409569  INNER JOIN HASH ON movie_id = movie_id_14\n36244344  36244344  │└DISTRIBUTE HASH ON movie_id_14\n36244344  36244344  │ PROJECT person_id, movie_id AS movie_id_14, person_role_id\n36244344  36244344  │ TABLE SCAN cast_info\n       -     85941  INNER JOIN HASH ON status_id = id_4\n       -         2  │└DISTRIBUTE GATHER\n       4         2  │ PROJECT id AS id_4\n       4         2  │ FILTER kind LIKE '%complete%'\n       4         4  │ TABLE SCAN comp_cast_type\n       -     85941  INNER JOIN HASH ON subject_id = id_0\n       -         1  │└DISTRIBUTE GATHER\n       4         1  │ PROJECT id AS id_0\n       4         1  │ FILTER kind = 'cast'\n       4         4  │ TABLE SCAN comp_cast_type\n  135086    135086  TABLE SCAN complete_cast\n",
+      "plan": "Estimate    Actual  Operator\n       1         ∞  PROJECT min AS complete_downey_ironman_movie\n       1         1  AGGREGATE MIN(min_50) AS min\n       -        16  DISTRIBUTE GATHER\n       -        16  AGGREGATE MIN(title) AS min_50\n       -        33  INNER JOIN HASH ON kind_id = id_22\n       7         1  │└DISTRIBUTE GATHER\n       7         1  │ PROJECT id AS id_22\n       7         1  │ FILTER kind = 'movie'\n       7         1  │ TABLE SCAN kind_type\n 1219274    507898  INNER JOIN HASH ON movie_id = id_42\n 1219274    507898  │└DISTRIBUTE HASH ON id_42\n 1219274    507898  │ PROJECT id AS id_42, title, kind_id\n 1219274    507898  │ FILTER production_year > 1950\n 1219274    507898  │ TABLE SCAN title\n 1219274    507898  INNER JOIN HASH ON person_id = id_32\n 1219274    507898  │└DISTRIBUTE HASH ON id_32\n 1219274    507898  │ PROJECT id AS id_32\n 1219274    507898  │ TABLE SCAN name\n 1219274    507898  INNER JOIN HASH ON keyword_id = id_18\n 1219274    507898  │└DISTRIBUTE GATHER\n 1219274    507898  │ PROJECT id AS id_18\n 1219274    507898  │ FILTER keyword IN('based-on-comic','fight','marvel-comics','second-part','sequel','superhero','tv-special','violence')\n 1219274    507898  │ TABLE SCAN keyword\n 1219274    507898  INNER JOIN HASH ON movie_id = movie_id_28\n 1219274    507898  │└DISTRIBUTE HASH ON movie_id_28\n 1219274    507898  │ PROJECT movie_id AS movie_id_28, keyword_id\n 1219274    507898  │ TABLE SCAN movie_keyword\n 1219274    507898  INNER JOIN HASH ON person_role_id = id_9\n 1219274    507898  │└DISTRIBUTE HASH ON id_9\n 1219274    507898  │ PROJECT id AS id_9\n 1219274    507898  │ FILTER  NOT (name LIKE '%Sherlock%') AND ((name LIKE '%Tony%Stark%') OR (name LIKE '%Iron%Man%'))\n 1219274    507898  │ TABLE SCAN char_name\n 1219274    507898  INNER JOIN HASH ON movie_id = movie_id_14\n 1219274    507898  │└DISTRIBUTE HASH ON movie_id_14\n 1219274    507898  │ PROJECT person_id, movie_id AS movie_id_14, person_role_id\n 1219274    507898  │ TABLE SCAN cast_info\n 1219274    507898  INNER JOIN HASH ON status_id = id_4\n 1219274    507898  │└DISTRIBUTE GATHER\n 1219274    507898  │ PROJECT id AS id_4\n 1219274    507898  │ FILTER kind LIKE '%complete%'\n 1219274    507898  │ TABLE SCAN comp_cast_type\n 1219274    507898  INNER JOIN HASH ON subject_id = id_0\n 1219274    507898  │└DISTRIBUTE GATHER\n 1219274    507898  │ PROJECT id AS id_0\n 1219274    507898  │ FILTER kind = 'cast'\n 1219274    507898  │ TABLE SCAN comp_cast_type\n 1219274    507898  TABLE SCAN complete_cast\n",
       "sql": "SELECT MIN(t.title) AS complete_downey_ironman_movie\nFROM job.complete_cast AS cc,\n     job.comp_cast_type AS cct1,\n     job.comp_cast_type AS cct2,\n     job.char_name AS chn,\n     job.cast_info AS ci,\n     job.keyword AS k,\n     job.kind_type AS kt,\n     job.movie_keyword AS mk,\n     job.name AS n,\n     job.title AS t\nWHERE cct1.kind = 'cast'\n  AND cct2.kind LIKE '%complete%'\n  AND chn.name NOT LIKE '%Sherlock%'\n  AND (chn.name LIKE '%Tony%Stark%'\n       OR chn.name LIKE '%Iron%Man%')\n  AND k.keyword IN ('superhero',\n                    'sequel',\n                    'second-part',\n                    'marvel-comics',\n                    'based-on-comic',\n                    'tv-special',\n                    'fight',\n                    'violence')\n  AND kt.kind = 'movie'\n  AND t.production_year > 1950\n  AND kt.id = t.kind_id\n  AND t.id = mk.movie_id\n  AND t.id = ci.movie_id\n  AND t.id = cc.movie_id\n  AND mk.movie_id = ci.movie_id\n  AND mk.movie_id = cc.movie_id\n  AND ci.movie_id = cc.movie_id\n  AND chn.id = ci.person_role_id\n  AND n.id = ci.person_id\n  AND k.id = mk.keyword_id\n  AND cct1.id = cc.subject_id\n  AND cct2.id = cc.status_id;\n",
-      "startTime": "2026-06-26T16:45:26.943856Z",
+      "startTime": "2026-06-30T11:21:07.396355Z",
       "status": "OK",
-      "timeMs": 850.853
+      "timeMs": 904.956
     }
   ],
   "runtime": {
-    "avgMs": 850.853,
-    "bestMs": 850.853,
-    "maxMs": 850.853,
-    "minMs": 850.853,
+    "avgMs": 904.956,
+    "bestMs": 904.956,
+    "maxMs": 904.956,
+    "minMs": 904.956,
     "stdDevMs": 0.0
   },
   "storageVariant": "iceberg",

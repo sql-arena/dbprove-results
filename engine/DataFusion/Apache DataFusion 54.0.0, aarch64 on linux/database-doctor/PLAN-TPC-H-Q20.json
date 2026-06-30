@@ -15,6 +15,17 @@
           "=": 1,
           ">16x": 0
         },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 2,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 4,
+          ">16x": 2
+        },
         "filter": {
           "+2x": 0,
           "+4x": 1,
@@ -27,15 +38,15 @@
           ">16x": 1
         },
         "hash": {
-          "+2x": 0,
-          "+4x": 2,
+          "+2x": 1,
+          "+4x": 0,
           "+8x": 0,
           "-2x": 0,
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
-          "=": 0,
-          ">16x": 2
+          "=": 2,
+          ">16x": 1
         },
         "join": {
           "+2x": 0,
@@ -74,24 +85,24 @@
       "operatorRows": {
         "aggregate": 1767927,
         "distribute": 1080728,
-        "hash": 18544,
-        "join": 1358969,
+        "hash": 1358969,
+        "join": 18544,
         "scan": 7011240,
         "seek": 0,
         "sort": 316
       },
-      "plan": "Estimate    Actual  Operator\n    2000       158  SORT s_name\n    2000       158  SORT s_name\n    2000       158  LEFT SEMI JOIN HASH ON s_suppkey = ps_suppkey\n    2000       376  │└DISTRIBUTE GATHER\n    2000       376  │ INNER JOIN HASH ON n_nationkey = s_nationkey\n       5         1  │ │└DISTRIBUTE GATHER\n       5         1  │ │ FILTER n_name = 'KENYA'\n      25        25  │ │ DISTRIBUTE ROUND ROBIN\n      25        25  │ │ TABLE SCAN nation WHERE n_name = 'KENYA'\n   10000     10000  │ DISTRIBUTE ROUND ROBIN\n   10000     10000  │ TABLE SCAN supplier WHERE ((s_nationkey >= 14) AND (s_nationkey <= 14)) AND s_nationkey IN 14\n96019440      6028  INNER JOIN HASH ON ps_partkey = l_partkey AND ps_suppkey = l_suppkey AND (CAST(ps_availqty AS FLOAT64) > qty)\n  800000      8896  │└DISTRIBUTE HASH ON ps_partkey, ps_suppkey\n  800000      8896  │ RIGHT SEMI INNER JOIN HASH ON p_partkey = ps_partkey\n   40000      2224  │ │└DISTRIBUTE GATHER\n   40000      2224  │ │ FILTER p_name LIKE 'almond%'\n  200000    200000  │ │ DISTRIBUTE ROUND ROBIN\n  200000    200000  │ │ TABLE SCAN part WHERE p_name LIKE 'almond%'\n  800000    800000  │ TABLE SCAN partsupp\n 1200243    542941  PROJECT qty, l_partkey, l_suppkey\n 1200243    542941  AGGREGATE SUM(l_quantity) GROUP BY HASH l_partkey, l_suppkey\n 1200243    859206  DISTRIBUTE HASH ON l_partkey, l_suppkey\n 1200243    859206  AGGREGATE SUM(l_quantity) GROUP BY HASH l_partkey, l_suppkey\n 1200243    908721  FILTER (l_shipdate >= DATE'1993-01-01') AND (l_shipdate < DATE'1994-01-01')\n 6001215   6001215  TABLE SCAN lineitem WHERE ((l_shipdate >= DATE'1993-01-01') AND (l_shipdate < DATE'1994-01-01')) AND CASE MOD(HASH_REPARTITION(l_partkey,l_suppkey),10) WHEN 0 THEN ((((l_partkey >= 113) AND (l_partkey <= 199955)) AND ((l_suppkey >= 1) AND (l_suppkey <= 9988))) AND TRUE) WHEN 1 THEN ((((l_partkey >= 167) AND (l_partkey <= 199882)) AND ((l_suppkey >= 1) AND (l_suppkey <= 9986))) AND TRUE) WHEN 2 THEN ((((l_partkey >= 113) AND (l_partkey <= 199821)) AND ((l_suppkey >= 8) AND ...\n",
+      "plan": "Estimate    Actual  Operator\n    2000       158  SORT s_name\n    2000       158  SORT s_name\n    2000       158  LEFT SEMI JOIN HASH ON s_suppkey = ps_suppkey\n96019440      6028  │└INNER JOIN HASH ON ps_partkey = l_partkey AND ps_suppkey = l_suppkey AND (CAST(ps_availqty AS FLOAT64) > qty)\n 1200243    542941  │ │└PROJECT qty, l_partkey, l_suppkey\n 1200243    542941  │ │ AGGREGATE SUM(l_quantity) GROUP BY HASH l_partkey, l_suppkey\n 1200243    859206  │ │ DISTRIBUTE HASH ON l_partkey, l_suppkey\n 1200243    859206  │ │ AGGREGATE SUM(l_quantity) GROUP BY HASH l_partkey, l_suppkey\n 1200243    908721  │ │ FILTER (l_shipdate >= DATE'1993-01-01') AND (l_shipdate < DATE'1994-01-01')\n 6001215   6001215  │ │ TABLE SCAN lineitem WHERE ((l_shipdate >= DATE'1993-01-01') AND (l_shipdate < DATE'1994-01-01')) AND CASE MOD(HASH_REPARTITION(l_partkey,l_suppkey),10) WHEN 0 THEN ((((l_partkey >= 113) AND (l_partkey <= 199955)) AND ((l_suppkey >= 1) AND (l_suppkey <= 9988))) AND TRUE) WHEN 1 THEN ((((l_partkey >= 167) AND (l_partkey <= 199882)) AND ((l_suppkey >= 1) AND (l_suppkey <= 9986))) AND TRUE) WHEN 2 THEN ((((l_partkey >= 113) AND (l_partkey <= 199821)) AND ((l_suppkey >=...\n  800000      8896  │ DISTRIBUTE HASH ON ps_partkey, ps_suppkey\n  800000      8896  │ RIGHT SEMI INNER JOIN HASH ON p_partkey = ps_partkey\n  800000    800000  │ │└TABLE SCAN partsupp\n   40000      2224  │ DISTRIBUTE GATHER\n   40000      2224  │ FILTER p_name LIKE 'almond%'\n  200000    200000  │ DISTRIBUTE ROUND ROBIN\n  200000    200000  │ TABLE SCAN part WHERE p_name LIKE 'almond%'\n    2000       376  DISTRIBUTE GATHER\n    2000       376  INNER JOIN HASH ON n_nationkey = s_nationkey\n   10000     10000  │└DISTRIBUTE ROUND ROBIN\n   10000     10000  │ TABLE SCAN supplier WHERE ((s_nationkey >= 14) AND (s_nationkey <= 14)) AND s_nationkey IN 14\n       5         1  DISTRIBUTE GATHER\n       5         1  FILTER n_name = 'KENYA'\n      25        25  DISTRIBUTE ROUND ROBIN\n      25        25  TABLE SCAN nation WHERE n_name = 'KENYA'\n",
       "sql": "/* TPC-H Q20 */\nSELECT s_name,\n       s_address\nFROM tpch_sf1.supplier\nINNER JOIN tpch_sf1.nation\n    ON s_nationkey = n_nationkey\nWHERE s_suppkey IN (SELECT ps_suppkey\n                    FROM tpch_sf1.partsupp\n                    WHERE ps_partkey IN (SELECT p_partkey\n                                         FROM tpch_sf1.part AS p_inner\n                                         WHERE p_name LIKE 'almond%')\n                      AND ps_availqty > (SELECT 0.5 * SUM(l_quantity) AS qty\n                                         FROM tpch_sf1.lineitem as li_inner\n                                         WHERE l_partkey = ps_partkey\n                                           AND l_suppkey = ps_suppkey\n                                           AND l_shipdate >= '1993-01-01'\n                                           AND l_shipdate < '1994-01-01'))\n  AND n_name = 'KENYA'\nORDER BY s_name\n\n",
-      "startTime": "2026-06-26T23:43:59.844879Z",
+      "startTime": "2026-06-30T16:22:19.010855Z",
       "status": "OK",
-      "timeMs": 65.359
+      "timeMs": 67.807
     }
   ],
   "runtime": {
-    "avgMs": 65.359,
-    "bestMs": 65.359,
-    "maxMs": 65.359,
-    "minMs": 65.359,
+    "avgMs": 67.807,
+    "bestMs": 67.807,
+    "maxMs": 67.807,
+    "minMs": 67.807,
     "stdDevMs": 0.0
   },
   "storageVariant": "iceberg",

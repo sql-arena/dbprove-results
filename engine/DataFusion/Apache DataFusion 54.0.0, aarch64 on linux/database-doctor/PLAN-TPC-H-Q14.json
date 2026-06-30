@@ -15,6 +15,17 @@
           "=": 1,
           ">16x": 1
         },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 2
+        },
         "filter": {
           "+2x": 0,
           "+4x": 0,
@@ -34,8 +45,8 @@
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
-          "=": 1,
-          ">16x": 0
+          "=": 0,
+          ">16x": 1
         },
         "join": {
           "+2x": 0,
@@ -74,24 +85,24 @@
       "operatorRows": {
         "aggregate": 71646,
         "distribute": 271646,
-        "hash": 200000,
-        "join": 71636,
+        "hash": 71636,
+        "join": 200000,
         "scan": 6201215,
         "seek": 0,
         "sort": 0
       },
-      "plan": "Estimate    Actual  Operator\n       1         1  PROJECT promo_revenue\n       1         1  AGGREGATE SUM(CASE WHEN p_type LIKE 'PROMO%' THEN __common_expr_1 ELSE 0.0000 END), SUM(__common_expr_1)\n 1200243        10  DISTRIBUTE GATHER\n 1200243        10  AGGREGATE SUM(CASE WHEN p_type LIKE 'PROMO%' THEN __common_expr_1 ELSE 0.0000 END), SUM(__common_expr_1)\n 1200243     71636  PROJECT __common_expr_1, p_type\n 1200243     71636  INNER JOIN HASH ON p_partkey = l_partkey\n  200000    200000  │└DISTRIBUTE HASH ON p_partkey\n  200000    200000  │ TABLE SCAN part\n 1200243     71636  DISTRIBUTE HASH ON l_partkey\n 1200243     71636  FILTER (l_shipdate >= DATE'1996-02-01') AND (l_shipdate < DATE'1996-03-01')\n 6001215   6001215  TABLE SCAN lineitem WHERE ((l_shipdate >= DATE'1996-02-01') AND (l_shipdate < DATE'1996-03-01')) AND CASE MOD(HASH_REPARTITION l_partkey,10) WHEN 0 THEN (((l_partkey >= 5) AND (l_partkey <= 200000)) AND TRUE) WHEN 1 THEN (((l_partkey >= 6) AND (l_partkey <= 199996)) AND TRUE) WHEN 2 THEN (((l_partkey >= 10) AND (l_partkey <= 199997)) AND TRUE) WHEN 3 THEN (((l_partkey >= 1) AND (l_partkey <= 199998)) AND TRUE) WHEN 4 THEN (((l_partkey >= 12) AND (l_partkey <= 199994)) AND ...\n",
+      "plan": "Estimate    Actual  Operator\n       1         1  PROJECT promo_revenue\n       1         1  AGGREGATE SUM(CASE WHEN p_type LIKE 'PROMO%' THEN __common_expr_1 ELSE 0.0000 END), SUM(__common_expr_1)\n 1200243        10  DISTRIBUTE GATHER\n 1200243        10  AGGREGATE SUM(CASE WHEN p_type LIKE 'PROMO%' THEN __common_expr_1 ELSE 0.0000 END), SUM(__common_expr_1)\n 1200243     71636  PROJECT __common_expr_1, p_type\n 1200243     71636  INNER JOIN HASH ON p_partkey = l_partkey\n 1200243     71636  │└DISTRIBUTE HASH ON l_partkey\n 1200243     71636  │ FILTER (l_shipdate >= DATE'1996-02-01') AND (l_shipdate < DATE'1996-03-01')\n 6001215   6001215  │ TABLE SCAN lineitem WHERE ((l_shipdate >= DATE'1996-02-01') AND (l_shipdate < DATE'1996-03-01')) AND CASE MOD(HASH_REPARTITION l_partkey,10) WHEN 0 THEN (((l_partkey >= 5) AND (l_partkey <= 200000)) AND TRUE) WHEN 1 THEN (((l_partkey >= 6) AND (l_partkey <= 199996)) AND TRUE) WHEN 2 THEN (((l_partkey >= 10) AND (l_partkey <= 199997)) AND TRUE) WHEN 3 THEN (((l_partkey >= 1) AND (l_partkey <= 199998)) AND TRUE) WHEN 4 THEN (((l_partkey >= 12) AND (l_partkey <= 199994)) ...\n  200000    200000  DISTRIBUTE HASH ON p_partkey\n  200000    200000  TABLE SCAN part\n",
       "sql": "/* TPC-H Q14 */\nSELECT 100.00 * SUM(CASE\n                        WHEN p_type LIKE 'PROMO%'\n                            THEN l_extendedprice * (1 - l_discount)\n                        ELSE 0\n    END) / SUM(l_extendedprice * (1 - l_discount)) AS promo_revenue\nFROM tpch_sf1.lineitem\nINNER JOIN tpch_sf1.part\n    ON l_partkey = p_partkey\nWHERE l_shipdate >= '1996-02-01'\n  AND l_shipdate < '1996-03-01'",
-      "startTime": "2026-06-26T23:43:57.825817Z",
+      "startTime": "2026-06-30T16:22:16.923451Z",
       "status": "OK",
-      "timeMs": 49.83
+      "timeMs": 59.749
     }
   ],
   "runtime": {
-    "avgMs": 49.83,
-    "bestMs": 49.83,
-    "maxMs": 49.83,
-    "minMs": 49.83,
+    "avgMs": 59.749,
+    "bestMs": 59.749,
+    "maxMs": 59.749,
+    "minMs": 59.749,
     "stdDevMs": 0.0
   },
   "storageVariant": "iceberg",

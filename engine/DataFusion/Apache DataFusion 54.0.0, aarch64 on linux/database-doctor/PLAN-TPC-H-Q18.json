@@ -15,6 +15,17 @@
           "=": 0,
           ">16x": 1
         },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 1,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 2,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 3,
+          ">16x": 0
+        },
         "filter": {
           "+2x": 0,
           "+4x": 0,
@@ -31,11 +42,11 @@
           "+4x": 0,
           "+8x": 0,
           "-2x": 0,
-          "-4x": 0,
+          "-4x": 2,
           "-8x": 0,
           "<16x": 0,
-          "=": 2,
-          ">16x": 1
+          "=": 1,
+          ">16x": 0
         },
         "join": {
           "+2x": 0,
@@ -74,24 +85,24 @@
       "operatorRows": {
         "aggregate": 7501285,
         "distribute": 21153652,
-        "hash": 12002493,
-        "join": 18003645,
+        "hash": 18003645,
+        "join": 12002493,
         "scan": 13652430,
         "seek": 0,
         "sort": 18
       },
-      "plan": "Estimate    Actual  Operator\n 1500303         9  SORT o_totalprice, o_orderdate\n 1500303         9  SORT o_totalprice, o_orderdate\n 1500303         9  AGGREGATE SUM(l_quantity) GROUP BY HASH c_name, c_custkey, o_orderkey, o_orderdate, o_totalprice\n 1500303        63  RIGHT SEMI INNER JOIN HASH ON l_orderkey = o_orderkey\n 1200243         9  │└FILTER SUM(l_quantity) > 314.00\n 6001215   1500000  │ AGGREGATE SUM(l_quantity) GROUP BY HASH l_orderkey\n 6001215   1500007  │ DISTRIBUTE HASH ON l_orderkey\n 6001215   1500007  │ AGGREGATE SUM(l_quantity) GROUP BY HASH l_orderkey\n 6001215   6001215  │ TABLE SCAN lineitem\n 1500303   6001215  DISTRIBUTE HASH ON o_orderkey\n 1500303   6001215  PROJECT l_quantity, o_orderkey, o_totalprice, o_orderdate, c_custkey, c_name\n 1500303   6001215  INNER JOIN HASH ON c_custkey = o_custkey\n  150000    150000  │└DISTRIBUTE HASH ON c_custkey\n  150000    150000  │ TABLE SCAN customer\n 1500303   6001215  DISTRIBUTE HASH ON o_custkey\n 1500303   6001215  PROJECT l_quantity, o_orderkey, o_custkey, o_totalprice, o_orderdate\n 1500303   6001215  INNER JOIN HASH ON o_orderkey = l_orderkey\n 1500000   1500000  │└DISTRIBUTE HASH ON o_orderkey\n 1500000   1500000  │ TABLE SCAN orders WHERE CASE MOD(HASH_REPARTITION o_custkey,10) WHEN 0 THEN (((o_custkey >= 5) AND (o_custkey <= 149992)) AND TRUE) WHEN 1 THEN (((o_custkey >= 6) AND (o_custkey <= 149997)) AND TRUE) WHEN 2 THEN (((o_custkey >= 10) AND (o_custkey <= 149995)) AND TRUE) WHEN 3 THEN (((o_custkey >= 1) AND (o_custkey <= 150000)) AND TRUE) WHEN 4 THEN (((o_custkey >= 12) AND (o_custkey <= 149998)) AND TRUE) WHEN 5 THEN (((o_custkey >= 8) AND (o_custkey <= 149988)) AND TRUE)...\n 6001215   6001215  DISTRIBUTE HASH ON l_orderkey\n 6001215   6001215  TABLE SCAN lineitem WHERE CASE MOD(HASH_REPARTITION l_orderkey,10) WHEN 0 THEN (((l_orderkey >= 5) AND (l_orderkey <= 5999847)) AND TRUE) WHEN 1 THEN (((l_orderkey >= 6) AND (l_orderkey <= 5999970)) AND TRUE) WHEN 2 THEN (((l_orderkey >= 37) AND (l_orderkey <= 5999975)) AND TRUE) WHEN 3 THEN (((l_orderkey >= 1) AND (l_orderkey <= 5999971)) AND TRUE) WHEN 4 THEN (((l_orderkey >= 131) AND (l_orderkey <= 5999969)) AND TRUE) WHEN 5 THEN (((l_orderkey >= 66) AND (l_orderkey <= ...\n",
+      "plan": "Estimate    Actual  Operator\n 1500303         9  SORT o_totalprice, o_orderdate\n 1500303         9  SORT o_totalprice, o_orderdate\n 1500303         9  AGGREGATE SUM(l_quantity) GROUP BY HASH c_name, c_custkey, o_orderkey, o_orderdate, o_totalprice\n 1500303        63  RIGHT SEMI INNER JOIN HASH ON l_orderkey = o_orderkey\n 1500303   6001215  │└DISTRIBUTE HASH ON o_orderkey\n 1500303   6001215  │ PROJECT l_quantity, o_orderkey, o_totalprice, o_orderdate, c_custkey, c_name\n 1500303   6001215  │ INNER JOIN HASH ON c_custkey = o_custkey\n 1500303   6001215  │ │└DISTRIBUTE HASH ON o_custkey\n 1500303   6001215  │ │ PROJECT l_quantity, o_orderkey, o_custkey, o_totalprice, o_orderdate\n 1500303   6001215  │ │ INNER JOIN HASH ON o_orderkey = l_orderkey\n 6001215   6001215  │ │ │└DISTRIBUTE HASH ON l_orderkey\n 6001215   6001215  │ │ │ TABLE SCAN lineitem WHERE CASE MOD(HASH_REPARTITION l_orderkey,10) WHEN 0 THEN (((l_orderkey >= 5) AND (l_orderkey <= 5999847)) AND TRUE) WHEN 1 THEN (((l_orderkey >= 6) AND (l_orderkey <= 5999970)) AND TRUE) WHEN 2 THEN (((l_orderkey >= 37) AND (l_orderkey <= 5999975)) AND TRUE) WHEN 3 THEN (((l_orderkey >= 1) AND (l_orderkey <= 5999971)) AND TRUE) WHEN 4 THEN (((l_orderkey >= 131) AND (l_orderkey <= 5999969)) AND TRUE) WHEN 5 THEN (((l_orderkey >= 66) AND (l_...\n 1500000   1500000  │ │ DISTRIBUTE HASH ON o_orderkey\n 1500000   1500000  │ │ TABLE SCAN orders WHERE CASE MOD(HASH_REPARTITION o_custkey,10) WHEN 0 THEN (((o_custkey >= 5) AND (o_custkey <= 149992)) AND TRUE) WHEN 1 THEN (((o_custkey >= 6) AND (o_custkey <= 149997)) AND TRUE) WHEN 2 THEN (((o_custkey >= 10) AND (o_custkey <= 149995)) AND TRUE) WHEN 3 THEN (((o_custkey >= 1) AND (o_custkey <= 150000)) AND TRUE) WHEN 4 THEN (((o_custkey >= 12) AND (o_custkey <= 149998)) AND TRUE) WHEN 5 THEN (((o_custkey >= 8) AND (o_custkey <= 149988)) AND T...\n  150000    150000  │ DISTRIBUTE HASH ON c_custkey\n  150000    150000  │ TABLE SCAN customer\n 1200243         9  FILTER SUM(l_quantity) > 314.00\n 6001215   1500000  AGGREGATE SUM(l_quantity) GROUP BY HASH l_orderkey\n 6001215   1500007  DISTRIBUTE HASH ON l_orderkey\n 6001215   1500007  AGGREGATE SUM(l_quantity) GROUP BY HASH l_orderkey\n 6001215   6001215  TABLE SCAN lineitem\n",
       "sql": "/* TPC-H Q18 */\nSELECT c_name,\n       c_custkey,\n       o_orderkey,\n       o_orderdate,\n       o_totalprice,\n       SUM(l_quantity)\nFROM tpch_sf1.lineitem\nINNER JOIN tpch_sf1.orders\n    ON l_orderkey = o_orderkey\nINNER JOIN tpch_sf1.customer\n    ON o_custkey = c_custkey\nWHERE o_orderkey IN (SELECT l_orderkey\n                     FROM tpch_sf1.lineitem\n                     GROUP BY l_orderkey\n                     HAVING SUM(l_quantity) > 314)\nGROUP BY c_name,\n         c_custkey,\n         o_orderkey,\n         o_orderdate,\n         o_totalprice\nORDER BY o_totalprice DESC,\n         o_orderdate",
-      "startTime": "2026-06-26T23:43:59.375720Z",
+      "startTime": "2026-06-30T16:22:18.596643Z",
       "status": "OK",
-      "timeMs": 249.636
+      "timeMs": 221.143
     }
   ],
   "runtime": {
-    "avgMs": 249.636,
-    "bestMs": 249.636,
-    "maxMs": 249.636,
-    "minMs": 249.636,
+    "avgMs": 221.143,
+    "bestMs": 221.143,
+    "maxMs": 221.143,
+    "minMs": 221.143,
     "stdDevMs": 0.0
   },
   "storageVariant": "iceberg",

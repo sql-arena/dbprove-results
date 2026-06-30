@@ -15,6 +15,17 @@
           "=": 1,
           ">16x": 1
         },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 1
+        },
         "filter": {
           "+2x": 0,
           "+4x": 0,
@@ -74,24 +85,24 @@
       "operatorRows": {
         "aggregate": 44475,
         "distribute": 41975,
-        "hash": 48279,
-        "join": 1514055,
+        "hash": 1514055,
+        "join": 48279,
         "scan": 1800000,
         "seek": 0,
         "sort": 14
       },
-      "plan": "Estimate    Actual  Operator\n       -         7  SORT cntrycode\n       -         7  SORT cntrycode\n       -         7  PROJECT cntrycode, numcust, totacctbal\n       -         7  AGGREGATE COUNT(1), SUM(c_acctbal) GROUP BY HASH cntrycode\n       -         7  DISTRIBUTE HASH ON cntrycode\n       -         7  AGGREGATE COUNT(1), SUM(c_acctbal) GROUP BY HASH cntrycode\n       -      6321  PROJECT cntrycode, c_acctbal\n       -      6321  INNER JOIN LOOP ON join_proj_push_down_1 > AVG(c_acctbal)\n       1         1  │└AGGREGATE AVG(c_acctbal)\n   30000        10  │ DISTRIBUTE GATHER\n   30000        10  │ AGGREGATE AVG(c_acctbal)\n   30000     38137  │ FILTER (c_acctbal > 0.00) AND left(c_phone,2) IN('10','17','19','23','22','31','27')\n  150000    150000  │ TABLE SCAN customer WHERE (c_acctbal > 0.00) AND left(c_phone,2) IN('10','17','19','23','22','31','27')\n   30000     14055  PROJECT c_phone, c_acctbal, join_proj_push_down_1\n   30000     14055  LEFT ANTI JOIN HASH ON c_custkey = o_custkey\n   30000     41958  │└DISTRIBUTE GATHER\n   30000     41958  │ FILTER left(c_phone,2) IN('10','17','19','23','22','31','27')\n  150000    150000  │ TABLE SCAN customer WHERE left(c_phone,2) IN('10','17','19','23','22','31','27')\n 1500000   1500000  TABLE SCAN orders\n",
+      "plan": "Estimate    Actual  Operator\n       -         7  SORT cntrycode\n       -         7  SORT cntrycode\n       -         7  PROJECT cntrycode, numcust, totacctbal\n       -         7  AGGREGATE COUNT(1), SUM(c_acctbal) GROUP BY HASH cntrycode\n       -         7  DISTRIBUTE HASH ON cntrycode\n       -         7  AGGREGATE COUNT(1), SUM(c_acctbal) GROUP BY HASH cntrycode\n       -      6321  PROJECT cntrycode, c_acctbal\n       -      6321  INNER JOIN LOOP ON join_proj_push_down_1 > AVG(c_acctbal)\n   30000     14055  │└PROJECT c_phone, c_acctbal, join_proj_push_down_1\n   30000     14055  │ LEFT ANTI JOIN HASH ON c_custkey = o_custkey\n 1500000   1500000  │ │└TABLE SCAN orders\n   30000     41958  │ DISTRIBUTE GATHER\n   30000     41958  │ FILTER left(c_phone,2) IN('10','17','19','23','22','31','27')\n  150000    150000  │ TABLE SCAN customer WHERE left(c_phone,2) IN('10','17','19','23','22','31','27')\n       1         1  AGGREGATE AVG(c_acctbal)\n   30000        10  DISTRIBUTE GATHER\n   30000        10  AGGREGATE AVG(c_acctbal)\n   30000     38137  FILTER (c_acctbal > 0.00) AND left(c_phone,2) IN('10','17','19','23','22','31','27')\n  150000    150000  TABLE SCAN customer WHERE (c_acctbal > 0.00) AND left(c_phone,2) IN('10','17','19','23','22','31','27')\n",
       "sql": "/* TPC-H Q22 */\nSELECT cntrycode,\n       COUNT(*)       AS numcust,\n       SUM(c_acctbal) AS totacctbal\nFROM (SELECT LEFT(c_phone,2) AS cntrycode,\n             c_acctbal\n      FROM tpch_sf1.customer\n      WHERE LEFT(c_phone,2) IN\n            ('10', '17', '19', '23', '22', '31', '27')\n        AND c_acctbal > (SELECT AVG(c_acctbal)\n                         FROM tpch_sf1.customer\n                         WHERE c_acctbal > 0.00\n                           AND LEFT(c_phone,2) IN\n                               ('10', '17', '19', '23', '22', '31', '27'))\n        AND NOT EXISTS (SELECT *\n                        FROM tpch_sf1.orders\n                        WHERE o_custkey = c_custkey)) AS custsale\nGROUP BY cntrycode\nORDER BY cntrycode\n\n\n",
-      "startTime": "2026-06-26T23:44:00.177595Z",
+      "startTime": "2026-06-30T16:22:19.380967Z",
       "status": "OK",
-      "timeMs": 21.575
+      "timeMs": 76.946
     }
   ],
   "runtime": {
-    "avgMs": 21.575,
-    "bestMs": 21.575,
-    "maxMs": 21.575,
-    "minMs": 21.575,
+    "avgMs": 76.946,
+    "bestMs": 76.946,
+    "maxMs": 76.946,
+    "minMs": 76.946,
     "stdDevMs": 0.0
   },
   "storageVariant": "iceberg",

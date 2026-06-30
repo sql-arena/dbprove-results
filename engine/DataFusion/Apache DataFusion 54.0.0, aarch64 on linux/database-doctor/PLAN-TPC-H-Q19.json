@@ -15,6 +15,17 @@
           "=": 1,
           ">16x": 1
         },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 2
+        },
         "filter": {
           "+2x": 0,
           "+4x": 0,
@@ -29,13 +40,13 @@
         "hash": {
           "+2x": 0,
           "+4x": 0,
-          "+8x": 0,
+          "+8x": 1,
           "-2x": 0,
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
           "=": 0,
-          ">16x": 1
+          ">16x": 0
         },
         "join": {
           "+2x": 0,
@@ -74,24 +85,24 @@
       "operatorRows": {
         "aggregate": 137,
         "distribute": 200521,
-        "hash": 511,
-        "join": 132509,
+        "hash": 132509,
+        "join": 511,
         "scan": 6201215,
         "seek": 0,
         "sort": 0
       },
-      "plan": "Estimate    Actual  Operator\n       1         1  PROJECT revenue\n       1         1  AGGREGATE SUM(l_extendedprice * (1 - l_discount))\n  240048        10  DISTRIBUTE GATHER\n  240048        10  AGGREGATE SUM(l_extendedprice * (1 - l_discount))\n  240048       127  INNER JOIN HASH ON p_partkey = l_partkey AND (((((((p_brand = 'Brand#11') AND p_container IN('SM CASE','SM BOX','SM PACK','SM PKG')) AND (l_quantity >= 5.00)) AND (l_quantity <= 15.00)) AND (p_size <= 5)) OR (((((p_brand = 'Brand#22') AND p_container IN('MED BAG','MED BOX','MED PKG','MED PACK')) AND (l_quantity >= 15.00)) AND (l_quantity <= 25.00)) AND (p_size <= 10))) OR (((((p_brand = 'Brand#33') AND p_container IN('LG CASE','LG BOX','LG PACK','LG PKG')) AND (l_quantity ...\n   40000       511  │└DISTRIBUTE GATHER\n   40000       511  │ FILTER (((((p_brand = 'Brand#11') AND p_container IN('SM CASE','SM BOX','SM PACK','SM PKG')) AND (p_size <= 5)) OR (((p_brand = 'Brand#22') AND p_container IN('MED BAG','MED BOX','MED PKG','MED PACK')) AND (p_size <= 10))) OR (((p_brand = 'Brand#33') AND p_container IN('LG CASE','LG BOX','LG PACK','LG PKG')) AND (p_size <= 15))) AND (p_size >= 1)\n  200000    200000  │ DISTRIBUTE ROUND ROBIN\n  200000    200000  │ TABLE SCAN part WHERE (((((p_brand = 'Brand#11') AND p_container IN('SM CASE','SM BOX','SM PACK','SM PKG')) AND (p_size <= 5)) OR (((p_brand = 'Brand#22') AND p_container IN('MED BAG','MED BOX','MED PKG','MED PACK')) AND (p_size <= 10))) OR (((p_brand = 'Brand#33') AND p_container IN('LG CASE','LG BOX','LG PACK','LG PKG')) AND (p_size <= 15))) AND (p_size >= 1)\n 1200243    132509  FILTER (((((l_quantity >= 5.00) AND (l_quantity <= 15.00)) OR ((l_quantity >= 15.00) AND (l_quantity <= 25.00))) OR ((l_quantity >= 25.00) AND (l_quantity <= 35.00))) AND ((l_shipmode = 'AIR') OR (l_shipmode = 'AIR REG'))) AND (l_shipinstruct = 'DELIVER IN PERSON')\n 6001215   6001215  TABLE SCAN lineitem WHERE ((((((l_quantity >= 5.00) AND (l_quantity <= 15.00)) OR ((l_quantity >= 15.00) AND (l_quantity <= 25.00))) OR ((l_quantity >= 25.00) AND (l_quantity <= 35.00))) AND ((l_shipmode = 'AIR') OR (l_shipmode = 'AIR REG'))) AND (l_shipinstruct = 'DELIVER IN PERSON')) AND (((l_partkey >= 109) AND (l_partkey <= 199761)) AND TRUE)\n",
+      "plan": "Estimate    Actual  Operator\n       1         1  PROJECT revenue\n       1         1  AGGREGATE SUM(l_extendedprice * (1 - l_discount))\n  240048        10  DISTRIBUTE GATHER\n  240048        10  AGGREGATE SUM(l_extendedprice * (1 - l_discount))\n  240048       127  INNER JOIN HASH ON p_partkey = l_partkey AND (((((((p_brand = 'Brand#11') AND p_container IN('SM CASE','SM BOX','SM PACK','SM PKG')) AND (l_quantity >= 5.00)) AND (l_quantity <= 15.00)) AND (p_size <= 5)) OR (((((p_brand = 'Brand#22') AND p_container IN('MED BAG','MED BOX','MED PKG','MED PACK')) AND (l_quantity >= 15.00)) AND (l_quantity <= 25.00)) AND (p_size <= 10))) OR (((((p_brand = 'Brand#33') AND p_container IN('LG CASE','LG BOX','LG PACK','LG PKG')) AND (l_quantity ...\n 1200243    132509  │└FILTER (((((l_quantity >= 5.00) AND (l_quantity <= 15.00)) OR ((l_quantity >= 15.00) AND (l_quantity <= 25.00))) OR ((l_quantity >= 25.00) AND (l_quantity <= 35.00))) AND ((l_shipmode = 'AIR') OR (l_shipmode = 'AIR REG'))) AND (l_shipinstruct = 'DELIVER IN PERSON')\n 6001215   6001215  │ TABLE SCAN lineitem WHERE ((((((l_quantity >= 5.00) AND (l_quantity <= 15.00)) OR ((l_quantity >= 15.00) AND (l_quantity <= 25.00))) OR ((l_quantity >= 25.00) AND (l_quantity <= 35.00))) AND ((l_shipmode = 'AIR') OR (l_shipmode = 'AIR REG'))) AND (l_shipinstruct = 'DELIVER IN PERSON')) AND (((l_partkey >= 109) AND (l_partkey <= 199761)) AND TRUE)\n   40000       511  DISTRIBUTE GATHER\n   40000       511  FILTER (((((p_brand = 'Brand#11') AND p_container IN('SM CASE','SM BOX','SM PACK','SM PKG')) AND (p_size <= 5)) OR (((p_brand = 'Brand#22') AND p_container IN('MED BAG','MED BOX','MED PKG','MED PACK')) AND (p_size <= 10))) OR (((p_brand = 'Brand#33') AND p_container IN('LG CASE','LG BOX','LG PACK','LG PKG')) AND (p_size <= 15))) AND (p_size >= 1)\n  200000    200000  DISTRIBUTE ROUND ROBIN\n  200000    200000  TABLE SCAN part WHERE (((((p_brand = 'Brand#11') AND p_container IN('SM CASE','SM BOX','SM PACK','SM PKG')) AND (p_size <= 5)) OR (((p_brand = 'Brand#22') AND p_container IN('MED BAG','MED BOX','MED PKG','MED PACK')) AND (p_size <= 10))) OR (((p_brand = 'Brand#33') AND p_container IN('LG CASE','LG BOX','LG PACK','LG PKG')) AND (p_size <= 15))) AND (p_size >= 1)\n",
       "sql": "/* TPC-H Q19 */\nSELECT SUM(l_extendedprice * (1 - l_discount)) AS revenue\nFROM tpch_sf1.lineitem\nINNER JOIN tpch_sf1.part ON p_partkey = l_partkey\nWHERE (\n\n        p_brand = 'Brand#11'\n        AND p_container IN ('SM CASE', 'SM BOX', 'SM PACK', 'SM PKG')\n        AND l_quantity >= 5 AND l_quantity <= 5 + 10\n        AND p_size BETWEEN 1 AND 5\n        AND l_shipmode IN ('AIR', 'AIR REG')\n        AND l_shipinstruct = 'DELIVER IN PERSON'\n    )\n   OR ( p_brand = 'Brand#22'\n        AND p_container IN ('MED BAG', 'MED BOX', 'MED PKG', 'MED PACK')\n        AND l_quantity >= 15 AND l_quantity <= 15 + 10\n        AND p_size BETWEEN 1 AND 10\n        AND l_shipmode IN ('AIR', 'AIR REG')\n        AND l_shipinstruct = 'DELIVER IN PERSON'\n    )\n   OR ( p_brand = 'Brand#33'\n        AND p_container IN ('LG CASE', 'LG BOX', 'LG PACK', 'LG PKG')\n        AND l_quantity >= 25 AND l_quantity <= 25 + 10\n        AND p_size BETWEEN 1 AND 15\n        AND l_shipmode IN ('AIR', 'AIR REG')\n        AND l_shipinstruct = 'DELIVER IN PERSON'\n    )\n",
-      "startTime": "2026-06-26T23:43:59.716821Z",
+      "startTime": "2026-06-30T16:22:18.893333Z",
       "status": "OK",
-      "timeMs": 94.325
+      "timeMs": 88.561
     }
   ],
   "runtime": {
-    "avgMs": 94.325,
-    "bestMs": 94.325,
-    "maxMs": 94.325,
-    "minMs": 94.325,
+    "avgMs": 88.561,
+    "bestMs": 88.561,
+    "maxMs": 88.561,
+    "minMs": 88.561,
     "stdDevMs": 0.0
   },
   "storageVariant": "iceberg",

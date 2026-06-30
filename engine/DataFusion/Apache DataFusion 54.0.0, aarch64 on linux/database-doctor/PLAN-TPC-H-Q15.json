@@ -15,6 +15,17 @@
           "=": 1,
           ">16x": 3
         },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 2,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 1
+        },
         "filter": {
           "+2x": 0,
           "+4x": 2,
@@ -34,8 +45,8 @@
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
-          "=": 2,
-          ">16x": 0
+          "=": 0,
+          ">16x": 2
         },
         "join": {
           "+2x": 0,
@@ -74,24 +85,24 @@
       "operatorRows": {
         "aggregate": 641582,
         "distribute": 178988,
-        "hash": 10001,
-        "join": 20000,
+        "hash": 20000,
+        "join": 10001,
         "scan": 12012430,
         "seek": 0,
         "sort": 2
       },
-      "plan": "Estimate    Actual  Operator\n       1         1  SORT s_suppkey\n       1         1  SORT s_suppkey\n       1         1  INNER JOIN HASH ON MAX(revenue.total_revenue) = total_revenue\n       1         1  │└AGGREGATE MAX(total_revenue)\n 1200243        10  │ DISTRIBUTE GATHER\n 1200243        10  │ AGGREGATE MAX(total_revenue)\n 1200243     10000  │ PROJECT total_revenue\n 1200243     10000  │ AGGREGATE SUM(l_extendedprice * (1 - l_discount)) GROUP BY HASH l_suppkey\n 1200243     89489  │ DISTRIBUTE HASH ON l_suppkey\n 1200243     89489  │ AGGREGATE SUM(l_extendedprice * (1 - l_discount)) GROUP BY HASH l_suppkey\n 1200243    226297  │ FILTER (l_shipdate >= DATE'1997-09-01') AND (l_shipdate < DATE'1997-12-01')\n 6001215   6001215  │ TABLE SCAN lineitem WHERE (l_shipdate >= DATE'1997-09-01') AND (l_shipdate < DATE'1997-12-01')\n 1200243     10000  INNER JOIN HASH ON s_suppkey = supplier_no\n   10000     10000  │└TABLE SCAN supplier\n 1200243     10000  PROJECT supplier_no, total_revenue\n 1200243     10000  AGGREGATE SUM(l_extendedprice * (1 - l_discount)) GROUP BY HASH l_suppkey\n 1200243     89489  DISTRIBUTE HASH ON l_suppkey\n 1200243     89489  AGGREGATE SUM(l_extendedprice * (1 - l_discount)) GROUP BY HASH l_suppkey\n 1200243    226297  FILTER (l_shipdate >= DATE'1997-09-01') AND (l_shipdate < DATE'1997-12-01')\n 6001215   6001215  TABLE SCAN lineitem WHERE ((l_shipdate >= DATE'1997-09-01') AND (l_shipdate < DATE'1997-12-01')) AND (((l_suppkey >= 1) AND (l_suppkey <= 10000)) AND TRUE)\n",
+      "plan": "Estimate    Actual  Operator\n       1         1  SORT s_suppkey\n       1         1  SORT s_suppkey\n       1         1  INNER JOIN HASH ON MAX(revenue.total_revenue) = total_revenue\n 1200243     10000  │└INNER JOIN HASH ON s_suppkey = supplier_no\n 1200243     10000  │ │└PROJECT supplier_no, total_revenue\n 1200243     10000  │ │ AGGREGATE SUM(l_extendedprice * (1 - l_discount)) GROUP BY HASH l_suppkey\n 1200243     89489  │ │ DISTRIBUTE HASH ON l_suppkey\n 1200243     89489  │ │ AGGREGATE SUM(l_extendedprice * (1 - l_discount)) GROUP BY HASH l_suppkey\n 1200243    226297  │ │ FILTER (l_shipdate >= DATE'1997-09-01') AND (l_shipdate < DATE'1997-12-01')\n 6001215   6001215  │ │ TABLE SCAN lineitem WHERE ((l_shipdate >= DATE'1997-09-01') AND (l_shipdate < DATE'1997-12-01')) AND (((l_suppkey >= 1) AND (l_suppkey <= 10000)) AND TRUE)\n   10000     10000  │ TABLE SCAN supplier\n       1         1  AGGREGATE MAX(total_revenue)\n 1200243        10  DISTRIBUTE GATHER\n 1200243        10  AGGREGATE MAX(total_revenue)\n 1200243     10000  PROJECT total_revenue\n 1200243     10000  AGGREGATE SUM(l_extendedprice * (1 - l_discount)) GROUP BY HASH l_suppkey\n 1200243     89489  DISTRIBUTE HASH ON l_suppkey\n 1200243     89489  AGGREGATE SUM(l_extendedprice * (1 - l_discount)) GROUP BY HASH l_suppkey\n 1200243    226297  FILTER (l_shipdate >= DATE'1997-09-01') AND (l_shipdate < DATE'1997-12-01')\n 6001215   6001215  TABLE SCAN lineitem WHERE (l_shipdate >= DATE'1997-09-01') AND (l_shipdate < DATE'1997-12-01')\n",
       "sql": "/* TPC-H Q15 */\nWITH revenue AS (SELECT l_suppkey                               AS supplier_no,\n                        SUM(l_extendedprice * (1 - l_discount)) AS total_revenue\n                 FROM tpch_sf1.lineitem\n                 WHERE l_shipdate >= '1997-09-01'\n                   AND l_shipdate < '1997-12-01'\n                 GROUP BY l_suppkey)\nSELECT s_suppkey,\n       s_name,\n       s_address,\n       s_phone,\n       total_revenue\nFROM tpch_sf1.supplier\nINNER JOIN revenue\n    ON s_suppkey = supplier_no\nWHERE total_revenue = (SELECT MAX(total_revenue)\n                       FROM revenue)\nORDER BY s_suppkey\n",
-      "startTime": "2026-06-26T23:43:57.905829Z",
+      "startTime": "2026-06-30T16:22:17.011332Z",
       "status": "OK",
-      "timeMs": 79.532
+      "timeMs": 83.353
     }
   ],
   "runtime": {
-    "avgMs": 79.532,
-    "bestMs": 79.532,
-    "maxMs": 79.532,
-    "minMs": 79.532,
+    "avgMs": 83.353,
+    "bestMs": 83.353,
+    "maxMs": 83.353,
+    "minMs": 83.353,
     "stdDevMs": 0.0
   },
   "storageVariant": "iceberg",

@@ -15,6 +15,17 @@
           "=": 0,
           ">16x": 2
         },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 1
+        },
         "filter": {
           "+2x": 0,
           "+4x": 0,
@@ -82,16 +93,16 @@
       },
       "plan": "Estimate    Actual  Operator\n 1200243         4  SORT l_returnflag, l_linestatus\n 1200243         4  SORT l_returnflag, l_linestatus\n 1200243         4  PROJECT l_returnflag, l_linestatus, sum_qty, sum_base_price, sum_disc_price, sum_charge, avg_qty, avg_price, avg_disc, count_order\n 1200243         4  AGGREGATE SUM(l_quantity), SUM(l_extendedprice), SUM(__common_expr_1), SUM(__common_expr_1 * (1 + l_tax)), AVG(l_quantity), AVG(l_extendedprice), AVG(l_discount), COUNT(1) GROUP BY HASH l_returnflag, l_linestatus\n 1200243        40  DISTRIBUTE HASH ON l_returnflag, l_linestatus\n 1200243        40  AGGREGATE SUM(l_quantity), SUM(l_extendedprice), SUM(__common_expr_1), SUM(__common_expr_1 * (1 + l_tax)), AVG(l_quantity), AVG(l_extendedprice), AVG(l_discount), COUNT(1) GROUP BY HASH l_returnflag, l_linestatus\n 1200243   5962146  PROJECT __common_expr_1, l_quantity, l_extendedprice, l_discount, l_tax, l_returnflag, l_linestatus\n 1200243   5962146  FILTER l_shipdate <= DATE'1998-10-01'\n 6001215   6001215  TABLE SCAN lineitem WHERE l_shipdate <= DATE'1998-10-01'\n",
       "sql": "/* TPC-H Q01 */\nSELECT l_returnflag,\n       l_linestatus,\n       SUM(l_quantity)                                       AS sum_qty,\n       SUM(l_extendedprice)                                  AS sum_base_price,\n       SUM(l_extendedprice * (1 - l_discount))               AS sum_disc_price,\n       SUM(l_extendedprice * (1 - l_discount) * (1 + l_tax)) AS sum_charge,\n       AVG(l_quantity)                                       AS avg_qty,\n       AVG(l_extendedprice)                                  AS avg_price,\n       AVG(l_discount)                                       AS avg_disc,\n       COUNT(*)                                              AS count_order\nFROM tpch_sf1.lineitem\nWHERE l_shipdate <= '1998-10-01'\nGROUP BY l_returnflag,\n         l_linestatus\nORDER BY l_returnflag,\n         l_linestatus",
-      "startTime": "2026-06-26T23:27:50.041378Z",
+      "startTime": "2026-06-30T16:21:44.883317Z",
       "status": "OK",
-      "timeMs": 366.677
+      "timeMs": 391.431
     }
   ],
   "runtime": {
-    "avgMs": 366.677,
-    "bestMs": 366.677,
-    "maxMs": 366.677,
-    "minMs": 366.677,
+    "avgMs": 391.431,
+    "bestMs": 391.431,
+    "maxMs": 391.431,
+    "minMs": 391.431,
     "stdDevMs": 0.0
   },
   "storageVariant": "iceberg",

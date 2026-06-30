@@ -15,6 +15,17 @@
           "=": 1,
           ">16x": 1
         },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 3,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 2,
+          ">16x": 1
+        },
         "filter": {
           "+2x": 0,
           "+4x": 2,
@@ -28,13 +39,13 @@
         },
         "hash": {
           "+2x": 0,
-          "+4x": 2,
+          "+4x": 0,
           "+8x": 0,
           "-2x": 0,
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
-          "=": 2,
+          "=": 4,
           ">16x": 0
         },
         "join": {
@@ -74,24 +85,24 @@
       "operatorRows": {
         "aggregate": 88845,
         "distribute": 28577,
-        "hash": 1661545,
-        "join": 3228515,
+        "hash": 3228515,
+        "join": 1661545,
         "scan": 1620050,
         "seek": 0,
         "sort": 2450
       },
-      "plan": "Estimate    Actual  Operator\n       -      1225  SORT v\n       -      1225  SORT v\n       -      1225  PROJECT ps_partkey, v\n       -      1225  INNER JOIN LOOP ON join_proj_push_down_1 > SUM(ps_supplycost * ps_availqty) * Float64 0.0001\n       1         1  │└PROJECT CAST((CAST(SUM(ps_supplycost * ps_availqty) AS FLOAT64) * 0.000100) AS DECIMAL(38,15))\n       1         1  │ AGGREGATE SUM(ps_supplycost * CAST(ps_availqty AS DECIMAL(20,0)))\n  160000        10  │ DISTRIBUTE GATHER\n  160000        10  │ AGGREGATE SUM(ps_supplycost * CAST(ps_availqty AS DECIMAL(20,0)))\n  160000     30160  │ INNER JOIN HASH ON n_nationkey = s_nationkey\n       5         1  │ │└DISTRIBUTE GATHER\n       5         1  │ │ FILTER n_name = 'JAPAN'\n      25        25  │ │ DISTRIBUTE ROUND ROBIN\n      25        25  │ │ TABLE SCAN nation WHERE n_name = 'JAPAN'\n  800000    800000  │ PROJECT ps_availqty, ps_supplycost, s_nationkey\n  800000    800000  │ INNER JOIN HASH ON s_suppkey = ps_suppkey\n   10000     10000  │ │└TABLE SCAN supplier WHERE ((s_nationkey >= 12) AND (s_nationkey <= 12)) AND s_nationkey IN 12\n  800000    800000  │ TABLE SCAN partsupp WHERE ((ps_suppkey >= 1) AND (ps_suppkey <= 10000)) AND TRUE\n  160000     28515  PROJECT ps_partkey, SUM(ps_supplycost * ps_availqty), join_proj_push_down_1\n  160000     28515  AGGREGATE SUM(ps_supplycost * CAST(ps_availqty AS DECIMAL(20,0))) GROUP BY HASH ps_partkey\n  160000     28515  DISTRIBUTE HASH ON ps_partkey\n  160000     28515  AGGREGATE SUM(ps_supplycost * CAST(ps_availqty AS DECIMAL(20,0))) GROUP BY HASH ps_partkey\n  160000     30160  INNER JOIN HASH ON n_nationkey = s_nationkey\n       5         1  │└DISTRIBUTE GATHER\n       5         1  │ FILTER n_name = 'JAPAN'\n      25        25  │ DISTRIBUTE ROUND ROBIN\n      25        25  │ TABLE SCAN nation WHERE n_name = 'JAPAN'\n  800000    800000  PROJECT ps_partkey, ps_availqty, ps_supplycost, s_nationkey\n  800000    800000  INNER JOIN HASH ON s_suppkey = ps_suppkey\n   10000     10000  │└TABLE SCAN supplier WHERE ((s_nationkey >= 12) AND (s_nationkey <= 12)) AND s_nationkey IN 12\n  800000    800000  TABLE SCAN partsupp WHERE ((ps_suppkey >= 1) AND (ps_suppkey <= 10000)) AND TRUE\n",
+      "plan": "Estimate    Actual  Operator\n       -      1225  SORT v\n       -      1225  SORT v\n       -      1225  PROJECT ps_partkey, v\n       -      1225  INNER JOIN LOOP ON join_proj_push_down_1 > SUM(ps_supplycost * ps_availqty) * Float64 0.0001\n  160000     28515  │└PROJECT ps_partkey, SUM(ps_supplycost * ps_availqty), join_proj_push_down_1\n  160000     28515  │ AGGREGATE SUM(ps_supplycost * CAST(ps_availqty AS DECIMAL(20,0))) GROUP BY HASH ps_partkey\n  160000     28515  │ DISTRIBUTE HASH ON ps_partkey\n  160000     28515  │ AGGREGATE SUM(ps_supplycost * CAST(ps_availqty AS DECIMAL(20,0))) GROUP BY HASH ps_partkey\n  160000     30160  │ INNER JOIN HASH ON n_nationkey = s_nationkey\n  800000    800000  │ │└PROJECT ps_partkey, ps_availqty, ps_supplycost, s_nationkey\n  800000    800000  │ │ INNER JOIN HASH ON s_suppkey = ps_suppkey\n  800000    800000  │ │ │└TABLE SCAN partsupp WHERE ((ps_suppkey >= 1) AND (ps_suppkey <= 10000)) AND TRUE\n   10000     10000  │ │ TABLE SCAN supplier WHERE ((s_nationkey >= 12) AND (s_nationkey <= 12)) AND s_nationkey IN 12\n       5         1  │ DISTRIBUTE GATHER\n       5         1  │ FILTER n_name = 'JAPAN'\n      25        25  │ DISTRIBUTE ROUND ROBIN\n      25        25  │ TABLE SCAN nation WHERE n_name = 'JAPAN'\n       1         1  PROJECT CAST((CAST(SUM(ps_supplycost * ps_availqty) AS FLOAT64) * 0.000100) AS DECIMAL(38,15))\n       1         1  AGGREGATE SUM(ps_supplycost * CAST(ps_availqty AS DECIMAL(20,0)))\n  160000        10  DISTRIBUTE GATHER\n  160000        10  AGGREGATE SUM(ps_supplycost * CAST(ps_availqty AS DECIMAL(20,0)))\n  160000     30160  INNER JOIN HASH ON n_nationkey = s_nationkey\n  800000    800000  │└PROJECT ps_availqty, ps_supplycost, s_nationkey\n  800000    800000  │ INNER JOIN HASH ON s_suppkey = ps_suppkey\n  800000    800000  │ │└TABLE SCAN partsupp WHERE ((ps_suppkey >= 1) AND (ps_suppkey <= 10000)) AND TRUE\n   10000     10000  │ TABLE SCAN supplier WHERE ((s_nationkey >= 12) AND (s_nationkey <= 12)) AND s_nationkey IN 12\n       5         1  DISTRIBUTE GATHER\n       5         1  FILTER n_name = 'JAPAN'\n      25        25  DISTRIBUTE ROUND ROBIN\n      25        25  TABLE SCAN nation WHERE n_name = 'JAPAN'\n",
       "sql": "/* TPC-H Q11 */\nSELECT ps_partkey,\n       SUM(ps_supplycost * ps_availqty) AS v\nFROM tpch_sf1.partsupp\nINNER JOIN tpch_sf1.supplier\n    ON ps_suppkey = s_suppkey\nINNER JOIN tpch_sf1.nation\n    ON s_nationkey = n_nationkey\nWHERE n_name = 'JAPAN'\nGROUP BY ps_partkey\nHAVING SUM(ps_supplycost * ps_availqty)\n           > (SELECT SUM(ps_supplycost * ps_availqty) * 0.0001\n              FROM tpch_sf1.partsupp\n              INNER JOIN tpch_sf1.supplier\n                  ON ps_suppkey = s_suppkey\n              INNER JOIN tpch_sf1.nation\n                  ON s_nationkey = n_nationkey\n              WHERE n_name = 'JAPAN')\nORDER BY v DESC\n",
-      "startTime": "2026-06-26T23:43:57.446783Z",
+      "startTime": "2026-06-30T16:22:16.581062Z",
       "status": "OK",
-      "timeMs": 109.906
+      "timeMs": 83.054
     }
   ],
   "runtime": {
-    "avgMs": 109.906,
-    "bestMs": 109.906,
-    "maxMs": 109.906,
-    "minMs": 109.906,
+    "avgMs": 83.054,
+    "bestMs": 83.054,
+    "maxMs": 83.054,
+    "minMs": 83.054,
     "stdDevMs": 0.0
   },
   "storageVariant": "iceberg",

@@ -15,6 +15,17 @@
           "=": 1,
           ">16x": 2
         },
+        "distribute": {
+          "+2x": 1,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 3
+        },
         "filter": {
           "+2x": 0,
           "+4x": 0,
@@ -34,8 +45,8 @@
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
-          "=": 0,
-          ">16x": 2
+          "=": 1,
+          ">16x": 1
         },
         "join": {
           "+2x": 0,
@@ -74,24 +85,24 @@
       "operatorRows": {
         "aggregate": 7899459,
         "distribute": 2103934,
-        "hash": 12058,
-        "join": 6201215,
+        "hash": 6201215,
+        "join": 12058,
         "scan": 12202430,
         "seek": 0,
         "sort": 0
       },
-      "plan": "Estimate    Actual  Operator\n       1         1  PROJECT avg_yearly\n       1         1  AGGREGATE SUM(l_extendedprice)\n36014581        10  DISTRIBUTE GATHER\n36014581        10  AGGREGATE SUM(l_extendedprice)\n36014581       537  INNER JOIN HASH ON p_partkey = l_partkey AND (CAST(l_quantity AS DECIMAL(30,15)) < l_avg)\n 1200243      6029  │└DISTRIBUTE HASH ON p_partkey\n 1200243      6029  │ PROJECT l_quantity, l_extendedprice, p_partkey\n 1200243      6029  │ INNER JOIN HASH ON p_partkey = l_partkey\n   40000       198  │ │└DISTRIBUTE GATHER\n   40000       198  │ │ FILTER (p_brand = 'Brand#13') AND (p_container = 'MED CAN')\n  200000    200000  │ │ DISTRIBUTE ROUND ROBIN\n  200000    200000  │ │ TABLE SCAN part WHERE (p_brand = 'Brand#13') AND (p_container = 'MED CAN')\n 6001215   6001215  │ TABLE SCAN lineitem WHERE ((l_partkey >= 509) AND (l_partkey <= 199323)) AND TRUE\n 6001215    200000  PROJECT l_avg, l_partkey\n 6001215    200000  AGGREGATE AVG(l_quantity) GROUP BY HASH l_partkey\n 6001215   1897697  DISTRIBUTE HASH ON l_partkey\n 6001215   1897697  AGGREGATE AVG(l_quantity) GROUP BY HASH l_partkey\n 6001215   6001215  TABLE SCAN lineitem WHERE CASE MOD(HASH_REPARTITION l_partkey,10) WHEN 0 THEN (((l_partkey >= 509) AND (l_partkey <= 175468)) AND l_partkey IN(21593,3559,14899,64424,126054,134525,80173,137549,134525,64424,42323,509,80173,104543,134525,104543,64424,86869,171687,169197,175468,115064,6637,69973,175468,175468,86869,509,107131,3559,115064,42323,134525,6637,107131,3559,69973,175468,107131,169197,64424,21593,115064,103316,175468,86869,69973,135656,97168,107131,80173,21593,509,16...\n",
+      "plan": "Estimate    Actual  Operator\n       1         1  PROJECT avg_yearly\n       1         1  AGGREGATE SUM(l_extendedprice)\n36014581        10  DISTRIBUTE GATHER\n36014581        10  AGGREGATE SUM(l_extendedprice)\n36014581       537  INNER JOIN HASH ON p_partkey = l_partkey AND (CAST(l_quantity AS DECIMAL(30,15)) < l_avg)\n 6001215    200000  │└PROJECT l_avg, l_partkey\n 6001215    200000  │ AGGREGATE AVG(l_quantity) GROUP BY HASH l_partkey\n 6001215   1897697  │ DISTRIBUTE HASH ON l_partkey\n 6001215   1897697  │ AGGREGATE AVG(l_quantity) GROUP BY HASH l_partkey\n 6001215   6001215  │ TABLE SCAN lineitem WHERE CASE MOD(HASH_REPARTITION l_partkey,10) WHEN 0 THEN (((l_partkey >= 509) AND (l_partkey <= 175468)) AND l_partkey IN(21593,3559,14899,64424,126054,134525,80173,137549,134525,64424,42323,509,80173,104543,134525,104543,64424,86869,171687,169197,175468,115064,6637,69973,175468,175468,86869,509,107131,3559,115064,42323,134525,6637,107131,3559,69973,175468,107131,169197,64424,21593,115064,103316,175468,86869,69973,135656,97168,107131,80173,21593,50...\n 1200243      6029  DISTRIBUTE HASH ON p_partkey\n 1200243      6029  PROJECT l_quantity, l_extendedprice, p_partkey\n 1200243      6029  INNER JOIN HASH ON p_partkey = l_partkey\n 6001215   6001215  │└TABLE SCAN lineitem WHERE ((l_partkey >= 509) AND (l_partkey <= 199323)) AND TRUE\n   40000       198  DISTRIBUTE GATHER\n   40000       198  FILTER (p_brand = 'Brand#13') AND (p_container = 'MED CAN')\n  200000    200000  DISTRIBUTE ROUND ROBIN\n  200000    200000  TABLE SCAN part WHERE (p_brand = 'Brand#13') AND (p_container = 'MED CAN')\n",
       "sql": "/* TPC-H Q17 */\nSELECT SUM(l_extendedprice) / 7.0 AS avg_yearly\nFROM tpch_sf1.lineitem\nINNER JOIN tpch_sf1.part\n    ON l_partkey = p_partkey\nWHERE p_brand = 'Brand#13'\n  AND p_container = 'MED CAN'\n  AND l_quantity < (SELECT 0.2 * AVG(l_quantity) AS l_avg\n                    FROM tpch_sf1.lineitem li\n                    WHERE l_partkey = p_partkey)",
-      "startTime": "2026-06-26T23:43:59.010795Z",
+      "startTime": "2026-06-30T16:22:18.179799Z",
       "status": "OK",
-      "timeMs": 125.314
+      "timeMs": 166.388
     }
   ],
   "runtime": {
-    "avgMs": 125.314,
-    "bestMs": 125.314,
-    "maxMs": 125.314,
-    "minMs": 125.314,
+    "avgMs": 166.388,
+    "bestMs": 166.388,
+    "maxMs": 166.388,
+    "minMs": 166.388,
     "stdDevMs": 0.0
   },
   "storageVariant": "iceberg",

@@ -15,6 +15,17 @@
           "=": 1,
           ">16x": 0
         },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
         "filter": {
           "+2x": 0,
           "+4x": 0,
@@ -82,16 +93,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(name as name) AS Expr1016, MIN(title as title) AS Expr1017\n   12998    249455  INNER JOIN HASH ON an.person_id = ci.person_id\n    2678    169273  │└INNER JOIN LOOP ON Bmk1002 = Bmk1002\n       1    169273  │ │└TABLE SEEK cast_info AS ci\n    2678    169273  │ PROJECT BmkToPage Bmk1002 AS Expr1152\n    2678    169273  │ INNER JOIN LOOP ON t.id = ci.movie_id\n      30    169273  │ │└TABLE SEEK cast_info AS ci\n      88      6766  │ SORT movie_id\n      88      6766  │ FILTER country_code as country_code = 'us'\n     246      8661  │ INNER JOIN LOOP ON Bmk1004 = Bmk1004\n       1      8661  │ │└TABLE SEEK company_name AS cn\n     246      8661  │ INNER JOIN LOOP ON mc.company_id = cn.id\n       1      8661  │ │└TABLE SEEK company_name AS cn\n     246      8661  │ INNER JOIN LOOP ON Bmk1008 = Bmk1008\n       1      8661  │ │└TABLE SEEK movie_companies AS mc\n     246      8661  │ SORT Expr1033\n     246      8661  │ PROJECT BmkToPage Bmk1008 AS Expr1033\n     246      8661  │ INNER JOIN LOOP ON t.id = mc.movie_id\n       9      8661  │ │└TABLE SEEK movie_companies AS mc\n      24      5385  │ INNER JOIN LOOP ON Bmk1014 = Bmk1014\n       0      5385  │ │└TABLE SEEK title AS t WHERE episode_nr as episode_nr >= 5 AND episode_nr as episode_nr < 100\n      90     41840  │ PROJECT BmkToPage Bmk1014 AS Expr1146\n      90     41840  │ INNER JOIN LOOP ON mk.movie_id = t.id\n       1     41840  │ │└TABLE SEEK title AS t\n      90     41840  │ INNER JOIN LOOP ON Bmk1010 = Bmk1010\n       1     41840  │ │└TABLE SEEK movie_keyword AS mk\n      90     41840  │ INNER JOIN LOOP ON k.id = mk.keyword_id\n      90     41840  │ │└TABLE SEEK movie_keyword AS mk\n       1         1  │ TABLE SCAN keyword AS k WHERE keyword as keyword = 'character-name-in-title'\n  901343     27239  TABLE SCAN aka_name AS an WHERE BLOOM(person_id as person_id)\n",
       "sql": "SELECT MIN(an.name) AS cool_actor_pseudonym,\n       MIN(t.title) AS series_named_after_char\nFROM job.aka_name AS an,\n     job.cast_info AS ci,\n     job.company_name AS cn,\n     job.keyword AS k,\n     job.movie_companies AS mc,\n     job.movie_keyword AS mk,\n     job.name AS n,\n     job.title AS t\nWHERE cn.country_code ='[us]'\n  AND k.keyword ='character-name-in-title'\n  AND t.episode_nr >= 5\n  AND t.episode_nr < 100\n  AND an.person_id = n.id\n  AND n.id = ci.person_id\n  AND ci.movie_id = t.id\n  AND t.id = mk.movie_id\n  AND mk.keyword_id = k.id\n  AND t.id = mc.movie_id\n  AND mc.company_id = cn.id\n  AND an.person_id = ci.person_id\n  AND ci.movie_id = mc.movie_id\n  AND ci.movie_id = mk.movie_id\n  AND mc.movie_id = mk.movie_id;\n",
-      "startTime": "2026-06-26T10:57:09.710555Z",
+      "startTime": "2026-06-30T16:46:14.825689Z",
       "status": "OK",
-      "timeMs": 539.389
+      "timeMs": 542.698
     }
   ],
   "runtime": {
-    "avgMs": 539.389,
-    "bestMs": 539.389,
-    "maxMs": 539.389,
-    "minMs": 539.389,
+    "avgMs": 542.698,
+    "bestMs": 542.698,
+    "maxMs": 542.698,
+    "minMs": 542.698,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

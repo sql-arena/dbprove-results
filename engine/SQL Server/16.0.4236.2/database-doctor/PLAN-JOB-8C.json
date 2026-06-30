@@ -15,6 +15,17 @@
           "=": 1,
           ">16x": 0
         },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
         "filter": {
           "+2x": 0,
           "+4x": 0,
@@ -82,16 +93,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(partialagg1030) AS Expr1014, MIN(partialagg1031) AS Expr1015\n       5        10  AGGREGATE MIN(name as name) AS partialagg1030, MIN(title as title) AS partialagg1031\n12508000   2487611  INNER JOIN HASH ON ci.person_id = a1.person_id\n  901343    901343  │└TABLE SCAN aka_name AS a1\n 2577820   1970658  INNER JOIN HASH ON t.id = mc.movie_id\n 2577810   1970658  │└INNER JOIN HASH ON ci.role_id = rt.id\n       1         1  │ │└FILTER role as role = 'writer'\n      12        12  │ │ INNER JOIN LOOP ON Bmk1010 = Bmk1010\n       1        12  │ │ │└TABLE SEEK role_type AS rt\n      12        12  │ │ TABLE SEEK role_type AS rt\n 2835590   1970658  │ INNER JOIN HASH ON ci.movie_id = mc.movie_id\n  938352   1153798  │ │└INNER JOIN HASH ON mc.company_id = cn.id\n   84576     84843  │ │ │└TABLE SCAN company_name AS cn WHERE country_code as country_code = 'us'\n 2609130   1153798  │ │ TABLE SEEK movie_companies AS mc WHERE BLOOM(company_id as company_id)\n  362443    835568  │ TABLE SEEK cast_info AS ci WHERE BLOOM(role_id as role_id) AND BLOOM(movie_id as movie_id)\n 2528310    362147  TABLE SCAN title AS t WHERE BLOOM(id as id)\n",
       "sql": "SELECT MIN(a1.name) AS writer_pseudo_name,\n       MIN(t.title) AS movie_title\nFROM job.aka_name AS a1,\n     job.cast_info AS ci,\n     job.company_name AS cn,\n     job.movie_companies AS mc,\n     job.name AS n1,\n     job.role_type AS rt,\n     job.title AS t\nWHERE cn.country_code ='[us]'\n  AND rt.role ='writer'\n  AND a1.person_id = n1.id\n  AND n1.id = ci.person_id\n  AND ci.movie_id = t.id\n  AND t.id = mc.movie_id\n  AND mc.company_id = cn.id\n  AND ci.role_id = rt.id\n  AND a1.person_id = ci.person_id\n  AND ci.movie_id = mc.movie_id;\n",
-      "startTime": "2026-06-26T11:02:06.991432Z",
+      "startTime": "2026-06-30T16:48:46.122431Z",
       "status": "OK",
-      "timeMs": 901.836
+      "timeMs": 762.462
     }
   ],
   "runtime": {
-    "avgMs": 901.836,
-    "bestMs": 901.836,
-    "maxMs": 901.836,
-    "minMs": 901.836,
+    "avgMs": 762.462,
+    "bestMs": 762.462,
+    "maxMs": 762.462,
+    "minMs": 762.462,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

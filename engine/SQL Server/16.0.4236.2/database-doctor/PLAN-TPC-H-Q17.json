@@ -15,6 +15,17 @@
           "=": 1,
           ">16x": 0
         },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
         "filter": {
           "+2x": 0,
           "+4x": 0,
@@ -82,16 +93,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  SEQUENCE\n   30532      6029  ├─MATERIALISE AS m5\n   30532      6029  │ GROUP BY SORT l_partkey\n   30532      6029  │ SORT l_partkey\n   30532      6029  │ INNER JOIN HASH ON l_partkey = p_partkey\n    1017       198  │ │└TABLE SCAN part WHERE p_container = 'MED CAN' AND p_brand = 'Brand#13'\n   60012      6029  │ TABLE SCAN lineitem WHERE BLOOM(l_partkey)\n       1         1  └─PROJECT Expr1010 / 7.0 AS Expr1011\n       1         1    PROJECT CASE WHEN Expr1056 = 0 THEN NULL ELSE Expr1057 END AS Expr1010\n       1         1    AGGREGATE COUNT(*) AS Expr1056, SUM(l_extendedprice) AS Expr1057\n      30       537    INNER JOIN LOOP ON l_quantity < 0.2 * Expr1008\n      30      6029    │└SCAN MATERIALISED m5\n       1       198    PROJECT CASE WHEN Expr1054 = 0 THEN NULL ELSE Expr1055 / CONVERT_IMPLICIT(decimal(19,0),Expr1054,0) END AS Expr1008\n       1       198    AGGREGATE COUNT(*) AS Expr1054, SUM(l_quantity) AS Expr1055\n      30      6029    SCAN MATERIALISED m5\n",
       "sql": "/* TPC-H Q17 */\nSELECT SUM(l_extendedprice) / 7.0 AS avg_yearly\nFROM tpch_sf1.lineitem\nINNER JOIN tpch_sf1.part\n    ON l_partkey = p_partkey\nWHERE p_brand = 'Brand#13'\n  AND p_container = 'MED CAN'\n  AND l_quantity < (SELECT 0.2 * AVG(l_quantity) AS l_avg\n                    FROM tpch_sf1.lineitem li\n                    WHERE l_partkey = p_partkey)",
-      "startTime": "2026-06-26T11:49:43.943037Z",
+      "startTime": "2026-06-30T16:49:09.530562Z",
       "status": "OK",
-      "timeMs": 389.664
+      "timeMs": 84.572
     }
   ],
   "runtime": {
-    "avgMs": 389.664,
-    "bestMs": 389.664,
-    "maxMs": 389.664,
-    "minMs": 389.664,
+    "avgMs": 84.572,
+    "bestMs": 84.572,
+    "maxMs": 84.572,
+    "minMs": 84.572,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

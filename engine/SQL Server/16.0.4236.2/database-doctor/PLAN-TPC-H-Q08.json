@@ -15,6 +15,17 @@
           "=": 1,
           ">16x": 0
         },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
         "filter": {
           "+2x": 0,
           "+4x": 0,
@@ -82,16 +93,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       2         2  PROJECT Expr1024 / Expr1025 AS Expr1026\n       2         2  AGGREGATE SUM(CASE WHEN n_name as n_name = 'FRANCE' THEN l_extendedprice * (1. - l_discount) ELSE 0.0000 END) AS Expr1024, SUM(Expr1027) AS Expr1025 GROUP BY SORT Expr1022\n     703      2647  SORT Expr1022\n     703      2647  INNER JOIN HASH ON n1.n_regionkey = r_regionkey\n       1         1  │└TABLE SCAN region WHERE r_name = 'EUROPE'\n     351      2647  INNER JOIN HASH ON s_nationkey = n2.n_nationkey\n      25        25  │└TABLE SCAN nation AS n2\n     351      2647  INNER JOIN HASH ON c_nationkey = n1.n_nationkey\n       2         5  │└TABLE SCAN nation AS n1 WHERE BLOOM(n_regionkey as n_regionkey)\n     351      2647  INNER JOIN HASH ON s_suppkey = l_suppkey\n     351      2647  │└INNER JOIN HASH ON c_custkey = o_custkey\n    3512     12905  │ │└INNER JOIN HASH ON o_orderkey = l_orderkey\n   42100     42054  │ │ │└INNER JOIN HASH ON l_partkey = p_partkey\n    1403      1403  │ │ │ │└TABLE SCAN part WHERE p_type = 'SMALL POLISHED NICKEL'\n   60012     42054  │ │ │ PROJECT l_extendedprice * (1. - l_discount) AS Expr1027\n   60012     42054  │ │ │ TABLE SCAN lineitem WHERE BLOOM(l_partkey)\n    4546     12714  │ │ PROJECT datepart(year,o_orderdate) AS Expr1022\n    4546     12714  │ │ TABLE SCAN orders WHERE o_orderdate >= '1995-01-01' AND o_orderdate <= '1996-12-31' AND BLOOM(o_orderkey)\n     150      2432  │ TABLE SCAN customer WHERE BLOOM(c_custkey) AND BLOOM(c_nationkey)\n     100      1891  TABLE SCAN supplier WHERE BLOOM(s_suppkey)\n",
       "sql": "/* TPC-H Q08 */\nSELECT o_year,\n       SUM(CASE\n               WHEN nation = 'FRANCE'\n                   THEN volume\n               ELSE 0\n           END) / SUM(volume) AS mkt_share\nFROM (SELECT EXTRACT(YEAR FROM o_orderdate)     AS o_year,\n             l_extendedprice * (1 - l_discount) AS volume,\n             n2.n_name                          AS nation\n      FROM tpch_sf1.lineitem\n      INNER JOIN tpch_sf1.orders\n          ON o_orderkey = l_orderkey\n      INNER JOIN tpch_sf1.part\n          ON l_partkey = p_partkey\n      INNER JOIN tpch_sf1.supplier\n          ON l_suppkey = s_suppkey\n      INNER JOIN tpch_sf1.customer\n          ON o_custkey = c_custkey\n      INNER JOIN tpch_sf1.nation n1\n          ON c_nationkey = n1.n_nationkey\n      INNER JOIN tpch_sf1.region\n          ON n1.n_regionkey = r_regionkey\n      INNER JOIN tpch_sf1.nation n2\n          ON s_nationkey = n2.n_nationkey\n      WHERE r_name = 'EUROPE'\n        AND o_orderdate BETWEEN '1995-01-01' AND '1996-12-31'\n        AND p_type = 'SMALL POLISHED NICKEL') AS all_nations\nGROUP BY o_year\nORDER BY o_year",
-      "startTime": "2026-06-26T11:49:38.246678Z",
+      "startTime": "2026-06-30T16:49:06.223970Z",
       "status": "OK",
-      "timeMs": 83.738
+      "timeMs": 152.431
     }
   ],
   "runtime": {
-    "avgMs": 83.738,
-    "bestMs": 83.738,
-    "maxMs": 83.738,
-    "minMs": 83.738,
+    "avgMs": 152.431,
+    "bestMs": 152.431,
+    "maxMs": 152.431,
+    "minMs": 152.431,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

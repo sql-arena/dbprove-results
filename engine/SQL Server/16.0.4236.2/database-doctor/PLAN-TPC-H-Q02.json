@@ -15,6 +15,17 @@
           "=": 0,
           ">16x": 0
         },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
         "filter": {
           "+2x": 0,
           "+4x": 0,
@@ -82,16 +93,16 @@
       },
       "plan": "Estimate    Actual  Operator\n     209       495  SORT s_acctbal, n_name, s_name, ps_partkey\n     209       495  INNER JOIN HASH ON n_regionkey = r_regionkey\n       1         1  │└TABLE SCAN region WHERE r_name = 'EUROPE'\n     104       495  INNER JOIN HASH ON s_nationkey = n_nationkey\n       2         5  │└TABLE SCAN nation WHERE BLOOM(n_regionkey)\n     104       495  INNER JOIN HASH ON s_suppkey = ps_suppkey\n    1045       495  │└INNER JOIN HASH ON Expr1023 = ps_supplycost AND ps_partkey = ps_partkey as ps_partkey\n    1045       495  │ │└INNER JOIN HASH ON ps_min.ps_partkey = p_partkey\n    1766       803  │ │ │└TABLE SCAN part WHERE (p_size = 25) AND (p_type LIKE '%BRASS')\n    1178       495  │ │ AGGREGATE MIN(ps_supplycost as ps_supplycost) AS Expr1023 GROUP BY HASH ps_partkey\n    1600       689  │ │ INNER JOIN HASH ON ps_min.ps_suppkey = s_min.s_suppkey\n    2000      1987  │ │ │└INNER JOIN HASH ON s_min.s_nationkey = n_min.n_nationkey\n       5         5  │ │ │ │└INNER JOIN HASH ON n_min.n_regionkey = r_min.r_regionkey\n       1         1  │ │ │ │ │└TABLE SCAN region AS r_min WHERE r_name as r_name = 'EUROPE'\n       2         5  │ │ │ │ TABLE SCAN nation AS n_min WHERE BLOOM(n_regionkey as n_regionkey)\n    1000      1987  │ │ │ TABLE SCAN supplier AS s_min WHERE BLOOM(s_nationkey as s_nationkey)\n     800       689  │ │ TABLE SCAN partsupp AS ps_min WHERE BLOOM(ps_suppkey as ps_suppkey) AND BLOOM(ps_partkey as ps_partkey)\n     800       495  │ TABLE SCAN partsupp WHERE (BLOOM(ps_partkey)) AND (BLOOM(ps_supplycost,ps_partkey))\n     100       441  TABLE SCAN supplier WHERE BLOOM(s_suppkey) AND BLOOM(s_nationkey)\n",
       "sql": "/* TPC-H Q02 */\nSELECT s_acctbal,\n       s_name,\n       n_name,\n       p_partkey,\n       p_mfgr,\n       s_address,\n       s_phone,\n       s_comment\nFROM tpch_sf1.partsupp\nINNER JOIN tpch_sf1.part\n    ON ps_partkey = p_partkey\nINNER JOIN tpch_sf1.supplier\n    ON ps_suppkey = s_suppkey\nINNER JOIN tpch_sf1.nation\n    ON s_nationkey = n_nationkey\nINNER JOIN tpch_sf1.region\n    ON n_regionkey = r_regionkey\nWHERE p_size = 25\n  AND p_type LIKE '%BRASS'\n  AND r_name = 'EUROPE'\n  AND ps_supplycost = (SELECT MIN(ps_supplycost) AS min_cost\n                       FROM tpch_sf1.partsupp AS ps_min\n                       INNER JOIN tpch_sf1.supplier AS s_min\n                           ON ps_suppkey = s_suppkey\n                       INNER JOIN tpch_sf1.nation AS n_min\n                           ON s_nationkey = n_nationkey\n                       INNER JOIN tpch_sf1.region AS r_min\n                           ON n_regionkey = r_regionkey\n                       WHERE ps_partkey = p_partkey\n                         AND r_name = 'EUROPE')\nORDER BY s_acctbal DESC,\n         n_name,\n         s_name,\n         p_partkey\n\n\n",
-      "startTime": "2026-06-26T11:49:36.297601Z",
+      "startTime": "2026-06-30T16:49:05.255307Z",
       "status": "OK",
-      "timeMs": 492.562
+      "timeMs": 58.124
     }
   ],
   "runtime": {
-    "avgMs": 492.562,
-    "bestMs": 492.562,
-    "maxMs": 492.562,
-    "minMs": 492.562,
+    "avgMs": 58.124,
+    "bestMs": 58.124,
+    "maxMs": 58.124,
+    "minMs": 58.124,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

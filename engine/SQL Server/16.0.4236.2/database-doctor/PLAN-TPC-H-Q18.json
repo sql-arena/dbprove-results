@@ -15,6 +15,17 @@
           "=": 0,
           ">16x": 0
         },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
         "filter": {
           "+2x": 0,
           "+4x": 0,
@@ -82,16 +93,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         9  SORT o_totalprice, o_orderdate\n       1         9  AGGREGATE SUM(l_quantity) AS Expr1013, c_custkey, o_orderdate, o_totalprice GROUP BY SORT o_orderkey, c_name\n       1        63  INNER JOIN LOOP ON ColStoreLoc1000 = ColStoreLoc1000\n       1        63  │└TABLE SCAN lineitem\n       1        63  INNER JOIN LOOP ON o_orderkey = l_orderkey\n       1        63  │└TABLE SEEK lineitem\n       1         9  INNER JOIN LOOP ON ColStoreLoc1006 = ColStoreLoc1006\n       1         9  │└TABLE SCAN customer\n       1         9  INNER JOIN LOOP ON o_custkey = c_custkey\n       1         9  │└TABLE SEEK customer\n       1         9  INNER JOIN LOOP ON ColStoreLoc1003 = ColStoreLoc1003\n       1         9  │└TABLE SCAN orders\n       1         9  INNER JOIN LOOP ON l_orderkey = o_orderkey\n       1         9  │└TABLE SEEK orders\n       1         9  SORT l_orderkey\n       1         9  FILTER Expr1012 > 314.00\n 5449630   1500000  AGGREGATE SUM(l_quantity) AS Expr1012 GROUP BY HASH l_orderkey\n 6001220   6001215  TABLE SCAN lineitem\n",
       "sql": "/* TPC-H Q18 */\nSELECT c_name,\n       c_custkey,\n       o_orderkey,\n       o_orderdate,\n       o_totalprice,\n       SUM(l_quantity)\nFROM tpch_sf1.lineitem\nINNER JOIN tpch_sf1.orders\n    ON l_orderkey = o_orderkey\nINNER JOIN tpch_sf1.customer\n    ON o_custkey = c_custkey\nWHERE o_orderkey IN (SELECT l_orderkey\n                     FROM tpch_sf1.lineitem\n                     GROUP BY l_orderkey\n                     HAVING SUM(l_quantity) > 314)\nGROUP BY c_name,\n         c_custkey,\n         o_orderkey,\n         o_orderdate,\n         o_totalprice\nORDER BY o_totalprice DESC,\n         o_orderdate",
-      "startTime": "2026-06-26T11:49:44.447486Z",
+      "startTime": "2026-06-30T16:49:09.678770Z",
       "status": "OK",
-      "timeMs": 367.558
+      "timeMs": 333.216
     }
   ],
   "runtime": {
-    "avgMs": 367.558,
-    "bestMs": 367.558,
-    "maxMs": 367.558,
-    "minMs": 367.558,
+    "avgMs": 333.216,
+    "bestMs": 333.216,
+    "maxMs": 333.216,
+    "minMs": 333.216,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

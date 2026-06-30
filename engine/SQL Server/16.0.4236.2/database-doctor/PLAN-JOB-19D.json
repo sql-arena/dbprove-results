@@ -15,6 +15,17 @@
           "=": 1,
           ">16x": 0
         },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
         "filter": {
           "+2x": 0,
           "+4x": 0,
@@ -82,16 +93,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(partialagg1090) AS Expr1020, MIN(partialagg1091) AS Expr1021\n     203     10024  INNER JOIN LOOP ON ci.person_role_id = chn.id\n       1     10024  │└TABLE SEEK char_name AS chn\n     207     10025  AGGREGATE MIN(name as name) AS partialagg1090, MIN(title as title) AS partialagg1091 GROUP BY HASH person_role_id\n   29251   1910374  INNER JOIN HASH ON mc.company_id = cn.id\n   84576     84843  │└TABLE SCAN company_name AS cn WHERE country_code as country_code = 'us'\n   81336   1910374  INNER JOIN HASH ON mc.movie_id = t.id\n    8212    741702  │└INNER JOIN LOOP ON Bmk1018 = Bmk1018\n       0    741702  │ │└TABLE SEEK title AS t WHERE production_year as production_year > 2000\n   15112   1131685  │ PROJECT BmkToPage Bmk1018 AS Expr1814\n   15112   1131685  │ INNER JOIN LOOP ON mi.movie_id = t.id\n       1   1131685  │ │└TABLE SEEK title AS t\n   15112   1131685  │ INNER JOIN HASH ON n.id = ci.person_id\n   67623   1132447  │ │└INNER JOIN HASH ON an.person_id = ci.person_id\n   13936    547464  │ │ │└INNER JOIN HASH ON ci.role_id = rt.id\n       1         1  │ │ │ │└FILTER role as role = 'actress'\n      12        12  │ │ │ │ INNER JOIN LOOP ON Bmk1016 = Bmk1016\n       1        12  │ │ │ │ │└TABLE SEEK role_type AS rt\n      12        12  │ │ │ │ TABLE SEEK role_type AS rt\n   15330    547464  │ │ │ INNER JOIN HASH ON ci.movie_id = mi.movie_id\n  211939   3036719  │ │ │ │└INNER JOIN LOOP ON it.id = mi.info_type_id\n  211939   3036719  │ │ │ │ │└TABLE SEEK movie_info AS mi\n       1         1  │ │ │ │ FILTER info as info = 'release dates'\n     113       113  │ │ │ │ TABLE SCAN info_type AS it\n    8675    259680  │ │ │ TABLE SCAN cast_info AS ci WHERE (note as note = '(voice)' OR note as note = '(voice) (uncredited)' OR note as note = '(voice: English version)' OR note as note = '(voice: Japanese version)') AND BLOOM(role_id as role_id) AND BLOOM(movie_id as movie_id)\n   90134     15130  │ │ TABLE SEEK aka_name AS an WHERE BLOOM(person_id as person_id)\n     931      8116  │ TABLE SCAN name AS n WHERE gender as gender = 'f' AND BLOOM(id as id)\n 2609130     18796  FILTER BLOOM(company_id as company_id)\n 2609130     48662  TABLE SCAN movie_companies AS mc WHERE PROBE(Bitmap1816,movie_id as movie_id,N'IN ROW')\n",
       "sql": "SELECT MIN(n.name) AS voicing_actress,\n       MIN(t.title) AS jap_engl_voiced_movie\nFROM job.aka_name AS an,\n     job.char_name AS chn,\n     job.cast_info AS ci,\n     job.company_name AS cn,\n     job.info_type AS it,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.name AS n,\n     job.role_type AS rt,\n     job.title AS t\nWHERE ci.note IN ('(voice)',\n                  '(voice: Japanese version)',\n                  '(voice) (uncredited)',\n                  '(voice: English version)')\n  AND cn.country_code ='[us]'\n  AND it.info = 'release dates'\n  AND n.gender ='f'\n  AND rt.role ='actress'\n  AND t.production_year > 2000\n  AND t.id = mi.movie_id\n  AND t.id = mc.movie_id\n  AND t.id = ci.movie_id\n  AND mc.movie_id = ci.movie_id\n  AND mc.movie_id = mi.movie_id\n  AND mi.movie_id = ci.movie_id\n  AND cn.id = mc.company_id\n  AND it.id = mi.info_type_id\n  AND n.id = ci.person_id\n  AND rt.id = ci.role_id\n  AND n.id = an.person_id\n  AND ci.person_id = an.person_id\n  AND chn.id = ci.person_role_id;\n",
-      "startTime": "2026-06-26T10:58:54.330523Z",
+      "startTime": "2026-06-30T16:47:06.170288Z",
       "status": "OK",
-      "timeMs": 25476.693
+      "timeMs": 25753.073
     }
   ],
   "runtime": {
-    "avgMs": 25476.693,
-    "bestMs": 25476.693,
-    "maxMs": 25476.693,
-    "minMs": 25476.693,
+    "avgMs": 25753.073,
+    "bestMs": 25753.073,
+    "maxMs": 25753.073,
+    "minMs": 25753.073,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

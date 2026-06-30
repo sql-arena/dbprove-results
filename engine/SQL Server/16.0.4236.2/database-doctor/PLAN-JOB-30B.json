@@ -15,6 +15,17 @@
           "=": 1,
           ">16x": 0
         },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
         "filter": {
           "+2x": 0,
           "+4x": 0,
@@ -82,16 +93,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(partialagg1093) AS Expr1024, MIN(partialagg1094) AS Expr1025, MIN(partialagg1095) AS Expr1026, MIN(partialagg1096) AS Expr1027\n       1         5  FILTER keyword as keyword = 'blood' OR keyword as keyword = 'death' OR keyword as keyword = 'female-nudity' OR keyword as keyword = 'gore' OR keyword as keyword = 'hospital' OR keyword as keyword = 'murder' OR keyword as keyword = 'violence'\n       1       275  INNER JOIN LOOP ON Bmk1012 = Bmk1012\n       1       275  │└TABLE SEEK keyword AS k\n       1       275  INNER JOIN LOOP ON mk.keyword_id = k.id\n       1       275  │└TABLE SEEK keyword AS k\n       1       275  AGGREGATE MIN(info as info) AS partialagg1093, MIN(info as info) AS partialagg1094, MIN(name as name) AS partialagg1095, MIN(title as title) AS partialagg1096 GROUP BY SORT keyword_id\n      49      1060  SORT keyword_id\n      49      1060  INNER JOIN LOOP ON Bmk1018 = Bmk1018\n       1      1060  │└TABLE SEEK movie_keyword AS mk\n      49      1060  INNER JOIN LOOP ON t.id = mk.movie_id\n      49      1060  │└TABLE SEEK movie_keyword AS mk\n       1         7  FILTER gender as gender = 'm'\n       1         7  INNER JOIN LOOP ON Bmk1020 = Bmk1020\n       1         7  │└TABLE SEEK name AS n\n       1         7  PROJECT BmkToPage Bmk1020 AS Expr1110\n       1         7  INNER JOIN LOOP ON ci.person_id = n.id\n       1         7  │└TABLE SEEK name AS n\n       1         7  FILTER info as info = 'votes'\n       2        21  INNER JOIN LOOP ON Bmk1010 = Bmk1010\n       1        21  │└TABLE SEEK info_type AS it2\n       2        21  INNER JOIN LOOP ON mi_idx.info_type_id = it2.id\n       1        21  │└TABLE SEEK info_type AS it2\n       2        21  INNER JOIN LOOP ON t.id = mi_idx.movie_id\n       2        21  │└TABLE SEEK movie_info_idx AS mi_idx\n       1         7  FILTER note as note = '(head writer)' OR note as note = '(story editor)' OR note as note = '(story)' OR note as note = '(writer)' OR note as note = '(written by)'\n      30       327  INNER JOIN LOOP ON Bmk1006 = Bmk1006\n       1       327  │└TABLE SEEK cast_info AS ci\n      30       327  PROJECT BmkToPage Bmk1006 AS Expr1108\n      30       327  INNER JOIN LOOP ON t.id = ci.movie_id\n      30       327  │└TABLE SEEK cast_info AS ci\n       1         3  INNER JOIN HASH ON mi.info_type_id = it1.id\n       1         1  │└TABLE SCAN info_type AS it1 WHERE info as info = 'genres'\n       1         3  INNER JOIN LOOP ON t.id = mi.movie_id\n       1         3  │└TABLE SEEK movie_info AS mi WHERE (info as info = 'Horror' OR info as info = 'Thriller') AND BLOOM(info_type_id as info_type_id)\n     483         2  INNER JOIN HASH ON id as id = movie_id as movie_id\n     669       538  │└TABLE SCAN title AS t WHERE (production_year as production_year > 2000) AND (title as title LIKE '%Freddy%' OR title as title LIKE '%Jason%' OR title as title LIKE 'Saw%')\n     675         2  INNER JOIN HASH ON cc.subject_id = cct1.id\n       2         2  │└TABLE SCAN comp_cast_type AS cct1 WHERE kind as kind = 'cast' OR kind as kind = 'crew'\n     675         2  INNER JOIN HASH ON cc.status_id = cct2.id\n       1         1  │└TABLE SCAN comp_cast_type AS cct2 WHERE kind as kind = 'complete+verified'\n    1350         2  TABLE SEEK complete_cast AS cc WHERE BLOOM(movie_id as movie_id) AND BLOOM(status_id as status_id)\n",
       "sql": "SELECT MIN(mi.info) AS movie_budget,\n       MIN(mi_idx.info) AS movie_votes,\n       MIN(n.name) AS writer,\n       MIN(t.title) AS complete_gore_movie\nFROM job.complete_cast AS cc,\n     job.comp_cast_type AS cct1,\n     job.comp_cast_type AS cct2,\n     job.cast_info AS ci,\n     job.info_type AS it1,\n     job.info_type AS it2,\n     job.keyword AS k,\n     job.movie_info AS mi,\n     job.movie_info_idx AS mi_idx,\n     job.movie_keyword AS mk,\n     job.name AS n,\n     job.title AS t\nWHERE cct1.kind IN ('cast',\n                    'crew')\n  AND cct2.kind ='complete+verified'\n  AND ci.note IN ('(writer)',\n                  '(head writer)',\n                  '(written by)',\n                  '(story)',\n                  '(story editor)')\n  AND it1.info = 'genres'\n  AND it2.info = 'votes'\n  AND k.keyword IN ('murder',\n                    'violence',\n                    'blood',\n                    'gore',\n                    'death',\n                    'female-nudity',\n                    'hospital')\n  AND mi.info IN ('Horror',\n                  'Thriller')\n  AND n.gender = 'm'\n  AND t.production_year > 2000\n  AND (t.title LIKE '%Freddy%'\n       OR t.title LIKE '%Jason%'\n       OR t.title LIKE 'Saw%')\n  AND t.id = mi.movie_id\n  AND t.id = mi_idx.movie_id\n  AND t.id = ci.movie_id\n  AND t.id = mk.movie_id\n  AND t.id = cc.movie_id\n  AND ci.movie_id = mi.movie_id\n  AND ci.movie_id = mi_idx.movie_id\n  AND ci.movie_id = mk.movie_id\n  AND ci.movie_id = cc.movie_id\n  AND mi.movie_id = mi_idx.movie_id\n  AND mi.movie_id = mk.movie_id\n  AND mi.movie_id = cc.movie_id\n  AND mi_idx.movie_id = mk.movie_id\n  AND mi_idx.movie_id = cc.movie_id\n  AND mk.movie_id = cc.movie_id\n  AND n.id = ci.person_id\n  AND it1.id = mi.info_type_id\n  AND it2.id = mi_idx.info_type_id\n  AND k.id = mk.keyword_id\n  AND cct1.id = cc.subject_id\n  AND cct2.id = cc.status_id;\n",
-      "startTime": "2026-06-26T11:00:44.703491Z",
+      "startTime": "2026-06-30T16:48:04.240639Z",
       "status": "OK",
-      "timeMs": 908.239
+      "timeMs": 893.727
     }
   ],
   "runtime": {
-    "avgMs": 908.239,
-    "bestMs": 908.239,
-    "maxMs": 908.239,
-    "minMs": 908.239,
+    "avgMs": 893.727,
+    "bestMs": 893.727,
+    "maxMs": 893.727,
+    "minMs": 893.727,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

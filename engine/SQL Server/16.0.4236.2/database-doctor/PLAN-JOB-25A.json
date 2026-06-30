@@ -15,6 +15,17 @@
           "=": 1,
           ">16x": 0
         },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
         "filter": {
           "+2x": 0,
           "+4x": 0,
@@ -82,16 +93,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(info as info) AS Expr1018, MIN(info as info) AS Expr1019, MIN(name as name) AS Expr1020, MIN(title as title) AS Expr1021\n       1      4407  INNER JOIN MERGE ON id as id = keyword_id as keyword_id\n       5         5  │└SORT id\n       5         5  │ TABLE SCAN keyword AS k WHERE keyword as keyword = 'blood' OR keyword as keyword = 'death' OR keyword as keyword = 'female-nudity' OR keyword as keyword = 'gore' OR keyword as keyword = 'murder'\n    1168      4407  SORT keyword_id\n    1168    128590  INNER JOIN LOOP ON Bmk1012 = Bmk1012\n       1    128590  │└TABLE SEEK movie_keyword AS mk\n    1168    128590  INNER JOIN LOOP ON t.id = mk.movie_id\n      18    128590  │└TABLE SEEK movie_keyword AS mk\n      63      4851  INNER JOIN LOOP ON Bmk1016 = Bmk1016\n       1      4851  │└TABLE SEEK title AS t\n      64      4851  INNER JOIN LOOP ON ci.movie_id = t.id\n       1      4851  │└TABLE SEEK title AS t\n      63      4851  SORT movie_id\n      63      4851  FILTER gender as gender = 'm'\n     154      8650  INNER JOIN LOOP ON Bmk1014 = Bmk1014\n       1      8650  │└TABLE SEEK name AS n\n     154      8650  SORT Expr1060\n     154      8650  PROJECT BmkToPage Bmk1014 AS Expr1060\n     154      8650  INNER JOIN LOOP ON ci.person_id = n.id\n       1      8650  │└TABLE SEEK name AS n\n     154      8650  SORT person_id\n     154      8650  FILTER note as note = '(head writer)' OR note as note = '(story editor)' OR note as note = '(story)' OR note as note = '(writer)' OR note as note = '(written by)'\n    5614    548763  INNER JOIN LOOP ON Bmk1000 = Bmk1000\n       1    548763  │└TABLE SEEK cast_info AS ci\n    5614    548763  SORT Expr1059\n    5614    548763  PROJECT BmkToPage Bmk1000 AS Expr1059\n    5614    548763  INNER JOIN LOOP ON mi_idx.movie_id = ci.movie_id\n      30    548763  │└TABLE SEEK cast_info AS ci\n     185     16480  INNER JOIN MERGE ON id as id = info_type_id as info_type_id\n       1         1  │└FILTER info as info = 'votes'\n     113       113  │ INNER JOIN LOOP ON Bmk1004 = Bmk1004\n       1       113  │ │└TABLE SEEK info_type AS it2\n     113       113  │ TABLE SEEK info_type AS it2\n     929     16484  SORT info_type_id\n     929     49452  INNER JOIN LOOP ON mi.movie_id = mi_idx.movie_id\n       2     49452  │└TABLE SEEK movie_info_idx AS mi_idx\n     414     30413  INNER JOIN HASH ON mi.info_type_id = it1.id\n       1         1  │└FILTER info as info = 'genres'\n     113       113  │ TABLE SCAN info_type AS it1\n   29003     30413  TABLE SEEK movie_info AS mi WHERE (PROBE(Bitmap1066,info_type_id as info_type_id,N'IN ROW')) AND (info as info = 'Horror')\n",
       "sql": "SELECT MIN(mi.info) AS movie_budget,\n       MIN(mi_idx.info) AS movie_votes,\n       MIN(n.name) AS male_writer,\n       MIN(t.title) AS violent_movie_title\nFROM job.cast_info AS ci,\n     job.info_type AS it1,\n     job.info_type AS it2,\n     job.keyword AS k,\n     job.movie_info AS mi,\n     job.movie_info_idx AS mi_idx,\n     job.movie_keyword AS mk,\n     job.name AS n,\n     job.title AS t\nWHERE ci.note IN ('(writer)',\n                  '(head writer)',\n                  '(written by)',\n                  '(story)',\n                  '(story editor)')\n  AND it1.info = 'genres'\n  AND it2.info = 'votes'\n  AND k.keyword IN ('murder',\n                    'blood',\n                    'gore',\n                    'death',\n                    'female-nudity')\n  AND mi.info = 'Horror'\n  AND n.gender = 'm'\n  AND t.id = mi.movie_id\n  AND t.id = mi_idx.movie_id\n  AND t.id = ci.movie_id\n  AND t.id = mk.movie_id\n  AND ci.movie_id = mi.movie_id\n  AND ci.movie_id = mi_idx.movie_id\n  AND ci.movie_id = mk.movie_id\n  AND mi.movie_id = mi_idx.movie_id\n  AND mi.movie_id = mk.movie_id\n  AND mi_idx.movie_id = mk.movie_id\n  AND n.id = ci.person_id\n  AND it1.id = mi.info_type_id\n  AND it2.id = mi_idx.info_type_id\n  AND k.id = mk.keyword_id;\n",
-      "startTime": "2026-06-26T11:00:17.811289Z",
+      "startTime": "2026-06-30T16:47:49.772432Z",
       "status": "OK",
-      "timeMs": 2582.832
+      "timeMs": 2178.502
     }
   ],
   "runtime": {
-    "avgMs": 2582.832,
-    "bestMs": 2582.832,
-    "maxMs": 2582.832,
-    "minMs": 2582.832,
+    "avgMs": 2178.502,
+    "bestMs": 2178.502,
+    "maxMs": 2178.502,
+    "minMs": 2178.502,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

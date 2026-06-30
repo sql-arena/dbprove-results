@@ -15,6 +15,17 @@
           "=": 1,
           ">16x": 0
         },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
         "filter": {
           "+2x": 0,
           "+4x": 0,
@@ -82,16 +93,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(partialagg1040) AS Expr1018, MIN(partialagg1041) AS Expr1019\n       1        95  FILTER country_code as country_code = 'us'\n       1       140  INNER JOIN LOOP ON Bmk1002 = Bmk1002\n       1       140  │└TABLE SEEK company_name AS cn\n       1       140  INNER JOIN LOOP ON mc.company_id = cn.id\n       1       140  │└TABLE SEEK company_name AS cn\n       1       140  AGGREGATE MIN(info as info) AS partialagg1040, MIN(title as title) AS partialagg1041 GROUP BY SORT company_id\n    3333      3494  SORT company_id\n    3333      3494  INNER JOIN LOOP ON Bmk1010 = Bmk1010\n       1      3494  │└TABLE SEEK movie_companies AS mc\n    3333      3494  PROJECT BmkToPage Bmk1010 AS Expr1049\n    3333      3494  INNER JOIN LOOP ON t.id = mc.movie_id\n       9      3494  │└TABLE SEEK movie_companies AS mc\n     336      1199  INNER JOIN LOOP ON t.id = mk.movie_id\n      18      1199  │└TABLE SEEK movie_keyword AS mk\n      18       123  INNER JOIN LOOP ON t.id = aka_t.movie_id\n       1       123  │└TABLE SEEK aka_title AS aka_t\n      16      1784  INNER JOIN LOOP ON Bmk1016 = Bmk1016\n       0      1784  │└TABLE SEEK title AS t WHERE production_year as production_year > 1990\n      24      1785  PROJECT BmkToPage Bmk1016 AS Expr1047\n      24      1785  INNER JOIN LOOP ON mi.movie_id = t.id\n       1      1785  │└TABLE SEEK title AS t\n      24      1785  INNER JOIN MERGE ON id as id = info_type_id as info_type_id\n       1         1  │└SORT id\n       1         1  │ FILTER info as info = 'release dates'\n     113       113  │ TABLE SCAN info_type AS it1\n    1690      1785  SORT info_type_id\n    1690      1785  TABLE SEEK movie_info AS mi WHERE note as note LIKE '%internet%' AND (info as info LIKE 'USA:% 199%' OR info as info LIKE 'USA:% 200%')\n",
       "sql": "SELECT MIN(mi.info) AS release_date,\n       MIN(t.title) AS modern_american_internet_movie\nFROM job.aka_title AS aka_t,\n     job.company_name AS cn,\n     job.company_type AS ct,\n     job.info_type AS it1,\n     job.keyword AS k,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.movie_keyword AS mk,\n     job.title AS t\nWHERE cn.country_code = '[us]'\n  AND it1.info = 'release dates'\n  AND mi.note LIKE '%internet%'\n  AND mi.info IS NOT NULL\n  AND (mi.info LIKE 'USA:% 199%'\n       OR mi.info LIKE 'USA:% 200%')\n  AND t.production_year > 1990\n  AND t.id = aka_t.movie_id\n  AND t.id = mi.movie_id\n  AND t.id = mk.movie_id\n  AND t.id = mc.movie_id\n  AND mk.movie_id = mi.movie_id\n  AND mk.movie_id = mc.movie_id\n  AND mk.movie_id = aka_t.movie_id\n  AND mi.movie_id = mc.movie_id\n  AND mi.movie_id = aka_t.movie_id\n  AND mc.movie_id = aka_t.movie_id\n  AND k.id = mk.keyword_id\n  AND it1.id = mi.info_type_id\n  AND cn.id = mc.company_id\n  AND ct.id = mc.company_type_id;\n",
-      "startTime": "2026-06-26T10:57:00.955623Z",
+      "startTime": "2026-06-30T16:46:09.686563Z",
       "status": "OK",
-      "timeMs": 637.134
+      "timeMs": 665.282
     }
   ],
   "runtime": {
-    "avgMs": 637.134,
-    "bestMs": 637.134,
-    "maxMs": 637.134,
-    "minMs": 637.134,
+    "avgMs": 665.282,
+    "bestMs": 665.282,
+    "maxMs": 665.282,
+    "minMs": 665.282,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

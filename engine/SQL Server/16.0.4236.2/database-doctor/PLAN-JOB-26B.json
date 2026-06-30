@@ -15,6 +15,17 @@
           "=": 1,
           ">16x": 0
         },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
         "filter": {
           "+2x": 0,
           "+4x": 0,
@@ -82,16 +93,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(name as name) AS Expr1024, MIN(info as info) AS Expr1025, MIN(title as title) AS Expr1026\n       1        93  FILTER name as name LIKE '%man%' OR name as name LIKE '%Man%'\n      13       893  INNER JOIN LOOP ON Bmk1006 = Bmk1006\n       1       893  │└TABLE SEEK char_name AS chn\n      13       893  PROJECT BmkToPage Bmk1006 AS Expr1203\n      13       893  INNER JOIN LOOP ON ci.person_role_id = chn.id\n       1       893  │└TABLE SEEK char_name AS chn\n      30      2300  INNER JOIN LOOP ON Bmk1008 = Bmk1008\n       1      2300  │└TABLE SEEK cast_info AS ci\n      30      2300  PROJECT BmkToPage Bmk1008 AS Expr1200\n      30      2300  INNER JOIN LOOP ON t.id = ci.movie_id\n      30      2300  │└TABLE SEEK cast_info AS ci\n       1         6  INNER JOIN HASH ON mk.keyword_id = k.id\n       4         4  │└TABLE SCAN keyword AS k WHERE keyword as keyword = 'based-on-comic' OR keyword as keyword = 'fight' OR keyword as keyword = 'marvel-comics' OR keyword as keyword = 'superhero'\n       1         6  INNER JOIN LOOP ON Bmk1018 = Bmk1018\n       1         6  │└TABLE SEEK movie_keyword AS mk WHERE BLOOM(keyword_id as keyword_id)\n    3788      3891  INNER JOIN LOOP ON t.id = mk.movie_id\n      49      3891  │└TABLE SEEK movie_keyword AS mk\n      76        32  INNER JOIN HASH ON t.kind_id = kt.id\n       1         1  │└TABLE SCAN kind_type AS kt WHERE kind as kind = 'movie'\n      46        32  FILTER production_year as production_year > 2005\n     115       309  INNER JOIN LOOP ON Bmk1022 = Bmk1022\n       1       309  │└TABLE SEEK title AS t WHERE BLOOM(kind_id as kind_id)\n    1155      2413  PROJECT BmkToPage Bmk1022 AS Expr1196\n    1155      2413  INNER JOIN LOOP ON mi_idx.movie_id = t.id\n       1      2413  │└TABLE SEEK title AS t\n    1155      2413  INNER JOIN HASH ON mi_idx.info_type_id = it2.id\n       1         1  │└TABLE SCAN info_type AS it2 WHERE info as info = 'rating'\n     577      2413  INNER JOIN HASH ON movie_id as movie_id = movie_id as movie_id\n   67543     85941  │└INNER JOIN HASH ON cc.status_id = cct2.id\n       2         2  │ │└TABLE SCAN comp_cast_type AS cct2 WHERE kind as kind LIKE '%complete%'\n   67543     85941  │ INNER JOIN HASH ON cc.subject_id = cct1.id\n       1         1  │ │└TABLE SCAN comp_cast_type AS cct1 WHERE kind as kind = 'cast'\n  135086     85941  │ TABLE SEEK complete_cast AS cc WHERE BLOOM(subject_id as subject_id)\n     536      2413  TABLE SEEK movie_info_idx AS mi_idx WHERE info as info > '8.0' AND BLOOM(movie_id as movie_id) AND BLOOM(info_type_id as info_type_id)\n",
       "sql": "SELECT MIN(chn.name) AS character_name,\n       MIN(mi_idx.info) AS rating,\n       MIN(t.title) AS complete_hero_movie\nFROM job.complete_cast AS cc,\n     job.comp_cast_type AS cct1,\n     job.comp_cast_type AS cct2,\n     job.char_name AS chn,\n     job.cast_info AS ci,\n     job.info_type AS it2,\n     job.keyword AS k,\n     job.kind_type AS kt,\n     job.movie_info_idx AS mi_idx,\n     job.movie_keyword AS mk,\n     job.name AS n,\n     job.title AS t\nWHERE cct1.kind = 'cast'\n  AND cct2.kind LIKE '%complete%'\n  AND chn.name IS NOT NULL\n  AND (chn.name LIKE '%man%'\n       OR chn.name LIKE '%Man%')\n  AND it2.info = 'rating'\n  AND k.keyword IN ('superhero',\n                    'marvel-comics',\n                    'based-on-comic',\n                    'fight')\n  AND kt.kind = 'movie'\n  AND mi_idx.info > '8.0'\n  AND t.production_year > 2005\n  AND kt.id = t.kind_id\n  AND t.id = mk.movie_id\n  AND t.id = ci.movie_id\n  AND t.id = cc.movie_id\n  AND t.id = mi_idx.movie_id\n  AND mk.movie_id = ci.movie_id\n  AND mk.movie_id = cc.movie_id\n  AND mk.movie_id = mi_idx.movie_id\n  AND ci.movie_id = cc.movie_id\n  AND ci.movie_id = mi_idx.movie_id\n  AND cc.movie_id = mi_idx.movie_id\n  AND chn.id = ci.person_role_id\n  AND n.id = ci.person_id\n  AND k.id = mk.keyword_id\n  AND cct1.id = cc.subject_id\n  AND cct2.id = cc.status_id\n  AND it2.id = mi_idx.info_type_id;\n",
-      "startTime": "2026-06-26T11:00:30.600415Z",
+      "startTime": "2026-06-30T16:47:56.370086Z",
       "status": "OK",
-      "timeMs": 360.264
+      "timeMs": 359.312
     }
   ],
   "runtime": {
-    "avgMs": 360.264,
-    "bestMs": 360.264,
-    "maxMs": 360.264,
-    "minMs": 360.264,
+    "avgMs": 359.312,
+    "bestMs": 359.312,
+    "maxMs": 359.312,
+    "minMs": 359.312,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

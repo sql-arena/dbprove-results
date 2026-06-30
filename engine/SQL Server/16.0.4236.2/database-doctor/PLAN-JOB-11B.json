@@ -15,6 +15,17 @@
           "=": 1,
           ">16x": 0
         },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
         "filter": {
           "+2x": 0,
           "+4x": 0,
@@ -82,16 +93,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(name as name) AS Expr1016, MIN(link as link) AS Expr1017, MIN(title as title) AS Expr1018\n       1        14  FILTER (name as name LIKE '%Film%' OR name as name LIKE '%Warner%') AND country_code as country_code <> 'pl'\n       2        21  INNER JOIN LOOP ON Bmk1000 = Bmk1000\n       1        21  │└TABLE SEEK company_name AS cn\n       2        21  INNER JOIN LOOP ON mc.company_id = cn.id\n       1        21  │└TABLE SEEK company_name AS cn\n       2        21  FILTER kind as kind = 'production companies'\n       4        21  INNER JOIN LOOP ON Bmk1002 = Bmk1002\n       1        21  │└TABLE SEEK company_type AS ct\n       4        21  INNER JOIN LOOP ON mc.company_type_id = ct.id\n       1        21  │└TABLE SEEK company_type AS ct\n       4        21  FILTER note as note IS NULL\n       9        28  INNER JOIN LOOP ON Bmk1008 = Bmk1008\n       1        28  │└TABLE SEEK movie_companies AS mc\n       9        28  PROJECT BmkToPage Bmk1008 AS Expr1049\n       9        28  INNER JOIN LOOP ON t.id = mc.movie_id\n       9        28  │└TABLE SEEK movie_companies AS mc\n       1         7  FILTER link as link LIKE '%follows%'\n       1        19  INNER JOIN LOOP ON Bmk1006 = Bmk1006\n       1        19  │└TABLE SEEK link_type AS lt\n       1        19  INNER JOIN LOOP ON ml.link_type_id = lt.id\n       1        19  │└TABLE SEEK link_type AS lt\n       1        19  INNER JOIN LOOP ON Bmk1012 = Bmk1012\n       1        19  │└TABLE SEEK movie_link AS ml\n       1        19  INNER JOIN LOOP ON t.id = ml.movie_id\n       1        19  │└TABLE SEEK movie_link AS ml\n       1         1  FILTER title as title LIKE '%Money%'\n       1       271  INNER JOIN LOOP ON Bmk1014 = Bmk1014\n       0       271  │└TABLE SEEK title AS t WHERE production_year as production_year = 1998\n      90     10544  PROJECT BmkToPage Bmk1014 AS Expr1047\n      90     10544  INNER JOIN LOOP ON mk.movie_id = t.id\n       1     10544  │└TABLE SEEK title AS t\n      90     10544  INNER JOIN LOOP ON Bmk1010 = Bmk1010\n       1     10544  │└TABLE SEEK movie_keyword AS mk\n      90     10544  INNER JOIN LOOP ON k.id = mk.keyword_id\n      90     10544  │└TABLE SEEK movie_keyword AS mk\n       1         1  TABLE SCAN keyword AS k WHERE keyword as keyword = 'sequel'\n",
       "sql": "SELECT MIN(cn.name) AS from_company,\n       MIN(lt.link) AS movie_link_type,\n       MIN(t.title) AS sequel_movie\nFROM job.company_name AS cn,\n     job.company_type AS ct,\n     job.keyword AS k,\n     job.link_type AS lt,\n     job.movie_companies AS mc,\n     job.movie_keyword AS mk,\n     job.movie_link AS ml,\n     job.title AS t\nWHERE cn.country_code !='[pl]'\n  AND (cn.name LIKE '%Film%'\n       OR cn.name LIKE '%Warner%')\n  AND ct.kind ='production companies'\n  AND k.keyword ='sequel'\n  AND lt.link LIKE '%follows%'\n  AND mc.note IS NULL\n  AND t.production_year = 1998\n  AND t.title LIKE '%Money%'\n  AND lt.id = ml.link_type_id\n  AND ml.movie_id = t.id\n  AND t.id = mk.movie_id\n  AND mk.keyword_id = k.id\n  AND t.id = mc.movie_id\n  AND mc.company_type_id = ct.id\n  AND mc.company_id = cn.id\n  AND ml.movie_id = mk.movie_id\n  AND ml.movie_id = mc.movie_id\n  AND mk.movie_id = mc.movie_id;\n",
-      "startTime": "2026-06-26T10:56:43.989393Z",
+      "startTime": "2026-06-30T16:45:58.807227Z",
       "status": "OK",
-      "timeMs": 135.233
+      "timeMs": 138.591
     }
   ],
   "runtime": {
-    "avgMs": 135.233,
-    "bestMs": 135.233,
-    "maxMs": 135.233,
-    "minMs": 135.233,
+    "avgMs": 138.591,
+    "bestMs": 138.591,
+    "maxMs": 138.591,
+    "minMs": 138.591,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

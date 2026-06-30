@@ -15,6 +15,17 @@
           "=": 1,
           ">16x": 0
         },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
         "filter": {
           "+2x": 0,
           "+4x": 0,
@@ -82,16 +93,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(name as name) AS Expr1028, MIN(info as info) AS Expr1029, MIN(title as title) AS Expr1030\n       1       148  FILTER kind as kind = 'episode' OR kind as kind = 'movie'\n       1       161  INNER JOIN LOOP ON Bmk1016 = Bmk1016\n       1       161  │└TABLE SEEK kind_type AS kt\n       1       161  INNER JOIN LOOP ON t.kind_id = kt.id\n       1       161  │└TABLE SEEK kind_type AS kt\n       1       161  INNER JOIN LOOP ON Bmk1026 = Bmk1026\n       1       161  │└TABLE SEEK title AS t WHERE production_year as production_year > 2005\n       1      1233  PROJECT BmkToPage Bmk1026 AS Expr1105\n       1      1233  INNER JOIN LOOP ON mk.movie_id = t.id\n       1      1233  │└TABLE SEEK title AS t\n       1      1233  FILTER info as info = 'rating'\n       1      1726  INNER JOIN LOOP ON Bmk1012 = Bmk1012\n       1      1726  │└TABLE SEEK info_type AS it2\n       1      1726  INNER JOIN LOOP ON mi_idx.info_type_id = it2.id\n       1      1726  │└TABLE SEEK info_type AS it2\n       1      1726  INNER JOIN LOOP ON mk.movie_id = mi_idx.movie_id\n       1      1726  │└TABLE SEEK movie_info_idx AS mi_idx WHERE info as info > '6.5'\n       1      1574  FILTER country_code as country_code <> 'us'\n       1      1615  INNER JOIN LOOP ON Bmk1006 = Bmk1006\n       1      1615  │└TABLE SEEK company_name AS cn\n       1      1615  INNER JOIN LOOP ON mc.company_id = cn.id\n       1      1615  │└TABLE SEEK company_name AS cn\n       1      1615  FILTER  NOT note as note LIKE '%(USA)%' AND note as note LIKE '%(200%)%'\n      13      3394  INNER JOIN LOOP ON Bmk1018 = Bmk1018\n       1      3394  │└TABLE SEEK movie_companies AS mc\n      13      3394  PROJECT BmkToPage Bmk1018 AS Expr1104\n      13      3394  INNER JOIN LOOP ON mk.movie_id = mc.movie_id\n       9      3394  │└TABLE SEEK movie_companies AS mc\n       1       176  FILTER kind as kind <> 'complete+verified'\n       1       224  INNER JOIN LOOP ON Bmk1004 = Bmk1004\n       1       224  │└TABLE SEEK comp_cast_type AS cct2\n       1       224  INNER JOIN LOOP ON cc.status_id = cct2.id\n       1       224  │└TABLE SEEK comp_cast_type AS cct2\n       1       224  FILTER kind as kind = 'crew'\n       3       976  INNER JOIN LOOP ON Bmk1002 = Bmk1002\n       1       976  │└TABLE SEEK comp_cast_type AS cct1\n       3       976  INNER JOIN LOOP ON cc.subject_id = cct1.id\n       1       976  │└TABLE SEEK comp_cast_type AS cct1\n       3       976  INNER JOIN LOOP ON Bmk1000 = Bmk1000\n       1       976  │└TABLE SEEK complete_cast AS cc\n       3       976  INNER JOIN LOOP ON mk.movie_id = cc.movie_id\n       1       976  │└TABLE SEEK complete_cast AS cc\n       2      1960  FILTER info as info = 'German' OR info as info = 'Germany' OR info as info = 'Sweden' OR info as info = 'Swedish'\n     308     44297  INNER JOIN LOOP ON mi.movie_id = mi.movie_id AND Uniq1021 = Uniq1021\n       1     44297  │└TABLE SEEK movie_info AS mi\n     308     44297  INNER JOIN LOOP ON it1.id = mi.info_type_id AND mk.movie_id = mi.movie_id\n       1     44297  │└TABLE SEEK movie_info AS mi\n     362     37091  INNER JOIN LOOP ON info as info = 'countries'\n       1         1  │└MATERIALISE AS m47\n       1         1  │ TABLE SCAN info_type AS it1 WHERE info as info = 'countries'\n     362     37091  INNER JOIN LOOP ON Bmk1024 = Bmk1024\n       1     37091  │└TABLE SEEK movie_keyword AS mk\n     362     37091  INNER JOIN LOOP ON k.id = mk.keyword_id\n      90     37091  │└TABLE SEEK movie_keyword AS mk\n       4         3  TABLE SCAN keyword AS k WHERE keyword as keyword = 'blood' OR keyword as keyword = 'murder' OR keyword as keyword = 'murder-in-title' OR keyword as keyword = 'violence'\n",
       "sql": "SELECT MIN(cn.name) AS movie_company,\n       MIN(mi_idx.info) AS rating,\n       MIN(t.title) AS complete_euro_dark_movie\nFROM job.complete_cast AS cc,\n     job.comp_cast_type AS cct1,\n     job.comp_cast_type AS cct2,\n     job.company_name AS cn,\n     job.company_type AS ct,\n     job.info_type AS it1,\n     job.info_type AS it2,\n     job.keyword AS k,\n     job.kind_type AS kt,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.movie_info_idx AS mi_idx,\n     job.movie_keyword AS mk,\n     job.title AS t\nWHERE cct1.kind = 'crew'\n  AND cct2.kind != 'complete+verified'\n  AND cn.country_code != '[us]'\n  AND it1.info = 'countries'\n  AND it2.info = 'rating'\n  AND k.keyword IN ('murder',\n                    'murder-in-title',\n                    'blood',\n                    'violence')\n  AND kt.kind IN ('movie',\n                  'episode')\n  AND mc.note NOT LIKE '%(USA)%'\n  AND mc.note LIKE '%(200%)%'\n  AND mi.info IN ('Sweden',\n                  'Germany',\n                  'Swedish',\n                  'German')\n  AND mi_idx.info > '6.5'\n  AND t.production_year > 2005\n  AND kt.id = t.kind_id\n  AND t.id = mi.movie_id\n  AND t.id = mk.movie_id\n  AND t.id = mi_idx.movie_id\n  AND t.id = mc.movie_id\n  AND t.id = cc.movie_id\n  AND mk.movie_id = mi.movie_id\n  AND mk.movie_id = mi_idx.movie_id\n  AND mk.movie_id = mc.movie_id\n  AND mk.movie_id = cc.movie_id\n  AND mi.movie_id = mi_idx.movie_id\n  AND mi.movie_id = mc.movie_id\n  AND mi.movie_id = cc.movie_id\n  AND mc.movie_id = mi_idx.movie_id\n  AND mc.movie_id = cc.movie_id\n  AND mi_idx.movie_id = cc.movie_id\n  AND k.id = mk.keyword_id\n  AND it1.id = mi.info_type_id\n  AND it2.id = mi_idx.info_type_id\n  AND ct.id = mc.company_type_id\n  AND cn.id = mc.company_id\n  AND cct1.id = cc.subject_id\n  AND cct2.id = cc.status_id;\n",
-      "startTime": "2026-06-26T11:00:37.153079Z",
+      "startTime": "2026-06-30T16:47:59.868456Z",
       "status": "OK",
-      "timeMs": 311.574
+      "timeMs": 310.376
     }
   ],
   "runtime": {
-    "avgMs": 311.574,
-    "bestMs": 311.574,
-    "maxMs": 311.574,
-    "minMs": 311.574,
+    "avgMs": 310.376,
+    "bestMs": 310.376,
+    "maxMs": 310.376,
+    "minMs": 310.376,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

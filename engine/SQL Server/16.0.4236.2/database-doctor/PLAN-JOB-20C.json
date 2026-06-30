@@ -15,6 +15,17 @@
           "=": 2,
           ">16x": 0
         },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
         "filter": {
           "+2x": 0,
           "+4x": 0,
@@ -82,16 +93,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(partialagg1054) AS Expr1020, MIN(partialagg1055) AS Expr1021\n       1         1  FILTER kind as kind = 'cast'\n       2         2  INNER JOIN LOOP ON Bmk1002 = Bmk1002\n       1         2  │└TABLE SEEK comp_cast_type AS cct1\n       2         2  INNER JOIN LOOP ON cc.subject_id = cct1.id\n       1         2  │└TABLE SEEK comp_cast_type AS cct1\n       2         2  AGGREGATE MIN(name as name) AS partialagg1054, MIN(title as title) AS partialagg1055 GROUP BY SORT subject_id\n      94      6371  SORT subject_id\n      94      6371  INNER JOIN HASH ON cc.status_id = cct2.id\n       2         2  │└TABLE SCAN comp_cast_type AS cct2 WHERE kind as kind LIKE '%complete%'\n      94      6371  INNER JOIN HASH ON mk.keyword_id = k.id\n      10        10  │└TABLE SCAN keyword AS k WHERE keyword as keyword = 'based-on-comic' OR keyword as keyword = 'claw' OR keyword as keyword = 'fight' OR keyword as keyword = 'laser' OR keyword as keyword = 'magnet' OR keyword as keyword = 'marvel-comics' OR keyword as keyword = 'superhero' OR keyword as keyword = 'tv-special' OR keyword as keyword = 'violence' OR keyword as keyword = 'web'\n      47      6371  INNER JOIN LOOP ON Bmk1000 = Bmk1000\n       1      6371  │└TABLE SEEK complete_cast AS cc\n      47      6371  INNER JOIN LOOP ON t.id = cc.movie_id\n       1      6371  │└TABLE SEEK complete_cast AS cc\n      32     11235  INNER JOIN LOOP ON Bmk1016 = Bmk1016\n       1     11235  │└TABLE SEEK name AS n\n      32     11235  PROJECT BmkToPage Bmk1016 AS Expr1336\n      32     11235  INNER JOIN LOOP ON ci.person_id = n.id\n       1     11235  │└TABLE SEEK name AS n\n      32     11235  FILTER name as name LIKE '%man%' OR name as name LIKE '%Man%'\n     556    175101  INNER JOIN LOOP ON Bmk1006 = Bmk1006\n       1    175101  │└TABLE SEEK char_name AS chn\n     556    175101  PROJECT BmkToPage Bmk1006 AS Expr1333\n     556    175101  INNER JOIN LOOP ON ci.person_role_id = chn.id\n       1    175101  │└TABLE SEEK char_name AS chn\n    1238    406258  INNER JOIN HASH ON t.kind_id = kt.id\n       1         1  │└TABLE SCAN kind_type AS kt WHERE kind as kind = 'movie'\n     742    406258  INNER JOIN LOOP ON Bmk1008 = Bmk1008\n       1    406258  │└TABLE SEEK cast_info AS ci\n     742    406258  PROJECT BmkToPage Bmk1008 AS Expr1330\n     742    406258  INNER JOIN LOOP ON t.id = ci.movie_id\n      30    406258  │└TABLE SEEK cast_info AS ci\n      24      5032  FILTER production_year as production_year > 2000\n      45     13935  INNER JOIN LOOP ON Bmk1018 = Bmk1018\n       1     13935  │└TABLE SEEK title AS t WHERE BLOOM(kind_id as kind_id)\n     452     24091  PROJECT BmkToPage Bmk1018 AS Expr1327\n     452     24091  INNER JOIN LOOP ON mk.movie_id = t.id\n       1     24091  │└TABLE SEEK title AS t\n     452     24091  TABLE SEEK movie_keyword AS mk WHERE BLOOM(keyword_id as keyword_id)\n",
       "sql": "SELECT MIN(n.name) AS cast_member,\n       MIN(t.title) AS complete_dynamic_hero_movie\nFROM job.complete_cast AS cc,\n     job.comp_cast_type AS cct1,\n     job.comp_cast_type AS cct2,\n     job.char_name AS chn,\n     job.cast_info AS ci,\n     job.keyword AS k,\n     job.kind_type AS kt,\n     job.movie_keyword AS mk,\n     job.name AS n,\n     job.title AS t\nWHERE cct1.kind = 'cast'\n  AND cct2.kind LIKE '%complete%'\n  AND chn.name IS NOT NULL\n  AND (chn.name LIKE '%man%'\n       OR chn.name LIKE '%Man%')\n  AND k.keyword IN ('superhero',\n                    'marvel-comics',\n                    'based-on-comic',\n                    'tv-special',\n                    'fight',\n                    'violence',\n                    'magnet',\n                    'web',\n                    'claw',\n                    'laser')\n  AND kt.kind = 'movie'\n  AND t.production_year > 2000\n  AND kt.id = t.kind_id\n  AND t.id = mk.movie_id\n  AND t.id = ci.movie_id\n  AND t.id = cc.movie_id\n  AND mk.movie_id = ci.movie_id\n  AND mk.movie_id = cc.movie_id\n  AND ci.movie_id = cc.movie_id\n  AND chn.id = ci.person_role_id\n  AND n.id = ci.person_id\n  AND k.id = mk.keyword_id\n  AND cct1.id = cc.subject_id\n  AND cct2.id = cc.status_id;\n",
-      "startTime": "2026-06-26T10:59:59.754759Z",
+      "startTime": "2026-06-30T16:47:40.107543Z",
       "status": "OK",
-      "timeMs": 1754.088
+      "timeMs": 1748.128
     }
   ],
   "runtime": {
-    "avgMs": 1754.088,
-    "bestMs": 1754.088,
-    "maxMs": 1754.088,
-    "minMs": 1754.088,
+    "avgMs": 1748.128,
+    "bestMs": 1748.128,
+    "maxMs": 1748.128,
+    "minMs": 1748.128,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

@@ -15,6 +15,17 @@
           "=": 1,
           ">16x": 0
         },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
         "filter": {
           "+2x": 0,
           "+4x": 0,
@@ -82,16 +93,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(info as info) AS Expr1014, MIN(info as info) AS Expr1015, MIN(title as title) AS Expr1016\n       1        11  FILTER gender as gender = 'f'\n       4       268  INNER JOIN LOOP ON Bmk1010 = Bmk1010\n       1       268  │└TABLE SEEK name AS n\n       4       268  PROJECT BmkToPage Bmk1010 AS Expr1064\n       4       268  INNER JOIN LOOP ON ci.person_id = n.id\n       1       268  │└TABLE SEEK name AS n\n       4       268  FILTER note as note = '(head writer)' OR note as note = '(story editor)' OR note as note = '(story)' OR note as note = '(writer)' OR note as note = '(written by)'\n     161     12564  INNER JOIN LOOP ON Bmk1000 = Bmk1000\n       1     12564  │└TABLE SEEK cast_info AS ci\n     161     12564  SORT Expr1045\n     161     12564  PROJECT BmkToPage Bmk1000 AS Expr1045\n     161     12564  INNER JOIN LOOP ON t.id = ci.movie_id\n      30     12564  │└TABLE SEEK cast_info AS ci\n       5       358  INNER JOIN LOOP ON Bmk1012 = Bmk1012\n       0       358  │└TABLE SEEK title AS t WHERE production_year as production_year >= 2008 AND production_year as production_year <= 2014\n      17       732  PROJECT BmkToPage Bmk1012 AS Expr1062\n      17       732  INNER JOIN LOOP ON mi_idx.movie_id = t.id\n       1       732  │└TABLE SEEK title AS t\n      17       732  INNER JOIN MERGE ON id as id = info_type_id as info_type_id\n       1         1  │└SORT id\n       1         1  │ FILTER info as info = 'genres'\n     113       113  │ TABLE SCAN info_type AS it1\n    1206       732  SORT info_type_id\n    1206       810  INNER JOIN LOOP ON mi_idx.movie_id = mi.movie_id\n       1       810  │└TABLE SEEK movie_info AS mi WHERE note as note IS NULL AND (info as info = 'Horror' OR info as info = 'Thriller')\n   10726     15849  INNER JOIN HASH ON mi_idx.info_type_id = it2.id\n       1         1  │└FILTER info as info = 'rating'\n     113       113  │ INNER JOIN LOOP ON Bmk1004 = Bmk1004\n       1       113  │ │└TABLE SEEK info_type AS it2\n     113       113  │ TABLE SEEK info_type AS it2\n   53631     15849  TABLE SEEK movie_info_idx AS mi_idx WHERE (PROBE(Bitmap1059,info_type_id as info_type_id,N'IN ROW')) AND (info as info > '8.0')\n",
       "sql": "SELECT MIN(mi.info) AS movie_budget,\n       MIN(mi_idx.info) AS movie_votes,\n       MIN(t.title) AS movie_title\nFROM job.cast_info AS ci,\n     job.info_type AS it1,\n     job.info_type AS it2,\n     job.movie_info AS mi,\n     job.movie_info_idx AS mi_idx,\n     job.name AS n,\n     job.title AS t\nWHERE ci.note IN ('(writer)',\n                  '(head writer)',\n                  '(written by)',\n                  '(story)',\n                  '(story editor)')\n  AND it1.info = 'genres'\n  AND it2.info = 'rating'\n  AND mi.info IN ('Horror',\n                  'Thriller')\n  AND mi.note IS NULL\n  AND mi_idx.info > '8.0'\n  AND n.gender IS NOT NULL\n  AND n.gender = 'f'\n  AND t.production_year BETWEEN 2008 AND 2014\n  AND t.id = mi.movie_id\n  AND t.id = mi_idx.movie_id\n  AND t.id = ci.movie_id\n  AND ci.movie_id = mi.movie_id\n  AND ci.movie_id = mi_idx.movie_id\n  AND mi.movie_id = mi_idx.movie_id\n  AND n.id = ci.person_id\n  AND it1.id = mi.info_type_id\n  AND it2.id = mi_idx.info_type_id;\n",
-      "startTime": "2026-06-26T10:58:20.760410Z",
+      "startTime": "2026-06-30T16:46:48.266418Z",
       "status": "OK",
-      "timeMs": 602.42
+      "timeMs": 567.598
     }
   ],
   "runtime": {
-    "avgMs": 602.42,
-    "bestMs": 602.42,
-    "maxMs": 602.42,
-    "minMs": 602.42,
+    "avgMs": 567.598,
+    "bestMs": 567.598,
+    "maxMs": 567.598,
+    "minMs": 567.598,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

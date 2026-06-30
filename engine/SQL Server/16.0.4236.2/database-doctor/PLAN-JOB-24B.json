@@ -15,6 +15,17 @@
           "=": 1,
           ">16x": 0
         },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
         "filter": {
           "+2x": 0,
           "+4x": 0,
@@ -82,16 +93,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(name as name) AS Expr1024, MIN(name as name) AS Expr1025, MIN(title as title) AS Expr1026\n       1        57  FILTER keyword as keyword = 'computer-animated-movie' OR keyword as keyword = 'hand-to-hand-combat' OR keyword as keyword = 'hero' OR keyword as keyword = 'martial-arts'\n      18       900  INNER JOIN LOOP ON Bmk1010 = Bmk1010\n       1       900  │└TABLE SEEK keyword AS k\n      18       900  INNER JOIN LOOP ON mk.keyword_id = k.id\n       1       900  │└TABLE SEEK keyword AS k\n      18       900  INNER JOIN LOOP ON Bmk1016 = Bmk1016\n       1       900  │└TABLE SEEK movie_keyword AS mk\n      18       900  INNER JOIN LOOP ON t.id = mk.movie_id\n      18       900  │└TABLE SEEK movie_keyword AS mk\n       1        31  INNER JOIN LOOP ON Bmk1002 = Bmk1002\n       1        31  │└TABLE SEEK char_name AS chn\n       1        31  PROJECT BmkToPage Bmk1002 AS Expr1103\n       1        31  INNER JOIN LOOP ON ci.person_role_id = chn.id\n       1        31  │└TABLE SEEK char_name AS chn\n       1        31  INNER JOIN LOOP ON n.id = an.person_id\n       4        31  │└TABLE SEEK aka_name AS an\n       1         9  FILTER name as name LIKE '%An%' AND gender as gender = 'f'\n       1        32  INNER JOIN LOOP ON Bmk1018 = Bmk1018\n       1        32  │└TABLE SEEK name AS n\n       1        32  PROJECT BmkToPage Bmk1018 AS Expr1102\n       1        32  INNER JOIN LOOP ON ci.person_id = n.id\n       1        32  │└TABLE SEEK name AS n\n       1        32  FILTER role as role = 'actress'\n       1       125  INNER JOIN LOOP ON Bmk1020 = Bmk1020\n       1       125  │└TABLE SEEK role_type AS rt\n       1       125  INNER JOIN LOOP ON ci.role_id = rt.id\n       1       125  │└TABLE SEEK role_type AS rt\n       1       125  FILTER note as note = '(voice)' OR note as note = '(voice) (uncredited)' OR note as note = '(voice: English version)' OR note as note = '(voice: Japanese version)'\n      30       540  INNER JOIN LOOP ON Bmk1004 = Bmk1004\n       1       540  │└TABLE SEEK cast_info AS ci\n      30       540  PROJECT BmkToPage Bmk1004 AS Expr1100\n      30       540  INNER JOIN LOOP ON t.id = ci.movie_id\n      30       540  │└TABLE SEEK cast_info AS ci\n       1         5  FILTER info as info = 'release dates'\n       1         5  INNER JOIN LOOP ON Bmk1008 = Bmk1008\n       1         5  │└TABLE SEEK info_type AS it\n       1         5  INNER JOIN LOOP ON mi.info_type_id = it.id\n       1         5  │└TABLE SEEK info_type AS it\n       1         5  INNER JOIN LOOP ON t.id = mi.movie_id\n       1         5  │└TABLE SEEK movie_info AS mi WHERE info as info LIKE 'Japan:%201%' OR info as info LIKE 'USA:%201%'\n       1         4  FILTER title as title LIKE 'Kung Fu Panda%'\n       1        37  INNER JOIN LOOP ON Bmk1022 = Bmk1022\n       0        37  │└TABLE SEEK title AS t WHERE production_year as production_year > 2010\n      44        99  PROJECT BmkToPage Bmk1022 AS Expr1098\n      44        99  INNER JOIN LOOP ON mc.movie_id = t.id\n       1        99  │└TABLE SEEK title AS t\n      44        99  INNER JOIN LOOP ON Bmk1012 = Bmk1012\n       1        99  │└TABLE SEEK movie_companies AS mc\n      44        99  PROJECT BmkToPage Bmk1012 AS Expr1095\n      44        99  INNER JOIN LOOP ON cn.id = mc.company_id\n      44        99  │└TABLE SEEK movie_companies AS mc\n       1         1  TABLE SCAN company_name AS cn WHERE country_code as country_code = 'us' AND name as name = 'DreamWorks Animation'\n",
       "sql": "SELECT MIN(chn.name) AS voiced_char_name,\n       MIN(n.name) AS voicing_actress_name,\n       MIN(t.title) AS kung_fu_panda\nFROM job.aka_name AS an,\n     job.char_name AS chn,\n     job.cast_info AS ci,\n     job.company_name AS cn,\n     job.info_type AS it,\n     job.keyword AS k,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.movie_keyword AS mk,\n     job.name AS n,\n     job.role_type AS rt,\n     job.title AS t\nWHERE ci.note IN ('(voice)',\n                  '(voice: Japanese version)',\n                  '(voice) (uncredited)',\n                  '(voice: English version)')\n  AND cn.country_code ='[us]'\n  AND cn.name = 'DreamWorks Animation'\n  AND it.info = 'release dates'\n  AND k.keyword IN ('hero',\n                    'martial-arts',\n                    'hand-to-hand-combat',\n                    'computer-animated-movie')\n  AND mi.info IS NOT NULL\n  AND (mi.info LIKE 'Japan:%201%'\n       OR mi.info LIKE 'USA:%201%')\n  AND n.gender ='f'\n  AND n.name LIKE '%An%'\n  AND rt.role ='actress'\n  AND t.production_year > 2010\n  AND t.title LIKE 'Kung Fu Panda%'\n  AND t.id = mi.movie_id\n  AND t.id = mc.movie_id\n  AND t.id = ci.movie_id\n  AND t.id = mk.movie_id\n  AND mc.movie_id = ci.movie_id\n  AND mc.movie_id = mi.movie_id\n  AND mc.movie_id = mk.movie_id\n  AND mi.movie_id = ci.movie_id\n  AND mi.movie_id = mk.movie_id\n  AND ci.movie_id = mk.movie_id\n  AND cn.id = mc.company_id\n  AND it.id = mi.info_type_id\n  AND n.id = ci.person_id\n  AND rt.id = ci.role_id\n  AND n.id = an.person_id\n  AND ci.person_id = an.person_id\n  AND chn.id = ci.person_role_id\n  AND k.id = mk.keyword_id;\n",
-      "startTime": "2026-06-26T11:00:17.559098Z",
+      "startTime": "2026-06-30T16:47:49.606024Z",
       "status": "OK",
-      "timeMs": 93.222
+      "timeMs": 88.234
     }
   ],
   "runtime": {
-    "avgMs": 93.222,
-    "bestMs": 93.222,
-    "maxMs": 93.222,
-    "minMs": 93.222,
+    "avgMs": 88.234,
+    "bestMs": 88.234,
+    "maxMs": 88.234,
+    "minMs": 88.234,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

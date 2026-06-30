@@ -15,6 +15,17 @@
           "=": 1,
           ">16x": 0
         },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
         "filter": {
           "+2x": 0,
           "+4x": 0,
@@ -82,16 +93,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(name as name) AS Expr1020, MIN(title as title) AS Expr1021\n     200     70027  INNER JOIN LOOP ON ci.person_role_id = chn.id\n       1     70027  │└TABLE SEEK char_name AS chn\n     444     74233  FILTER country_code as country_code = 'us'\n    1235    181481  INNER JOIN LOOP ON Bmk1006 = Bmk1006\n       1    181481  │└TABLE SEEK company_name AS cn\n    1235    181481  SORT Expr1062\n    1235    181481  PROJECT BmkToPage Bmk1006 AS Expr1062\n    1235    181481  INNER JOIN LOOP ON mc.company_id = cn.id\n       1    181481  │└TABLE SEEK company_name AS cn\n    1236    181481  SORT company_id\n    1236    181481  INNER JOIN LOOP ON Bmk1010 = Bmk1010\n       1    181481  │└TABLE SEEK movie_companies AS mc\n    1236    181481  SORT Expr1056\n    1236    181481  PROJECT BmkToPage Bmk1010 AS Expr1056\n    1236    181481  INNER JOIN LOOP ON t.id = mc.movie_id\n       9    181481  │└TABLE SEEK movie_companies AS mc\n     124     60017  INNER JOIN LOOP ON Bmk1018 = Bmk1018\n       0     60017  │└TABLE SEEK title AS t WHERE production_year as production_year > 2000\n     229     65232  INNER JOIN LOOP ON ci.movie_id = t.id\n       1     65232  │└TABLE SEEK title AS t\n     229     65232  INNER JOIN LOOP ON n.id = an.person_id\n       4     65232  │└TABLE SEEK aka_name AS an\n      47     34975  SORT movie_id\n      47     34975  FILTER name as name LIKE '%An%' AND gender as gender = 'f'\n     412    147233  INNER JOIN LOOP ON Bmk1014 = Bmk1014\n       1    147233  │└TABLE SEEK name AS n\n     412    147233  PROJECT BmkToPage Bmk1014 AS Expr1072\n     412    147233  INNER JOIN LOOP ON ci.person_id = n.id\n       1    147233  │└TABLE SEEK name AS n\n     412    147233  SORT person_id\n     412    147233  FILTER note as note = '(voice)' OR note as note = '(voice) (uncredited)' OR note as note = '(voice: English version)' OR note as note = '(voice: Japanese version)'\n   17225   1695931  INNER JOIN LOOP ON Bmk1004 = Bmk1004\n       1   1695931  │└TABLE SEEK cast_info AS ci\n   17225   1695931  PROJECT BmkToPage Bmk1004 AS Expr1069\n   17225   1695931  INNER JOIN HASH ON Bmk1004 = Bmk1004\n  189484   9919357  │└INNER JOIN LOOP ON mi.movie_id = ci.movie_id\n      30   9919357  │ │└TABLE SEEK cast_info AS ci\n    6270    451039  │ INNER JOIN HASH ON mi.info_type_id = it.id\n       1         1  │ │└FILTER info as info = 'release dates'\n     113       113  │ │ TABLE SCAN info_type AS it\n  438927    451039  │ TABLE SEEK movie_info AS mi WHERE (PROBE(Bitmap1066,info_type_id as info_type_id,N'IN ROW')) AND (info as info LIKE 'Japan:%200%' OR info as info LIKE 'USA:%200%')\n 3294940   7451973  INNER JOIN LOOP ON rt.id = ci.role_id\n 3294940   7451973  │└TABLE SEEK cast_info AS ci\n       1         1  FILTER role as role = 'actress'\n      12        12  TABLE SCAN role_type AS rt\n",
       "sql": "SELECT MIN(n.name) AS voicing_actress,\n       MIN(t.title) AS jap_engl_voiced_movie\nFROM job.aka_name AS an,\n     job.char_name AS chn,\n     job.cast_info AS ci,\n     job.company_name AS cn,\n     job.info_type AS it,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.name AS n,\n     job.role_type AS rt,\n     job.title AS t\nWHERE ci.note IN ('(voice)',\n                  '(voice: Japanese version)',\n                  '(voice) (uncredited)',\n                  '(voice: English version)')\n  AND cn.country_code ='[us]'\n  AND it.info = 'release dates'\n  AND mi.info IS NOT NULL\n  AND (mi.info LIKE 'Japan:%200%'\n       OR mi.info LIKE 'USA:%200%')\n  AND n.gender ='f'\n  AND n.name LIKE '%An%'\n  AND rt.role ='actress'\n  AND t.production_year > 2000\n  AND t.id = mi.movie_id\n  AND t.id = mc.movie_id\n  AND t.id = ci.movie_id\n  AND mc.movie_id = ci.movie_id\n  AND mc.movie_id = mi.movie_id\n  AND mi.movie_id = ci.movie_id\n  AND cn.id = mc.company_id\n  AND it.id = mi.info_type_id\n  AND n.id = ci.person_id\n  AND rt.id = ci.role_id\n  AND n.id = an.person_id\n  AND ci.person_id = an.person_id\n  AND chn.id = ci.person_role_id;\n",
-      "startTime": "2026-06-26T10:58:32.931292Z",
+      "startTime": "2026-06-30T16:46:55.149286Z",
       "status": "OK",
-      "timeMs": 10600.127
+      "timeMs": 10895.133
     }
   ],
   "runtime": {
-    "avgMs": 10600.127,
-    "bestMs": 10600.127,
-    "maxMs": 10600.127,
-    "minMs": 10600.127,
+    "avgMs": 10895.133,
+    "bestMs": 10895.133,
+    "maxMs": 10895.133,
+    "minMs": 10895.133,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

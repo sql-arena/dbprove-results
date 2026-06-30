@@ -1,0 +1,122 @@
+{
+  "config": "M5 Macbook Pro",
+  "engine": "SQL Server",
+  "queries": [
+    {
+      "misEstimates": {
+        "aggregate": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 2,
+          ">16x": 0
+        },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "filter": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
+        "hash": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "join": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
+        "scan": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 4,
+          ">16x": 0
+        },
+        "sort": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        }
+      },
+      "operatorRows": {
+        "aggregate": 1650000,
+        "distribute": 0,
+        "hash": 150000,
+        "join": 150000,
+        "scan": 1650000,
+        "seek": 0,
+        "sort": 0
+      },
+      "plan": "Estimate    Actual  Operator\n       1         1  PROJECT CONVERT_IMPLICIT(int,globalagg1007,0) AS Expr1004, CONVERT_IMPLICIT(int,globalagg1009,0) AS Expr1005\n       1         1  AGGREGATE SUM(partialagg1006) AS globalagg1007, SUM(partialagg1008) AS globalagg1009\n  150000    150000  PROJECT CASE WHEN partialagg1008 IS NULL THEN 0 ELSE partialagg1008 END AS partialagg1008, CASE WHEN partialagg1006 IS NULL THEN 1 ELSE partialagg1006 END AS partialagg1006\n  150000    150000  RIGHT OUTER JOIN HASH ON o.o_custkey = c.c_custkey\n  150000    150000  │└TABLE SCAN customer AS c\n   96548     99996  PROJECT partialagg1006 AS partialagg1008\n   96548     99996  AGGREGATE COUNT(*) AS partialagg1006 GROUP BY HASH o_custkey\n 1500000   1500000  TABLE SCAN orders AS o\n",
+      "sql": "SELECT COUNT(c.c_custkey), COUNT(o.o_orderkey)\nFROM tpch_sf1.customer AS c\nLEFT JOIN tpch_sf1.orders AS o\n  ON c.c_custkey = o.o_custkey;\n",
+      "startTime": "2026-06-30T16:49:03.294000Z",
+      "status": "OK",
+      "timeMs": 46.444
+    }
+  ],
+  "runtime": {
+    "avgMs": 46.444,
+    "bestMs": 46.444,
+    "maxMs": 46.444,
+    "minMs": 46.444,
+    "stdDevMs": 0.0
+  },
+  "storageVariant": "native",
+  "theorem": {
+    "categories": [
+      "PLAN"
+    ],
+    "description": "RIGHT JOIN",
+    "displayName": "PLAN-JOIN-LEFT-RIGHT",
+    "name": "PLAN-JOIN-LEFT-RIGHT",
+    "tags": [
+      "PLAN-JOIN",
+      "join"
+    ]
+  },
+  "version": "16.0.4236.2"
+}

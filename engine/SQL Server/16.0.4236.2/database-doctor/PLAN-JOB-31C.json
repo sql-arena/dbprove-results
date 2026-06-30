@@ -15,6 +15,17 @@
           "=": 1,
           ">16x": 0
         },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
         "filter": {
           "+2x": 0,
           "+4x": 0,
@@ -82,16 +93,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(info as info) AS Expr1022, MIN(info as info) AS Expr1023, MIN(name as name) AS Expr1024, MIN(title as title) AS Expr1025\n       1      2825  FILTER keyword as keyword = 'blood' OR keyword as keyword = 'death' OR keyword as keyword = 'female-nudity' OR keyword as keyword = 'gore' OR keyword as keyword = 'hospital' OR keyword as keyword = 'murder' OR keyword as keyword = 'violence'\n      21    107406  INNER JOIN LOOP ON Bmk1008 = Bmk1008\n       1    107406  │└TABLE SEEK keyword AS k\n      21    107406  INNER JOIN LOOP ON mk.keyword_id = k.id\n       1    107406  │└TABLE SEEK keyword AS k\n      21    107406  INNER JOIN LOOP ON Bmk1016 = Bmk1016\n       1    107406  │└TABLE SEEK movie_keyword AS mk\n      21    107406  INNER JOIN LOOP ON t.id = mk.movie_id\n      18    107406  │└TABLE SEEK movie_keyword AS mk\n       1      1017  INNER JOIN LOOP ON Bmk1018 = Bmk1018\n       1      1017  │└TABLE SEEK name AS n\n       1      1017  PROJECT BmkToPage Bmk1018 AS Expr1524\n       1      1017  INNER JOIN LOOP ON ci.person_id = n.id\n       1      1017  │└TABLE SEEK name AS n\n       1      1017  INNER JOIN HASH ON mc.company_id = cn.id\n       8        10  │└TABLE SCAN company_name AS cn WHERE name as name LIKE 'Lionsgate%'\n       1      1017  INNER JOIN HASH ON mc.movie_id = t.id\n     829     54155  │└INNER JOIN LOOP ON Bmk1020 = Bmk1020\n       1     54155  │ │└TABLE SEEK title AS t\n     829     54155  │ PROJECT BmkToPage Bmk1020 AS Expr1522\n     829     54155  │ INNER JOIN LOOP ON mi_idx.movie_id = t.id\n       1     54155  │ │└TABLE SEEK title AS t\n     826     54155  │ INNER JOIN HASH ON mi_idx.info_type_id = it2.id\n       1         1  │ │└FILTER info as info = 'votes'\n     113       113  │ │ TABLE SCAN info_type AS it2\n     413     54155  │ INNER JOIN HASH ON mi.info_type_id = it1.id\n       1         1  │ │└FILTER info as info = 'genres'\n     113       113  │ │ INNER JOIN LOOP ON Bmk1004 = Bmk1004\n       1       113  │ │ │└TABLE SEEK info_type AS it1\n     113       113  │ │ TABLE SEEK info_type AS it1\n     289     54155  │ INNER JOIN HASH ON mi_idx.movie_id = mi.movie_id\n    1560    186594  │ │└TABLE SEEK movie_info AS mi WHERE (info as info = 'Action' OR info as info = 'Crime' OR info as info = 'Horror' OR info as info = 'Sci-Fi' OR info as info = 'Thriller' OR info as info = 'War') AND BLOOM(info_type_id as info_type_id)\n     114     38275  │ FILTER note as note = '(head writer)' OR note as note = '(story editor)' OR note as note = '(story)' OR note as note = '(writer)' OR note as note = '(written by)'\n    4170   2764032  │ INNER JOIN LOOP ON Bmk1000 = Bmk1000\n       1   2764032  │ │└TABLE SEEK cast_info AS ci\n    4170   2764032  │ PROJECT BmkToPage Bmk1000 AS Expr1519\n    4170   2764032  │ INNER JOIN LOOP ON mi_idx.movie_id = ci.movie_id\n      30   2764032  │ │└TABLE SEEK cast_info AS ci\n    1380     75493  │ TABLE SEEK movie_info_idx AS mi_idx WHERE BLOOM(movie_id as movie_id) AND BLOOM(info_type_id as info_type_id)\n       1       323  TABLE SEEK movie_companies AS mc WHERE BLOOM(company_id as company_id) AND BLOOM(movie_id as movie_id)\n",
       "sql": "SELECT MIN(mi.info) AS movie_budget,\n       MIN(mi_idx.info) AS movie_votes,\n       MIN(n.name) AS writer,\n       MIN(t.title) AS violent_liongate_movie\nFROM job.cast_info AS ci,\n     job.company_name AS cn,\n     job.info_type AS it1,\n     job.info_type AS it2,\n     job.keyword AS k,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.movie_info_idx AS mi_idx,\n     job.movie_keyword AS mk,\n     job.name AS n,\n     job.title AS t\nWHERE ci.note IN ('(writer)',\n                  '(head writer)',\n                  '(written by)',\n                  '(story)',\n                  '(story editor)')\n  AND cn.name LIKE 'Lionsgate%'\n  AND it1.info = 'genres'\n  AND it2.info = 'votes'\n  AND k.keyword IN ('murder',\n                    'violence',\n                    'blood',\n                    'gore',\n                    'death',\n                    'female-nudity',\n                    'hospital')\n  AND mi.info IN ('Horror',\n                  'Action',\n                  'Sci-Fi',\n                  'Thriller',\n                  'Crime',\n                  'War')\n  AND t.id = mi.movie_id\n  AND t.id = mi_idx.movie_id\n  AND t.id = ci.movie_id\n  AND t.id = mk.movie_id\n  AND t.id = mc.movie_id\n  AND ci.movie_id = mi.movie_id\n  AND ci.movie_id = mi_idx.movie_id\n  AND ci.movie_id = mk.movie_id\n  AND ci.movie_id = mc.movie_id\n  AND mi.movie_id = mi_idx.movie_id\n  AND mi.movie_id = mk.movie_id\n  AND mi.movie_id = mc.movie_id\n  AND mi_idx.movie_id = mk.movie_id\n  AND mi_idx.movie_id = mc.movie_id\n  AND mk.movie_id = mc.movie_id\n  AND n.id = ci.person_id\n  AND it1.id = mi.info_type_id\n  AND it2.id = mi_idx.info_type_id\n  AND k.id = mk.keyword_id\n  AND cn.id = mc.company_id;\n",
-      "startTime": "2026-06-26T11:01:00.528592Z",
+      "startTime": "2026-06-30T16:48:12.470254Z",
       "status": "OK",
-      "timeMs": 3973.653
+      "timeMs": 3312.638
     }
   ],
   "runtime": {
-    "avgMs": 3973.653,
-    "bestMs": 3973.653,
-    "maxMs": 3973.653,
-    "minMs": 3973.653,
+    "avgMs": 3312.638,
+    "bestMs": 3312.638,
+    "maxMs": 3312.638,
+    "minMs": 3312.638,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

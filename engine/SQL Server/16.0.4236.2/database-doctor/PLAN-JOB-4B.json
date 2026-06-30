@@ -15,6 +15,17 @@
           "=": 1,
           ">16x": 0
         },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
         "filter": {
           "+2x": 0,
           "+4x": 0,
@@ -82,16 +93,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(info as info) AS Expr1010, MIN(title as title) AS Expr1011\n       5         6  INNER JOIN LOOP ON Bmk1008 = Bmk1008\n       0         6  │└TABLE SEEK title AS t WHERE production_year as production_year > 2010\n       8        21  PROJECT BmkToPage Bmk1008 AS Expr1037\n       8        21  INNER JOIN LOOP ON mk.movie_id = t.id\n       1        21  │└TABLE SEEK title AS t\n       8        21  INNER JOIN HASH ON mk.keyword_id = k.id\n      47        30  │└TABLE SCAN keyword AS k WHERE keyword as keyword LIKE '%sequel%'\n    9413      6032  INNER JOIN LOOP ON Bmk1006 = Bmk1006\n       1      6032  │└TABLE SEEK movie_keyword AS mk\n    9413      6032  INNER JOIN LOOP ON mi_idx.movie_id = mk.movie_id\n       7      6032  │└TABLE SEEK movie_keyword AS mk\n    1277       305  INNER JOIN HASH ON mi_idx.info_type_id = it.id\n       1         1  │└FILTER info as info = 'rating'\n     113       113  │ TABLE SCAN info_type AS it\n    6387       305  TABLE SEEK movie_info_idx AS mi_idx WHERE (PROBE(Bitmap1033,info_type_id as info_type_id,N'IN ROW')) AND (info as info > '9.0')\n",
       "sql": "SELECT MIN(mi_idx.info) AS rating,\n       MIN(t.title) AS movie_title\nFROM job.info_type AS it,\n     job.keyword AS k,\n     job.movie_info_idx AS mi_idx,\n     job.movie_keyword AS mk,\n     job.title AS t\nWHERE it.info ='rating'\n  AND k.keyword LIKE '%sequel%'\n  AND mi_idx.info > '9.0'\n  AND t.production_year > 2010\n  AND t.id = mi_idx.movie_id\n  AND t.id = mk.movie_id\n  AND mk.movie_id = mi_idx.movie_id\n  AND k.id = mk.keyword_id\n  AND it.id = mi_idx.info_type_id;\n",
-      "startTime": "2026-06-26T11:01:21.811028Z",
+      "startTime": "2026-06-30T16:48:23.130770Z",
       "status": "OK",
-      "timeMs": 106.116
+      "timeMs": 90.564
     }
   ],
   "runtime": {
-    "avgMs": 106.116,
-    "bestMs": 106.116,
-    "maxMs": 106.116,
-    "minMs": 106.116,
+    "avgMs": 90.564,
+    "bestMs": 90.564,
+    "maxMs": 90.564,
+    "minMs": 90.564,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

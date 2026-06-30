@@ -15,6 +15,17 @@
           "=": 0,
           ">16x": 0
         },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
         "filter": {
           "+2x": 0,
           "+4x": 0,
@@ -82,16 +93,16 @@
       },
       "plan": "Estimate    Actual  Operator\n      51       158  SORT s_name\n      51       158  RIGHT SEMI INNER JOIN HASH ON s_suppkey = ps_suppkey\n    1377      6028  │└INNER JOIN HASH ON ps_partkey = p_inner.p_partkey\n    2266      2224  │ │└TABLE SCAN part AS p_inner WHERE p_name as p_name LIKE 'almond%'\n    1210      6028  │ INNER JOIN HASH ON l_partkey as l_partkey = ps_partkey AND l_suppkey as l_suppkey = ps_suppkey AND ps_availqty > 0.5 * Expr1013\n    8000      8896  │ │└TABLE SCAN partsupp WHERE BLOOM(ps_partkey)\n     906      6043  │ AGGREGATE SUM(l_quantity as l_quantity) AS Expr1013 GROUP BY HASH l_partkey, l_suppkey\n     907     10030  │ TABLE SCAN lineitem AS li_inner WHERE l_shipdate as l_shipdate >= '1993-01-01' AND l_shipdate as l_shipdate < '1994-01-01' AND BLOOM(l_partkey as l_partkey) AND BLOOM(l_suppkey as l_suppkey)\n      40       158  INNER JOIN HASH ON s_nationkey = n_nationkey\n       1         1  │└TABLE SCAN nation WHERE n_name = 'KENYA'\n     100       158  TABLE SCAN supplier WHERE BLOOM(s_nationkey) AND BLOOM(s_suppkey)\n",
       "sql": "/* TPC-H Q20 */\nSELECT s_name,\n       s_address\nFROM tpch_sf1.supplier\nINNER JOIN tpch_sf1.nation\n    ON s_nationkey = n_nationkey\nWHERE s_suppkey IN (SELECT ps_suppkey\n                    FROM tpch_sf1.partsupp\n                    WHERE ps_partkey IN (SELECT p_partkey\n                                         FROM tpch_sf1.part AS p_inner\n                                         WHERE p_name LIKE 'almond%')\n                      AND ps_availqty > (SELECT 0.5 * SUM(l_quantity) AS qty\n                                         FROM tpch_sf1.lineitem as li_inner\n                                         WHERE l_partkey = ps_partkey\n                                           AND l_suppkey = ps_suppkey\n                                           AND l_shipdate >= '1993-01-01'\n                                           AND l_shipdate < '1994-01-01'))\n  AND n_name = 'KENYA'\nORDER BY s_name\n\n",
-      "startTime": "2026-06-26T11:49:45.345492Z",
+      "startTime": "2026-06-30T16:49:10.307194Z",
       "status": "OK",
-      "timeMs": 156.933
+      "timeMs": 210.412
     }
   ],
   "runtime": {
-    "avgMs": 156.933,
-    "bestMs": 156.933,
-    "maxMs": 156.933,
-    "minMs": 156.933,
+    "avgMs": 210.412,
+    "bestMs": 210.412,
+    "maxMs": 210.412,
+    "minMs": 210.412,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

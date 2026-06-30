@@ -15,6 +15,17 @@
           "=": 1,
           ">16x": 0
         },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
         "filter": {
           "+2x": 0,
           "+4x": 0,
@@ -82,16 +93,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(name as name) AS Expr1028, MIN(info as info) AS Expr1029, MIN(title as title) AS Expr1030\n       1      4803  FILTER kind as kind = 'episode' OR kind as kind = 'movie'\n       1      4979  INNER JOIN LOOP ON Bmk1016 = Bmk1016\n       1      4979  │└TABLE SEEK kind_type AS kt\n       1      4979  INNER JOIN LOOP ON t.kind_id = kt.id\n       1      4979  │└TABLE SEEK kind_type AS kt\n       1      4979  INNER JOIN LOOP ON Bmk1026 = Bmk1026\n       0      4979  │└TABLE SEEK title AS t WHERE production_year as production_year > 2000\n       2      8121  PROJECT BmkToPage Bmk1026 AS Expr1529\n       2      8121  INNER JOIN LOOP ON mk.movie_id = t.id\n       1      8121  │└TABLE SEEK title AS t\n       2      8121  FILTER info as info = 'rating'\n      10     24867  INNER JOIN LOOP ON Bmk1012 = Bmk1012\n       1     24867  │└TABLE SEEK info_type AS it2\n      10     24867  INNER JOIN LOOP ON mi_idx.info_type_id = it2.id\n       1     24867  │└TABLE SEEK info_type AS it2\n      10     24867  INNER JOIN LOOP ON mk.movie_id = mi_idx.movie_id\n       2     24867  │└TABLE SEEK movie_info_idx AS mi_idx WHERE info as info < '8.5'\n       4      8440  FILTER country_code as country_code <> 'us'\n       8      9065  INNER JOIN LOOP ON Bmk1006 = Bmk1006\n       1      9065  │└TABLE SEEK company_name AS cn\n       8      9065  INNER JOIN LOOP ON mc.company_id = cn.id\n       1      9065  │└TABLE SEEK company_name AS cn\n       8      9065  FILTER  NOT note as note LIKE '%(USA)%' AND note as note LIKE '%(200%)%'\n      75     36406  INNER JOIN LOOP ON Bmk1018 = Bmk1018\n       1     36406  │└TABLE SEEK movie_companies AS mc\n      75     36406  PROJECT BmkToPage Bmk1018 AS Expr1527\n      75     36406  INNER JOIN LOOP ON mk.movie_id = mc.movie_id\n       9     36406  │└TABLE SEEK movie_companies AS mc\n       7      2945  FILTER kind as kind <> 'complete+verified'\n      10      5085  INNER JOIN LOOP ON Bmk1004 = Bmk1004\n       1      5085  │└TABLE SEEK comp_cast_type AS cct2\n      10      5085  INNER JOIN LOOP ON cc.status_id = cct2.id\n       1      5085  │└TABLE SEEK comp_cast_type AS cct2\n      10      5085  INNER JOIN HASH ON cc.subject_id = cct1.id\n       1         1  │└TABLE SCAN comp_cast_type AS cct1 WHERE kind as kind = 'crew'\n      20      5085  INNER JOIN LOOP ON Bmk1000 = Bmk1000\n       1      5085  │└TABLE SEEK complete_cast AS cc WHERE BLOOM(subject_id as subject_id)\n      20     16264  INNER JOIN LOOP ON mk.movie_id = cc.movie_id\n       1     16264  │└TABLE SEEK complete_cast AS cc\n      14     23916  FILTER info as info = 'American' OR info as info = 'Danish' OR info as info = 'Denmark' OR info as info = 'German' OR info as info = 'Germany' OR info as info = 'Norway' OR info as info = 'Norwegian' OR info as info = 'Sweden' OR info as info = 'Swedish' OR info as info = 'USA'\n     308     44297  INNER JOIN LOOP ON mi.movie_id = mi.movie_id AND Uniq1021 = Uniq1021\n       1     44297  │└TABLE SEEK movie_info AS mi\n     308     44297  INNER JOIN LOOP ON it1.id = mi.info_type_id AND mk.movie_id = mi.movie_id\n       1     44297  │└TABLE SEEK movie_info AS mi\n     362     37091  INNER JOIN LOOP ON info as info = 'countries'\n       1         1  │└MATERIALISE AS m48\n       1         1  │ TABLE SCAN info_type AS it1 WHERE info as info = 'countries'\n     362     37091  INNER JOIN LOOP ON Bmk1024 = Bmk1024\n       1     37091  │└TABLE SEEK movie_keyword AS mk\n     362     37091  INNER JOIN LOOP ON k.id = mk.keyword_id\n      90     37091  │└TABLE SEEK movie_keyword AS mk\n       4         3  TABLE SCAN keyword AS k WHERE keyword as keyword = 'blood' OR keyword as keyword = 'murder' OR keyword as keyword = 'murder-in-title' OR keyword as keyword = 'violence'\n",
       "sql": "SELECT MIN(cn.name) AS movie_company,\n       MIN(mi_idx.info) AS rating,\n       MIN(t.title) AS complete_euro_dark_movie\nFROM job.complete_cast AS cc,\n     job.comp_cast_type AS cct1,\n     job.comp_cast_type AS cct2,\n     job.company_name AS cn,\n     job.company_type AS ct,\n     job.info_type AS it1,\n     job.info_type AS it2,\n     job.keyword AS k,\n     job.kind_type AS kt,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.movie_info_idx AS mi_idx,\n     job.movie_keyword AS mk,\n     job.title AS t\nWHERE cct1.kind = 'crew'\n  AND cct2.kind != 'complete+verified'\n  AND cn.country_code != '[us]'\n  AND it1.info = 'countries'\n  AND it2.info = 'rating'\n  AND k.keyword IN ('murder',\n                    'murder-in-title',\n                    'blood',\n                    'violence')\n  AND kt.kind IN ('movie',\n                  'episode')\n  AND mc.note NOT LIKE '%(USA)%'\n  AND mc.note LIKE '%(200%)%'\n  AND mi.info IN ('Sweden',\n                  'Norway',\n                  'Germany',\n                  'Denmark',\n                  'Swedish',\n                  'Danish',\n                  'Norwegian',\n                  'German',\n                  'USA',\n                  'American')\n  AND mi_idx.info < '8.5'\n  AND t.production_year > 2000\n  AND kt.id = t.kind_id\n  AND t.id = mi.movie_id\n  AND t.id = mk.movie_id\n  AND t.id = mi_idx.movie_id\n  AND t.id = mc.movie_id\n  AND t.id = cc.movie_id\n  AND mk.movie_id = mi.movie_id\n  AND mk.movie_id = mi_idx.movie_id\n  AND mk.movie_id = mc.movie_id\n  AND mk.movie_id = cc.movie_id\n  AND mi.movie_id = mi_idx.movie_id\n  AND mi.movie_id = mc.movie_id\n  AND mi.movie_id = cc.movie_id\n  AND mc.movie_id = mi_idx.movie_id\n  AND mc.movie_id = cc.movie_id\n  AND mi_idx.movie_id = cc.movie_id\n  AND k.id = mk.keyword_id\n  AND it1.id = mi.info_type_id\n  AND it2.id = mi_idx.info_type_id\n  AND ct.id = mc.company_type_id\n  AND cn.id = mc.company_id\n  AND cct1.id = cc.subject_id\n  AND cct2.id = cc.status_id;\n",
-      "startTime": "2026-06-26T11:00:35.961402Z",
+      "startTime": "2026-06-30T16:47:59.201872Z",
       "status": "OK",
-      "timeMs": 611.789
+      "timeMs": 565.179
     }
   ],
   "runtime": {
-    "avgMs": 611.789,
-    "bestMs": 611.789,
-    "maxMs": 611.789,
-    "minMs": 611.789,
+    "avgMs": 565.179,
+    "bestMs": 565.179,
+    "maxMs": 565.179,
+    "minMs": 565.179,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

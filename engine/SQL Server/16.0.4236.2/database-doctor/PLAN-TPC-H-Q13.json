@@ -15,6 +15,17 @@
           "=": 2,
           ">16x": 0
         },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
         "filter": {
           "+2x": 0,
           "+4x": 0,
@@ -80,18 +91,18 @@
         "seek": 0,
         "sort": 42
       },
-      "plan": "Estimate    Actual  Operator\n      24        42  SORT Expr1007, Expr1006\n      24        42  PROJECT CONVERT_IMPLICIT(int,Expr1015,0) AS Expr1007\n      24        42  AGGREGATE COUNT(*) AS Expr1015 GROUP BY HASH Expr1006\n  150000    150000  PROJECT CASE WHEN Expr1006 IS NULL THEN 0 ELSE Expr1006 END AS Expr1006\n  150000    150000  RIGHT OUTER JOIN HASH ON c_custkey = o_custkey\n   96548     99996  │└PROJECT CONVERT_IMPLICIT(int,Expr1014,0) AS Expr1006\n   96548     99996  │ AGGREGATE COUNT(*) AS Expr1014 GROUP BY HASH o_custkey\n 1500000   1499959  │ TABLE SCAN orders WHERE  NOT o_comment LIKE ' % special % requests % '\n  150000    150000  TABLE SCAN customer\n",
+      "plan": "Estimate    Actual  Operator\n      24        42  SORT Expr1007, Expr1006\n      24        42  PROJECT CONVERT_IMPLICIT(int,Expr1015,0) AS Expr1007\n      24        42  AGGREGATE COUNT(*) AS Expr1015 GROUP BY HASH Expr1006\n  150000    150000  PROJECT CASE WHEN Expr1006 IS NULL THEN 0 ELSE Expr1006 END AS Expr1006\n  150000    150000  LEFT OUTER JOIN HASH ON c_custkey = o_custkey\n   96548     99996  │└PROJECT CONVERT_IMPLICIT(int,Expr1014,0) AS Expr1006\n   96548     99996  │ AGGREGATE COUNT(*) AS Expr1014 GROUP BY HASH o_custkey\n 1500000   1499959  │ TABLE SCAN orders WHERE  NOT o_comment LIKE ' % special % requests % '\n  150000    150000  TABLE SCAN customer\n",
       "sql": "/* TPC-H Q13 */\nSELECT\n  c_count,\n  COUNT(*) AS custdist\nFROM\n  (\n    SELECT\n      c_custkey,\n      COUNT(o_orderkey) AS c_count\n    FROM\n      tpch_sf1.customer\n      LEFT OUTER JOIN tpch_sf1.orders ON c_custkey = o_custkey\n      AND o_comment NOT LIKE ' % special % requests % '\n    GROUP BY\n      c_custkey\n  ) AS c_orders\nGROUP BY\n  c_count\nORDER BY\n  custdist DESC,\n  c_count DESC\n;",
-      "startTime": "2026-06-26T11:49:41.416793Z",
+      "startTime": "2026-06-30T16:49:08.097579Z",
       "status": "OK",
-      "timeMs": 612.618
+      "timeMs": 540.95
     }
   ],
   "runtime": {
-    "avgMs": 612.618,
-    "bestMs": 612.618,
-    "maxMs": 612.618,
-    "minMs": 612.618,
+    "avgMs": 540.95,
+    "bestMs": 540.95,
+    "maxMs": 540.95,
+    "minMs": 540.95,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

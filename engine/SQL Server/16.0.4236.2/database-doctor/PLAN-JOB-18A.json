@@ -15,6 +15,17 @@
           "=": 1,
           ">16x": 0
         },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
         "filter": {
           "+2x": 0,
           "+4x": 0,
@@ -82,16 +93,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(info as info) AS Expr1014, MIN(info as info) AS Expr1015, MIN(title as title) AS Expr1016\n   37310       416  INNER JOIN HASH ON mi_idx.info_type_id = it2.id\n       1         1  │└TABLE SCAN info_type AS it2 WHERE info as info = 'votes'\n   18655       416  INNER JOIN HASH ON mi.info_type_id = it1.id\n       1         1  │└TABLE SCAN info_type AS it1 WHERE info as info = 'budget'\n   13058       416  INNER JOIN LOOP ON t.id = mi.movie_id\n      24       416  │└TABLE SEEK movie_info AS mi WHERE BLOOM(info_type_id as info_type_id)\n   54176      3848  INNER JOIN LOOP ON t.id = mi_idx.movie_id\n       1      3848  │└TABLE SEEK movie_info_idx AS mi_idx WHERE BLOOM(info_type_id as info_type_id)\n  470845      7370  INNER JOIN HASH ON t.id = ci.movie_id\n  470847      7370  │└INNER JOIN HASH ON ci.person_id = n.id\n   12244      9798  │ │└TABLE SCAN name AS n WHERE name as name LIKE '%Tim%' AND gender as gender = 'm'\n  240301      7370  │ TABLE SCAN cast_info AS ci WHERE (note as note = '(executive producer)' OR note as note = '(producer)') AND BLOOM(person_id as person_id)\n 2528310      7239  TABLE SCAN title AS t WHERE BLOOM(id as id)\n",
       "sql": "SELECT MIN(mi.info) AS movie_budget,\n       MIN(mi_idx.info) AS movie_votes,\n       MIN(t.title) AS movie_title\nFROM job.cast_info AS ci,\n     job.info_type AS it1,\n     job.info_type AS it2,\n     job.movie_info AS mi,\n     job.movie_info_idx AS mi_idx,\n     job.name AS n,\n     job.title AS t\nWHERE ci.note IN ('(producer)',\n                  '(executive producer)')\n  AND it1.info = 'budget'\n  AND it2.info = 'votes'\n  AND n.gender = 'm'\n  AND n.name LIKE '%Tim%'\n  AND t.id = mi.movie_id\n  AND t.id = mi_idx.movie_id\n  AND t.id = ci.movie_id\n  AND ci.movie_id = mi.movie_id\n  AND ci.movie_id = mi_idx.movie_id\n  AND mi.movie_id = mi_idx.movie_id\n  AND n.id = ci.person_id\n  AND it1.id = mi.info_type_id\n  AND it2.id = mi_idx.info_type_id;\n",
-      "startTime": "2026-06-26T10:58:04.943524Z",
+      "startTime": "2026-06-30T16:46:40.422874Z",
       "status": "OK",
-      "timeMs": 7370.179
+      "timeMs": 7763.046
     }
   ],
   "runtime": {
-    "avgMs": 7370.179,
-    "bestMs": 7370.179,
-    "maxMs": 7370.179,
-    "minMs": 7370.179,
+    "avgMs": 7763.046,
+    "bestMs": 7763.046,
+    "maxMs": 7763.046,
+    "minMs": 7763.046,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

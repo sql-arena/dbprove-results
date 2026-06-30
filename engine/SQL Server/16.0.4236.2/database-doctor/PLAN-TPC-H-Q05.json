@@ -15,6 +15,17 @@
           "=": 1,
           ">16x": 0
         },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
         "filter": {
           "+2x": 0,
           "+4x": 0,
@@ -82,16 +93,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       5         5  SORT Expr1018\n       5         5  AGGREGATE SUM(Expr1019) AS Expr1018 GROUP BY HASH n_name\n    2004      7403  INNER JOIN HASH ON n_regionkey = r_regionkey\n       1         1  │└TABLE SCAN region WHERE r_name = 'EUROPE'\n    1002      7403  INNER JOIN HASH ON s_nationkey = n_nationkey\n       2         5  │└TABLE SCAN nation WHERE BLOOM(n_regionkey)\n    1002      7403  INNER JOIN HASH ON c_custkey = o_custkey AND s_nationkey = c_nationkey\n   24986    181905  │└INNER JOIN HASH ON l_suppkey = s_suppkey\n    1000      1987  │ │└TABLE SCAN supplier WHERE BLOOM(s_nationkey)\n   24986    181905  │ INNER JOIN HASH ON l_orderkey = o_orderkey\n  226895    228637  │ │└TABLE SCAN orders WHERE o_orderdate >= '1995-01-01' AND o_orderdate < '1996-01-01'\n   60012    181905  │ PROJECT l_extendedprice * (1. - l_discount) AS Expr1019\n   60012    181905  │ TABLE SCAN lineitem WHERE BLOOM(l_orderkey) AND BLOOM(l_suppkey)\n    1500     13901  TABLE SCAN customer WHERE BLOOM(c_custkey) AND BLOOM(c_nationkey)\n",
       "sql": "/* TPC-H Q05 */\nSELECT n_name,\n       SUM(l_extendedprice * (1 - l_discount)) AS revenue\nFROM tpch_sf1.lineitem\nINNER JOIN tpch_sf1.orders\n    ON l_orderkey = o_orderkey\nINNER JOIN tpch_sf1.customer\n    ON o_custkey = c_custkey\nINNER JOIN tpch_sf1.supplier\n    ON l_suppkey = s_suppkey\nINNER JOIN tpch_sf1.nation\n    ON s_nationkey = n_nationkey\nINNER JOIN tpch_sf1.region\n    ON n_regionkey = r_regionkey\nWHERE r_name = 'EUROPE'\n  AND o_orderdate >= '1995-01-01'\n  AND o_orderdate < '1996-01-01'\n  AND s_nationkey = c_nationkey\nGROUP BY n_name\nORDER BY revenue DESC\n",
-      "startTime": "2026-06-26T11:49:37.633514Z",
+      "startTime": "2026-06-30T16:49:05.711346Z",
       "status": "OK",
-      "timeMs": 96.585
+      "timeMs": 140.43
     }
   ],
   "runtime": {
-    "avgMs": 96.585,
-    "bestMs": 96.585,
-    "maxMs": 96.585,
-    "minMs": 96.585,
+    "avgMs": 140.43,
+    "bestMs": 140.43,
+    "maxMs": 140.43,
+    "minMs": 140.43,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

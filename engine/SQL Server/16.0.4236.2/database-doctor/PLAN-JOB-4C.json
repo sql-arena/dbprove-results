@@ -15,6 +15,17 @@
           "=": 1,
           ">16x": 0
         },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
         "filter": {
           "+2x": 0,
           "+4x": 0,
@@ -82,16 +93,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(partialagg1018) AS Expr1010, MIN(partialagg1019) AS Expr1011\n       5         1  AGGREGATE MIN(info as info) AS partialagg1018, MIN(title as title) AS partialagg1019\n     779      4700  INNER JOIN LOOP ON Bmk1008 = Bmk1008\n       0      4700  │└TABLE SEEK title AS t WHERE production_year as production_year > 1990\n    1128      8092  SORT Expr1020\n    1128      8092  PROJECT BmkToPage Bmk1008 AS Expr1020\n    1128      8092  INNER JOIN LOOP ON mk.movie_id = t.id\n       1      8092  │└TABLE SEEK title AS t\n    1128      8092  INNER JOIN HASH ON mi_idx.info_type_id = it.id\n       1         1  │└FILTER info as info = 'rating'\n     113       113  │ TABLE SCAN info_type AS it\n    5644     14599  INNER JOIN HASH ON mi_idx.movie_id = mk.movie_id\n    4309     12951  │└INNER JOIN LOOP ON Bmk1006 = Bmk1006\n       1     12951  │ │└TABLE SEEK movie_keyword AS mk\n    4309     12951  │ INNER JOIN LOOP ON k.id = mk.keyword_id\n      90     12951  │ │└TABLE SEEK movie_keyword AS mk\n      47        30  │ TABLE SCAN keyword AS k WHERE keyword as keyword LIKE '%sequel%'\n  804005     12279  TABLE SEEK movie_info_idx AS mi_idx WHERE (PROBE(Bitmap1026,movie_id as movie_id,N'IN ROW')) AND (info as info > '2.0')\n",
       "sql": "SELECT MIN(mi_idx.info) AS rating,\n       MIN(t.title) AS movie_title\nFROM job.info_type AS it,\n     job.keyword AS k,\n     job.movie_info_idx AS mi_idx,\n     job.movie_keyword AS mk,\n     job.title AS t\nWHERE it.info ='rating'\n  AND k.keyword LIKE '%sequel%'\n  AND mi_idx.info > '2.0'\n  AND t.production_year > 1990\n  AND t.id = mi_idx.movie_id\n  AND t.id = mk.movie_id\n  AND mk.movie_id = mi_idx.movie_id\n  AND k.id = mk.keyword_id\n  AND it.id = mi_idx.info_type_id;\n",
-      "startTime": "2026-06-26T11:01:22.063796Z",
+      "startTime": "2026-06-30T16:48:23.288848Z",
       "status": "OK",
-      "timeMs": 151.016
+      "timeMs": 128.931
     }
   ],
   "runtime": {
-    "avgMs": 151.016,
-    "bestMs": 151.016,
-    "maxMs": 151.016,
-    "minMs": 151.016,
+    "avgMs": 128.931,
+    "bestMs": 128.931,
+    "maxMs": 128.931,
+    "minMs": 128.931,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

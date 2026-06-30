@@ -15,6 +15,17 @@
           "=": 1,
           ">16x": 0
         },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
         "filter": {
           "+2x": 0,
           "+4x": 0,
@@ -82,16 +93,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(partialagg1071) AS Expr1016, MIN(partialagg1072) AS Expr1017\n      48         6  FILTER country_code as country_code = 'us'\n     133        22  INNER JOIN LOOP ON Bmk1000 = Bmk1000\n       1        22  │└TABLE SEEK company_name AS cn\n     133        22  INNER JOIN LOOP ON mc.company_id = cn.id\n       1        22  │└TABLE SEEK company_name AS cn\n     134        22  AGGREGATE MIN(info as info) AS partialagg1071, MIN(title as title) AS partialagg1072 GROUP BY SORT company_id\n    2518        33  SORT company_id\n    2518        33  INNER JOIN MERGE ON id as id = company_type_id as company_type_id\n       2         2  │└SORT id\n       2         2  │ FILTER kind as kind = 'distributors' OR kind as kind = 'production companies'\n       4         4  │ TABLE SCAN company_type AS ct\n    2518        33  SORT company_type_id\n    2518        33  INNER JOIN LOOP ON Bmk1008 = Bmk1008\n       1        33  │└TABLE SEEK movie_companies AS mc\n    2518        33  SORT Expr1076\n    2518        33  PROJECT BmkToPage Bmk1008 AS Expr1076\n    2518        33  INNER JOIN LOOP ON t.id = mc.movie_id\n       4        33  │└TABLE SEEK movie_companies AS mc\n     103         2  INNER JOIN MERGE ON info_type_id as info_type_id = id as id\n       1         1  │└FILTER info as info = 'bottom 10 rank'\n     113       113  │ INNER JOIN LOOP ON Bmk1006 = Bmk1006\n       1       113  │ │└TABLE SEEK info_type AS it2\n     113       113  │ TABLE SEEK info_type AS it2\n    1270         5  SORT info_type_id\n    1270       635  INNER JOIN LOOP ON t.id = mi_idx.movie_id\n       2       635  │└TABLE SEEK movie_info_idx AS mi_idx\n     568       443  INNER JOIN HASH ON mi.info_type_id = it1.id\n       1         1  │└FILTER info as info = 'budget'\n     113       113  │ TABLE SCAN info_type AS it1\n     568       453  INNER JOIN LOOP ON t.id = mi.movie_id\n      56       453  │└TABLE SEEK movie_info AS mi WHERE BLOOM(info_type_id as info_type_id,N'IN ROW')\n     669      2597  TABLE SCAN title AS t WHERE (production_year as production_year > 2000) AND (title as title LIKE 'Birdemic%' OR title as title LIKE '%Movie%')\n",
       "sql": "SELECT MIN(mi.info) AS budget,\n       MIN(t.title) AS unsuccsessful_movie\nFROM job.company_name AS cn,\n     job.company_type AS ct,\n     job.info_type AS it1,\n     job.info_type AS it2,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.movie_info_idx AS mi_idx,\n     job.title AS t\nWHERE cn.country_code ='[us]'\n  AND ct.kind IS NOT NULL\n  AND (ct.kind ='production companies'\n       OR ct.kind = 'distributors')\n  AND it1.info ='budget'\n  AND it2.info ='bottom 10 rank'\n  AND t.production_year >2000\n  AND (t.title LIKE 'Birdemic%'\n       OR t.title LIKE '%Movie%')\n  AND t.id = mi.movie_id\n  AND t.id = mi_idx.movie_id\n  AND mi.info_type_id = it1.id\n  AND mi_idx.info_type_id = it2.id\n  AND t.id = mc.movie_id\n  AND ct.id = mc.company_type_id\n  AND cn.id = mc.company_id\n  AND mc.movie_id = mi.movie_id\n  AND mc.movie_id = mi_idx.movie_id\n  AND mi.movie_id = mi_idx.movie_id;\n",
-      "startTime": "2026-06-26T10:56:47.332401Z",
+      "startTime": "2026-06-30T16:46:01.236551Z",
       "status": "OK",
-      "timeMs": 394.563
+      "timeMs": 348.561
     }
   ],
   "runtime": {
-    "avgMs": 394.563,
-    "bestMs": 394.563,
-    "maxMs": 394.563,
-    "minMs": 394.563,
+    "avgMs": 348.561,
+    "bestMs": 348.561,
+    "maxMs": 348.561,
+    "minMs": 348.561,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

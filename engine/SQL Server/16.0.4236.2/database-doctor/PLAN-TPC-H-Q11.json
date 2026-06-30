@@ -15,6 +15,17 @@
           "=": 2,
           ">16x": 0
         },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
         "filter": {
           "+2x": 0,
           "+4x": 0,
@@ -82,16 +93,16 @@
       },
       "plan": "Estimate    Actual  Operator\n    9035      1225  SORT Expr1009\n    9035      1225  INNER JOIN LOOP ON n_name = 'JAPAN'\n   30119     28515  │└AGGREGATE SUM(Expr1021) AS Expr1009 GROUP BY HASH ps_partkey\n   32005     30160  │ INNER JOIN HASH ON ps_suppkey = s_suppkey\n     400       377  │ │└INNER JOIN HASH ON s_nationkey = n_nationkey\n       1         1  │ │ │└TABLE SCAN nation WHERE n_name = 'JAPAN'\n    1000       377  │ │ TABLE SCAN supplier WHERE BLOOM(s_nationkey)\n   80000     30160  │ PROJECT ps_supplycost * CONVERT_IMPLICIT(decimal(10,0),ps_availqty,0) AS Expr1021\n   80000     30160  │ TABLE SCAN partsupp WHERE BLOOM(ps_suppkey)\n       1         1  PROJECT CASE WHEN Expr1042 = 0 THEN NULL ELSE Expr1043 END AS Expr1019\n       1         1  AGGREGATE COUNT(Expr1022) AS Expr1042, SUM(Expr1022) AS Expr1043\n   32005     30160  INNER JOIN HASH ON ps_suppkey = s_suppkey\n     400       377  │└INNER JOIN HASH ON s_nationkey = n_nationkey\n       1         1  │ │└TABLE SCAN nation WHERE n_name = 'JAPAN'\n    1000       377  │ TABLE SCAN supplier WHERE BLOOM(s_nationkey)\n   80000     30160  PROJECT ps_supplycost * CONVERT_IMPLICIT(decimal(10,0),ps_availqty,0) AS Expr1022\n   80000     30160  TABLE SCAN partsupp WHERE BLOOM(ps_suppkey)\n",
       "sql": "/* TPC-H Q11 */\nSELECT ps_partkey,\n       SUM(ps_supplycost * ps_availqty) AS v\nFROM tpch_sf1.partsupp\nINNER JOIN tpch_sf1.supplier\n    ON ps_suppkey = s_suppkey\nINNER JOIN tpch_sf1.nation\n    ON s_nationkey = n_nationkey\nWHERE n_name = 'JAPAN'\nGROUP BY ps_partkey\nHAVING SUM(ps_supplycost * ps_availqty)\n           > (SELECT SUM(ps_supplycost * ps_availqty) * 0.0001\n              FROM tpch_sf1.partsupp\n              INNER JOIN tpch_sf1.supplier\n                  ON ps_suppkey = s_suppkey\n              INNER JOIN tpch_sf1.nation\n                  ON s_nationkey = n_nationkey\n              WHERE n_name = 'JAPAN')\nORDER BY v DESC\n",
-      "startTime": "2026-06-26T11:49:40.980072Z",
+      "startTime": "2026-06-30T16:49:07.850079Z",
       "status": "OK",
-      "timeMs": 26.808
+      "timeMs": 36.735
     }
   ],
   "runtime": {
-    "avgMs": 26.808,
-    "bestMs": 26.808,
-    "maxMs": 26.808,
-    "minMs": 26.808,
+    "avgMs": 36.735,
+    "bestMs": 36.735,
+    "maxMs": 36.735,
+    "minMs": 36.735,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

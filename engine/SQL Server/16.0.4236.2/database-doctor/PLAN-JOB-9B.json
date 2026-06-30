@@ -15,6 +15,17 @@
           "=": 2,
           ">16x": 0
         },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
         "filter": {
           "+2x": 0,
           "+4x": 1,
@@ -82,16 +93,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(partialagg1044) AS Expr1016, MIN(partialagg1045) AS Expr1017, MIN(partialagg1046) AS Expr1018, MIN(partialagg1047) AS Expr1019\n       5         7  AGGREGATE MIN(name as name) AS partialagg1044, MIN(name as name) AS partialagg1045, MIN(name as name) AS partialagg1046, MIN(title as title) AS partialagg1047\n     331        42  INNER JOIN LOOP ON Bmk1002 = Bmk1002\n       1        42  │└TABLE SEEK char_name AS chn\n     331        42  PROJECT BmkToPage Bmk1002 AS Expr1864\n     331        42  INNER JOIN LOOP ON ci.person_role_id = chn.id\n       1        42  │└TABLE SEEK char_name AS chn\n     736        42  INNER JOIN LOOP ON Bmk1000 = Bmk1000\n       1        42  │└TABLE SEEK aka_name AS an\n     349        42  INNER JOIN LOOP ON n.id = an.person_id\n       4        42  │└TABLE SEEK aka_name AS an\n     151        32  INNER JOIN LOOP ON Bmk1014 = Bmk1014\n       0        32  │└TABLE SEEK title AS t WHERE production_year as production_year >= 2007 AND production_year as production_year <= 2010\n     356        85  SORT Expr1057\n     356        85  PROJECT BmkToPage Bmk1014 AS Expr1057\n     356        85  INNER JOIN LOOP ON mc.movie_id = t.id\n       1        85  │└TABLE SEEK title AS t\n     356        85  FILTER name as name LIKE '%Angel%' AND gender as gender = 'f'\n    4032     26447  INNER JOIN LOOP ON Bmk1010 = Bmk1010\n       1     26447  │└TABLE SEEK name AS n\n    4032     26447  SORT Expr1051\n    4032     26447  PROJECT BmkToPage Bmk1010 AS Expr1051\n    4032     26447  INNER JOIN LOOP ON ci.person_id = n.id\n       1     26447  │└TABLE SEEK name AS n\n    4032     26447  SORT person_id\n    4032     26447  INNER JOIN HASH ON ci.role_id = rt.id\n       1         1  │└FILTER role as role = 'actress'\n      12        12  │ INNER JOIN LOOP ON Bmk1012 = Bmk1012\n       1        12  │ │└TABLE SEEK role_type AS rt\n      12        12  │ TABLE SEEK role_type AS rt\n    4435     26447  INNER JOIN HASH ON ci.movie_id = mc.movie_id\n   72076    177065  │└INNER JOIN HASH ON mc.company_id = cn.id\n   84576     84843  │ │└TABLE SCAN company_name AS cn WHERE country_code as country_code = 'us'\n  200411    177065  │ TABLE SCAN movie_companies AS mc WHERE note as note LIKE '%(200%)%' AND (note as note LIKE '%(USA)%' OR note as note LIKE '%(worldwide)%') AND BLOOM(company_id as company_id)\n    4435     23278  TABLE SCAN cast_info AS ci WHERE (BLOOM(movie_id as movie_id,N'IN ROW')) AND (note as note = '(voice)' AND BLOOM(role_id as role_id))\n",
       "sql": "SELECT MIN(an.name) AS alternative_name,\n       MIN(chn.name) AS voiced_character,\n       MIN(n.name) AS voicing_actress,\n       MIN(t.title) AS american_movie\nFROM job.aka_name AS an,\n     job.char_name AS chn,\n     job.cast_info AS ci,\n     job.company_name AS cn,\n     job.movie_companies AS mc,\n     job.name AS n,\n     job.role_type AS rt,\n     job.title AS t\nWHERE ci.note = '(voice)'\n  AND cn.country_code ='[us]'\n  AND mc.note LIKE '%(200%)%'\n  AND (mc.note LIKE '%(USA)%'\n       OR mc.note LIKE '%(worldwide)%')\n  AND n.gender ='f'\n  AND n.name LIKE '%Angel%'\n  AND rt.role ='actress'\n  AND t.production_year BETWEEN 2007 AND 2010\n  AND ci.movie_id = t.id\n  AND t.id = mc.movie_id\n  AND ci.movie_id = mc.movie_id\n  AND mc.company_id = cn.id\n  AND ci.role_id = rt.id\n  AND n.id = ci.person_id\n  AND chn.id = ci.person_role_id\n  AND an.person_id = n.id\n  AND an.person_id = ci.person_id;\n",
-      "startTime": "2026-06-26T11:02:14.719433Z",
+      "startTime": "2026-06-30T16:48:50.318261Z",
       "status": "OK",
-      "timeMs": 1130.759
+      "timeMs": 1122.66
     }
   ],
   "runtime": {
-    "avgMs": 1130.759,
-    "bestMs": 1130.759,
-    "maxMs": 1130.759,
-    "minMs": 1130.759,
+    "avgMs": 1122.66,
+    "bestMs": 1122.66,
+    "maxMs": 1122.66,
+    "minMs": 1122.66,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

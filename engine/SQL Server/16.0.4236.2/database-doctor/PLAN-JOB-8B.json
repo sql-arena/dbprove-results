@@ -15,6 +15,17 @@
           "=": 1,
           ">16x": 0
         },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
         "filter": {
           "+2x": 0,
           "+4x": 0,
@@ -82,16 +93,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(name as name) AS Expr1014, MIN(title as title) AS Expr1015\n       1         6  INNER JOIN LOOP ON Bmk1000 = Bmk1000\n       1         6  │└TABLE SEEK aka_name AS an\n       1         6  INNER JOIN LOOP ON n.id = an.person_id\n       1         6  │└TABLE SEEK aka_name AS an\n       1         4  FILTER name as name LIKE '%Yo%' AND  NOT name as name LIKE '%Yu%'\n       1        25  INNER JOIN LOOP ON Bmk1008 = Bmk1008\n       1        25  │└TABLE SEEK name AS n\n       1        25  PROJECT BmkToPage Bmk1008 AS Expr1063\n       1        25  INNER JOIN LOOP ON ci.person_id = n.id\n       1        25  │└TABLE SEEK name AS n\n       1        25  FILTER country_code as country_code = 'jp'\n       1        25  INNER JOIN LOOP ON Bmk1004 = Bmk1004\n       1        25  │└TABLE SEEK company_name AS cn\n       1        25  INNER JOIN LOOP ON mc.company_id = cn.id\n       1        25  │└TABLE SEEK company_name AS cn\n       1        25  FILTER role as role = 'actress'\n       1       104  INNER JOIN LOOP ON Bmk1010 = Bmk1010\n       1       104  │└TABLE SEEK role_type AS rt\n       1       104  INNER JOIN LOOP ON ci.role_id = rt.id\n       1       104  │└TABLE SEEK role_type AS rt\n       1       104  FILTER note as note = '(voice: English version)'\n      32       188  INNER JOIN LOOP ON Bmk1002 = Bmk1002\n       1       188  │└TABLE SEEK cast_info AS ci\n      32       188  PROJECT BmkToPage Bmk1002 AS Expr1061\n      32       188  INNER JOIN LOOP ON t.id = ci.movie_id\n      30       188  │└TABLE SEEK cast_info AS ci\n       1         5  FILTER note as note LIKE '%(Japan)%' AND  NOT note as note LIKE '%(USA)%' AND (note as note LIKE '%(2006)%' OR note as note LIKE '%(2007)%')\n     267        19  INNER JOIN LOOP ON Bmk1006 = Bmk1006\n       1        19  │└TABLE SEEK movie_companies AS mc\n     267        19  PROJECT BmkToPage Bmk1006 AS Expr1059\n     267        19  INNER JOIN LOOP ON t.id = mc.movie_id\n       2        19  │└TABLE SEEK movie_companies AS mc\n      26         8  TABLE SCAN title AS t WHERE (production_year as production_year >= 2006 AND production_year as production_year <= 2007) AND (title as title LIKE 'One Piece%' OR title as title LIKE 'Dragon Ball Z%')\n",
       "sql": "SELECT MIN(an.name) AS acress_pseudonym,\n       MIN(t.title) AS japanese_anime_movie\nFROM job.aka_name AS an,\n     job.cast_info AS ci,\n     job.company_name AS cn,\n     job.movie_companies AS mc,\n     job.name AS n,\n     job.role_type AS rt,\n     job.title AS t\nWHERE ci.note ='(voice: English version)'\n  AND cn.country_code ='[jp]'\n  AND mc.note LIKE '%(Japan)%'\n  AND mc.note NOT LIKE '%(USA)%'\n  AND (mc.note LIKE '%(2006)%'\n       OR mc.note LIKE '%(2007)%')\n  AND n.name LIKE '%Yo%'\n  AND n.name NOT LIKE '%Yu%'\n  AND rt.role ='actress'\n  AND t.production_year BETWEEN 2006 AND 2007\n  AND (t.title LIKE 'One Piece%'\n       OR t.title LIKE 'Dragon Ball Z%')\n  AND an.person_id = n.id\n  AND n.id = ci.person_id\n  AND ci.movie_id = t.id\n  AND t.id = mc.movie_id\n  AND mc.company_id = cn.id\n  AND ci.role_id = rt.id\n  AND an.person_id = ci.person_id\n  AND ci.movie_id = mc.movie_id;\n",
-      "startTime": "2026-06-26T11:02:06.666440Z",
+      "startTime": "2026-06-30T16:48:45.873873Z",
       "status": "OK",
-      "timeMs": 163.478
+      "timeMs": 164.818
     }
   ],
   "runtime": {
-    "avgMs": 163.478,
-    "bestMs": 163.478,
-    "maxMs": 163.478,
-    "minMs": 163.478,
+    "avgMs": 164.818,
+    "bestMs": 164.818,
+    "maxMs": 164.818,
+    "minMs": 164.818,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

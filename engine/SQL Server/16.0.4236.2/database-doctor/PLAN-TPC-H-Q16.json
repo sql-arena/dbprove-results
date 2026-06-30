@@ -15,6 +15,17 @@
           "=": 1,
           ">16x": 0
         },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
         "filter": {
           "+2x": 0,
           "+4x": 0,
@@ -82,16 +93,16 @@
       },
       "plan": "Estimate    Actual  Operator\n   19495     18282  SORT Expr1009, p_brand, p_type, p_size\n   19495     18282  PROJECT CONVERT_IMPLICIT(int,Expr1016,0) AS Expr1009\n   19495     18282  AGGREGATE COUNT(*) AS Expr1016 GROUP BY SORT p_brand, p_type, p_size\n  125272    119013  SORT p_brand, p_type, p_size, ps_suppkey\n  125304    119043  RIGHT ANTI JOIN HASH ON ps_suppkey = s_suppkey\n       1         4  │└TABLE SCAN supplier WHERE s_comment LIKE '%Customer%Complaints%'\n  125328    119100  INNER JOIN MERGE ON p_partkey = ps_partkey\n   31197     29775  │└SORT p_partkey\n   31197     29775  │ TABLE SCAN part WHERE (p_size = 3 OR p_size = 7 OR p_size = 11 OR p_size = 29 OR p_size = 31 OR p_size = 37 OR p_size = 41 OR p_size = 49) AND (p_brand <> 'Brand#42' AND  NOT p_type LIKE 'STANDARD ANODIZED%')\n  800000    799993  TABLE SEEK partsupp\n",
       "sql": "/* TPC-H Q16 */\nSELECT p_brand,\n       p_type,\n       p_size,\n       COUNT(DISTINCT ps_suppkey) AS supplier_cnt\nFROM tpch_sf1.partsupp\nINNER JOIN tpch_sf1.part\n    ON ps_partkey = p_partkey\n\nWHERE p_brand <> 'Brand#42'\n  AND p_type NOT LIKE 'STANDARD ANODIZED%'\n  AND p_size IN (3, 7, 11, 29, 31, 37, 41, 49)\n  AND ps_suppkey NOT IN (SELECT s_suppkey\n                         FROM tpch_sf1.supplier\n                         WHERE s_comment LIKE '%Customer%Complaints%')\nGROUP BY p_brand,\n         p_type,\n         p_size\nORDER BY supplier_cnt DESC,\n         p_brand,\n         p_type,\n         p_size",
-      "startTime": "2026-06-26T11:49:42.635399Z",
+      "startTime": "2026-06-30T16:49:08.967918Z",
       "status": "OK",
-      "timeMs": 784.995
+      "timeMs": 493.948
     }
   ],
   "runtime": {
-    "avgMs": 784.995,
-    "bestMs": 784.995,
-    "maxMs": 784.995,
-    "minMs": 784.995,
+    "avgMs": 493.948,
+    "bestMs": 493.948,
+    "maxMs": 493.948,
+    "minMs": 493.948,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

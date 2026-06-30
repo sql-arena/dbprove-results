@@ -15,6 +15,17 @@
           "=": 1,
           ">16x": 0
         },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
         "filter": {
           "+2x": 0,
           "+4x": 0,
@@ -82,16 +93,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(kind as kind) AS Expr1022, MIN(title as title) AS Expr1023\n       1        16  FILTER country_code as country_code = 'us'\n       9        16  INNER JOIN LOOP ON Bmk1004 = Bmk1004\n       1        16  │└TABLE SEEK company_name AS cn\n       9        16  INNER JOIN LOOP ON mc.company_id = cn.id\n       1        16  │└TABLE SEEK company_name AS cn\n       9        16  INNER JOIN LOOP ON Bmk1014 = Bmk1014\n       1        16  │└TABLE SEEK movie_companies AS mc\n       9        16  PROJECT BmkToPage Bmk1014 AS Expr1079\n       9        16  INNER JOIN LOOP ON t.id = mc.movie_id\n       9        16  │└TABLE SEEK movie_companies AS mc\n       1        16  FILTER kind as kind = 'movie'\n       1        16  INNER JOIN LOOP ON Bmk1012 = Bmk1012\n       1        16  │└TABLE SEEK kind_type AS kt\n       1        16  INNER JOIN LOOP ON t.kind_id = kt.id\n       1        16  │└TABLE SEEK kind_type AS kt\n       1        16  INNER JOIN LOOP ON Bmk1020 = Bmk1020\n       1        16  │└TABLE SEEK title AS t WHERE production_year as production_year > 2000\n       1        16  PROJECT BmkToPage Bmk1020 AS Expr1078\n       1        16  INNER JOIN LOOP ON mk.movie_id = t.id\n       1        16  │└TABLE SEEK title AS t\n       1        16  FILTER kind as kind = 'complete+verified'\n       1        16  INNER JOIN LOOP ON Bmk1002 = Bmk1002\n       1        16  │└TABLE SEEK comp_cast_type AS cct1\n       1        16  INNER JOIN LOOP ON cc.status_id = cct1.id\n       1        16  │└TABLE SEEK comp_cast_type AS cct1\n       1        16  INNER JOIN LOOP ON Bmk1000 = Bmk1000\n       1        16  │└TABLE SEEK complete_cast AS cc\n       1        16  INNER JOIN LOOP ON mk.movie_id = cc.movie_id\n       1        16  │└TABLE SEEK complete_cast AS cc\n       1        10  FILTER note as note LIKE '%internet%' AND info as info LIKE 'USA:% 200%'\n     308     11501  INNER JOIN LOOP ON mi.movie_id = mi.movie_id AND Uniq1017 = Uniq1017\n       1     11501  │└TABLE SEEK movie_info AS mi\n     308     11501  INNER JOIN LOOP ON it1.id = mi.info_type_id AND mk.movie_id = mi.movie_id\n       1     11501  │└TABLE SEEK movie_info AS mi\n     362      1133  INNER JOIN LOOP ON info as info = 'release dates'\n       1         1  │└MATERIALISE AS m39\n       1         1  │ TABLE SCAN info_type AS it1 WHERE info as info = 'release dates'\n     362      1133  INNER JOIN LOOP ON Bmk1018 = Bmk1018\n       1      1133  │└TABLE SEEK movie_keyword AS mk\n     362      1133  INNER JOIN LOOP ON k.id = mk.keyword_id\n      90      1133  │└TABLE SEEK movie_keyword AS mk\n       4         4  TABLE SCAN keyword AS k WHERE keyword as keyword = 'alienation' OR keyword as keyword = 'dignity' OR keyword as keyword = 'loner' OR keyword as keyword = 'nerd'\n",
       "sql": "SELECT MIN(kt.kind) AS movie_kind,\n       MIN(t.title) AS complete_nerdy_internet_movie\nFROM job.complete_cast AS cc,\n     job.comp_cast_type AS cct1,\n     job.company_name AS cn,\n     job.company_type AS ct,\n     job.info_type AS it1,\n     job.keyword AS k,\n     job.kind_type AS kt,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.movie_keyword AS mk,\n     job.title AS t\nWHERE cct1.kind = 'complete+verified'\n  AND cn.country_code = '[us]'\n  AND it1.info = 'release dates'\n  AND k.keyword IN ('nerd',\n                    'loner',\n                    'alienation',\n                    'dignity')\n  AND kt.kind IN ('movie')\n  AND mi.note LIKE '%internet%'\n  AND mi.info LIKE 'USA:% 200%'\n  AND t.production_year > 2000\n  AND kt.id = t.kind_id\n  AND t.id = mi.movie_id\n  AND t.id = mk.movie_id\n  AND t.id = mc.movie_id\n  AND t.id = cc.movie_id\n  AND mk.movie_id = mi.movie_id\n  AND mk.movie_id = mc.movie_id\n  AND mk.movie_id = cc.movie_id\n  AND mi.movie_id = mc.movie_id\n  AND mi.movie_id = cc.movie_id\n  AND mc.movie_id = cc.movie_id\n  AND k.id = mk.keyword_id\n  AND it1.id = mi.info_type_id\n  AND cn.id = mc.company_id\n  AND ct.id = mc.company_type_id\n  AND cct1.id = cc.status_id;\n",
-      "startTime": "2026-06-26T11:00:12.798913Z",
+      "startTime": "2026-06-30T16:47:47.098408Z",
       "status": "OK",
-      "timeMs": 132.875
+      "timeMs": 139.408
     }
   ],
   "runtime": {
-    "avgMs": 132.875,
-    "bestMs": 132.875,
-    "maxMs": 132.875,
-    "minMs": 132.875,
+    "avgMs": 139.408,
+    "bestMs": 139.408,
+    "maxMs": 139.408,
+    "minMs": 139.408,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

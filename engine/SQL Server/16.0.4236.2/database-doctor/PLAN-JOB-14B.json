@@ -15,6 +15,17 @@
           "=": 1,
           ">16x": 0
         },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
         "filter": {
           "+2x": 0,
           "+4x": 0,
@@ -82,16 +93,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(info as info) AS Expr1016, MIN(title as title) AS Expr1017\n       1         1  FILTER info as info = 'rating'\n       1         1  INNER JOIN LOOP ON Bmk1002 = Bmk1002\n       1         1  │└TABLE SEEK info_type AS it2\n       1         1  INNER JOIN LOOP ON mi_idx.info_type_id = it2.id\n       1         1  │└TABLE SEEK info_type AS it2\n       1         1  INNER JOIN LOOP ON t.id = mi_idx.movie_id\n       1         1  │└TABLE SEEK movie_info_idx AS mi_idx WHERE info as info > '6.0'\n       1         6  FILTER kind as kind = 'movie'\n       1         8  INNER JOIN LOOP ON Bmk1006 = Bmk1006\n       1         8  │└TABLE SEEK kind_type AS kt\n       1         8  INNER JOIN LOOP ON t.kind_id = kt.id\n       1         8  │└TABLE SEEK kind_type AS kt\n       1         8  FILTER title as title LIKE '%murder%' OR title as title LIKE '%Murder%' OR title as title LIKE '%Mord%'\n       1       781  INNER JOIN LOOP ON Bmk1014 = Bmk1014\n       0       781  │└TABLE SEEK title AS t WHERE production_year as production_year > 2010\n       6     12774  PROJECT BmkToPage Bmk1014 AS Expr1071\n       6     12774  INNER JOIN LOOP ON mk.movie_id = t.id\n       1     12774  │└TABLE SEEK title AS t\n       6     12774  FILTER info as info = 'American' OR info as info = 'Denish' OR info as info = 'Denmark' OR info as info = 'German' OR info as info = 'Germany' OR info as info = 'Norway' OR info as info = 'Norwegian' OR info as info = 'Sweden' OR info as info = 'Swedish' OR info as info = 'USA'\n     154     22333  INNER JOIN LOOP ON mi.movie_id = mi.movie_id AND Uniq1009 = Uniq1009\n       1     22333  │└TABLE SEEK movie_info AS mi\n     154     22333  INNER JOIN LOOP ON it1.id = mi.info_type_id AND mk.movie_id = mi.movie_id\n       1     22333  │└TABLE SEEK movie_info AS mi\n     181     19528  INNER JOIN LOOP ON info as info = 'countries'\n       1         1  │└MATERIALISE AS m31\n       1         1  │ TABLE SCAN info_type AS it1 WHERE info as info = 'countries'\n     181     19528  INNER JOIN LOOP ON Bmk1012 = Bmk1012\n       1     19528  │└TABLE SEEK movie_keyword AS mk\n     181     19528  INNER JOIN LOOP ON k.id = mk.keyword_id\n      90     19528  │└TABLE SEEK movie_keyword AS mk\n       2         1  TABLE SCAN keyword AS k WHERE keyword as keyword = 'murder' OR keyword as keyword = 'murder-in-title'\n",
       "sql": "SELECT MIN(mi_idx.info) AS rating,\n       MIN(t.title) AS western_dark_production\nFROM job.info_type AS it1,\n     job.info_type AS it2,\n     job.keyword AS k,\n     job.kind_type AS kt,\n     job.movie_info AS mi,\n     job.movie_info_idx AS mi_idx,\n     job.movie_keyword AS mk,\n     job.title AS t\nWHERE it1.info = 'countries'\n  AND it2.info = 'rating'\n  AND k.keyword IN ('murder',\n                    'murder-in-title')\n  AND kt.kind = 'movie'\n  AND mi.info IN ('Sweden',\n                  'Norway',\n                  'Germany',\n                  'Denmark',\n                  'Swedish',\n                  'Denish',\n                  'Norwegian',\n                  'German',\n                  'USA',\n                  'American')\n  AND mi_idx.info > '6.0'\n  AND t.production_year > 2010\n  AND (t.title LIKE '%murder%'\n       OR t.title LIKE '%Murder%'\n       OR t.title LIKE '%Mord%')\n  AND kt.id = t.kind_id\n  AND t.id = mi.movie_id\n  AND t.id = mk.movie_id\n  AND t.id = mi_idx.movie_id\n  AND mk.movie_id = mi.movie_id\n  AND mk.movie_id = mi_idx.movie_id\n  AND mi.movie_id = mi_idx.movie_id\n  AND k.id = mk.keyword_id\n  AND it1.id = mi.info_type_id\n  AND it2.id = mi_idx.info_type_id;\n",
-      "startTime": "2026-06-26T10:56:58.812674Z",
+      "startTime": "2026-06-30T16:46:08.318048Z",
       "status": "OK",
-      "timeMs": 194.828
+      "timeMs": 198.408
     }
   ],
   "runtime": {
-    "avgMs": 194.828,
-    "bestMs": 194.828,
-    "maxMs": 194.828,
-    "minMs": 194.828,
+    "avgMs": 198.408,
+    "bestMs": 198.408,
+    "maxMs": 198.408,
+    "minMs": 198.408,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

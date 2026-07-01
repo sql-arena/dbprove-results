@@ -15,6 +15,17 @@
           "=": 2,
           ">16x": 0
         },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 1,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 1,
+          "=": 2,
+          ">16x": 5
+        },
         "filter": {
           "+2x": 0,
           "+4x": 0,
@@ -82,16 +93,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(mi.info), MIN(t.title)\n       1         1  DISTRIBUTE GATHER\n       1         1  AGGREGATE MIN(mi.info), MIN(t.title)\n  237000      2271  INNER JOIN HASH ON aka_t.movie_id = mk.movie_id\n  237000       284  │└DISTRIBUTE GATHER\n  113000       284  │ INNER JOIN HASH ON mc.movie_id = aka_t.movie_id\n  113000      2647  │ │└DISTRIBUTE GATHER\n  516000      2647  │ │ INNER JOIN HASH ON mc.company_id = cn.id\n  516000     84843  │ │ │└DISTRIBUTE GATHER\n       4     84843  │ │ │ TABLE SCAN company_name WHERE (cn.country_code IS NOT NULL) AND (cn.country_code = 'us')\n  516000      2884  │ │ INNER JOIN HASH ON mc.company_type_id = ct.id\n  516000         4  │ │ │└DISTRIBUTE GATHER\n  235000         4  │ │ │ TABLE SCAN company_type\n  202000      2884  │ │ INNER JOIN HASH ON mi.movie_id = mc.movie_id\n  202000      1783  │ │ │└DISTRIBUTE GATHER\n  192000      1783  │ │ │ INNER JOIN HASH ON mi.info_type_id = it1.id\n  192000         1  │ │ │ │└DISTRIBUTE GATHER\n  361000         1  │ │ │ │ TABLE SCAN info_type WHERE it1.info = 'release dates'\n  134000      1783  │ │ │ TABLE SCAN movie_info WHERE (mi.note IS NOT NULL) AND contains(mi.note,'internet') AND (mi.info LIKE 'USA:% 199%' OR mi.info LIKE 'USA:% 200%')\n 4520000   2605035  │ │ TABLE SCAN movie_companies\n   12100    140974  │ INNER JOIN HASH ON aka_t.movie_id = t.id\n   12100    361379  │ │└DISTRIBUTE GATHER\n 2530000    361379  │ │ TABLE SCAN aka_title WHERE aka_t.movie_id IS NOT NULL\n 2610000   1743764  │ TABLE SCAN title WHERE (t.production_year IS NOT NULL) AND (t.production_year > 1990L)\n  108000   4515739  INNER JOIN HASH ON mk.keyword_id = k.id\n  108000    134170  │└DISTRIBUTE GATHER\n     113    134170  │ TABLE SCAN keyword\n14800000   4515739  TABLE SCAN movie_keyword\n",
       "sql": "SELECT MIN(mi.info) AS release_date,\n       MIN(t.title) AS modern_american_internet_movie\nFROM job.aka_title AS aka_t,\n     job.company_name AS cn,\n     job.company_type AS ct,\n     job.info_type AS it1,\n     job.keyword AS k,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.movie_keyword AS mk,\n     job.title AS t\nWHERE cn.country_code = '[us]'\n  AND it1.info = 'release dates'\n  AND mi.note LIKE '%internet%'\n  AND mi.info IS NOT NULL\n  AND (mi.info LIKE 'USA:% 199%'\n       OR mi.info LIKE 'USA:% 200%')\n  AND t.production_year > 1990\n  AND t.id = aka_t.movie_id\n  AND t.id = mi.movie_id\n  AND t.id = mk.movie_id\n  AND t.id = mc.movie_id\n  AND mk.movie_id = mi.movie_id\n  AND mk.movie_id = mc.movie_id\n  AND mk.movie_id = aka_t.movie_id\n  AND mi.movie_id = mc.movie_id\n  AND mi.movie_id = aka_t.movie_id\n  AND mc.movie_id = aka_t.movie_id\n  AND k.id = mk.keyword_id\n  AND it1.id = mi.info_type_id\n  AND cn.id = mc.company_id\n  AND ct.id = mc.company_type_id;\n",
-      "startTime": "2026-06-25T17:33:00.991049Z",
+      "startTime": "2026-07-01T13:17:51.291036Z",
       "status": "OK",
-      "timeMs": 1222.227
+      "timeMs": 2631.776
     }
   ],
   "runtime": {
-    "avgMs": 1222.227,
-    "bestMs": 1222.227,
-    "maxMs": 1222.227,
-    "minMs": 1222.227,
+    "avgMs": 2631.776,
+    "bestMs": 2631.776,
+    "maxMs": 2631.776,
+    "minMs": 2631.776,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

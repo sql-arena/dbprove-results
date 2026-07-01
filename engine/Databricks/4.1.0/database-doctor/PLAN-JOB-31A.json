@@ -15,6 +15,17 @@
           "=": 2,
           ">16x": 0
         },
+        "distribute": {
+          "+2x": 1,
+          "+4x": 0,
+          "+8x": 1,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 4,
+          "=": 1,
+          ">16x": 4
+        },
         "filter": {
           "+2x": 0,
           "+4x": 0,
@@ -82,16 +93,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(mi.info), MIN(mi_idx.info), MIN(n.name), MIN(t.title)\n       1         1  DISTRIBUTE GATHER\n       1         1  AGGREGATE MIN(mi.info), MIN(mi_idx.info), MIN(n.name), MIN(t.title)\n    2230      1273  INNER JOIN HASH ON ci.movie_id = mi_idx.movie_id\n    2230     63701  │└DISTRIBUTE GATHER\n  705000     63701  │ INNER JOIN HASH ON mi_idx.info_type_id = it2.id\n  705000         1  │ │└DISTRIBUTE GATHER\n 1380000         1  │ │ TABLE SCAN info_type WHERE it2.info = 'votes'\n 1890000    191657  │ INNER JOIN HASH ON mk.movie_id = mi_idx.movie_id\n 1890000     76714  │ │└DISTRIBUTE GATHER\n     207     76714  │ │ INNER JOIN HASH ON mk.keyword_id = k.id\n     207         7  │ │ │└DISTRIBUTE GATHER\n 2530000         7  │ │ │ TABLE SCAN keyword WHERE k.keyword IN('murder','violence','blood','gore','death','female-nudity','hospital')\n  134000   4519852  │ │ TABLE SCAN movie_keyword\n 2610000   1375949  │ TABLE SCAN movie_info_idx\n    2230       444  INNER JOIN HASH ON ci.person_id = n.id\n    2230   1739579  │└DISTRIBUTE GATHER\n  235000   1739579  │ TABLE SCAN name WHERE (n.gender IS NOT NULL) AND (n.gender = 'm')\n 3530000       594  INNER JOIN HASH ON mc.movie_id = ci.movie_id\n 3530000   1244716  │└DISTRIBUTE GATHER\n     113   1244716  │ TABLE SCAN cast_info WHERE ci.note IN('(writer)','(head writer)','(written by)','(story)','(story editor)')\n     281       724  INNER JOIN HASH ON mc.company_id = cn.id\n     281        10  │└DISTRIBUTE GATHER\n14800000        10  │ TABLE SCAN company_name WHERE startswith(cn.name,'Lionsgate')\n     207    259826  INNER JOIN HASH ON mi.movie_id = mc.movie_id\n     207     72258  │└DISTRIBUTE GATHER\n      13     72258  │ INNER JOIN HASH ON mi.movie_id = t.id\n      13     72258  │ │└DISTRIBUTE GATHER\n      12     72258  │ │ INNER JOIN HASH ON mi.info_type_id = it1.id\n      12         1  │ │ │└DISTRIBUTE GATHER\n 4170000         1  │ │ │ TABLE SCAN info_type WHERE it1.info = 'genres'\n36200000     72258  │ │ TABLE SCAN movie_info WHERE mi.info IN('Horror','Thriller')\n     113   2520486  │ TABLE SCAN title\n 4520000   2379754  TABLE SCAN movie_companies\n",
       "sql": "SELECT MIN(mi.info) AS movie_budget,\n       MIN(mi_idx.info) AS movie_votes,\n       MIN(n.name) AS writer,\n       MIN(t.title) AS violent_liongate_movie\nFROM job.cast_info AS ci,\n     job.company_name AS cn,\n     job.info_type AS it1,\n     job.info_type AS it2,\n     job.keyword AS k,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.movie_info_idx AS mi_idx,\n     job.movie_keyword AS mk,\n     job.name AS n,\n     job.title AS t\nWHERE ci.note IN ('(writer)',\n                  '(head writer)',\n                  '(written by)',\n                  '(story)',\n                  '(story editor)')\n  AND cn.name LIKE 'Lionsgate%'\n  AND it1.info = 'genres'\n  AND it2.info = 'votes'\n  AND k.keyword IN ('murder',\n                    'violence',\n                    'blood',\n                    'gore',\n                    'death',\n                    'female-nudity',\n                    'hospital')\n  AND mi.info IN ('Horror',\n                  'Thriller')\n  AND n.gender = 'm'\n  AND t.id = mi.movie_id\n  AND t.id = mi_idx.movie_id\n  AND t.id = ci.movie_id\n  AND t.id = mk.movie_id\n  AND t.id = mc.movie_id\n  AND ci.movie_id = mi.movie_id\n  AND ci.movie_id = mi_idx.movie_id\n  AND ci.movie_id = mk.movie_id\n  AND ci.movie_id = mc.movie_id\n  AND mi.movie_id = mi_idx.movie_id\n  AND mi.movie_id = mk.movie_id\n  AND mi.movie_id = mc.movie_id\n  AND mi_idx.movie_id = mk.movie_id\n  AND mi_idx.movie_id = mc.movie_id\n  AND mk.movie_id = mc.movie_id\n  AND n.id = ci.person_id\n  AND it1.id = mi.info_type_id\n  AND it2.id = mi_idx.info_type_id\n  AND k.id = mk.keyword_id\n  AND cn.id = mc.company_id;\n",
-      "startTime": "2026-06-25T17:36:52.971347Z",
+      "startTime": "2026-07-01T13:22:59.883703Z",
       "status": "OK",
-      "timeMs": 1078.638
+      "timeMs": 3287.963
     }
   ],
   "runtime": {
-    "avgMs": 1078.638,
-    "bestMs": 1078.638,
-    "maxMs": 1078.638,
-    "minMs": 1078.638,
+    "avgMs": 3287.963,
+    "bestMs": 3287.963,
+    "maxMs": 3287.963,
+    "minMs": 3287.963,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

@@ -15,6 +15,17 @@
           "=": 1,
           ">16x": 0
         },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 5,
+          "=": 0,
+          ">16x": 1
+        },
         "filter": {
           "+2x": 0,
           "+4x": 0,
@@ -82,16 +93,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(n.name)\n       1         2  DISTRIBUTE GATHER\n       1         2  AGGREGATE MIN(n.name)\n    3280     11538  INNER JOIN HASH ON ci.person_id = n.id\n    3280   7796926  │└DISTRIBUTE GATHER\n    3280   7796926  │ INNER JOIN HASH ON mc.movie_id = ci.movie_id\n    3280    148552  │ │└DISTRIBUTE GATHER\n     199    148552  │ │ INNER JOIN HASH ON mc.company_id = cn.id\n     199    148552  │ │ │└DISTRIBUTE GATHER\n     192    148552  │ │ │ INNER JOIN HASH ON mk.movie_id = mc.movie_id\n     192     41840  │ │ │ │└DISTRIBUTE GATHER\n      75     41840  │ │ │ │ INNER JOIN HASH ON mk.movie_id = t.id\n      75     41840  │ │ │ │ │└DISTRIBUTE GATHER\n      71     41840  │ │ │ │ │ INNER JOIN HASH ON mk.keyword_id = k.id\n      71         1  │ │ │ │ │ │└DISTRIBUTE GATHER\n 4170000         1  │ │ │ │ │ │ TABLE SCAN keyword WHERE k.keyword = 'character-name-in-title'\n36200000   4519861  │ │ │ │ │ TABLE SCAN movie_keyword\n  235000   2520276  │ │ │ │ TABLE SCAN title\n 2610000   2605059  │ │ │ TABLE SCAN movie_companies\n 2530000    231711  │ │ TABLE SCAN company_name\n  134000  36228449  │ TABLE SCAN cast_info\n 4520000      5207  TABLE SCAN name WHERE contains(n.name,'Bert')\n",
       "sql": "SELECT MIN(n.name) AS member_in_charnamed_movie\nFROM job.cast_info AS ci,\n     job.company_name AS cn,\n     job.keyword AS k,\n     job.movie_companies AS mc,\n     job.movie_keyword AS mk,\n     job.name AS n,\n     job.title AS t\nWHERE k.keyword ='character-name-in-title'\n  AND n.name LIKE '%Bert%'\n  AND n.id = ci.person_id\n  AND ci.movie_id = t.id\n  AND t.id = mk.movie_id\n  AND mk.keyword_id = k.id\n  AND t.id = mc.movie_id\n  AND mc.company_id = cn.id\n  AND ci.movie_id = mc.movie_id\n  AND ci.movie_id = mk.movie_id\n  AND mc.movie_id = mk.movie_id;\n",
-      "startTime": "2026-06-25T17:33:30.406367Z",
+      "startTime": "2026-07-01T13:18:37.235743Z",
       "status": "OK",
-      "timeMs": 1108.546
+      "timeMs": 2881.045
     }
   ],
   "runtime": {
-    "avgMs": 1108.546,
-    "bestMs": 1108.546,
-    "maxMs": 1108.546,
-    "minMs": 1108.546,
+    "avgMs": 2881.045,
+    "bestMs": 2881.045,
+    "maxMs": 2881.045,
+    "minMs": 2881.045,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

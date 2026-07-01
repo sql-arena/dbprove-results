@@ -15,6 +15,17 @@
           "=": 1,
           ">16x": 2
         },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 3
+        },
         "filter": {
           "+2x": 0,
           "+4x": 0,
@@ -80,18 +91,18 @@
         "seek": 0,
         "sort": 42
       },
-      "plan": "Estimate    Actual  Operator\n  147000        42  SORT custdist DESC NULLS LAST, c_orders.c_count DESC NULLS LAST\n  147000        42  AGGREGATE COUNT(1) GROUP BY HASH c_orders.c_count\n  147000       460  DISTRIBUTE HASH ON c_orders.c_count\n  147000       460  AGGREGATE COUNT(1) GROUP BY HASH c_orders.c_count\n  147000    150000  AGGREGATE COUNT(o_orderkey) GROUP BY HASH c_custkey\n      0B   1549963  LEFT OUTER JOIN HASH ON c_custkey = o_custkey\n      0B   1499959  │└DISTRIBUTE HASH ON o_custkey\n 1500000   1499959  │ TABLE SCAN orders WHERE  NOT o_comment LIKE ' % special % requests % '\n      0B    150000  DISTRIBUTE HASH ON c_custkey\n  150000    150000  TABLE SCAN customer\n",
+      "plan": "Estimate    Actual  Operator\n  147000        42  SORT custdist DESC NULLS LAST, c_orders.c_count DESC NULLS LAST\n  147000        42  AGGREGATE COUNT(1) GROUP BY HASH c_orders.c_count\n  147000       460  DISTRIBUTE HASH ON c_orders.c_count\n  147000       460  AGGREGATE COUNT(1) GROUP BY HASH c_orders.c_count\n  147000    150000  AGGREGATE COUNT(o_orderkey) GROUP BY HASH c_custkey\n     67B   1549963  LEFT OUTER JOIN HASH ON c_custkey = o_custkey\n     67B   1499959  │└DISTRIBUTE HASH ON o_custkey\n 1500000   1499959  │ TABLE SCAN orders WHERE  NOT o_comment LIKE ' % special % requests % '\n     67B    150000  DISTRIBUTE HASH ON c_custkey\n  150000    150000  TABLE SCAN customer\n",
       "sql": "/* TPC-H Q13 */\nSELECT\n  c_count,\n  COUNT(*) AS custdist\nFROM\n  (\n    SELECT\n      c_custkey,\n      COUNT(o_orderkey) AS c_count\n    FROM\n      tpch_sf1.customer\n      LEFT OUTER JOIN tpch_sf1.orders ON c_custkey = o_custkey\n      AND o_comment NOT LIKE ' % special % requests % '\n    GROUP BY\n      c_custkey\n  ) AS c_orders\nGROUP BY\n  c_count\nORDER BY\n  custdist DESC,\n  c_count DESC\n;",
-      "startTime": "2026-06-25T17:02:14.120537Z",
+      "startTime": "2026-07-01T13:27:40.302103Z",
       "status": "OK",
-      "timeMs": 892.215
+      "timeMs": 2252.562
     }
   ],
   "runtime": {
-    "avgMs": 892.215,
-    "bestMs": 892.215,
-    "maxMs": 892.215,
-    "minMs": 892.215,
+    "avgMs": 2252.562,
+    "bestMs": 2252.562,
+    "maxMs": 2252.562,
+    "minMs": 2252.562,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

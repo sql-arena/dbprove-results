@@ -15,6 +15,17 @@
           "=": 1,
           ">16x": 0
         },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 1,
+          "-8x": 0,
+          "<16x": 7,
+          "=": 0,
+          ">16x": 5
+        },
         "filter": {
           "+2x": 0,
           "+4x": 0,
@@ -82,16 +93,16 @@
       },
       "plan": "Estimate    Actual  Operator\n     142    901343  SEQUENCE\n       1         1  ├─AGGREGATE MIN(n.name), MIN(t.title)\n       1         4  │ DISTRIBUTE GATHER\n       1         4  │ AGGREGATE MIN(n.name), MIN(t.title)\n    3970       184  │ INNER JOIN HASH ON mi.info_type_id = it.id\n    3970         1  │ │└DISTRIBUTE GATHER\n 4170000         1  │ │ TABLE SCAN info_type WHERE it.info = 'release dates'\n    2500       184  │ INNER JOIN HASH ON ci.movie_id = mi.movie_id\n    2500        77  │ │└DISTRIBUTE GATHER\n     397        77  │ │ INNER JOIN HASH ON ci.person_id = an.person_id\n     397    901343  │ │ │└DISTRIBUTE GATHER\n 3140000    901343  │ │ │ TABLE SCAN aka_name\n     384        65  │ │ INNER JOIN HASH ON mc.company_id = cn.id\n     384     84843  │ │ │└DISTRIBUTE GATHER\n 2530000     84843  │ │ │ TABLE SCAN company_name WHERE (cn.country_code IS NOT NULL) AND (cn.country_code = 'us')\n     150        71  │ │ INNER JOIN HASH ON ci.movie_id = mc.movie_id\n     150    590994  │ │ │└DISTRIBUTE HASH ON mc.movie_id, mc.movie_id\n 2610000    590994  │ │ │ TABLE SCAN movie_companies WHERE (mc.note IS NOT NULL) AND (contains(mc.note,'(USA)') OR contains(mc.note,'(worldwide)'))\n     142       119  │ │ INNER JOIN HASH ON ci.movie_id = t.id\n     142    574556  │ │ │└DISTRIBUTE GATHER\n  235000    574556  │ │ │ TABLE SCAN title WHERE (t.production_year IS NOT NULL) AND (t.production_year >= 2005L) AND (t.production_year <= 2009L)\n     142       630  │ │ INNER JOIN HASH ON ci.person_id = n.id\n     142    255651  │ │ │└DISTRIBUTE GATHER\n     142    255651  │ │ │ INNER JOIN HASH ON ci.person_role_id = chn.id\n     142    255651  │ │ │ │└DISTRIBUTE GATHER\n  202000    255651  │ │ │ │ INNER JOIN HASH ON ci.role_id = rt.id\n  202000         1  │ │ │ │ │└DISTRIBUTE GATHER\n       -         1  │ │ │ │ │ TABLE SCAN role_type WHERE rt.role = 'actress'\n  901000    255651  │ │ │ │ TABLE SCAN cast_info WHERE (ci.note IN('(voice)','(voice: Japanese version)','(voice) (uncredited)','(voice: English version)')) AND (ci.person_role_id IS NOT NULL)\n     113   3132421  │ │ │ TABLE SCAN char_name\n14800000      6557  │ │ TABLE SCAN name WHERE (n.gender IS NOT NULL) AND (n.gender = 'f') AND contains(n.name,'Ang')\n 1740000     24737  │ FILTER \n      12    379910  │ TABLE SCAN movie_info WHERE mi.info LIKE 'Japan:%200%' OR mi.info LIKE 'USA:%200%'\n     142    901343  └─FILTER \n    2500    901343    DISTRIBUTE HASH\n    2500    901343    AGGREGATE bloom_filter_agg(bloom_expr(ci.movie_id,ci.movie_id),255651L,2097152L)\n36200000    901343    DISTRIBUTE HASH\n36200000    901343    DISTRIBUTE HASH\n36200000    901343    TABLE SCAN aka_name\n",
       "sql": "SELECT MIN(n.name) AS voicing_actress,\n       MIN(t.title) AS voiced_movie\nFROM job.aka_name AS an,\n     job.char_name AS chn,\n     job.cast_info AS ci,\n     job.company_name AS cn,\n     job.info_type AS it,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.name AS n,\n     job.role_type AS rt,\n     job.title AS t\nWHERE ci.note IN ('(voice)',\n                  '(voice: Japanese version)',\n                  '(voice) (uncredited)',\n                  '(voice: English version)')\n  AND cn.country_code ='[us]'\n  AND it.info = 'release dates'\n  AND mc.note IS NOT NULL\n  AND (mc.note LIKE '%(USA)%'\n       OR mc.note LIKE '%(worldwide)%')\n  AND mi.info IS NOT NULL\n  AND (mi.info LIKE 'Japan:%200%'\n       OR mi.info LIKE 'USA:%200%')\n  AND n.gender ='f'\n  AND n.name LIKE '%Ang%'\n  AND rt.role ='actress'\n  AND t.production_year BETWEEN 2005 AND 2009\n  AND t.id = mi.movie_id\n  AND t.id = mc.movie_id\n  AND t.id = ci.movie_id\n  AND mc.movie_id = ci.movie_id\n  AND mc.movie_id = mi.movie_id\n  AND mi.movie_id = ci.movie_id\n  AND cn.id = mc.company_id\n  AND it.id = mi.info_type_id\n  AND n.id = ci.person_id\n  AND rt.id = ci.role_id\n  AND n.id = an.person_id\n  AND ci.person_id = an.person_id\n  AND chn.id = ci.person_role_id;\n",
-      "startTime": "2026-06-25T17:34:22.868006Z",
+      "startTime": "2026-07-01T13:19:07.970244Z",
       "status": "OK",
-      "timeMs": 1065.233
+      "timeMs": 3978.431
     }
   ],
   "runtime": {
-    "avgMs": 1065.233,
-    "bestMs": 1065.233,
-    "maxMs": 1065.233,
-    "minMs": 1065.233,
+    "avgMs": 3978.431,
+    "bestMs": 3978.431,
+    "maxMs": 3978.431,
+    "minMs": 3978.431,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

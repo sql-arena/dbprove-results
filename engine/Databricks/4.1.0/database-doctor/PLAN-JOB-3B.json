@@ -15,6 +15,17 @@
           "=": 2,
           ">16x": 0
         },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 1,
+          "=": 1,
+          ">16x": 2
+        },
         "filter": {
           "+2x": 0,
           "+4x": 0,
@@ -82,16 +93,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(t.title)\n       1         1  DISTRIBUTE GATHER\n       1         1  AGGREGATE MIN(t.title)\n      57         5  INNER JOIN HASH ON mk.keyword_id = k.id\n      57       920  │└DISTRIBUTE GATHER\n 1470000       920  │ INNER JOIN HASH ON mi.movie_id = mk.movie_id\n 1470000       227  │ │└DISTRIBUTE GATHER\n 3300000       227  │ │ INNER JOIN HASH ON mi.movie_id = t.id\n 3300000      2287  │ │ │└DISTRIBUTE GATHER\n14800000      2287  │ │ │ TABLE SCAN movie_info WHERE mi.info = 'Bulgaria'\n 2530000    372506  │ │ TABLE SCAN title WHERE (t.production_year IS NOT NULL) AND (t.production_year > 2010L)\n 4520000   4462491  │ TABLE SCAN movie_keyword\n  134000        30  TABLE SCAN keyword WHERE contains(k.keyword,'sequel')\n",
       "sql": "SELECT MIN(t.title) AS movie_title\nFROM job.keyword AS k,\n     job.movie_info AS mi,\n     job.movie_keyword AS mk,\n     job.title AS t\nWHERE k.keyword LIKE '%sequel%'\n  AND mi.info IN ('Bulgaria')\n  AND t.production_year > 2010\n  AND t.id = mi.movie_id\n  AND t.id = mk.movie_id\n  AND mk.movie_id = mi.movie_id\n  AND k.id = mk.keyword_id;\n",
-      "startTime": "2026-06-25T17:37:20.578029Z",
+      "startTime": "2026-07-01T13:23:41.234600Z",
       "status": "OK",
-      "timeMs": 879.515
+      "timeMs": 1908.311
     }
   ],
   "runtime": {
-    "avgMs": 879.515,
-    "bestMs": 879.515,
-    "maxMs": 879.515,
-    "minMs": 879.515,
+    "avgMs": 1908.311,
+    "bestMs": 1908.311,
+    "maxMs": 1908.311,
+    "minMs": 1908.311,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

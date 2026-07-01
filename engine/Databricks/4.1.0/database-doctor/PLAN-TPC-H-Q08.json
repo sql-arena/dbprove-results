@@ -15,6 +15,17 @@
           "=": 0,
           ">16x": 2
         },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 8
+        },
         "filter": {
           "+2x": 0,
           "+4x": 0,
@@ -80,18 +91,18 @@
         "seek": 0,
         "sort": 2
       },
-      "plan": "Estimate    Actual  Operator\n       ∞         2  SORT all_nations.o_year ASC NULLS FIRST\n       ∞         2  AGGREGATE SUM(CASE WHEN (all_nations.nation = 'FRANCE') THEN all_nations.volume ELSE 0.0000BD END), SUM(all_nations.volume) GROUP BY HASH all_nations.o_year\n       ∞         4  DISTRIBUTE HASH ON all_nations.o_year\n       ∞         4  AGGREGATE SUM(CASE WHEN (all_nations.nation = 'FRANCE') THEN all_nations.volume ELSE 0.0000BD END), SUM(all_nations.volume) GROUP BY HASH all_nations.o_year\n       ∞      2647  INNER JOIN HASH ON s_nationkey = n2.n_nationkey\n       ∞        25  │└DISTRIBUTE GATHER\n 6000000        25  │ TABLE SCAN nation\n       ∞      2647  INNER JOIN HASH ON n1.n_regionkey = r_regionkey\n       ∞         1  │└DISTRIBUTE GATHER\n  200000         1  │ TABLE SCAN region WHERE r_name = 'EUROPE'\n       ∞     12905  INNER JOIN HASH ON c_nationkey = n1.n_nationkey\n       ∞        25  │└DISTRIBUTE GATHER\n 1500000        25  │ TABLE SCAN nation\n       ∞     12905  INNER JOIN HASH ON o_custkey = c_custkey\n       ∞    150000  │└DISTRIBUTE GATHER\n   10000    150000  │ TABLE SCAN customer\n       ∞     12905  INNER JOIN HASH ON l_suppkey = s_suppkey\n       ∞     10000  │└DISTRIBUTE GATHER\n  150000     10000  │ TABLE SCAN supplier\n       ∞     12905  INNER JOIN HASH ON l_orderkey = o_orderkey\n       ∞    457263  │└DISTRIBUTE HASH ON o_orderkey\n      25    457263  │ TABLE SCAN orders WHERE (o_orderdate >= DATE'1995-01-01') AND (o_orderdate <= DATE'1996-12-31')\n      1B     42017  INNER JOIN HASH ON l_partkey = p_partkey\n      1B      1403  │└DISTRIBUTE GATHER\n      25      1403  │ TABLE SCAN part WHERE p_type = 'SMALL POLISHED NICKEL'\n       5   5993041  TABLE SCAN lineitem\n",
+      "plan": "Estimate    Actual  Operator\n       ∞         2  SORT all_nations.o_year ASC NULLS FIRST\n       ∞         2  AGGREGATE SUM(CASE WHEN (all_nations.nation = 'FRANCE') THEN all_nations.volume ELSE 0.0000BD END), SUM(all_nations.volume) GROUP BY HASH all_nations.o_year\n       ∞         4  DISTRIBUTE HASH ON all_nations.o_year\n       ∞         4  AGGREGATE SUM(CASE WHEN (all_nations.nation = 'FRANCE') THEN all_nations.volume ELSE 0.0000BD END), SUM(all_nations.volume) GROUP BY HASH all_nations.o_year\n       ∞      2647  INNER JOIN HASH ON s_nationkey = n2.n_nationkey\n       ∞        25  │└DISTRIBUTE GATHER\n 6000000        25  │ TABLE SCAN nation\n       ∞      2647  INNER JOIN HASH ON n1.n_regionkey = r_regionkey\n       ∞         1  │└DISTRIBUTE GATHER\n  200000         1  │ TABLE SCAN region WHERE r_name = 'EUROPE'\n       ∞     12905  INNER JOIN HASH ON c_nationkey = n1.n_nationkey\n       ∞        25  │└DISTRIBUTE GATHER\n 1500000        25  │ TABLE SCAN nation\n       ∞     12905  INNER JOIN HASH ON o_custkey = c_custkey\n       ∞    150000  │└DISTRIBUTE GATHER\n   10000    150000  │ TABLE SCAN customer\n       ∞     12905  INNER JOIN HASH ON l_suppkey = s_suppkey\n       ∞     10000  │└DISTRIBUTE GATHER\n  150000     10000  │ TABLE SCAN supplier\n       ∞     12905  INNER JOIN HASH ON l_orderkey = o_orderkey\n       ∞    457263  │└DISTRIBUTE HASH ON o_orderkey\n      25    457263  │ TABLE SCAN orders WHERE (o_orderdate >= DATE'1995-01-01') AND (o_orderdate <= DATE'1996-12-31')\n      1T     42017  INNER JOIN HASH ON l_partkey = p_partkey\n      1T      1403  │└DISTRIBUTE GATHER\n      25      1403  │ TABLE SCAN part WHERE p_type = 'SMALL POLISHED NICKEL'\n       5   5993041  TABLE SCAN lineitem\n",
       "sql": "/* TPC-H Q08 */\nSELECT o_year,\n       SUM(CASE\n               WHEN nation = 'FRANCE'\n                   THEN volume\n               ELSE 0\n           END) / SUM(volume) AS mkt_share\nFROM (SELECT EXTRACT(YEAR FROM o_orderdate)     AS o_year,\n             l_extendedprice * (1 - l_discount) AS volume,\n             n2.n_name                          AS nation\n      FROM tpch_sf1.lineitem\n      INNER JOIN tpch_sf1.orders\n          ON o_orderkey = l_orderkey\n      INNER JOIN tpch_sf1.part\n          ON l_partkey = p_partkey\n      INNER JOIN tpch_sf1.supplier\n          ON l_suppkey = s_suppkey\n      INNER JOIN tpch_sf1.customer\n          ON o_custkey = c_custkey\n      INNER JOIN tpch_sf1.nation n1\n          ON c_nationkey = n1.n_nationkey\n      INNER JOIN tpch_sf1.region\n          ON n1.n_regionkey = r_regionkey\n      INNER JOIN tpch_sf1.nation n2\n          ON s_nationkey = n2.n_nationkey\n      WHERE r_name = 'EUROPE'\n        AND o_orderdate BETWEEN '1995-01-01' AND '1996-12-31'\n        AND p_type = 'SMALL POLISHED NICKEL') AS all_nations\nGROUP BY o_year\nORDER BY o_year",
-      "startTime": "2026-06-25T17:01:55.237506Z",
+      "startTime": "2026-07-01T13:27:18.430491Z",
       "status": "OK",
-      "timeMs": 1209.127
+      "timeMs": 2485.448
     }
   ],
   "runtime": {
-    "avgMs": 1209.127,
-    "bestMs": 1209.127,
-    "maxMs": 1209.127,
-    "minMs": 1209.127,
+    "avgMs": 2485.448,
+    "bestMs": 2485.448,
+    "maxMs": 2485.448,
+    "minMs": 2485.448,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

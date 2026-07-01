@@ -15,6 +15,17 @@
           "=": 2,
           ">16x": 0
         },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 2,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 2
+        },
         "filter": {
           "+2x": 0,
           "+4x": 0,
@@ -82,16 +93,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(t.title)\n       1         1  DISTRIBUTE GATHER\n       1         1  AGGREGATE MIN(t.title)\n     191         0  INNER JOIN HASH ON mc.company_id = cn.id\n     191         1  │└DISTRIBUTE GATHER\n  235000         1  │ TABLE SCAN company_name WHERE (cn.country_code IS NOT NULL) AND (cn.country_code = 'sm')\n   12700         0  INNER JOIN HASH ON mk.movie_id = mc.movie_id\n   12700     41840  │└DISTRIBUTE GATHER\n   12100     41840  │ INNER JOIN HASH ON mk.movie_id = t.id\n   12100     41840  │ │└DISTRIBUTE GATHER\n      71     41840  │ │ INNER JOIN HASH ON mk.keyword_id = k.id\n      71         1  │ │ │└DISTRIBUTE GATHER\n  134000         1  │ │ │ TABLE SCAN keyword WHERE k.keyword = 'character-name-in-title'\n 4520000   4519861  │ │ TABLE SCAN movie_keyword\n 2530000   2520276  │ TABLE SCAN title\n 2610000         0  TABLE SCAN movie_companies\n",
       "sql": "SELECT MIN(t.title) AS movie_title\nFROM job.company_name AS cn,\n     job.keyword AS k,\n     job.movie_companies AS mc,\n     job.movie_keyword AS mk,\n     job.title AS t\nWHERE cn.country_code ='[sm]'\n  AND k.keyword ='character-name-in-title'\n  AND cn.id = mc.company_id\n  AND mc.movie_id = t.id\n  AND t.id = mk.movie_id\n  AND mk.keyword_id = k.id\n  AND mc.movie_id = mk.movie_id;\n",
-      "startTime": "2026-06-25T17:36:36.292704Z",
+      "startTime": "2026-07-01T13:22:35.728508Z",
       "status": "OK",
-      "timeMs": 1063.926
+      "timeMs": 1738.962
     }
   ],
   "runtime": {
-    "avgMs": 1063.926,
-    "bestMs": 1063.926,
-    "maxMs": 1063.926,
-    "minMs": 1063.926,
+    "avgMs": 1738.962,
+    "bestMs": 1738.962,
+    "maxMs": 1738.962,
+    "minMs": 1738.962,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

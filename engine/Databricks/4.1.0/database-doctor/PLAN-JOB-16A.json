@@ -15,6 +15,17 @@
           "=": 2,
           ">16x": 0
         },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 1,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 2,
+          "=": 2,
+          ">16x": 3
+        },
         "filter": {
           "+2x": 0,
           "+4x": 0,
@@ -82,16 +93,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(an.name), MIN(t.title)\n       1         1  DISTRIBUTE GATHER\n       1         1  AGGREGATE MIN(an.name), MIN(t.title)\n    5200       385  INNER JOIN HASH ON ci.person_id = an.person_id\n    5200       323  │└DISTRIBUTE GATHER\n    3280       323  │ INNER JOIN HASH ON ci.person_id = n.id\n    3280       323  │ │└DISTRIBUTE GATHER\n    3280       323  │ │ INNER JOIN HASH ON mc.movie_id = ci.movie_id\n    3280        25  │ │ │└DISTRIBUTE GATHER\n     199        25  │ │ │ INNER JOIN HASH ON mc.company_id = cn.id\n     199     84843  │ │ │ │└DISTRIBUTE GATHER\n  235000     84843  │ │ │ │ TABLE SCAN company_name WHERE (cn.country_code IS NOT NULL) AND (cn.country_code = 'us')\n     192        53  │ │ │ INNER JOIN HASH ON mk.movie_id = mc.movie_id\n     192       146  │ │ │ │└DISTRIBUTE GATHER\n      75       146  │ │ │ │ INNER JOIN HASH ON mk.movie_id = t.id\n      75     41840  │ │ │ │ │└DISTRIBUTE GATHER\n      71     41840  │ │ │ │ │ INNER JOIN HASH ON mk.keyword_id = k.id\n      71         1  │ │ │ │ │ │└DISTRIBUTE GATHER\n  901000         1  │ │ │ │ │ │ TABLE SCAN keyword WHERE k.keyword = 'character-name-in-title'\n 4170000   4519861  │ │ │ │ │ TABLE SCAN movie_keyword\n36200000     68021  │ │ │ │ TABLE SCAN title WHERE (t.episode_nr IS NOT NULL) AND (t.episode_nr >= 50L) AND (t.episode_nr < 100L)\n 2610000   2584554  │ │ │ TABLE SCAN movie_companies\n 2530000  35421055  │ │ TABLE SCAN cast_info\n  134000   4155205  │ TABLE SCAN name\n 4520000    897248  TABLE SCAN aka_name\n",
       "sql": "SELECT MIN(an.name) AS cool_actor_pseudonym,\n       MIN(t.title) AS series_named_after_char\nFROM job.aka_name AS an,\n     job.cast_info AS ci,\n     job.company_name AS cn,\n     job.keyword AS k,\n     job.movie_companies AS mc,\n     job.movie_keyword AS mk,\n     job.name AS n,\n     job.title AS t\nWHERE cn.country_code ='[us]'\n  AND k.keyword ='character-name-in-title'\n  AND t.episode_nr >= 50\n  AND t.episode_nr < 100\n  AND an.person_id = n.id\n  AND n.id = ci.person_id\n  AND ci.movie_id = t.id\n  AND t.id = mk.movie_id\n  AND mk.keyword_id = k.id\n  AND t.id = mc.movie_id\n  AND mc.company_id = cn.id\n  AND an.person_id = ci.person_id\n  AND ci.movie_id = mc.movie_id\n  AND ci.movie_id = mk.movie_id\n  AND mc.movie_id = mk.movie_id;\n",
-      "startTime": "2026-06-25T17:33:07.555299Z",
+      "startTime": "2026-07-01T13:18:00.888067Z",
       "status": "OK",
-      "timeMs": 1190.903
+      "timeMs": 3993.567
     }
   ],
   "runtime": {
-    "avgMs": 1190.903,
-    "bestMs": 1190.903,
-    "maxMs": 1190.903,
-    "minMs": 1190.903,
+    "avgMs": 3993.567,
+    "bestMs": 3993.567,
+    "maxMs": 3993.567,
+    "minMs": 3993.567,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

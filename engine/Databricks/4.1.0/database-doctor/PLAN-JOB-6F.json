@@ -15,6 +15,17 @@
           "=": 1,
           ">16x": 1
         },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 2,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 2,
+          "=": 0,
+          ">16x": 4
+        },
         "filter": {
           "+2x": 0,
           "+4x": 0,
@@ -82,16 +93,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       9         0  SEQUENCE\n       1         1  ├─AGGREGATE MIN(k.keyword), MIN(n.name), MIN(t.title)\n       1         2  │ DISTRIBUTE GATHER\n       1         2  │ AGGREGATE MIN(k.keyword), MIN(n.name), MIN(t.title)\n    5500    785477  │ INNER JOIN HASH ON ci.person_id = n.id\n    5500    785477  │ │└DISTRIBUTE GATHER\n    5500    785477  │ │ INNER JOIN HASH ON mk.movie_id = ci.movie_id\n    5500     14165  │ │ │└DISTRIBUTE GATHER\n     334     14165  │ │ │ INNER JOIN HASH ON mk.movie_id = t.id\n     334     35548  │ │ │ │└DISTRIBUTE GATHER\n     317     35548  │ │ │ │ INNER JOIN HASH ON mk.keyword_id = k.id\n     317         8  │ │ │ │ │└DISTRIBUTE GATHER\n       -         8  │ │ │ │ │ TABLE SCAN keyword WHERE k.keyword IN('superhero','sequel','second-part','marvel-comics','based-on-comic','tv-special','fight','violence')\n 4170000   4519843  │ │ │ │ TABLE SCAN movie_keyword\n36200000   1377014  │ │ │ TABLE SCAN title WHERE (t.production_year IS NOT NULL) AND (t.production_year > 2000L)\n 2530000  36228389  │ │ TABLE SCAN cast_info\n  346000    285454  │ FILTER \n 4520000   4159860  │ TABLE SCAN name\n       9         0  └─FILTER \n    5500         1    DISTRIBUTE HASH\n    5500         1    AGGREGATE bloom_filter_agg(bloom_expr(ci.person_id,ci.person_id),785477L,8388608L)\n    5500    785477    SELECT\n  134000         8    DISTRIBUTE HASH\n  134000         8    DISTRIBUTE HASH\n  134000         8    TABLE SCAN keyword WHERE k.keyword IN('superhero','sequel','second-part','marvel-comics','based-on-comic','tv-special','fight','violence')\n",
       "sql": "SELECT MIN(k.keyword) AS movie_keyword,\n       MIN(n.name) AS actor_name,\n       MIN(t.title) AS hero_movie\nFROM job.cast_info AS ci,\n     job.keyword AS k,\n     job.movie_keyword AS mk,\n     job.name AS n,\n     job.title AS t\nWHERE k.keyword IN ('superhero',\n                    'sequel',\n                    'second-part',\n                    'marvel-comics',\n                    'based-on-comic',\n                    'tv-special',\n                    'fight',\n                    'violence')\n  AND t.production_year > 2000\n  AND k.id = mk.keyword_id\n  AND t.id = mk.movie_id\n  AND t.id = ci.movie_id\n  AND ci.movie_id = mk.movie_id\n  AND n.id = ci.person_id;\n",
-      "startTime": "2026-06-25T17:38:00.022225Z",
+      "startTime": "2026-07-01T13:24:41.399880Z",
       "status": "OK",
-      "timeMs": 1017.325
+      "timeMs": 2588.385
     }
   ],
   "runtime": {
-    "avgMs": 1017.325,
-    "bestMs": 1017.325,
-    "maxMs": 1017.325,
-    "minMs": 1017.325,
+    "avgMs": 2588.385,
+    "bestMs": 2588.385,
+    "maxMs": 2588.385,
+    "minMs": 2588.385,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

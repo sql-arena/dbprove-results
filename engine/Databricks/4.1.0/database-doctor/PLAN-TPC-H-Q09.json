@@ -15,6 +15,17 @@
           "=": 0,
           ">16x": 2
         },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 6
+        },
         "filter": {
           "+2x": 0,
           "+4x": 0,
@@ -80,18 +91,18 @@
         "seek": 0,
         "sort": 175
       },
-      "plan": "Estimate    Actual  Operator\n       ∞       175  SORT profit.nation ASC NULLS FIRST, profit.o_year DESC NULLS LAST\n       ∞       175  AGGREGATE SUM(profit.amount) GROUP BY HASH profit.nation, profit.o_year\n       ∞       350  DISTRIBUTE HASH ON profit.nation, profit.o_year\n       ∞       350  AGGREGATE SUM(profit.amount) GROUP BY HASH profit.nation, profit.o_year\n       ∞    327148  INNER JOIN HASH ON s_nationkey = n_nationkey\n       ∞        25  │└DISTRIBUTE GATHER\n 6000000        25  │ TABLE SCAN nation\n       ∞    327148  INNER JOIN HASH ON l_suppkey = s_suppkey\n       ∞     10000  │└DISTRIBUTE GATHER\n  200000     10000  │ TABLE SCAN supplier\n       ∞    327148  INNER JOIN HASH ON l_suppkey = ps_suppkey\n       ∞    800000  │└DISTRIBUTE HASH ON ps_suppkey, ps_partkey\n 1500000    800000  │ TABLE SCAN partsupp\n       ∞    327148  INNER JOIN HASH ON l_orderkey = o_orderkey\n       ∞   1500000  │└DISTRIBUTE HASH ON o_orderkey\n  800000   1500000  │ TABLE SCAN orders\n      0B    327148  INNER JOIN HASH ON l_partkey = p_partkey\n      0B     10907  │└DISTRIBUTE GATHER\n      25     10907  │ TABLE SCAN part WHERE contains(p_name,'lace')\n   10000   5993466  TABLE SCAN lineitem\n",
+      "plan": "Estimate    Actual  Operator\n       ∞       175  SORT profit.nation ASC NULLS FIRST, profit.o_year DESC NULLS LAST\n       ∞       175  AGGREGATE SUM(profit.amount) GROUP BY HASH profit.nation, profit.o_year\n       ∞       350  DISTRIBUTE HASH ON profit.nation, profit.o_year\n       ∞       350  AGGREGATE SUM(profit.amount) GROUP BY HASH profit.nation, profit.o_year\n       ∞    327148  INNER JOIN HASH ON s_nationkey = n_nationkey\n       ∞        25  │└DISTRIBUTE GATHER\n 6000000        25  │ TABLE SCAN nation\n       ∞    327148  INNER JOIN HASH ON l_suppkey = s_suppkey\n       ∞     10000  │└DISTRIBUTE GATHER\n  200000     10000  │ TABLE SCAN supplier\n       ∞    327148  INNER JOIN HASH ON l_suppkey = ps_suppkey\n       ∞    800000  │└DISTRIBUTE HASH ON ps_suppkey, ps_partkey\n 1500000    800000  │ TABLE SCAN partsupp\n       ∞    327148  INNER JOIN HASH ON l_orderkey = o_orderkey\n       ∞   1500000  │└DISTRIBUTE HASH ON o_orderkey\n  800000   1500000  │ TABLE SCAN orders\n    840B    327148  INNER JOIN HASH ON l_partkey = p_partkey\n    840B     10907  │└DISTRIBUTE GATHER\n      25     10907  │ TABLE SCAN part WHERE contains(p_name,'lace')\n   10000   5993466  TABLE SCAN lineitem\n",
       "sql": "/* TPC-H Q09 */\nSELECT nation,\n       o_year,\n       SUM(amount) AS sum_profit\nFROM (SELECT n_name                                                          AS nation,\n             EXTRACT(YEAR FROM o_orderdate)                                  AS o_year,\n             l_extendedprice * (1 - l_discount) - ps_supplycost * l_quantity AS amount\n      FROM tpch_sf1.lineitem\n      INNER JOIN tpch_sf1.orders\n          ON l_orderkey = o_orderkey\n      INNER JOIN tpch_sf1.partsupp\n          ON l_suppkey = ps_suppkey\n          AND l_partkey = ps_partkey\n      INNER JOIN tpch_sf1.part\n          ON l_partkey = p_partkey\n      INNER JOIN tpch_sf1.supplier\n          ON l_suppkey = s_suppkey\n      INNER JOIN tpch_sf1.nation\n          ON s_nationkey = n_nationkey\n      WHERE p_name LIKE '%lace%') AS profit\nGROUP BY nation,\n         o_year\nORDER BY nation,\n         o_year DESC",
-      "startTime": "2026-06-25T17:01:58.912447Z",
+      "startTime": "2026-07-01T13:27:23.090358Z",
       "status": "OK",
-      "timeMs": 1123.481
+      "timeMs": 1978.313
     }
   ],
   "runtime": {
-    "avgMs": 1123.481,
-    "bestMs": 1123.481,
-    "maxMs": 1123.481,
-    "minMs": 1123.481,
+    "avgMs": 1978.313,
+    "bestMs": 1978.313,
+    "maxMs": 1978.313,
+    "minMs": 1978.313,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

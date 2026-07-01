@@ -15,6 +15,17 @@
           "=": 1,
           ">16x": 0
         },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 1,
+          "-8x": 1,
+          "<16x": 0,
+          "=": 3,
+          ">16x": 3
+        },
         "filter": {
           "+2x": 0,
           "+4x": 0,
@@ -80,18 +91,18 @@
         "seek": 0,
         "sort": 396
       },
-      "plan": "Estimate    Actual  Operator\n     385       396  SORT numwait DESC NULLS LAST, s_name ASC NULLS FIRST\n     385       396  AGGREGATE COUNT(1) GROUP BY HASH s_name\n     385      3086  DISTRIBUTE HASH ON s_name\n     385      3086  AGGREGATE COUNT(1) GROUP BY HASH s_name\n      3T      3935  INNER JOIN HASH ON s_nationkey = n_nationkey\n      3T         1  │└DISTRIBUTE GATHER\n 6000000         1  │ TABLE SCAN nation WHERE n_name = 'GERMANY'\n     90T     98833  INNER JOIN HASH ON l1.l_suppkey = s_suppkey\n     90T     10000  │└DISTRIBUTE GATHER\n 6000000     10000  │ TABLE SCAN supplier\n      9B     98833  INNER JOIN HASH ON l1.l_orderkey = o_orderkey\n      9B    729413  │└DISTRIBUTE HASH ON o_orderkey\n 6000000    729413  │ TABLE SCAN orders WHERE o_orderstatus = 'F'\n 6000000    202092  LEFT ANTI JOIN HASH ON l1.l_orderkey = l3.l_orderkey\n 6000000   6001215  │└DISTRIBUTE HASH\n 1500000   6001215  │ DISTRIBUTE HASH\n 1500000   6001215  │ TABLE SCAN lineitem\n 6000000   3657708  LEFT SEMI JOIN HASH ON l1.l_orderkey = l2.l_orderkey\n 6000000   6001215  │└DISTRIBUTE HASH ON l2.l_orderkey\n   10000   6001215  │ TABLE SCAN lineitem\n 6000000   3793296  DISTRIBUTE HASH ON l1.l_orderkey\n      25   3793296  TABLE SCAN lineitem WHERE l1.l_receiptdate > l1.l_commitdate\n",
+      "plan": "Estimate    Actual  Operator\n     385       396  SORT numwait DESC NULLS LAST, s_name ASC NULLS FIRST\n     385       396  AGGREGATE COUNT(1) GROUP BY HASH s_name\n     385      3086  DISTRIBUTE HASH ON s_name\n     385      3086  AGGREGATE COUNT(1) GROUP BY HASH s_name\n       ∞      3935  INNER JOIN HASH ON s_nationkey = n_nationkey\n       ∞         1  │└DISTRIBUTE GATHER\n 6000000         1  │ TABLE SCAN nation WHERE n_name = 'GERMANY'\n       ∞     98833  INNER JOIN HASH ON l1.l_suppkey = s_suppkey\n       ∞     10000  │└DISTRIBUTE GATHER\n 6000000     10000  │ TABLE SCAN supplier\n      9T     98833  INNER JOIN HASH ON l1.l_orderkey = o_orderkey\n      9T    729413  │└DISTRIBUTE HASH ON o_orderkey\n 6000000    729413  │ TABLE SCAN orders WHERE o_orderstatus = 'F'\n 6000000    202092  LEFT ANTI JOIN HASH ON l1.l_orderkey = l3.l_orderkey\n 6000000   6001215  │└DISTRIBUTE HASH\n 1500000   6001215  │ DISTRIBUTE HASH\n 1500000   6001215  │ TABLE SCAN lineitem\n 6000000   3657708  LEFT SEMI JOIN HASH ON l1.l_orderkey = l2.l_orderkey\n 6000000   6001215  │└DISTRIBUTE HASH ON l2.l_orderkey\n   10000   6001215  │ TABLE SCAN lineitem\n 6000000   3793296  DISTRIBUTE HASH ON l1.l_orderkey\n      25   3793296  TABLE SCAN lineitem WHERE l1.l_receiptdate > l1.l_commitdate\n",
       "sql": "/* TPC-H Q21 */\nSELECT s_name, COUNT(*) AS numwait\nFROM tpch_sf1.lineitem l1\nINNER JOIN tpch_sf1.orders\n    ON l1.l_orderkey = o_orderkey\nINNER JOIN tpch_sf1.supplier\n    ON l1.l_suppkey = s_suppkey\nINNER JOIN tpch_sf1.nation\n    ON s_nationkey = n_nationkey\nWHERE o_orderstatus = 'F'\n  AND l1.l_receiptdate > l1.l_commitdate\n  AND EXISTS (SELECT 1\n              FROM tpch_sf1.lineitem l2\n              WHERE l2.l_orderkey = l1.l_orderkey\n                AND l2.l_suppkey <> l1.l_suppkey)\n  AND NOT EXISTS (SELECT 1\n                  FROM tpch_sf1.lineitem l3\n                  WHERE l3.l_orderkey = l1.l_orderkey\n                    AND l3.l_suppkey <> l1.l_suppkey\n                    AND l3.l_receiptdate\n                      > l3.l_commitdate)\n  AND n_name = 'GERMANY'\nGROUP BY s_name\nORDER BY numwait DESC,\n         s_name\n",
-      "startTime": "2026-06-25T17:02:39.250649Z",
+      "startTime": "2026-07-01T13:28:10.241358Z",
       "status": "OK",
-      "timeMs": 1099.476
+      "timeMs": 1690.284
     }
   ],
   "runtime": {
-    "avgMs": 1099.476,
-    "bestMs": 1099.476,
-    "maxMs": 1099.476,
-    "minMs": 1099.476,
+    "avgMs": 1690.284,
+    "bestMs": 1690.284,
+    "maxMs": 1690.284,
+    "minMs": 1690.284,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

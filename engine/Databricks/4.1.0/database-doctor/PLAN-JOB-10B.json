@@ -15,6 +15,17 @@
           "=": 2,
           ">16x": 0
         },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 0
+        },
         "filter": {
           "+2x": 0,
           "+4x": 0,
@@ -72,26 +83,26 @@
         }
       },
       "operatorRows": {
-        "aggregate": 0,
-        "distribute": 0,
-        "hash": 0,
-        "join": 0,
-        "scan": 0,
+        "aggregate": -1,
+        "distribute": -1,
+        "hash": -1,
+        "join": -1,
+        "scan": -1,
         "seek": 0,
         "sort": 0
       },
       "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(chn.name), MIN(t.title)\n       1         0  DISTRIBUTE GATHER\n       1         0  AGGREGATE MIN(chn.name), MIN(t.title)\n  209000         ∞  DISTRIBUTE GATHER\n  209000         ∞  INNER JOIN HASH ON ci.role_id = rt.id\n  209000         ∞  │└DISTRIBUTE GATHER\n 2610000         ∞  │ TABLE SCAN role_type WHERE rt.role = 'actor'\n  209000         ∞  INNER JOIN HASH ON mc.movie_id = ci.movie_id\n  209000         ∞  │└DISTRIBUTE GATHER\n  209000         ∞  │ INNER JOIN HASH ON mc.movie_id = t.id\n  209000         ∞  │ │└DISTRIBUTE GATHER\n   12700         ∞  │ │ INNER JOIN HASH ON mc.company_type_id = ct.id\n   12700         ∞  │ │ │└DISTRIBUTE GATHER\n 2530000         ∞  │ │ │ TABLE SCAN company_type\n   12100         ∞  │ │ INNER JOIN HASH ON mc.company_id = cn.id\n   12100         ∞  │ │ │└DISTRIBUTE GATHER\n      12         ∞  │ │ │ TABLE SCAN company_name WHERE (cn.country_code IS NOT NULL) AND (cn.country_code = 'ru')\n36200000         ∞  │ │ TABLE SCAN movie_companies\n       4         ∞  │ TABLE SCAN title WHERE (t.production_year IS NOT NULL) AND (t.production_year > 2010L)\n  235000         ∞  TABLE SCAN cast_info WHERE (ci.note IS NOT NULL) AND (ci.person_role_id IS NOT NULL) AND contains(ci.note,'(producer)')\n",
       "sql": "SELECT MIN(chn.name) AS character,\n       MIN(t.title) AS russian_mov_with_actor_producer\nFROM job.char_name AS chn,\n     job.cast_info AS ci,\n     job.company_name AS cn,\n     job.company_type AS ct,\n     job.movie_companies AS mc,\n     job.role_type AS rt,\n     job.title AS t\nWHERE ci.note LIKE '%(producer)%'\n  AND cn.country_code = '[ru]'\n  AND rt.role = 'actor'\n  AND t.production_year > 2010\n  AND t.id = mc.movie_id\n  AND t.id = ci.movie_id\n  AND ci.movie_id = mc.movie_id\n  AND chn.id = ci.person_role_id\n  AND rt.id = ci.role_id\n  AND cn.id = mc.company_id\n  AND ct.id = mc.company_type_id;\n",
-      "startTime": "2026-06-25T17:31:54.001001Z",
+      "startTime": "2026-07-01T13:16:20.429890Z",
       "status": "OK",
-      "timeMs": 1068.801
+      "timeMs": 2457.81
     }
   ],
   "runtime": {
-    "avgMs": 1068.801,
-    "bestMs": 1068.801,
-    "maxMs": 1068.801,
-    "minMs": 1068.801,
+    "avgMs": 2457.81,
+    "bestMs": 2457.81,
+    "maxMs": 2457.81,
+    "minMs": 2457.81,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

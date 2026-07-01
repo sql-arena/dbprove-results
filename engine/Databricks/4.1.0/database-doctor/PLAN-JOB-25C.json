@@ -15,6 +15,17 @@
           "=": 1,
           ">16x": 0
         },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 5,
+          "=": 0,
+          ">16x": 3
+        },
         "filter": {
           "+2x": 0,
           "+4x": 0,
@@ -82,16 +93,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(mi.info), MIN(mi_idx.info), MIN(n.name), MIN(t.title)\n       1         2  DISTRIBUTE GATHER\n       1         2  AGGREGATE MIN(mi.info), MIN(mi_idx.info), MIN(n.name), MIN(t.title)\n     875     26153  INNER JOIN HASH ON ci.movie_id = mi_idx.movie_id\n     875     63701  │└DISTRIBUTE GATHER\n     254     63701  │ INNER JOIN HASH ON mi_idx.info_type_id = it2.id\n     254         1  │ │└DISTRIBUTE GATHER\n36200000         1  │ │ TABLE SCAN info_type WHERE it2.info = 'votes'\n      34    191657  │ INNER JOIN HASH ON mk.movie_id = mi_idx.movie_id\n      34     76714  │ │└DISTRIBUTE GATHER\n     875     76714  │ │ INNER JOIN HASH ON mk.keyword_id = k.id\n     875         7  │ │ │└DISTRIBUTE GATHER\n 1380000         7  │ │ │ TABLE SCAN keyword WHERE k.keyword IN('murder','violence','blood','gore','death','female-nudity','hospital')\n 4520000   4519852  │ │ TABLE SCAN movie_keyword\n14800000   1375949  │ TABLE SCAN movie_info_idx\n     254     45265  INNER JOIN HASH ON ci.person_id = n.id\n     254   1739579  │└DISTRIBUTE GATHER\n     113   1739579  │ TABLE SCAN name WHERE (n.gender IS NOT NULL) AND (n.gender = 'm')\n      36     93240  INNER JOIN HASH ON mi.movie_id = ci.movie_id\n      36   1244716  │└DISTRIBUTE GATHER\n 4170000   1244716  │ TABLE SCAN cast_info WHERE ci.note IN('(writer)','(head writer)','(written by)','(story)','(story editor)')\n     875    186594  INNER JOIN HASH ON mi.movie_id = t.id\n     875    186594  │└DISTRIBUTE GATHER\n     281    186594  │ INNER JOIN HASH ON mi.info_type_id = it1.id\n     281         1  │ │└DISTRIBUTE GATHER\n     113         1  │ │ TABLE SCAN info_type WHERE it1.info = 'genres'\n  134000    186594  │ TABLE SCAN movie_info WHERE mi.info IN('Horror','Action','Sci-Fi','Thriller','Crime','War')\n 2530000   2520894  TABLE SCAN title\n",
       "sql": "SELECT MIN(mi.info) AS movie_budget,\n       MIN(mi_idx.info) AS movie_votes,\n       MIN(n.name) AS male_writer,\n       MIN(t.title) AS violent_movie_title\nFROM job.cast_info AS ci,\n     job.info_type AS it1,\n     job.info_type AS it2,\n     job.keyword AS k,\n     job.movie_info AS mi,\n     job.movie_info_idx AS mi_idx,\n     job.movie_keyword AS mk,\n     job.name AS n,\n     job.title AS t\nWHERE ci.note IN ('(writer)',\n                  '(head writer)',\n                  '(written by)',\n                  '(story)',\n                  '(story editor)')\n  AND it1.info = 'genres'\n  AND it2.info = 'votes'\n  AND k.keyword IN ('murder',\n                    'violence',\n                    'blood',\n                    'gore',\n                    'death',\n                    'female-nudity',\n                    'hospital')\n  AND mi.info IN ('Horror',\n                  'Action',\n                  'Sci-Fi',\n                  'Thriller',\n                  'Crime',\n                  'War')\n  AND n.gender = 'm'\n  AND t.id = mi.movie_id\n  AND t.id = mi_idx.movie_id\n  AND t.id = ci.movie_id\n  AND t.id = mk.movie_id\n  AND ci.movie_id = mi.movie_id\n  AND ci.movie_id = mi_idx.movie_id\n  AND ci.movie_id = mk.movie_id\n  AND mi.movie_id = mi_idx.movie_id\n  AND mi.movie_id = mk.movie_id\n  AND mi_idx.movie_id = mk.movie_id\n  AND n.id = ci.person_id\n  AND it1.id = mi.info_type_id\n  AND it2.id = mi_idx.info_type_id\n  AND k.id = mk.keyword_id;\n",
-      "startTime": "2026-06-25T17:35:46.239403Z",
+      "startTime": "2026-07-01T13:21:13.457842Z",
       "status": "OK",
-      "timeMs": 1014.335
+      "timeMs": 3626.03
     }
   ],
   "runtime": {
-    "avgMs": 1014.335,
-    "bestMs": 1014.335,
-    "maxMs": 1014.335,
-    "minMs": 1014.335,
+    "avgMs": 3626.03,
+    "bestMs": 3626.03,
+    "maxMs": 3626.03,
+    "minMs": 3626.03,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

@@ -15,6 +15,17 @@
           "=": 2,
           ">16x": 0
         },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 2,
+          "=": 2,
+          ">16x": 1
+        },
         "filter": {
           "+2x": 0,
           "+4x": 0,
@@ -82,16 +93,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(t.title)\n       1         1  DISTRIBUTE GATHER\n       1         1  AGGREGATE MIN(t.title)\n      33         0  INNER JOIN HASH ON mc.company_type_id = ct.id\n      33         1  │└DISTRIBUTE GATHER\n       4         1  │ TABLE SCAN company_type WHERE ct.kind = 'production companies'\n      31         0  INNER JOIN HASH ON mi.movie_id = mc.movie_id\n      31     82354  │└DISTRIBUTE GATHER\n      31     82354  │ INNER JOIN HASH ON mi.movie_id = t.id\n      31    552777  │ │└DISTRIBUTE GATHER\n  459000    552777  │ │ INNER JOIN HASH ON mi.info_type_id = it.id\n  459000    552777  │ │ │└DISTRIBUTE GATHER\n 2530000    552777  │ │ │ TABLE SCAN movie_info WHERE mi.info IN('USA','America')\n     113         5  │ │ TABLE SCAN info_type\n14800000    390730  │ TABLE SCAN title WHERE (t.production_year IS NOT NULL) AND (t.production_year > 2010L)\n 2610000         0  TABLE SCAN movie_companies WHERE (mc.note IS NOT NULL) AND contains(mc.note,'(VHS)') AND contains(mc.note,'(USA)') AND contains(mc.note,'(1994)')\n",
       "sql": "SELECT MIN(t.title) AS american_vhs_movie\nFROM job.company_type AS ct,\n     job.info_type AS it,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.title AS t\nWHERE ct.kind = 'production companies'\n  AND mc.note LIKE '%(VHS)%'\n  AND mc.note LIKE '%(USA)%'\n  AND mc.note LIKE '%(1994)%'\n  AND mi.info IN ('USA',\n                  'America')\n  AND t.production_year > 2010\n  AND t.id = mi.movie_id\n  AND t.id = mc.movie_id\n  AND mc.movie_id = mi.movie_id\n  AND ct.id = mc.company_type_id\n  AND it.id = mi.info_type_id;\n",
-      "startTime": "2026-06-25T17:37:38.314651Z",
+      "startTime": "2026-07-01T13:24:04.714147Z",
       "status": "OK",
-      "timeMs": 966.351
+      "timeMs": 3385.209
     }
   ],
   "runtime": {
-    "avgMs": 966.351,
-    "bestMs": 966.351,
-    "maxMs": 966.351,
-    "minMs": 966.351,
+    "avgMs": 3385.209,
+    "bestMs": 3385.209,
+    "maxMs": 3385.209,
+    "minMs": 3385.209,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

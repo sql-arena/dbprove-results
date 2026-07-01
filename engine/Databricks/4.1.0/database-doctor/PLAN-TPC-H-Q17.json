@@ -15,6 +15,17 @@
           "=": 1,
           ">16x": 1
         },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 1,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 2
+        },
         "filter": {
           "+2x": 0,
           "+4x": 0,
@@ -80,18 +91,18 @@
         "seek": 0,
         "sort": 0
       },
-      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE SUM(l_extendedprice)\n       1         2  DISTRIBUTE GATHER\n       1         2  AGGREGATE SUM(l_extendedprice)\n       ∞       537  INNER JOIN HASH ON p_partkey = li.l_partkey\n       ∞    200000  │└DISTRIBUTE GATHER\n  200000    200000  │ FILTER \n 6000000    200000  │ AGGREGATE AVG(li.l_quantity) GROUP BY HASH li.l_partkey\n 6000000    399994  │ DISTRIBUTE HASH ON li.l_partkey\n 6000000    399994  │ AGGREGATE AVG(li.l_quantity) GROUP BY HASH li.l_partkey\n 6000000   6001215  │ TABLE SCAN lineitem\n      1B      6029  INNER JOIN HASH ON l_partkey = p_partkey\n      1B       198  │└DISTRIBUTE GATHER\n  200000       198  │ TABLE SCAN part WHERE (p_brand = 'Brand#13') AND (p_container = 'MED CAN')\n 6000000   5993033  TABLE SCAN lineitem\n",
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE SUM(l_extendedprice)\n       1         2  DISTRIBUTE GATHER\n       1         2  AGGREGATE SUM(l_extendedprice)\n       ∞       537  INNER JOIN HASH ON p_partkey = li.l_partkey\n       ∞    200000  │└DISTRIBUTE GATHER\n  200000    200000  │ FILTER \n 6000000    200000  │ AGGREGATE AVG(li.l_quantity) GROUP BY HASH li.l_partkey\n 6000000    399994  │ DISTRIBUTE HASH ON li.l_partkey\n 6000000    399994  │ AGGREGATE AVG(li.l_quantity) GROUP BY HASH li.l_partkey\n 6000000   6001215  │ TABLE SCAN lineitem\n      1T      6029  INNER JOIN HASH ON l_partkey = p_partkey\n      1T       198  │└DISTRIBUTE GATHER\n  200000       198  │ TABLE SCAN part WHERE (p_brand = 'Brand#13') AND (p_container = 'MED CAN')\n 6000000   5993033  TABLE SCAN lineitem\n",
       "sql": "/* TPC-H Q17 */\nSELECT SUM(l_extendedprice) / 7.0 AS avg_yearly\nFROM tpch_sf1.lineitem\nINNER JOIN tpch_sf1.part\n    ON l_partkey = p_partkey\nWHERE p_brand = 'Brand#13'\n  AND p_container = 'MED CAN'\n  AND l_quantity < (SELECT 0.2 * AVG(l_quantity) AS l_avg\n                    FROM tpch_sf1.lineitem li\n                    WHERE l_partkey = p_partkey)",
-      "startTime": "2026-06-25T17:02:27.172423Z",
+      "startTime": "2026-07-01T13:27:55.306905Z",
       "status": "OK",
-      "timeMs": 861.619
+      "timeMs": 1715.046
     }
   ],
   "runtime": {
-    "avgMs": 861.619,
-    "bestMs": 861.619,
-    "maxMs": 861.619,
-    "minMs": 861.619,
+    "avgMs": 1715.046,
+    "bestMs": 1715.046,
+    "maxMs": 1715.046,
+    "minMs": 1715.046,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

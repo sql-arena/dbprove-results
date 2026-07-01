@@ -15,6 +15,17 @@
           "=": 1,
           ">16x": 0
         },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 1
+        },
         "filter": {
           "+2x": 0,
           "+4x": 0,
@@ -80,18 +91,18 @@
         "seek": 0,
         "sort": 0
       },
-      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE SUM(l_extendedprice * (1BD - l_discount))\n       1         2  DISTRIBUTE GATHER\n       1         2  AGGREGATE SUM(l_extendedprice * (1BD - l_discount))\n      1B       127  INNER JOIN HASH ON l_partkey = p_partkey\n      1B       511  │└DISTRIBUTE HASH ON p_partkey\n 6000000       511  │ TABLE SCAN part WHERE (p_size >= 1) AND (((((p_brand = 'Brand#11') AND (p_container IN('SM CASE','SM BOX','SM PACK','SM PKG'))) AND (p_size <= 5)) OR (((p_brand = 'Brand#22') AND (p_container IN('MED BAG','MED BOX','MED PKG','MED PACK'))) AND (p_size <= 10))) OR (((p_brand = 'Brand#33') AND (p_container IN('LG CASE','LG BOX','LG PACK','LG PKG'))) AND (p_size <= 15)))\n  200000    131625  TABLE SCAN lineitem WHERE (l_shipmode IN('AIR','AIR REG')) AND (l_shipinstruct = 'DELIVER IN PERSON') AND (l_quantity >= 5.00BD) AND (l_quantity <= 35.00BD)\n",
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE SUM(l_extendedprice * (1BD - l_discount))\n       1         2  DISTRIBUTE GATHER\n       1         2  AGGREGATE SUM(l_extendedprice * (1BD - l_discount))\n      1T       127  INNER JOIN HASH ON l_partkey = p_partkey\n      1T       511  │└DISTRIBUTE HASH ON p_partkey\n 6000000       511  │ TABLE SCAN part WHERE (p_size >= 1) AND (((((p_brand = 'Brand#11') AND (p_container IN('SM CASE','SM BOX','SM PACK','SM PKG'))) AND (p_size <= 5)) OR (((p_brand = 'Brand#22') AND (p_container IN('MED BAG','MED BOX','MED PKG','MED PACK'))) AND (p_size <= 10))) OR (((p_brand = 'Brand#33') AND (p_container IN('LG CASE','LG BOX','LG PACK','LG PKG'))) AND (p_size <= 15)))\n  200000    131625  TABLE SCAN lineitem WHERE (l_shipmode IN('AIR','AIR REG')) AND (l_shipinstruct = 'DELIVER IN PERSON') AND (l_quantity >= 5.00BD) AND (l_quantity <= 35.00BD)\n",
       "sql": "/* TPC-H Q19 */\nSELECT SUM(l_extendedprice * (1 - l_discount)) AS revenue\nFROM tpch_sf1.lineitem\nINNER JOIN tpch_sf1.part ON p_partkey = l_partkey\nWHERE (\n\n        p_brand = 'Brand#11'\n        AND p_container IN ('SM CASE', 'SM BOX', 'SM PACK', 'SM PKG')\n        AND l_quantity >= 5 AND l_quantity <= 5 + 10\n        AND p_size BETWEEN 1 AND 5\n        AND l_shipmode IN ('AIR', 'AIR REG')\n        AND l_shipinstruct = 'DELIVER IN PERSON'\n    )\n   OR ( p_brand = 'Brand#22'\n        AND p_container IN ('MED BAG', 'MED BOX', 'MED PKG', 'MED PACK')\n        AND l_quantity >= 15 AND l_quantity <= 15 + 10\n        AND p_size BETWEEN 1 AND 10\n        AND l_shipmode IN ('AIR', 'AIR REG')\n        AND l_shipinstruct = 'DELIVER IN PERSON'\n    )\n   OR ( p_brand = 'Brand#33'\n        AND p_container IN ('LG CASE', 'LG BOX', 'LG PACK', 'LG PKG')\n        AND l_quantity >= 25 AND l_quantity <= 25 + 10\n        AND p_size BETWEEN 1 AND 15\n        AND l_shipmode IN ('AIR', 'AIR REG')\n        AND l_shipinstruct = 'DELIVER IN PERSON'\n    )\n",
-      "startTime": "2026-06-25T17:02:33.141218Z",
+      "startTime": "2026-07-01T13:28:02.876201Z",
       "status": "OK",
-      "timeMs": 886.079
+      "timeMs": 1660.366
     }
   ],
   "runtime": {
-    "avgMs": 886.079,
-    "bestMs": 886.079,
-    "maxMs": 886.079,
-    "minMs": 886.079,
+    "avgMs": 1660.366,
+    "bestMs": 1660.366,
+    "maxMs": 1660.366,
+    "minMs": 1660.366,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

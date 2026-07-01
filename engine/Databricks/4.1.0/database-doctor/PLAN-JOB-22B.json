@@ -15,6 +15,17 @@
           "=": 2,
           ">16x": 0
         },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 1,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 1,
+          "-8x": 0,
+          "<16x": 2,
+          "=": 1,
+          ">16x": 6
+        },
         "filter": {
           "+2x": 0,
           "+4x": 0,
@@ -82,16 +93,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(cn.name), MIN(mi_idx.info), MIN(t.title)\n       1         1  DISTRIBUTE GATHER\n       1         1  AGGREGATE MIN(cn.name), MIN(mi_idx.info), MIN(t.title)\n    1530        31  INNER JOIN HASH ON mi.info_type_id = it1.id\n    1530         1  │└DISTRIBUTE GATHER\n 4520000         1  │ TABLE SCAN info_type WHERE it1.info = 'countries'\n    1530        34  INNER JOIN HASH ON mc.movie_id = mi.movie_id\n    1530    669336  │└DISTRIBUTE GATHER\n  134000    669336  │ TABLE SCAN movie_info WHERE mi.info IN('Germany','German','USA','American')\n    1530        50  INNER JOIN HASH ON mi_idx.info_type_id = it2.id\n    1530         1  │└DISTRIBUTE GATHER\n       7         1  │ TABLE SCAN info_type WHERE it2.info = 'rating'\n    1530       149  INNER JOIN HASH ON mc.movie_id = mi_idx.movie_id\n    1530        62  │└DISTRIBUTE GATHER\n     492        62  │ INNER JOIN HASH ON mc.company_id = cn.id\n     492        95  │ │└DISTRIBUTE GATHER\n     476        95  │ │ INNER JOIN HASH ON mc.company_type_id = ct.id\n     476         4  │ │ │└DISTRIBUTE GATHER\n       4         4  │ │ │ TABLE SCAN company_type\n     476        95  │ │ INNER JOIN HASH ON mk.movie_id = mc.movie_id\n     476      3517  │ │ │└DISTRIBUTE GATHER\n     186      3517  │ │ │ INNER JOIN HASH ON t.kind_id = kt.id\n     186         2  │ │ │ │└DISTRIBUTE GATHER\n 1380000         2  │ │ │ │ TABLE SCAN kind_type WHERE kt.kind IN('movie','episode')\n     186      4037  │ │ │ INNER JOIN HASH ON mk.movie_id = t.id\n     186     37091  │ │ │ │└DISTRIBUTE GATHER\n     176     37091  │ │ │ │ INNER JOIN HASH ON mk.keyword_id = k.id\n     176         3  │ │ │ │ │└DISTRIBUTE GATHER\n     113         3  │ │ │ │ │ TABLE SCAN keyword WHERE k.keyword IN('murder','murder-in-title','blood','violence')\n14800000   4519843  │ │ │ │ TABLE SCAN movie_keyword\n     113    531554  │ │ │ TABLE SCAN title WHERE (t.production_year IS NOT NULL) AND (t.production_year > 2009L)\n  235000    244695  │ │ TABLE SCAN movie_companies WHERE (mc.note IS NOT NULL) AND ( NOT contains(mc.note,'(USA)')) AND mc.note LIKE '%(200%)%'\n 2610000    123973  │ TABLE SCAN company_name WHERE (cn.country_code IS NOT NULL) AND ( NOT (cn.country_code = 'us'))\n 2530000    747672  TABLE SCAN movie_info_idx WHERE mi_idx.info < '7.0'\n",
       "sql": "SELECT MIN(cn.name) AS movie_company,\n       MIN(mi_idx.info) AS rating,\n       MIN(t.title) AS western_violent_movie\nFROM job.company_name AS cn,\n     job.company_type AS ct,\n     job.info_type AS it1,\n     job.info_type AS it2,\n     job.keyword AS k,\n     job.kind_type AS kt,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.movie_info_idx AS mi_idx,\n     job.movie_keyword AS mk,\n     job.title AS t\nWHERE cn.country_code != '[us]'\n  AND it1.info = 'countries'\n  AND it2.info = 'rating'\n  AND k.keyword IN ('murder',\n                    'murder-in-title',\n                    'blood',\n                    'violence')\n  AND kt.kind IN ('movie',\n                  'episode')\n  AND mc.note NOT LIKE '%(USA)%'\n  AND mc.note LIKE '%(200%)%'\n  AND mi.info IN ('Germany',\n                  'German',\n                  'USA',\n                  'American')\n  AND mi_idx.info < '7.0'\n  AND t.production_year > 2009\n  AND kt.id = t.kind_id\n  AND t.id = mi.movie_id\n  AND t.id = mk.movie_id\n  AND t.id = mi_idx.movie_id\n  AND t.id = mc.movie_id\n  AND mk.movie_id = mi.movie_id\n  AND mk.movie_id = mi_idx.movie_id\n  AND mk.movie_id = mc.movie_id\n  AND mi.movie_id = mi_idx.movie_id\n  AND mi.movie_id = mc.movie_id\n  AND mc.movie_id = mi_idx.movie_id\n  AND k.id = mk.keyword_id\n  AND it1.id = mi.info_type_id\n  AND it2.id = mi_idx.info_type_id\n  AND ct.id = mc.company_type_id\n  AND cn.id = mc.company_id;\n",
-      "startTime": "2026-06-25T17:35:11.662231Z",
+      "startTime": "2026-07-01T13:20:20.829220Z",
       "status": "OK",
-      "timeMs": 1105.086
+      "timeMs": 2799.939
     }
   ],
   "runtime": {
-    "avgMs": 1105.086,
-    "bestMs": 1105.086,
-    "maxMs": 1105.086,
-    "minMs": 1105.086,
+    "avgMs": 2799.939,
+    "bestMs": 2799.939,
+    "maxMs": 2799.939,
+    "minMs": 2799.939,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

@@ -15,6 +15,17 @@
           "=": 1,
           ">16x": 0
         },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 1
+        },
         "filter": {
           "+2x": 0,
           "+4x": 0,
@@ -80,18 +91,18 @@
         "seek": 0,
         "sort": 0
       },
-      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE SUM(CASE WHEN startswith(p_type,'PROMO') THEN (l_extendedprice * (1BD - l_discount)) ELSE 0.0000BD END), SUM(l_extendedprice * (1BD - l_discount))\n       1         2  DISTRIBUTE GATHER\n       1         2  AGGREGATE SUM(CASE WHEN startswith(p_type,'PROMO') THEN (l_extendedprice * (1BD - l_discount)) ELSE 0.0000BD END), SUM(l_extendedprice * (1BD - l_discount))\n      1B     71636  INNER JOIN HASH ON l_partkey = p_partkey\n      1B    200000  │└DISTRIBUTE GATHER\n 6000000    200000  │ TABLE SCAN part\n  200000     71636  TABLE SCAN lineitem WHERE (l_shipdate >= DATE'1996-02-01') AND (l_shipdate < DATE'1996-03-01')\n",
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE SUM(CASE WHEN startswith(p_type,'PROMO') THEN (l_extendedprice * (1BD - l_discount)) ELSE 0.0000BD END), SUM(l_extendedprice * (1BD - l_discount))\n       1         2  DISTRIBUTE GATHER\n       1         2  AGGREGATE SUM(CASE WHEN startswith(p_type,'PROMO') THEN (l_extendedprice * (1BD - l_discount)) ELSE 0.0000BD END), SUM(l_extendedprice * (1BD - l_discount))\n      1T     71636  INNER JOIN HASH ON l_partkey = p_partkey\n      1T    200000  │└DISTRIBUTE GATHER\n 6000000    200000  │ TABLE SCAN part\n  200000     71636  TABLE SCAN lineitem WHERE (l_shipdate >= DATE'1996-02-01') AND (l_shipdate < DATE'1996-03-01')\n",
       "sql": "/* TPC-H Q14 */\nSELECT 100.00 * SUM(CASE\n                        WHEN p_type LIKE 'PROMO%'\n                            THEN l_extendedprice * (1 - l_discount)\n                        ELSE 0\n    END) / SUM(l_extendedprice * (1 - l_discount)) AS promo_revenue\nFROM tpch_sf1.lineitem\nINNER JOIN tpch_sf1.part\n    ON l_partkey = p_partkey\nWHERE l_shipdate >= '1996-02-01'\n  AND l_shipdate < '1996-03-01'",
-      "startTime": "2026-06-25T17:02:16.959676Z",
+      "startTime": "2026-07-01T13:27:44.413915Z",
       "status": "OK",
-      "timeMs": 1139.549
+      "timeMs": 1370.019
     }
   ],
   "runtime": {
-    "avgMs": 1139.549,
-    "bestMs": 1139.549,
-    "maxMs": 1139.549,
-    "minMs": 1139.549,
+    "avgMs": 1370.019,
+    "bestMs": 1370.019,
+    "maxMs": 1370.019,
+    "minMs": 1370.019,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

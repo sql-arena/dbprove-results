@@ -15,6 +15,17 @@
           "=": 1,
           ">16x": 1
         },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 1,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 7
+        },
         "filter": {
           "+2x": 0,
           "+4x": 0,
@@ -82,16 +93,16 @@
       },
       "plan": "Estimate    Actual  Operator\n36200000         0  SEQUENCE\n       1         1  ├─AGGREGATE MIN(k.keyword), MIN(n.name), MIN(t.title)\n       1         4  │ DISTRIBUTE GATHER\n       1         4  │ AGGREGATE MIN(k.keyword), MIN(n.name), MIN(t.title)\n    1230         2  │ INNER JOIN HASH ON ci.movie_id = mk.movie_id\n    1230        14  │ │└DISTRIBUTE GATHER\n25700000        14  │ │ INNER JOIN HASH ON mk.keyword_id = k.id\n25700000         1  │ │ │└DISTRIBUTE GATHER\n 4520000         1  │ │ │ TABLE SCAN keyword WHERE k.keyword = 'marvel-cinematic-universe'\n 4170000   4499355  │ │ TABLE SCAN movie_keyword\n 1500000         3  │ INNER JOIN HASH ON ci.movie_id = t.id\n 1500000       438  │ │└DISTRIBUTE GATHER\n 2530000       438  │ │ TABLE SCAN title WHERE (t.production_year IS NOT NULL) AND (t.production_year > 2014L)\n      71         3  │ INNER JOIN HASH ON ci.person_id = n.id\n      71         2  │ │└DISTRIBUTE HASH ON n.id\n  134000         2  │ │ TABLE SCAN name WHERE n.name LIKE '%Downey%Robert%'\n 2920000    124345  │ FILTER \n       -   8119699  │ TABLE SCAN cast_info\n36200000         0  └─FILTER \n25700000         1    DISTRIBUTE HASH\n25700000         1    AGGREGATE bloom_filter_agg(bloom_expr(t.id,t.id),438L,4096L)\n25700000       438    SELECT\n36200000         1    DISTRIBUTE HASH\n36200000         1    DISTRIBUTE HASH\n36200000         1    TABLE SCAN keyword WHERE k.keyword = 'marvel-cinematic-universe'\n",
       "sql": "SELECT MIN(k.keyword) AS movie_keyword,\n       MIN(n.name) AS actor_name,\n       MIN(t.title) AS marvel_movie\nFROM job.cast_info AS ci,\n     job.keyword AS k,\n     job.movie_keyword AS mk,\n     job.name AS n,\n     job.title AS t\nWHERE k.keyword = 'marvel-cinematic-universe'\n  AND n.name LIKE '%Downey%Robert%'\n  AND t.production_year > 2014\n  AND k.id = mk.keyword_id\n  AND t.id = mk.movie_id\n  AND t.id = ci.movie_id\n  AND ci.movie_id = mk.movie_id\n  AND n.id = ci.person_id;\n",
-      "startTime": "2026-06-25T17:37:50.323632Z",
+      "startTime": "2026-07-01T13:24:28.358363Z",
       "status": "OK",
-      "timeMs": 882.653
+      "timeMs": 2234.255
     }
   ],
   "runtime": {
-    "avgMs": 882.653,
-    "bestMs": 882.653,
-    "maxMs": 882.653,
-    "minMs": 882.653,
+    "avgMs": 2234.255,
+    "bestMs": 2234.255,
+    "maxMs": 2234.255,
+    "minMs": 2234.255,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

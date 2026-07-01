@@ -15,6 +15,17 @@
           "=": 1,
           ">16x": 0
         },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 1
+        },
         "filter": {
           "+2x": 0,
           "+4x": 0,
@@ -80,18 +91,18 @@
         "seek": 0,
         "sort": 0
       },
-      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE COUNT(1)\n       1         2  DISTRIBUTE GATHER\n       1         2  AGGREGATE COUNT(1)\n      64        31  INNER JOIN HASH ON l.l_partkey = p.p_partkey\n      64         1  │└DISTRIBUTE GATHER\n  200000         1  │ TABLE SCAN sql - part WHERE sql - p_partkey = 1L\n 6000000        31  TABLE SCAN sql - lineitem WHERE l.l_partkey = 1L\n",
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE COUNT(1)\n       1         2  DISTRIBUTE GATHER\n       1         2  AGGREGATE COUNT(1)\n      64        31  INNER JOIN HASH ON l.l_partkey = p.p_partkey\n      64         1  │└DISTRIBUTE GATHER\n  200000         1  │ TABLE SCAN part WHERE p_partkey = 1L\n 6000000        31  TABLE SCAN lineitem WHERE l.l_partkey = 1L\n",
       "sql": "SELECT COUNT(l.l_partkey), COUNT(p.p_partkey)\nFROM tpch_sf1.lineitem AS l\nJOIN (\n  SELECT *\n  FROM tpch_sf1.part\n  WHERE p_partkey = 1\n) AS p\n  ON l.l_partkey = p.p_partkey;\n",
-      "startTime": "2026-06-25T13:47:51.371411Z",
+      "startTime": "2026-07-01T13:26:31.288420Z",
       "status": "OK",
-      "timeMs": 1411.831
+      "timeMs": 1375.572
     }
   ],
   "runtime": {
-    "avgMs": 1411.831,
-    "bestMs": 1411.831,
-    "maxMs": 1411.831,
-    "minMs": 1411.831,
+    "avgMs": 1375.572,
+    "bestMs": 1375.572,
+    "maxMs": 1375.572,
+    "minMs": 1375.572,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

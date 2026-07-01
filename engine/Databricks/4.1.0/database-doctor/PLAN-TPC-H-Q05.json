@@ -15,6 +15,17 @@
           "=": 2,
           ">16x": 0
         },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 5
+        },
         "filter": {
           "+2x": 0,
           "+4x": 0,
@@ -80,18 +91,18 @@
         "seek": 0,
         "sort": 5
       },
-      "plan": "Estimate    Actual  Operator\n       6         5  SORT revenue DESC NULLS LAST\n       6         5  AGGREGATE SUM(l_extendedprice * (1BD - l_discount)) GROUP BY HASH n_name\n       6        10  DISTRIBUTE HASH ON n_name\n       6        10  AGGREGATE SUM(l_extendedprice * (1BD - l_discount)) GROUP BY HASH n_name\n       ∞      7403  INNER JOIN HASH ON n_regionkey = r_regionkey\n       ∞         1  │└DISTRIBUTE GATHER\n 6000000         1  │ TABLE SCAN region WHERE r_name = 'EUROPE'\n       ∞     36582  INNER JOIN HASH ON s_nationkey = n_nationkey\n       ∞        25  │└DISTRIBUTE GATHER\n 1500000        25  │ TABLE SCAN nation\n       ∞     36582  INNER JOIN HASH ON c_nationkey = s_nationkey\n       ∞     10000  │└DISTRIBUTE GATHER\n  150000     10000  │ TABLE SCAN supplier\n       ∞    913927  INNER JOIN HASH ON o_custkey = c_custkey\n       ∞    150000  │└DISTRIBUTE GATHER\n   10000    150000  │ TABLE SCAN customer\n      9B    913927  INNER JOIN HASH ON l_orderkey = o_orderkey\n      9B    228637  │└DISTRIBUTE HASH ON o_orderkey\n       5    228637  │ TABLE SCAN orders WHERE (o_orderdate >= DATE'1995-01-01') AND (o_orderdate < DATE'1996-01-01')\n      25   5994223  TABLE SCAN lineitem\n",
+      "plan": "Estimate    Actual  Operator\n       6         5  SORT revenue DESC NULLS LAST\n       6         5  AGGREGATE SUM(l_extendedprice * (1BD - l_discount)) GROUP BY HASH n_name\n       6        10  DISTRIBUTE HASH ON n_name\n       6        10  AGGREGATE SUM(l_extendedprice * (1BD - l_discount)) GROUP BY HASH n_name\n       ∞      7403  INNER JOIN HASH ON n_regionkey = r_regionkey\n       ∞         1  │└DISTRIBUTE GATHER\n 6000000         1  │ TABLE SCAN region WHERE r_name = 'EUROPE'\n       ∞     36582  INNER JOIN HASH ON s_nationkey = n_nationkey\n       ∞        25  │└DISTRIBUTE GATHER\n 1500000        25  │ TABLE SCAN nation\n       ∞     36582  INNER JOIN HASH ON c_nationkey = s_nationkey\n       ∞     10000  │└DISTRIBUTE GATHER\n  150000     10000  │ TABLE SCAN supplier\n       ∞    913927  INNER JOIN HASH ON o_custkey = c_custkey\n       ∞    150000  │└DISTRIBUTE GATHER\n   10000    150000  │ TABLE SCAN customer\n      9T    913927  INNER JOIN HASH ON l_orderkey = o_orderkey\n      9T    228637  │└DISTRIBUTE HASH ON o_orderkey\n       5    228637  │ TABLE SCAN orders WHERE (o_orderdate >= DATE'1995-01-01') AND (o_orderdate < DATE'1996-01-01')\n      25   5994223  TABLE SCAN lineitem\n",
       "sql": "/* TPC-H Q05 */\nSELECT n_name,\n       SUM(l_extendedprice * (1 - l_discount)) AS revenue\nFROM tpch_sf1.lineitem\nINNER JOIN tpch_sf1.orders\n    ON l_orderkey = o_orderkey\nINNER JOIN tpch_sf1.customer\n    ON o_custkey = c_custkey\nINNER JOIN tpch_sf1.supplier\n    ON l_suppkey = s_suppkey\nINNER JOIN tpch_sf1.nation\n    ON s_nationkey = n_nationkey\nINNER JOIN tpch_sf1.region\n    ON n_regionkey = r_regionkey\nWHERE r_name = 'EUROPE'\n  AND o_orderdate >= '1995-01-01'\n  AND o_orderdate < '1996-01-01'\n  AND s_nationkey = c_nationkey\nGROUP BY n_name\nORDER BY revenue DESC\n",
-      "startTime": "2026-06-25T17:01:45.869778Z",
+      "startTime": "2026-07-01T13:27:04.699448Z",
       "status": "OK",
-      "timeMs": 1152.038
+      "timeMs": 2284.832
     }
   ],
   "runtime": {
-    "avgMs": 1152.038,
-    "bestMs": 1152.038,
-    "maxMs": 1152.038,
-    "minMs": 1152.038,
+    "avgMs": 2284.832,
+    "bestMs": 2284.832,
+    "maxMs": 2284.832,
+    "minMs": 2284.832,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

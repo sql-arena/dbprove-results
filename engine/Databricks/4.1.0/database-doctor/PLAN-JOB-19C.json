@@ -15,6 +15,17 @@
           "=": 2,
           ">16x": 0
         },
+        "distribute": {
+          "+2x": 1,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 1,
+          "<16x": 4,
+          "=": 2,
+          ">16x": 2
+        },
         "filter": {
           "+2x": 0,
           "+4x": 0,
@@ -82,16 +93,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(n.name), MIN(t.title)\n       1         1  DISTRIBUTE GATHER\n       1         1  AGGREGATE MIN(n.name), MIN(t.title)\n    3830      3575  INNER JOIN HASH ON ci.movie_id = mc.movie_id\n    3830      4703  │└DISTRIBUTE GATHER\n     226      4703  │ INNER JOIN HASH ON ci.person_id = an.person_id\n     226      3349  │ │└DISTRIBUTE GATHER\n     142      3349  │ │ INNER JOIN HASH ON ci.movie_id = t.id\n     142      5686  │ │ │└DISTRIBUTE GATHER\n   12100      5686  │ │ │ INNER JOIN HASH ON ci.person_id = n.id\n   12100    255651  │ │ │ │└DISTRIBUTE GATHER\n  515000    255651  │ │ │ │ INNER JOIN HASH ON ci.person_role_id = chn.id\n  515000    255651  │ │ │ │ │└DISTRIBUTE GATHER\n  202000    255651  │ │ │ │ │ INNER JOIN HASH ON ci.role_id = rt.id\n  202000         1  │ │ │ │ │ │└DISTRIBUTE GATHER\n  235000         1  │ │ │ │ │ │ TABLE SCAN role_type WHERE rt.role = 'actress'\n 2610000    255651  │ │ │ │ │ TABLE SCAN cast_info WHERE (ci.note IN('(voice)','(voice: Japanese version)','(voice) (uncredited)','(voice: English version)')) AND (ci.person_role_id IS NOT NULL)\n     113   3132421  │ │ │ │ TABLE SCAN char_name\n 2530000     49644  │ │ │ TABLE SCAN name WHERE (n.gender IS NOT NULL) AND (n.gender = 'f') AND contains(n.name,'An')\n  901000   1376967  │ │ TABLE SCAN title WHERE (t.production_year IS NOT NULL) AND (t.production_year > 2000L)\n36200000    893159  │ TABLE SCAN aka_name\n     238    424729  INNER JOIN HASH ON mc.company_id = cn.id\n     238     84843  │└DISTRIBUTE GATHER\n 3140000     84843  │ TABLE SCAN company_name WHERE (cn.country_code IS NOT NULL) AND (cn.country_code = 'us')\n     142    888431  INNER JOIN HASH ON mi.movie_id = mc.movie_id\n     142    451039  │└DISTRIBUTE GATHER\n  901000    451039  │ INNER JOIN HASH ON mi.info_type_id = it.id\n  901000         1  │ │└DISTRIBUTE GATHER\n14800000         1  │ │ TABLE SCAN info_type WHERE it.info = 'release dates'\n 4170000    451039  │ TABLE SCAN movie_info WHERE mi.info LIKE 'Japan:%200%' OR mi.info LIKE 'USA:%200%'\n      12   2605594  TABLE SCAN movie_companies\n",
       "sql": "SELECT MIN(n.name) AS voicing_actress,\n       MIN(t.title) AS jap_engl_voiced_movie\nFROM job.aka_name AS an,\n     job.char_name AS chn,\n     job.cast_info AS ci,\n     job.company_name AS cn,\n     job.info_type AS it,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.name AS n,\n     job.role_type AS rt,\n     job.title AS t\nWHERE ci.note IN ('(voice)',\n                  '(voice: Japanese version)',\n                  '(voice) (uncredited)',\n                  '(voice: English version)')\n  AND cn.country_code ='[us]'\n  AND it.info = 'release dates'\n  AND mi.info IS NOT NULL\n  AND (mi.info LIKE 'Japan:%200%'\n       OR mi.info LIKE 'USA:%200%')\n  AND n.gender ='f'\n  AND n.name LIKE '%An%'\n  AND rt.role ='actress'\n  AND t.production_year > 2000\n  AND t.id = mi.movie_id\n  AND t.id = mc.movie_id\n  AND t.id = ci.movie_id\n  AND mc.movie_id = ci.movie_id\n  AND mc.movie_id = mi.movie_id\n  AND mi.movie_id = ci.movie_id\n  AND cn.id = mc.company_id\n  AND it.id = mi.info_type_id\n  AND n.id = ci.person_id\n  AND rt.id = ci.role_id\n  AND n.id = an.person_id\n  AND ci.person_id = an.person_id\n  AND chn.id = ci.person_role_id;\n",
-      "startTime": "2026-06-25T17:34:29.303413Z",
+      "startTime": "2026-07-01T13:19:19.922070Z",
       "status": "OK",
-      "timeMs": 1161.866
+      "timeMs": 3188.783
     }
   ],
   "runtime": {
-    "avgMs": 1161.866,
-    "bestMs": 1161.866,
-    "maxMs": 1161.866,
-    "minMs": 1161.866,
+    "avgMs": 3188.783,
+    "bestMs": 3188.783,
+    "maxMs": 3188.783,
+    "minMs": 3188.783,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

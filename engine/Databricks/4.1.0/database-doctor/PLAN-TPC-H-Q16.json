@@ -15,6 +15,17 @@
           "=": 0,
           ">16x": 2
         },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 1,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 3
+        },
         "filter": {
           "+2x": 0,
           "+4x": 0,
@@ -80,18 +91,18 @@
         "seek": 0,
         "sort": 18282
       },
-      "plan": "Estimate    Actual  Operator\n      0B     18282  SORT supplier_cnt DESC NULLS LAST, p_brand ASC NULLS FIRST, p_type ASC NULLS FIRST, p_size ASC NULLS FIRST\n      0B     18282  AGGREGATE COUNT(DISTINCT ps_suppkey) GROUP BY HASH p_brand, p_type, p_size\n      0B     35216  DISTRIBUTE HASH ON p_brand, p_type, p_size\n  800000     35216  AGGREGATE COUNT(DISTINCT ps_suppkey) GROUP BY HASH p_brand, p_type, p_size\n  800000    119013  GROUP BY HASH p_brand, p_type, p_size, ps_suppkey\n  800000    119021  DISTRIBUTE HASH ON p_brand, p_type, p_size, ps_suppkey\n  800000    119021  GROUP BY HASH p_brand, p_type, p_size, ps_suppkey\n      0B    119043  INNER JOIN HASH ON ps_partkey = p_partkey\n      0B     29775  │└DISTRIBUTE GATHER\n  800000     29775  │ TABLE SCAN part WHERE ( NOT (p_brand = 'Brand#42')) AND (p_size IN(3,7,11,29,31,37,41,49)) AND ( NOT startswith(p_type,'STANDARD ANODIZED'))\n  800000    796154  LEFT ANTI JOIN HASH ON ps_suppkey = s_suppkey\n  800000         4  │└DISTRIBUTE GATHER\n  200000         4  │ TABLE SCAN supplier WHERE s_comment LIKE '%Customer%Complaints%'\n   10000    796472  TABLE SCAN partsupp\n",
+      "plan": "Estimate    Actual  Operator\n     48B     18282  SORT supplier_cnt DESC NULLS LAST, p_brand ASC NULLS FIRST, p_type ASC NULLS FIRST, p_size ASC NULLS FIRST\n     48B     18282  AGGREGATE COUNT(DISTINCT ps_suppkey) GROUP BY HASH p_brand, p_type, p_size\n     48B     35216  DISTRIBUTE HASH ON p_brand, p_type, p_size\n  800000     35216  AGGREGATE COUNT(DISTINCT ps_suppkey) GROUP BY HASH p_brand, p_type, p_size\n  800000    119013  GROUP BY HASH p_brand, p_type, p_size, ps_suppkey\n  800000    119021  DISTRIBUTE HASH ON p_brand, p_type, p_size, ps_suppkey\n  800000    119021  GROUP BY HASH p_brand, p_type, p_size, ps_suppkey\n     48B    119043  INNER JOIN HASH ON ps_partkey = p_partkey\n     48B     29775  │└DISTRIBUTE GATHER\n  800000     29775  │ TABLE SCAN part WHERE ( NOT (p_brand = 'Brand#42')) AND (p_size IN(3,7,11,29,31,37,41,49)) AND ( NOT startswith(p_type,'STANDARD ANODIZED'))\n  800000    796154  LEFT ANTI JOIN HASH ON ps_suppkey = s_suppkey\n  800000         4  │└DISTRIBUTE GATHER\n  200000         4  │ TABLE SCAN supplier WHERE s_comment LIKE '%Customer%Complaints%'\n   10000    796472  TABLE SCAN partsupp\n",
       "sql": "/* TPC-H Q16 */\nSELECT p_brand,\n       p_type,\n       p_size,\n       COUNT(DISTINCT ps_suppkey) AS supplier_cnt\nFROM tpch_sf1.partsupp\nINNER JOIN tpch_sf1.part\n    ON ps_partkey = p_partkey\n\nWHERE p_brand <> 'Brand#42'\n  AND p_type NOT LIKE 'STANDARD ANODIZED%'\n  AND p_size IN (3, 7, 11, 29, 31, 37, 41, 49)\n  AND ps_suppkey NOT IN (SELECT s_suppkey\n                         FROM tpch_sf1.supplier\n                         WHERE s_comment LIKE '%Customer%Complaints%')\nGROUP BY p_brand,\n         p_type,\n         p_size\nORDER BY supplier_cnt DESC,\n         p_brand,\n         p_type,\n         p_size",
-      "startTime": "2026-06-25T17:02:23.120641Z",
+      "startTime": "2026-07-01T13:27:51.323946Z",
       "status": "OK",
-      "timeMs": 1688.683
+      "timeMs": 2141.156
     }
   ],
   "runtime": {
-    "avgMs": 1688.683,
-    "bestMs": 1688.683,
-    "maxMs": 1688.683,
-    "minMs": 1688.683,
+    "avgMs": 2141.156,
+    "bestMs": 2141.156,
+    "maxMs": 2141.156,
+    "minMs": 2141.156,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

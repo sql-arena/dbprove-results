@@ -15,6 +15,17 @@
           "=": 0,
           ">16x": 3
         },
+        "distribute": {
+          "+2x": 1,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 1,
+          ">16x": 4
+        },
         "filter": {
           "+2x": 0,
           "+4x": 0,
@@ -80,18 +91,18 @@
         "seek": 0,
         "sort": 9
       },
-      "plan": "Estimate    Actual  Operator\n       ∞         9  SORT o_totalprice DESC NULLS LAST, o_orderdate ASC NULLS FIRST\n       ∞        18  DISTRIBUTE HASH ON o_totalprice, o_orderdate\n       ∞        18  AGGREGATE SUM(l_quantity) GROUP BY HASH c_name, c_custkey, o_orderkey, o_orderdate, o_totalprice\n       ∞        18  INNER JOIN HASH ON o_custkey = c_custkey\n       ∞    150000  │└DISTRIBUTE GATHER\n 6000000    150000  │ TABLE SCAN customer\n       ∞        18  AGGREGATE SUM(l_quantity) GROUP BY HASH o_custkey, o_orderkey, o_orderdate, o_totalprice\n      9B        18  INNER JOIN HASH ON l_orderkey = o_orderkey\n      9B   1500001  │└DISTRIBUTE HASH ON l_orderkey\n      9B   1500001  │ AGGREGATE SUM(l_quantity) GROUP BY HASH l_orderkey\n 1500000   6001215  │ TABLE SCAN lineitem\n 1500000        18  LEFT SEMI JOIN HASH ON o_orderkey = l_orderkey\n 1500000         9  │└DISTRIBUTE GATHER\n 6000000         9  │ FILTER \n 6000000   1500000  │ AGGREGATE SUM(l_quantity) GROUP BY HASH l_orderkey\n 6000000   1500001  │ DISTRIBUTE HASH ON l_orderkey\n 6000000   1500001  │ AGGREGATE SUM(l_quantity) GROUP BY HASH l_orderkey\n  150000   6001215  │ TABLE SCAN lineitem\n 1500000   1500000  DISTRIBUTE HASH ON o_orderkey\n 6000000   1500000  TABLE SCAN orders\n",
+      "plan": "Estimate    Actual  Operator\n       ∞         9  SORT o_totalprice DESC NULLS LAST, o_orderdate ASC NULLS FIRST\n       ∞        18  DISTRIBUTE HASH ON o_totalprice, o_orderdate\n       ∞        18  AGGREGATE SUM(l_quantity) GROUP BY HASH c_name, c_custkey, o_orderkey, o_orderdate, o_totalprice\n       ∞        18  INNER JOIN HASH ON o_custkey = c_custkey\n       ∞    150000  │└DISTRIBUTE GATHER\n 6000000    150000  │ TABLE SCAN customer\n       ∞        18  AGGREGATE SUM(l_quantity) GROUP BY HASH o_custkey, o_orderkey, o_orderdate, o_totalprice\n      9T        18  INNER JOIN HASH ON l_orderkey = o_orderkey\n      9T   1500001  │└DISTRIBUTE HASH ON l_orderkey\n      9T   1500001  │ AGGREGATE SUM(l_quantity) GROUP BY HASH l_orderkey\n 1500000   6001215  │ TABLE SCAN lineitem\n 1500000        18  LEFT SEMI JOIN HASH ON o_orderkey = l_orderkey\n 1500000         9  │└DISTRIBUTE GATHER\n 6000000         9  │ FILTER \n 6000000   1500000  │ AGGREGATE SUM(l_quantity) GROUP BY HASH l_orderkey\n 6000000   1500001  │ DISTRIBUTE HASH ON l_orderkey\n 6000000   1500001  │ AGGREGATE SUM(l_quantity) GROUP BY HASH l_orderkey\n  150000   6001215  │ TABLE SCAN lineitem\n 1500000   1500000  DISTRIBUTE HASH ON o_orderkey\n 6000000   1500000  TABLE SCAN orders\n",
       "sql": "/* TPC-H Q18 */\nSELECT c_name,\n       c_custkey,\n       o_orderkey,\n       o_orderdate,\n       o_totalprice,\n       SUM(l_quantity)\nFROM tpch_sf1.lineitem\nINNER JOIN tpch_sf1.orders\n    ON l_orderkey = o_orderkey\nINNER JOIN tpch_sf1.customer\n    ON o_custkey = c_custkey\nWHERE o_orderkey IN (SELECT l_orderkey\n                     FROM tpch_sf1.lineitem\n                     GROUP BY l_orderkey\n                     HAVING SUM(l_quantity) > 314)\nGROUP BY c_name,\n         c_custkey,\n         o_orderkey,\n         o_orderdate,\n         o_totalprice\nORDER BY o_totalprice DESC,\n         o_orderdate",
-      "startTime": "2026-06-25T17:02:30.272305Z",
+      "startTime": "2026-07-01T13:27:58.989889Z",
       "status": "OK",
-      "timeMs": 859.295
+      "timeMs": 2026.324
     }
   ],
   "runtime": {
-    "avgMs": 859.295,
-    "bestMs": 859.295,
-    "maxMs": 859.295,
-    "minMs": 859.295,
+    "avgMs": 2026.324,
+    "bestMs": 2026.324,
+    "maxMs": 2026.324,
+    "minMs": 2026.324,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

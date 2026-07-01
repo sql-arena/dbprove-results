@@ -15,6 +15,17 @@
           "=": 2,
           ">16x": 0
         },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 1,
+          "=": 2,
+          ">16x": 5
+        },
         "filter": {
           "+2x": 0,
           "+4x": 0,
@@ -82,16 +93,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE MIN(cn.name), MIN(lt.link), MIN(t.title)\n       1         1  DISTRIBUTE GATHER\n       1         1  AGGREGATE MIN(cn.name), MIN(lt.link), MIN(t.title)\n     878        14  INNER JOIN HASH ON ml.link_type_id = lt.id\n     878         1  │└DISTRIBUTE GATHER\n 2610000         1  │ TABLE SCAN link_type WHERE contains(lt.link,'follows')\n   41400        38  INNER JOIN HASH ON mc.movie_id = ml.movie_id\n   41400     29997  │└DISTRIBUTE GATHER\n 2530000     29997  │ TABLE SCAN movie_link\n   40000         2  INNER JOIN HASH ON mc.company_id = cn.id\n   40000         3  │└DISTRIBUTE GATHER\n   40000         3  │ INNER JOIN HASH ON mc.company_type_id = ct.id\n   40000         1  │ │└DISTRIBUTE GATHER\n  235000         1  │ │ TABLE SCAN company_type WHERE ct.kind = 'production companies'\n     316         3  │ INNER JOIN HASH ON mk.movie_id = mc.movie_id\n     316         1  │ │└DISTRIBUTE GATHER\n     316         1  │ │ INNER JOIN HASH ON mk.movie_id = t.id\n     316     10544  │ │ │└DISTRIBUTE GATHER\n      71     10544  │ │ │ INNER JOIN HASH ON mk.keyword_id = k.id\n      71         1  │ │ │ │└DISTRIBUTE GATHER\n      18         1  │ │ │ │ TABLE SCAN keyword WHERE k.keyword = 'sequel'\n   30000   4519836  │ │ │ TABLE SCAN movie_keyword\n  134000        33  │ │ TABLE SCAN title WHERE (t.production_year IS NOT NULL) AND (t.production_year = 1998L) AND contains(t.title,'Money')\n 4520000   1160822  │ TABLE SCAN movie_companies WHERE mc.note IS NULL\n       4     46751  TABLE SCAN company_name WHERE (cn.country_code IS NOT NULL) AND ( NOT (cn.country_code = 'pl')) AND (contains(cn.name,'Film') OR contains(cn.name,'Warner'))\n",
       "sql": "SELECT MIN(cn.name) AS from_company,\n       MIN(lt.link) AS movie_link_type,\n       MIN(t.title) AS sequel_movie\nFROM job.company_name AS cn,\n     job.company_type AS ct,\n     job.keyword AS k,\n     job.link_type AS lt,\n     job.movie_companies AS mc,\n     job.movie_keyword AS mk,\n     job.movie_link AS ml,\n     job.title AS t\nWHERE cn.country_code !='[pl]'\n  AND (cn.name LIKE '%Film%'\n       OR cn.name LIKE '%Warner%')\n  AND ct.kind ='production companies'\n  AND k.keyword ='sequel'\n  AND lt.link LIKE '%follows%'\n  AND mc.note IS NULL\n  AND t.production_year = 1998\n  AND t.title LIKE '%Money%'\n  AND lt.id = ml.link_type_id\n  AND ml.movie_id = t.id\n  AND t.id = mk.movie_id\n  AND mk.keyword_id = k.id\n  AND t.id = mc.movie_id\n  AND mc.company_type_id = ct.id\n  AND mc.company_id = cn.id\n  AND ml.movie_id = mk.movie_id\n  AND ml.movie_id = mc.movie_id\n  AND mk.movie_id = mc.movie_id;\n",
-      "startTime": "2026-06-25T17:32:05.375072Z",
+      "startTime": "2026-07-01T13:16:37.120428Z",
       "status": "OK",
-      "timeMs": 1075.603
+      "timeMs": 2467.111
     }
   ],
   "runtime": {
-    "avgMs": 1075.603,
-    "bestMs": 1075.603,
-    "maxMs": 1075.603,
-    "minMs": 1075.603,
+    "avgMs": 2467.111,
+    "bestMs": 2467.111,
+    "maxMs": 2467.111,
+    "minMs": 2467.111,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

@@ -1,0 +1,46 @@
+Trino version: 481
+Queued: 111.54us, Analysis: 3.71ms, Planning: 15.66ms, Execution: 198.49ms, Finishing: 0.00ns
+Fragment 1 [SINGLE]
+    CPU: 502.83us, Scheduled: 638.37us, Blocked 1.32s (Input: 1.24s, Output: 0.00ns), Input: 2 rows (26B); per task: avg.: 2.00 std.dev.: 0.00, Output: 1 row (17B)
+    Peak Memory: 112B, Tasks count: 1; per task: max: 112B
+    Output layout: [sum]
+    Output partitioning: SINGLE []
+    Aggregate[type = FINAL]
+    │   Layout: [sum:decimal(38,4)]
+    │   Estimates: {rows: 1 (17B), cpu: 8.89M, memory: 17B, network: 0B}
+    │   CPU: 0.00ns (0.00%), Scheduled: 0.00ns (0.00%), Blocked: 0.00ns (0.00%), Output: 1 row (17B)
+    │   Input avg.: 2.00 rows, Input std.dev.: 0.00%
+    │   sum := sum(sum_0)
+    └─ LocalExchange[partitioning = SINGLE]
+       │   Layout: [sum_0:varbinary]
+       │   Estimates: {rows: 169543 (8.89MB), cpu: 0, memory: 0B, network: 0B}
+       │   CPU: 0.00ns (0.00%), Scheduled: 0.00ns (0.00%), Blocked: 78.00ms (5.92%), Output: 2 rows (26B)
+       │   Input avg.: 0.13 rows, Input std.dev.: 264.58%
+       └─ RemoteSource[sourceFragmentIds = [2]]
+              Layout: [sum_0:varbinary]
+              CPU: 0.00ns (0.00%), Scheduled: 0.00ns (0.00%), Blocked: 1.24s (94.08%), Output: 2 rows (26B)
+              Input avg.: 0.13 rows, Input std.dev.: 264.58%
+
+Fragment 2 [SOURCE]
+    CPU: 98.97ms, Scheduled: 118.35ms, Blocked 0.00ns (Input: 0.00ns, Output: 0.00ns), Input: 6001215 rows (206.03MB); per task: avg.: 6001215.00 std.dev.: 0.00, Output: 2 rows (26B)
+    Peak Memory: 104B, Tasks count: 1; per task: max: 104B
+    Output layout: [sum_0]
+    Output partitioning: SINGLE []
+    Aggregate[type = PARTIAL]
+    │   Layout: [sum_0:varbinary]
+    │   Estimates: {rows: 169543 (8.89MB), cpu: ?, memory: ?, network: ?}
+    │   CPU: 0.00ns (0.00%), Scheduled: 0.00ns (0.00%), Blocked: 0.00ns (0.00%), Output: 2 rows (26B)
+    │   Input avg.: 57057.00 rows, Input std.dev.: 35.21%
+    │   sum_0 := sum(expr)
+    └─ ScanFilterProject[table = tpch:tpch_sf1.lineitem$data@1934773159408571084, filterPredicate = ((l_discount BETWEEN decimal(15,2) '0.04' AND decimal(15,2) '0.06') AND (l_quantity < decimal(15,2) '24.00') AND (l_shipdate >= date '1994-01-01') AND (l_shipdate < date '1995-01-01'))]
+           Layout: [expr:decimal(30,4)]
+           Estimates: {rows: 6001215 (97.29MB), cpu: 183.14M, memory: 0B, network: 0B}/{rows: 169543 (2.75MB), cpu: 183.14M, memory: 0B, network: 0B}/{rows: 169543 (2.75MB), cpu: 2.75M, memory: 0B, network: 0B}
+           CPU: 99.00ms (100.00%), Scheduled: 118.00ms (100.00%), Blocked: 0.00ns (0.00%), Output: 114114 rows (1.85MB)
+           Input avg.: 3000607.50 rows, Input std.dev.: 35.14%
+           expr := $operator$multiply(l_extendedprice, l_discount)
+           l_discount := 7:l_discount:decimal(15,2)
+           l_extendedprice := 6:l_extendedprice:decimal(15,2)
+           l_quantity := 5:l_quantity:decimal(15,2)
+           l_shipdate := 11:l_shipdate:date
+           Input: 6001215 rows (206.03MB), Filtered: 98.10%, Physical input: 51.69MB, Physical input time: 30.70ms, Splits: 2, Splits generation wait time: 1.24ms
+

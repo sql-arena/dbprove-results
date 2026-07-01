@@ -16,18 +16,7 @@
           ">16x": 0
         },
         "distribute": {
-          "+2x": 0,
-          "+4x": 0,
-          "+8x": 0,
-          "-2x": 0,
-          "-4x": 0,
-          "-8x": 0,
-          "<16x": 0,
-          "=": 6,
-          ">16x": 0
-        },
-        "filter": {
-          "+2x": 0,
+          "+2x": 1,
           "+4x": 0,
           "+8x": 0,
           "-2x": 0,
@@ -35,7 +24,18 @@
           "-8x": 0,
           "<16x": 0,
           "=": 2,
-          ">16x": 0
+          ">16x": 3
+        },
+        "filter": {
+          "+2x": 1,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 1
         },
         "hash": {
           "+2x": 0,
@@ -45,7 +45,7 @@
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
-          "=": 5,
+          "=": 0,
           ">16x": 0
         },
         "join": {
@@ -56,19 +56,19 @@
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
-          "=": 5,
+          "=": 0,
           ">16x": 0
         },
         "scan": {
-          "+2x": 0,
+          "+2x": 1,
           "+4x": 0,
           "+8x": 0,
           "-2x": 0,
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
-          "=": 8,
-          ">16x": 0
+          "=": 3,
+          ">16x": 4
         },
         "sort": {
           "+2x": 0,
@@ -84,25 +84,25 @@
       },
       "operatorRows": {
         "aggregate": 2832571,
-        "distribute": 23365783,
-        "hash": 23670010,
-        "join": 25004946,
-        "scan": 27533258,
+        "distribute": 6890778,
+        "hash": 18328446,
+        "join": 16993510,
+        "scan": 7638288,
         "seek": 0,
         "sort": 0
       },
-      "plan": "Estimate    Actual  Operator\n       1         ∞  PROJECT min AS member_in_charnamed_movie\n       1         1  AGGREGATE MIN(min_35) AS min\n       -        16  DISTRIBUTE GATHER\n       -        16  AGGREGATE MIN(name_20) AS min_35\n       -   2832555  INNER JOIN HASH ON movie_id = id_27\n 2528312   2528312  │└DISTRIBUTE HASH ON id_27\n 2528312   2528312  │ PROJECT id AS id_27\n 2528312   2528312  │ TABLE SCAN title\n 4167491   4167491  INNER JOIN HASH ON person_id = id_19\n 4167491   4167491  │└DISTRIBUTE HASH ON id_19\n 4167491   4167491  │ PROJECT id AS id_19, name AS name_20\n 4167491   4167491  │ TABLE SCAN name\n 4167491   4167491  INNER JOIN HASH ON keyword_id = id_4\n 4167491   4167491  │└DISTRIBUTE GATHER\n 4167491   4167491  │ PROJECT id AS id_4\n 4167491   4167491  │ FILTER keyword = 'character-name-in-title'\n 4167491   4167491  │ TABLE SCAN keyword\n 4167491   4167491  INNER JOIN HASH ON movie_id = movie_id_15\n 4167491   4167491  │└DISTRIBUTE HASH ON movie_id_15\n 4167491   4167491  │ PROJECT movie_id AS movie_id_15, keyword_id\n 4167491   4167491  │ TABLE SCAN movie_keyword\n 4167491   4167491  INNER JOIN HASH ON company_id = id_0\n 4167491   4167491  │└DISTRIBUTE GATHER\n 4167491   4167491  │ PROJECT id AS id_0\n 4167491   4167491  │ FILTER country_code = 'us'\n 4167491   4167491  │ TABLE SCAN company_name\n 4167491   4167491  INNER JOIN HASH ON movie_id = movie_id_9\n 4167491   4167491  │└DISTRIBUTE HASH ON movie_id_9\n 4167491   4167491  │ PROJECT movie_id AS movie_id_9, company_id\n 4167491   4167491  │ TABLE SCAN movie_companies\n 4167491   4167491  TABLE SCAN cast_info\n",
+      "plan": "Estimate    Actual  Operator\n       1         ∞  PROJECT min AS member_in_charnamed_movie\n       1         1  AGGREGATE MIN(min_35) AS min\n       -        16  DISTRIBUTE GATHER\n       -        16  AGGREGATE MIN(name_20) AS min_35\n       -   2832555  INNER JOIN HASH ON movie_id = id_27\n 2528312   2528312  │└DISTRIBUTE HASH ON id_27\n 2528312   2528312  │ PROJECT id AS id_27\n 2528312   2528312  │ TABLE SCAN title\n       -   2832555  INNER JOIN HASH ON person_id = id_19\n 4167491   4167491  │└DISTRIBUTE HASH ON id_19\n 4167491   4167491  │ PROJECT id AS id_19, name AS name_20\n 4167491   4167491  │ TABLE SCAN name\n       -   2832555  INNER JOIN HASH ON keyword_id = id_4\n  134170         1  │└DISTRIBUTE GATHER\n  134170         1  │ PROJECT id AS id_4\n  134170         1  │ FILTER keyword = 'character-name-in-title'\n  134170         1  │ TABLE SCAN keyword\n       -   2832555  INNER JOIN HASH ON movie_id = movie_id_15\n 4523930     41840  │└DISTRIBUTE HASH ON movie_id_15\n 4523930     41840  │ PROJECT movie_id AS movie_id_15, keyword_id\n 4523930     41840  │ TABLE SCAN movie_keyword\n       -   2831645  INNER JOIN HASH ON company_id = id_0\n  234997     84843  │└DISTRIBUTE GATHER\n  234997     84843  │ PROJECT id AS id_0\n  234997     84843  │ FILTER country_code = 'us'\n  234997     84843  │ TABLE SCAN company_name\n       -   2831645  INNER JOIN HASH ON movie_id = movie_id_9\n 2609129     68275  │└DISTRIBUTE HASH ON movie_id_9\n 2609129     68275  │ PROJECT movie_id AS movie_id_9, company_id\n 2609129     68275  │ TABLE SCAN movie_companies\n36244344    747526  TABLE SCAN cast_info\n",
       "sql": "SELECT MIN(n.name) AS member_in_charnamed_movie\nFROM job.cast_info AS ci,\n     job.company_name AS cn,\n     job.keyword AS k,\n     job.movie_companies AS mc,\n     job.movie_keyword AS mk,\n     job.name AS n,\n     job.title AS t\nWHERE cn.country_code ='[us]'\n  AND k.keyword ='character-name-in-title'\n  AND n.id = ci.person_id\n  AND ci.movie_id = t.id\n  AND t.id = mk.movie_id\n  AND mk.keyword_id = k.id\n  AND t.id = mc.movie_id\n  AND mc.company_id = cn.id\n  AND ci.movie_id = mc.movie_id\n  AND ci.movie_id = mk.movie_id\n  AND mc.movie_id = mk.movie_id;\n",
-      "startTime": "2026-06-30T11:20:58.628052Z",
+      "startTime": "2026-07-01T14:52:16.555725Z",
       "status": "OK",
-      "timeMs": 826.651
+      "timeMs": 861.717
     }
   ],
   "runtime": {
-    "avgMs": 826.651,
-    "bestMs": 826.651,
-    "maxMs": 826.651,
-    "minMs": 826.651,
+    "avgMs": 861.717,
+    "bestMs": 861.717,
+    "maxMs": 861.717,
+    "minMs": 861.717,
     "stdDevMs": 0.0
   },
   "storageVariant": "iceberg",

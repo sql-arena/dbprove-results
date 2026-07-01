@@ -46,7 +46,7 @@
           "-8x": 0,
           "<16x": 0,
           "=": 0,
-          ">16x": 1
+          ">16x": 0
         },
         "join": {
           "+2x": 0,
@@ -57,7 +57,7 @@
           "-8x": 0,
           "<16x": 0,
           "=": 0,
-          ">16x": 1
+          ">16x": 0
         },
         "scan": {
           "+2x": 0,
@@ -91,18 +91,18 @@
         "seek": 0,
         "sort": 0
       },
-      "plan": "Estimate    Actual  Operator\n       1         ∞  PROJECT min AS movie_keyword, min_21 AS actor_name, min_22 AS marvel_movie\n       1         1  AGGREGATE MIN(min_23) AS min, MIN(min_24) AS min_21, MIN(min_25) AS min_22\n       -        16  DISTRIBUTE GATHER\n       -        16  AGGREGATE MIN(keyword) AS min_23, MIN(name) AS min_24, MIN(title) AS min_25\n       -         2  INNER JOIN HASH ON movie_id = id_13\n   88353       438  │└DISTRIBUTE HASH ON id_13\n   88353       438  │ PROJECT id AS id_13, title\n   88353       438  │ FILTER production_year > 2014\n   88353       438  │ TABLE SCAN title\n       -         2  INNER JOIN HASH ON person_id = id_9\n 4167491         2  │└DISTRIBUTE HASH ON id_9\n 4167491         2  │ PROJECT id AS id_9, name\n 4167491         2  │ FILTER name LIKE '%Downey%Robert%'\n 4167491         2  │ TABLE SCAN name\n       -         2  INNER JOIN HASH ON keyword_id = id_0\n  134170         1  │└DISTRIBUTE GATHER\n  134170         1  │ PROJECT id AS id_0, keyword\n  134170         1  │ FILTER keyword = 'marvel-cinematic-universe'\n  134170         1  │ TABLE SCAN keyword\n 4523930         2  INNER JOIN HASH ON movie_id = movie_id_5\n 4523930         2  │└DISTRIBUTE HASH ON movie_id_5\n 4523930         2  │ PROJECT movie_id AS movie_id_5, keyword_id\n 4523930         2  │ TABLE SCAN movie_keyword\n 4523930         2  TABLE SCAN cast_info\n",
+      "plan": "Estimate    Actual  Operator\n       1         ∞  PROJECT min AS movie_keyword, min_21 AS actor_name, min_22 AS marvel_movie\n       1         1  AGGREGATE MIN(min_23) AS min, MIN(min_24) AS min_21, MIN(min_25) AS min_22\n       -        16  DISTRIBUTE GATHER\n       -        16  AGGREGATE MIN(keyword) AS min_23, MIN(name) AS min_24, MIN(title) AS min_25\n       -         2  INNER JOIN HASH ON movie_id = id_13\n   88353       438  │└DISTRIBUTE HASH ON id_13\n   88353       438  │ PROJECT id AS id_13, title\n   88353       438  │ FILTER production_year > 2014\n   88353       438  │ TABLE SCAN title\n       -         2  INNER JOIN HASH ON person_id = id_9\n 4167491         2  │└DISTRIBUTE HASH ON id_9\n 4167491         2  │ PROJECT id AS id_9, name\n 4167491         2  │ FILTER name LIKE '%Downey%Robert%'\n 4167491         2  │ TABLE SCAN name\n       -         2  INNER JOIN HASH ON keyword_id = id_0\n  134170         1  │└DISTRIBUTE GATHER\n  134170         1  │ PROJECT id AS id_0, keyword\n  134170         1  │ FILTER keyword = 'marvel-cinematic-universe'\n  134170         1  │ TABLE SCAN keyword\n       -         2  INNER JOIN HASH ON movie_id = movie_id_5\n 4523930         2  │└DISTRIBUTE HASH ON movie_id_5\n 4523930         2  │ PROJECT movie_id AS movie_id_5, keyword_id\n 4523930         2  │ TABLE SCAN movie_keyword\n36244344         2  TABLE SCAN cast_info\n",
       "sql": "SELECT MIN(k.keyword) AS movie_keyword,\n       MIN(n.name) AS actor_name,\n       MIN(t.title) AS marvel_movie\nFROM job.cast_info AS ci,\n     job.keyword AS k,\n     job.movie_keyword AS mk,\n     job.name AS n,\n     job.title AS t\nWHERE k.keyword = 'marvel-cinematic-universe'\n  AND n.name LIKE '%Downey%Robert%'\n  AND t.production_year > 2014\n  AND k.id = mk.keyword_id\n  AND t.id = mk.movie_id\n  AND t.id = ci.movie_id\n  AND ci.movie_id = mk.movie_id\n  AND n.id = ci.person_id;\n",
-      "startTime": "2026-06-30T11:21:47.981033Z",
+      "startTime": "2026-07-01T14:53:09.611732Z",
       "status": "OK",
-      "timeMs": 265.985
+      "timeMs": 269.81
     }
   ],
   "runtime": {
-    "avgMs": 265.985,
-    "bestMs": 265.985,
-    "maxMs": 265.985,
-    "minMs": 265.985,
+    "avgMs": 269.81,
+    "bestMs": 269.81,
+    "maxMs": 269.81,
+    "minMs": 269.81,
     "stdDevMs": 0.0
   },
   "storageVariant": "iceberg",

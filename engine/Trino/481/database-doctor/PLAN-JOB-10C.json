@@ -16,18 +16,7 @@
           ">16x": 0
         },
         "distribute": {
-          "+2x": 0,
-          "+4x": 0,
-          "+8x": 0,
-          "-2x": 1,
-          "-4x": 0,
-          "-8x": 0,
-          "<16x": 0,
-          "=": 5,
-          ">16x": 0
-        },
-        "filter": {
-          "+2x": 0,
+          "+2x": 2,
           "+4x": 0,
           "+8x": 0,
           "-2x": 1,
@@ -35,7 +24,18 @@
           "-8x": 0,
           "<16x": 0,
           "=": 2,
-          ">16x": 0
+          ">16x": 1
+        },
+        "filter": {
+          "+2x": 1,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 1
         },
         "hash": {
           "+2x": 0,
@@ -45,7 +45,7 @@
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
-          "=": 4,
+          "=": 0,
           ">16x": 0
         },
         "join": {
@@ -56,19 +56,19 @@
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
-          "=": 4,
+          "=": 0,
           ">16x": 0
         },
         "scan": {
-          "+2x": 0,
+          "+2x": 2,
           "+4x": 0,
           "+8x": 0,
           "-2x": 1,
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
-          "=": 7,
-          ">16x": 0
+          "=": 3,
+          ">16x": 2
         },
         "sort": {
           "+2x": 0,
@@ -84,25 +84,25 @@
       },
       "operatorRows": {
         "aggregate": 26,
-        "distribute": 1749076,
-        "hash": 1749062,
-        "join": 44,
-        "scan": 1749064,
+        "distribute": 4423144,
+        "hash": 4423140,
+        "join": 86,
+        "scan": 4423131,
         "seek": 0,
         "sort": 0
       },
-      "plan": "Estimate    Actual  Operator\n       1         ∞  PROJECT min AS character, min_33 AS movie_with_american_producer\n       1         1  AGGREGATE MIN(min_34) AS min, MIN(min_35) AS min_33\n       -        16  DISTRIBUTE GATHER\n       -        16  AGGREGATE MIN(name) AS min_34, MIN(title) AS min_35\n       -        10  INNER JOIN HASH ON movie_id = id_26\n  512448   1749032  │└DISTRIBUTE HASH ON id_26\n  512448   1749032  │ PROJECT id AS id_26, title\n  512448   1749032  │ FILTER production_year > 1990\n  512448   1749032  │ TABLE SCAN title\n       -        14  INNER JOIN HASH ON role_id = id_22\n      12        12  │└DISTRIBUTE GATHER\n      12        12  │ PROJECT id AS id_22\n      12        12  │ TABLE SCAN role_type\n       4         4  INNER JOIN HASH ON company_type_id = id_12\n       4         4  │└DISTRIBUTE GATHER\n       4         4  │ PROJECT id AS id_12\n       4         4  │ TABLE SCAN company_type\n       4         4  INNER JOIN HASH ON company_id = id_4\n       4         4  │└DISTRIBUTE GATHER\n       4         4  │ PROJECT id AS id_4\n       4         4  │ FILTER country_code = 'us'\n       4         4  │ TABLE SCAN company_name\n       4         4  INNER JOIN HASH ON movie_id = movie_id_17\n       4         4  │└DISTRIBUTE HASH ON movie_id_17\n       4         4  │ PROJECT movie_id AS movie_id_17, company_id, company_type_id\n       4         4  │ TABLE SCAN movie_companies\n       4         4  INNER JOIN HASH ON id = person_role_id\n       4         4  │└DISTRIBUTE HASH ON person_role_id\n       4         4  │ FILTER note LIKE '%(producer)%'\n       4         4  │ TABLE SCAN cast_info\n       4         4  TABLE SCAN char_name\n",
+      "plan": "Estimate    Actual  Operator\n       1         ∞  PROJECT min AS character, min_33 AS movie_with_american_producer\n       1         1  AGGREGATE MIN(min_34) AS min, MIN(min_35) AS min_33\n       -        16  DISTRIBUTE GATHER\n       -        16  AGGREGATE MIN(name) AS min_34, MIN(title) AS min_35\n       -        10  INNER JOIN HASH ON movie_id = id_26\n  512448   1749032  │└DISTRIBUTE HASH ON id_26\n  512448   1749032  │ PROJECT id AS id_26, title\n  512448   1749032  │ FILTER production_year > 1990\n  512448   1749032  │ TABLE SCAN title\n       -        14  INNER JOIN HASH ON role_id = id_22\n      12        12  │└DISTRIBUTE GATHER\n      12        12  │ PROJECT id AS id_22\n      12        12  │ TABLE SCAN role_type\n       -        14  INNER JOIN HASH ON company_type_id = id_12\n       4         4  │└DISTRIBUTE GATHER\n       4         4  │ PROJECT id AS id_12\n       4         4  │ TABLE SCAN company_type\n       -        14  INNER JOIN HASH ON company_id = id_4\n  234997     84843  │└DISTRIBUTE GATHER\n  234997     84843  │ PROJECT id AS id_4\n  234997     84843  │ FILTER country_code = 'us'\n  234997     84843  │ TABLE SCAN company_name\n       -        14  INNER JOIN HASH ON movie_id = movie_id_17\n 2609129   1153798  │└DISTRIBUTE HASH ON movie_id_17\n 2609129   1153798  │ PROJECT movie_id AS movie_id_17, company_id, company_type_id\n 2609129   1153798  │ TABLE SCAN movie_companies\n       -        15  INNER JOIN HASH ON id = person_role_id\n32619910   1435439  │└DISTRIBUTE HASH ON person_role_id\n32619910   1435439  │ FILTER note LIKE '%(producer)%'\n32619910   1435439  │ TABLE SCAN cast_info\n 3140339         3  TABLE SCAN char_name\n",
       "sql": "SELECT MIN(chn.name) AS character,\n       MIN(t.title) AS movie_with_american_producer\nFROM job.char_name AS chn,\n     job.cast_info AS ci,\n     job.company_name AS cn,\n     job.company_type AS ct,\n     job.movie_companies AS mc,\n     job.role_type AS rt,\n     job.title AS t\nWHERE ci.note LIKE '%(producer)%'\n  AND cn.country_code = '[us]'\n  AND t.production_year > 1990\n  AND t.id = mc.movie_id\n  AND t.id = ci.movie_id\n  AND ci.movie_id = mc.movie_id\n  AND chn.id = ci.person_role_id\n  AND rt.id = ci.role_id\n  AND cn.id = mc.company_id\n  AND ct.id = mc.company_type_id;\n",
-      "startTime": "2026-06-30T11:20:39.154681Z",
+      "startTime": "2026-07-01T14:51:55.678460Z",
       "status": "OK",
-      "timeMs": 1107.824
+      "timeMs": 1402.361
     }
   ],
   "runtime": {
-    "avgMs": 1107.824,
-    "bestMs": 1107.824,
-    "maxMs": 1107.824,
-    "minMs": 1107.824,
+    "avgMs": 1402.361,
+    "bestMs": 1402.361,
+    "maxMs": 1402.361,
+    "minMs": 1402.361,
     "stdDevMs": 0.0
   },
   "storageVariant": "iceberg",

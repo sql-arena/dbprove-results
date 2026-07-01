@@ -1,0 +1,70 @@
+Trino version: 481
+Queued: 107.04us, Analysis: 5.74ms, Planning: 29.99ms, Execution: 165.22ms, Finishing: 0.00ns
+Fragment 1 [SINGLE]
+    CPU: 570.54us, Scheduled: 655.38us, Blocked 474.30ms (Input: 446.28ms, Output: 0.00ns), Input: 2 rows (36B); per task: avg.: 2.00 std.dev.: 0.00, Output: 1 row (18B)
+    Peak Memory: 184B, Tasks count: 1; per task: max: 184B
+    Output layout: [count, count_3]
+    Output partitioning: SINGLE []
+    Aggregate[type = FINAL]
+    │   Layout: [count:bigint, count_3:bigint]
+    │   Estimates: {rows: 1 (18B), cpu: ?, memory: 18B, network: 0B}
+    │   CPU: 0.00ns (0.00%), Scheduled: 0.00ns (0.00%), Blocked: 0.00ns (0.00%), Output: 1 row (18B)
+    │   Input avg.: 2.00 rows, Input std.dev.: 0.00%
+    │   count := count(count_4)
+    │   count_3 := count(count_5)
+    └─ LocalExchange[partitioning = SINGLE]
+       │   Layout: [count_4:bigint, count_5:bigint]
+       │   Estimates: {rows: ? (?), cpu: 0, memory: 0B, network: 0B}
+       │   CPU: 0.00ns (0.00%), Scheduled: 0.00ns (0.00%), Blocked: 28.00ms (4.85%), Output: 2 rows (36B)
+       │   Input avg.: 0.13 rows, Input std.dev.: 264.58%
+       └─ RemoteSource[sourceFragmentIds = [2]]
+              Layout: [count_4:bigint, count_5:bigint]
+              CPU: 0.00ns (0.00%), Scheduled: 0.00ns (0.00%), Blocked: 446.00ms (77.30%), Output: 2 rows (36B)
+              Input avg.: 0.13 rows, Input std.dev.: 264.58%
+
+Fragment 2 [SOURCE]
+    CPU: 32.86ms, Scheduled: 36.98ms, Blocked 109.03ms (Input: 70.20ms, Output: 0.00ns), Input: 2314816 rows (11.04MB); per task: avg.: 2314816.00 std.dev.: 0.00, Output: 2 rows (36B)
+    Peak Memory: 184B, Tasks count: 1; per task: max: 184B
+    Output layout: [count_4, count_5]
+    Output partitioning: SINGLE []
+    Aggregate[type = PARTIAL]
+    │   Layout: [count_4:bigint, count_5:bigint]
+    │   CPU: 0.00ns (0.00%), Scheduled: 0.00ns (0.00%), Blocked: 0.00ns (0.00%), Output: 2 rows (36B)
+    │   Input avg.: 15.50 rows, Input std.dev.: 9.68%
+    │   count_4 := count(l_partkey)
+    │   count_5 := count(l_partkey)
+    └─ CrossJoin[]
+       │   Layout: [l_partkey:integer]
+       │   Estimates: {rows: ? (?), cpu: ?, memory: 0B, network: 0B}
+       │   CPU: 0.00ns (0.00%), Scheduled: 0.00ns (0.00%), Blocked: 29.00ms (5.03%), Output: 31 rows (155B)
+       │   Distribution: REPLICATED
+       ├─ ScanFilter[table = tpch:tpch_sf1.lineitem$data@1934773159408571084, filterPredicate = (l_partkey = integer '1')]
+       │      Layout: [l_partkey:integer]
+       │      Estimates: {rows: 6001215 (28.62MB), cpu: 28.62M, memory: 0B, network: 0B}/{rows: ? (?), cpu: 28.62M, memory: 0B, network: 0B}
+       │      CPU: 32.00ms (86.49%), Scheduled: 36.00ms (87.80%), Blocked: 0.00ns (0.00%), Output: 31 rows (155B)
+       │      Input avg.: 1157407.50 rows, Input std.dev.: 6.17%
+       │      l_partkey := 2:l_partkey:integer
+       │      Input: 2314815 rows (11.04MB), Filtered: 100.00%, Physical input: 10.61MB, Physical input time: 6.69ms, Splits: 2, Splits generation wait time: 0.98ms
+       └─ LocalExchange[partitioning = SINGLE]
+          │   Layout: []
+          │   Estimates: {rows: ? (0B), cpu: 0, memory: 0B, network: 0B}
+          │   CPU: 0.00ns (0.00%), Scheduled: 0.00ns (0.00%), Blocked: 4.00ms (0.69%), Output: 1 row (0B)
+          │   Input avg.: 0.06 rows, Input std.dev.: 387.30%
+          └─ RemoteSource[sourceFragmentIds = [3]]
+                 Layout: []
+                 CPU: 0.00ns (0.00%), Scheduled: 0.00ns (0.00%), Blocked: 70.00ms (12.13%), Output: 1 row (0B)
+                 Input avg.: 0.06 rows, Input std.dev.: 387.30%
+
+Fragment 3 [SOURCE]
+    CPU: 4.87ms, Scheduled: 4.94ms, Blocked 0.00ns (Input: 0.00ns, Output: 0.00ns), Input: 122880 rows (600kB); per task: avg.: 122880.00 std.dev.: 0.00, Output: 1 row (0B)
+    Peak Memory: 72B, Tasks count: 1; per task: max: 72B
+    Output layout: []
+    Output partitioning: BROADCAST []
+    ScanFilterProject[table = tpch:tpch_sf1.part$data@2762369314869286191, filterPredicate = (p_partkey = integer '1')]
+        Layout: []
+        Estimates: {rows: 200000 (0B), cpu: 976.56k, memory: 0B, network: 0B}/{rows: ? (0B), cpu: 976.56k, memory: 0B, network: 0B}/{rows: ? (0B), cpu: 0, memory: 0B, network: 0B}
+        CPU: 5.00ms (13.51%), Scheduled: 5.00ms (12.20%), Blocked: 0.00ns (0.00%), Output: 1 row (0B)
+        Input avg.: 122880.00 rows, Input std.dev.: 0.00%
+        p_partkey := 1:p_partkey:integer
+        Input: 122880 rows (600kB), Filtered: 100.00%, Physical input: 529.00kB, Physical input time: 61.46us, Splits: 1, Splits generation wait time: 1.02ms
+

@@ -18,24 +18,24 @@
         "distribute": {
           "+2x": 0,
           "+4x": 0,
-          "+8x": 1,
+          "+8x": 5,
           "-2x": 0,
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
           "=": 0,
-          ">16x": 4
+          ">16x": 0
         },
         "filter": {
           "+2x": 0,
           "+4x": 0,
-          "+8x": 1,
+          "+8x": 2,
           "-2x": 0,
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
           "=": 0,
-          ">16x": 2
+          ">16x": 1
         },
         "hash": {
           "+2x": 0,
@@ -46,7 +46,7 @@
           "-8x": 0,
           "<16x": 0,
           "=": 0,
-          ">16x": 4
+          ">16x": 0
         },
         "join": {
           "+2x": 0,
@@ -57,18 +57,18 @@
           "-8x": 0,
           "<16x": 0,
           "=": 0,
-          ">16x": 4
+          ">16x": 0
         },
         "scan": {
           "+2x": 0,
           "+4x": 0,
-          "+8x": 1,
+          "+8x": 5,
           "-2x": 0,
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
           "=": 0,
-          ">16x": 5
+          ">16x": 1
         },
         "sort": {
           "+2x": 0,
@@ -84,25 +84,25 @@
       },
       "operatorRows": {
         "aggregate": 5932,
-        "distribute": 18,
-        "hash": 5932,
-        "join": 5932,
-        "scan": 12,
+        "distribute": 134142,
+        "hash": 162702,
+        "join": 58615,
+        "scan": 145857,
         "seek": 0,
         "sort": 4
       },
-      "plan": "Estimate    Actual  Operator\n       -         4  PROJECT n_name AS supp_nation, n_name_13 AS cust_nation, expr_gid AS l_year, sum AS revenue\n       -         4  SORT n_name, n_name_13, expr_gid\n       -         4  AGGREGATE SUM(sum_20) AS sum GROUP BY HASH n_name, n_name_13, expr_gid\n       -         8  DISTRIBUTE HASH ON n_name, n_name_13, expr_gid\n       -         8  AGGREGATE SUM(expr_19) AS sum_20 GROUP BY PARTIAL n_name, n_name_13, expr_gid\n       -      5924  PROJECT l_extendedprice * (1 - l_discount) AS expr_19, n_name, n_name_13, EXTRACT(YEAR FROM l_shipdate) AS expr_gid\n       -      5924  INNER JOIN HASH ON (c_nationkey = n_nationkey_12) AND (((n_name = 'GERMANY') OR (n_name_13 = 'GERMANY')) AND ((n_name_13 = 'FRANCE') OR (n_name = 'FRANCE')))\n      25         2  │└DISTRIBUTE GATHER\n      25         2  │ PROJECT n_nationkey AS n_nationkey_12, n_name AS n_name_13\n      25         2  │ FILTER n_name IN('FRANCE','GERMANY')\n      25         2  │ TABLE SCAN nation\n  150000         2  INNER JOIN HASH ON s_nationkey = n_nationkey\n  150000         2  │└DISTRIBUTE GATHER\n  150000         2  │ FILTER n_name IN('FRANCE','GERMANY')\n  150000         2  │ TABLE SCAN nation\n  150000         2  INNER JOIN HASH ON o_custkey = c_custkey\n  150000         2  │└DISTRIBUTE GATHER\n  150000         2  │ TABLE SCAN customer\n  150000         2  INNER JOIN HASH ON l_suppkey = s_suppkey\n  150000         2  │└DISTRIBUTE GATHER\n  150000         2  │ TABLE SCAN supplier\n  150000         2  INNER JOIN HASH ON l_orderkey = o_orderkey\n  150000         2  │└DISTRIBUTE HASH ON o_orderkey\n  150000         2  │ TABLE SCAN orders\n  150000         2  FILTER l_shipdate BETWEEN '1995-01-01' AND '1996-12-31'\n  150000         2  TABLE SCAN lineitem\n",
+      "plan": "Estimate    Actual  Operator\n       -         4  PROJECT n_name AS supp_nation, n_name_13 AS cust_nation, expr_gid AS l_year, sum AS revenue\n       -         4  SORT n_name, n_name_13, expr_gid\n       -         4  AGGREGATE SUM(sum_20) AS sum GROUP BY HASH n_name, n_name_13, expr_gid\n       -         8  DISTRIBUTE HASH ON n_name, n_name_13, expr_gid\n       -         8  AGGREGATE SUM(expr_19) AS sum_20 GROUP BY PARTIAL n_name, n_name_13, expr_gid\n       -      5924  PROJECT l_extendedprice * (1 - l_discount) AS expr_19, n_name, n_name_13, EXTRACT(YEAR FROM l_shipdate) AS expr_gid\n       -      5924  INNER JOIN HASH ON (c_nationkey = n_nationkey_12) AND (((n_name = 'GERMANY') OR (n_name_13 = 'GERMANY')) AND ((n_name_13 = 'FRANCE') OR (n_name = 'FRANCE')))\n      25         2  │└DISTRIBUTE GATHER\n      25         2  │ PROJECT n_nationkey AS n_nationkey_12, n_name AS n_name_13\n      25         2  │ FILTER n_name IN('FRANCE','GERMANY')\n      25         2  │ TABLE SCAN nation\n       -     11723  INNER JOIN HASH ON s_nationkey = n_nationkey\n      25         2  │└DISTRIBUTE GATHER\n      25         2  │ FILTER n_name IN('FRANCE','GERMANY')\n      25         2  │ TABLE SCAN nation\n       -     11723  INNER JOIN HASH ON o_custkey = c_custkey\n  150000     12008  │└DISTRIBUTE GATHER\n  150000     12008  │ TABLE SCAN customer\n       -     11723  INNER JOIN HASH ON l_suppkey = s_suppkey\n   10000       798  │└DISTRIBUTE GATHER\n   10000       798  │ TABLE SCAN supplier\n       -     11723  INNER JOIN HASH ON l_orderkey = o_orderkey\n 1500000    121324  │└DISTRIBUTE HASH ON o_orderkey\n 1500000    121324  │ TABLE SCAN orders\n 1735005     11723  FILTER l_shipdate BETWEEN '1995-01-01' AND '1996-12-31'\n 1735005     11723  TABLE SCAN lineitem\n",
       "sql": "/* TPC-H Q07 */\nSELECT supp_nation,\n       cust_nation,\n       l_year,\n       SUM(volume) AS revenue\nFROM (SELECT n1.n_name                          AS supp_nation,\n             n2.n_name                          AS cust_nation,\n             EXTRACT(YEAR FROM l_shipdate)      AS l_year,\n             l_extendedprice * (1 - l_discount) AS volume\n      FROM tpch_sf1.lineitem\n      INNER JOIN tpch_sf1.orders\n          ON l_orderkey = o_orderkey\n      INNER JOIN tpch_sf1.supplier\n          ON l_suppkey = s_suppkey\n      INNER JOIN tpch_sf1.customer\n          ON o_custkey = c_custkey\n      INNER JOIN tpch_sf1.nation n1\n          ON s_nationkey = n1.n_nationkey\n      INNER JOIN tpch_sf1.nation n2\n          ON c_nationkey = n2.n_nationkey\n      WHERE ((n1.n_name = 'GERMANY' AND n2.n_name = 'FRANCE')\n          OR (n1.n_name = 'FRANCE' AND n2.n_name = 'GERMANY'))\n        AND l_shipdate BETWEEN '1995-01-01' AND '1996-12-31') AS shipping\nGROUP BY supp_nation,\n         cust_nation,\n         l_year\nORDER BY supp_nation,\n         cust_nation,\n         l_year\n\n\n",
-      "startTime": "2026-06-30T10:06:05.712748Z",
+      "startTime": "2026-07-01T14:53:43.915727Z",
       "status": "OK",
-      "timeMs": 503.945
+      "timeMs": 470.409
     }
   ],
   "runtime": {
-    "avgMs": 503.945,
-    "bestMs": 503.945,
-    "maxMs": 503.945,
-    "minMs": 503.945,
+    "avgMs": 470.409,
+    "bestMs": 470.409,
+    "maxMs": 470.409,
+    "minMs": 470.409,
     "stdDevMs": 0.0
   },
   "storageVariant": "iceberg",

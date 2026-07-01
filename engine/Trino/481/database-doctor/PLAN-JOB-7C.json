@@ -17,25 +17,25 @@
         },
         "distribute": {
           "+2x": 0,
-          "+4x": 0,
+          "+4x": 1,
           "+8x": 0,
           "-2x": 1,
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
-          "=": 0,
-          ">16x": 6
+          "=": 2,
+          ">16x": 3
         },
         "filter": {
           "+2x": 0,
-          "+4x": 0,
+          "+4x": 1,
           "+8x": 0,
           "-2x": 1,
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
-          "=": 0,
-          ">16x": 5
+          "=": 1,
+          ">16x": 3
         },
         "hash": {
           "+2x": 0,
@@ -46,7 +46,7 @@
           "-8x": 0,
           "<16x": 0,
           "=": 0,
-          ">16x": 6
+          ">16x": 0
         },
         "join": {
           "+2x": 0,
@@ -57,18 +57,18 @@
           "-8x": 0,
           "<16x": 0,
           "=": 0,
-          ">16x": 6
+          ">16x": 0
         },
         "scan": {
           "+2x": 0,
-          "+4x": 0,
+          "+4x": 1,
           "+8x": 0,
           "-2x": 1,
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
-          "=": 1,
-          ">16x": 7
+          "=": 3,
+          ">16x": 4
         },
         "sort": {
           "+2x": 0,
@@ -84,25 +84,25 @@
       },
       "operatorRows": {
         "aggregate": 68201,
-        "distribute": 1555619,
-        "hash": 1555603,
-        "join": 68191,
-        "scan": 1555604,
+        "distribute": 1694186,
+        "hash": 2137018,
+        "join": 706526,
+        "scan": 1715433,
         "seek": 0,
         "sort": 0
       },
-      "plan": "Estimate    Actual  Operator\n       1         ∞  PROJECT min AS cast_member_name, min_42 AS cast_member_info\n       1         1  AGGREGATE MIN(min_43) AS min, MIN(min_44) AS min_42\n       -        16  DISTRIBUTE GATHER\n       -        16  AGGREGATE MIN(name_19) AS min_43, MIN(info_30) AS min_44\n       -     68185  INNER JOIN HASH ON movie_id = id_35\n  530119   1555597  │└DISTRIBUTE HASH ON id_35\n  530119   1555597  │ PROJECT id AS id_35\n  530119   1555597  │ FILTER production_year BETWEEN 1980 AND 2010\n  530119   1555597  │ TABLE SCAN title\n   84183         1  INNER JOIN HASH ON info_type_id = id_5\n   84183         1  │└DISTRIBUTE GATHER\n   84183         1  │ PROJECT id AS id_5\n   84183         1  │ FILTER info = 'mini biography'\n   84183         1  │ TABLE SCAN info_type\n   84183         1  INNER JOIN HASH ON person_id_1 = person_id_29\n   84183         1  │└DISTRIBUTE HASH ON person_id_29\n   84183         1  │ PROJECT person_id AS person_id_29, info_type_id, info AS info_30\n   84183         1  │ FILTER  NOT (note IS NULL)\n   84183         1  │ TABLE SCAN person_info\n   84183         1  INNER JOIN HASH ON person_id_1 = id_18\n   84183         1  │└DISTRIBUTE HASH ON id_18\n   84183         1  │ PROJECT id AS id_18, name AS name_19\n   84183         1  │ FILTER (gender IN('f','m')) AND (name_pcode_cf BETWEEN 'A' AND 'F') AND ((gender = 'm') OR ((gender = 'f') AND (name LIKE 'A%')))\n   84183         1  │ TABLE SCAN name\n   84183         1  INNER JOIN HASH ON link_type_id = id_9\n   84183         1  │└DISTRIBUTE GATHER\n   84183         1  │ PROJECT id AS id_9\n   84183         1  │ FILTER link IN('featured in','features','referenced in','references')\n   84183         1  │ TABLE SCAN link_type\n   84183         1  INNER JOIN HASH ON movie_id = linked_movie_id\n   84183         1  │└DISTRIBUTE GATHER\n   84183         1  │ TABLE SCAN movie_link\n   84183         1  INNER JOIN HASH ON person_id_1 = person_id\n   84183         1  │└DISTRIBUTE GATHER\n   84183         1  │ FILTER  NOT (name IS NULL) AND ((name LIKE '%a%') OR (name LIKE 'A%'))\n   84183         1  │ TABLE SCAN aka_name\n   84183         1  PROJECT person_id AS person_id_1, movie_id\n   84183         1  TABLE SCAN cast_info\n",
+      "plan": "Estimate    Actual  Operator\n       1         ∞  PROJECT min AS cast_member_name, min_42 AS cast_member_info\n       1         1  AGGREGATE MIN(min_43) AS min, MIN(min_44) AS min_42\n       -        16  DISTRIBUTE GATHER\n       -        16  AGGREGATE MIN(name_19) AS min_43, MIN(info_30) AS min_44\n       -     68185  INNER JOIN HASH ON movie_id = id_35\n  530119   1555597  │└DISTRIBUTE HASH ON id_35\n  530119   1555597  │ PROJECT id AS id_35\n  530119   1555597  │ FILTER production_year BETWEEN 1980 AND 2010\n  530119   1555597  │ TABLE SCAN title\n       -    109842  INNER JOIN HASH ON info_type_id = id_5\n     113         1  │└DISTRIBUTE GATHER\n     113         1  │ PROJECT id AS id_5\n     113         1  │ FILTER info = 'mini biography'\n     113         1  │ TABLE SCAN info_type\n       -    109842  INNER JOIN HASH ON person_id_1 = person_id_29\n   84183     84183  │└DISTRIBUTE HASH ON person_id_29\n   84183     84183  │ PROJECT person_id AS person_id_29, info_type_id, info AS info_30\n   84183     84183  │ FILTER  NOT (note IS NULL)\n   84183     84183  │ TABLE SCAN person_info\n       -     98911  INNER JOIN HASH ON person_id_1 = id_18\n 3750742     12733  │└DISTRIBUTE HASH ON id_18\n 3750742     12733  │ PROJECT id AS id_18, name AS name_19\n 3750742     12733  │ FILTER (gender IN('f','m')) AND (name_pcode_cf BETWEEN 'A' AND 'F') AND ((gender = 'm') OR ((gender = 'f') AND (name LIKE 'A%')))\n 3750742     12733  │ TABLE SCAN name\n       -     98911  INNER JOIN HASH ON link_type_id = id_9\n      18         4  │└DISTRIBUTE GATHER\n      18         4  │ PROJECT id AS id_9\n      18         4  │ FILTER link IN('featured in','features','referenced in','references')\n      18         4  │ TABLE SCAN link_type\n       -    114174  INNER JOIN HASH ON movie_id = linked_movie_id\n   29997     29636  │└DISTRIBUTE GATHER\n   29997     29636  │ TABLE SCAN movie_link\n       -     49741  INNER JOIN HASH ON person_id_1 = person_id\n  811209     12016  │└DISTRIBUTE GATHER\n  811209     12016  │ FILTER  NOT (name IS NULL) AND ((name LIKE '%a%') OR (name LIKE 'A%'))\n  811209     12016  │ TABLE SCAN aka_name\n36244344     21263  PROJECT person_id AS person_id_1, movie_id\n36244344     21263  TABLE SCAN cast_info\n",
       "sql": "SELECT MIN(n.name) AS cast_member_name,\n       MIN(pi.info) AS cast_member_info\nFROM job.aka_name AS an,\n     job.cast_info AS ci,\n     job.info_type AS it,\n     job.link_type AS lt,\n     job.movie_link AS ml,\n     job.name AS n,\n     job.person_info AS pi,\n     job.title AS t\nWHERE an.name IS NOT NULL\n  AND (an.name LIKE '%a%'\n       OR an.name LIKE 'A%')\n  AND it.info ='mini biography'\n  AND lt.link IN ('references',\n                  'referenced in',\n                  'features',\n                  'featured in')\n  AND n.name_pcode_cf BETWEEN 'A' AND 'F'\n  AND (n.gender='m'\n       OR (n.gender = 'f'\n           AND n.name LIKE 'A%'))\n  AND pi.note IS NOT NULL\n  AND t.production_year BETWEEN 1980 AND 2010\n  AND n.id = an.person_id\n  AND n.id = pi.person_id\n  AND ci.person_id = n.id\n  AND t.id = ci.movie_id\n  AND ml.linked_movie_id = t.id\n  AND lt.id = ml.link_type_id\n  AND it.id = pi.info_type_id\n  AND pi.person_id = an.person_id\n  AND pi.person_id = ci.person_id\n  AND an.person_id = ci.person_id\n  AND ci.movie_id = ml.linked_movie_id;\n",
-      "startTime": "2026-06-30T11:21:50.400938Z",
+      "startTime": "2026-07-01T14:53:12.329384Z",
       "status": "OK",
-      "timeMs": 1037.661
+      "timeMs": 1063.251
     }
   ],
   "runtime": {
-    "avgMs": 1037.661,
-    "bestMs": 1037.661,
-    "maxMs": 1037.661,
-    "minMs": 1037.661,
+    "avgMs": 1063.251,
+    "bestMs": 1063.251,
+    "maxMs": 1063.251,
+    "minMs": 1063.251,
     "stdDevMs": 0.0
   },
   "storageVariant": "iceberg",

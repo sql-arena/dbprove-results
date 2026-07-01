@@ -34,8 +34,8 @@
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
-          "=": 2,
-          ">16x": 0
+          "=": 1,
+          ">16x": 1
         },
         "hash": {
           "+2x": 0,
@@ -45,7 +45,7 @@
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
-          "=": 2,
+          "=": 0,
           ">16x": 0
         },
         "join": {
@@ -56,7 +56,7 @@
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
-          "=": 2,
+          "=": 0,
           ">16x": 0
         },
         "scan": {
@@ -67,8 +67,8 @@
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
-          "=": 4,
-          ">16x": 0
+          "=": 3,
+          ">16x": 1
         },
         "sort": {
           "+2x": 0,
@@ -84,25 +84,25 @@
       },
       "operatorRows": {
         "aggregate": 157693,
-        "distribute": 342668,
-        "hash": 415050,
-        "join": 450000,
-        "scan": 450025,
+        "distribute": 250142,
+        "hash": 380100,
+        "join": 345150,
+        "scan": 322549,
         "seek": 0,
         "sort": 38182
       },
-      "plan": "Estimate    Actual  Operator\n       -     38182  PROJECT o_custkey AS c_custkey, c_name, sum AS revenue, c_acctbal, n_name, c_address, c_phone, c_comment\n       -     38182  SORT sum\n       -     38182  AGGREGATE SUM(sum_9) AS sum GROUP BY HASH o_custkey, c_name, c_acctbal, c_phone, n_name, c_address, c_comment\n       -     42643  DISTRIBUTE HASH ON o_custkey, c_name, c_acctbal, c_phone, n_name, c_address, c_comment\n       -     42643  AGGREGATE SUM(expr) AS sum_9 GROUP BY PARTIAL o_custkey, c_name, c_acctbal, c_phone, n_name, c_address, c_comment\n       -    115050  PROJECT l_extendedprice * (1 - l_discount) AS expr, o_custkey, c_name, c_acctbal, c_phone, n_name, c_address, c_comment\n       -    115050  INNER JOIN HASH ON c_nationkey = n_nationkey\n      25        25  │└DISTRIBUTE GATHER\n      25        25  │ TABLE SCAN nation\n  150000    150000  INNER JOIN HASH ON o_custkey = c_custkey\n  150000    150000  │└DISTRIBUTE GATHER\n  150000    150000  │ TABLE SCAN customer\n  150000    150000  INNER JOIN HASH ON l_orderkey = o_orderkey\n  150000    150000  │└DISTRIBUTE HASH ON o_orderkey\n  150000    150000  │ FILTER (o_orderdate >= '1994-06-01') AND (o_orderdate < '1994-09-01')\n  150000    150000  │ TABLE SCAN orders\n  150000    150000  FILTER l_returnflag = 'R'\n  150000    150000  TABLE SCAN lineitem\n",
+      "plan": "Estimate    Actual  Operator\n       -     38182  PROJECT o_custkey AS c_custkey, c_name, sum AS revenue, c_acctbal, n_name, c_address, c_phone, c_comment\n       -     38182  SORT sum\n       -     38182  AGGREGATE SUM(sum_9) AS sum GROUP BY HASH o_custkey, c_name, c_acctbal, c_phone, n_name, c_address, c_comment\n       -     42643  DISTRIBUTE HASH ON o_custkey, c_name, c_acctbal, c_phone, n_name, c_address, c_comment\n       -     42643  AGGREGATE SUM(expr) AS sum_9 GROUP BY PARTIAL o_custkey, c_name, c_acctbal, c_phone, n_name, c_address, c_comment\n       -    115050  PROJECT l_extendedprice * (1 - l_discount) AS expr, o_custkey, c_name, c_acctbal, c_phone, n_name, c_address, c_comment\n       -    115050  INNER JOIN HASH ON c_nationkey = n_nationkey\n      25        25  │└DISTRIBUTE GATHER\n      25        25  │ TABLE SCAN nation\n       -    115050  INNER JOIN HASH ON o_custkey = c_custkey\n  150000    150000  │└DISTRIBUTE GATHER\n  150000    150000  │ TABLE SCAN customer\n       -    115050  INNER JOIN HASH ON l_orderkey = o_orderkey\n   57380     57474  │└DISTRIBUTE HASH ON o_orderkey\n   57380     57474  │ FILTER (o_orderdate >= '1994-06-01') AND (o_orderdate < '1994-09-01')\n   57380     57474  │ TABLE SCAN orders\n 5401094    115050  FILTER l_returnflag = 'R'\n 5401094    115050  TABLE SCAN lineitem\n",
       "sql": "/* TPC-H Q10 */\nSELECT c_custkey,\n       c_name,\n       SUM(l_extendedprice * (1 - l_discount)) AS revenue,\n       c_acctbal,\n       n_name,\n       c_address,\n       c_phone,\n       c_comment\nFROM tpch_sf1.lineitem\nINNER JOIN tpch_sf1.orders\n    ON l_orderkey = o_orderkey\nINNER JOIN tpch_sf1.customer\n    ON o_custkey = c_custkey\nINNER JOIN tpch_sf1.nation\n    ON c_nationkey = n_nationkey\nWHERE o_orderdate >= '1994-06-01'\n  AND o_orderdate < '1994-09-01'\n  AND l_returnflag = 'R'\nGROUP BY c_custkey,\n         c_name,\n         c_acctbal,\n         c_phone,\n         n_name,\n         c_address,\n         c_comment\nORDER BY revenue DESC",
-      "startTime": "2026-06-30T10:06:07.317794Z",
+      "startTime": "2026-07-01T14:53:45.496552Z",
       "status": "OK",
-      "timeMs": 1148.908
+      "timeMs": 1144.832
     }
   ],
   "runtime": {
-    "avgMs": 1148.908,
-    "bestMs": 1148.908,
-    "maxMs": 1148.908,
-    "minMs": 1148.908,
+    "avgMs": 1144.832,
+    "bestMs": 1144.832,
+    "maxMs": 1144.832,
+    "minMs": 1144.832,
     "stdDevMs": 0.0
   },
   "storageVariant": "iceberg",

@@ -23,8 +23,8 @@
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
-          "=": 7,
-          ">16x": 0
+          "=": 5,
+          ">16x": 2
         },
         "filter": {
           "+2x": 0,
@@ -34,8 +34,8 @@
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
-          "=": 5,
-          ">16x": 0
+          "=": 3,
+          ">16x": 2
         },
         "hash": {
           "+2x": 0,
@@ -45,7 +45,7 @@
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
-          "=": 5,
+          "=": 0,
           ">16x": 0
         },
         "join": {
@@ -56,7 +56,7 @@
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
-          "=": 5,
+          "=": 0,
           ">16x": 0
         },
         "scan": {
@@ -67,8 +67,8 @@
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
-          "=": 9,
-          ">16x": 0
+          "=": 6,
+          ">16x": 3
         },
         "sort": {
           "+2x": 0,
@@ -84,25 +84,25 @@
       },
       "operatorRows": {
         "aggregate": 14915,
-        "distribute": 2437290,
-        "hash": 2452155,
-        "join": 194881,
-        "scan": 2467271,
+        "distribute": 2527527,
+        "hash": 2543555,
+        "join": 46633,
+        "scan": 2528023,
         "seek": 0,
         "sort": 0
       },
-      "plan": "Estimate    Actual  Operator\n       1         ∞  PROJECT min AS from_company, min_33 AS production_note, min_34 AS movie_based_on_book\n       1         1  AGGREGATE MIN(min_35) AS min, MIN(min_36) AS min_33, MIN(min_37) AS min_34\n       -        16  DISTRIBUTE GATHER\n       -        16  AGGREGATE MIN(name) AS min_35, MIN(note) AS min_36, MIN(title) AS min_37\n       -     14899  INNER JOIN HASH ON movie_id = id_26\n 1219274   2287271  │└DISTRIBUTE HASH ON id_26\n 1219274   2287271  │ PROJECT id AS id_26, title\n 1219274   2287271  │ FILTER production_year > 1950\n 1219274   2287271  │ TABLE SCAN title\n       -     14899  INNER JOIN HASH ON link_type_id = id_8\n      18        18  │└DISTRIBUTE GATHER\n      18        18  │ PROJECT id AS id_8\n      18        18  │ TABLE SCAN link_type\n   29997     29997  INNER JOIN HASH ON movie_id = movie_id_22\n   29997     29997  │└DISTRIBUTE GATHER\n   29997     29997  │ PROJECT movie_id AS movie_id_22, link_type_id\n   29997     29997  │ TABLE SCAN movie_link\n   29997     29997  INNER JOIN HASH ON keyword_id = id_4\n   29997     29997  │└DISTRIBUTE GATHER\n   29997     29997  │ PROJECT id AS id_4\n   29997     29997  │ FILTER keyword IN('based-on-novel','revenge','sequel')\n   29997     29997  │ TABLE SCAN keyword\n   29997     29997  INNER JOIN HASH ON movie_id = movie_id_17\n   29997     29997  │└DISTRIBUTE HASH ON movie_id_17\n   29997     29997  │ PROJECT movie_id AS movie_id_17, keyword_id\n   29997     29997  │ TABLE SCAN movie_keyword\n   29997     29997  INNER JOIN HASH ON company_type_id = id_0\n   29997     29997  │└DISTRIBUTE GATHER\n   29997     29997  │ PROJECT id AS id_0\n   29997     29997  │ FILTER kind <> 'production companies'\n   29997     29997  │ TABLE SCAN company_type\n   29997     29997  INNER JOIN HASH ON company_id = id\n   29997     29997  │└DISTRIBUTE GATHER\n   29997     29997  │ FILTER country_code <> 'pl'\n   29997     29997  │ TABLE SCAN company_name\n   29997     29997  FILTER  NOT (note IS NULL)\n   29997     29997  TABLE SCAN movie_companies\n",
+      "plan": "Estimate    Actual  Operator\n       1         ∞  PROJECT min AS from_company, min_33 AS production_note, min_34 AS movie_based_on_book\n       1         1  AGGREGATE MIN(min_35) AS min, MIN(min_36) AS min_33, MIN(min_37) AS min_34\n       -        16  DISTRIBUTE GATHER\n       -        16  AGGREGATE MIN(name) AS min_35, MIN(note) AS min_36, MIN(title) AS min_37\n       -     14899  INNER JOIN HASH ON movie_id = id_26\n 1219274   2287271  │└DISTRIBUTE HASH ON id_26\n 1219274   2287271  │ PROJECT id AS id_26, title\n 1219274   2287271  │ FILTER production_year > 1950\n 1219274   2287271  │ TABLE SCAN title\n       -     14899  INNER JOIN HASH ON link_type_id = id_8\n      18        18  │└DISTRIBUTE GATHER\n      18        18  │ PROJECT id AS id_8\n      18        18  │ TABLE SCAN link_type\n       -     14899  INNER JOIN HASH ON movie_id = movie_id_22\n   29997     29997  │└DISTRIBUTE GATHER\n   29997     29997  │ PROJECT movie_id AS movie_id_22, link_type_id\n   29997     29997  │ TABLE SCAN movie_link\n       -       456  INNER JOIN HASH ON keyword_id = id_4\n  134170         3  │└DISTRIBUTE GATHER\n  134170         3  │ PROJECT id AS id_4\n  134170         3  │ FILTER keyword IN('based-on-novel','revenge','sequel')\n  134170         3  │ TABLE SCAN keyword\n       -       456  INNER JOIN HASH ON movie_id = movie_id_17\n 4523930       188  │└DISTRIBUTE HASH ON movie_id_17\n 4523930       188  │ PROJECT movie_id AS movie_id_17, keyword_id\n 4523930       188  │ TABLE SCAN movie_keyword\n       -       445  INNER JOIN HASH ON company_type_id = id_0\n       2         3  │└DISTRIBUTE GATHER\n       2         3  │ PROJECT id AS id_0\n       2         3  │ FILTER kind <> 'production companies'\n       2         3  │ TABLE SCAN company_type\n       -       512  INNER JOIN HASH ON company_id = id\n  105537    210031  │└DISTRIBUTE GATHER\n  105537    210031  │ FILTER country_code <> 'pl'\n  105537    210031  │ TABLE SCAN company_name\n 1337140       512  FILTER  NOT (note IS NULL)\n 1337140       512  TABLE SCAN movie_companies\n",
       "sql": "SELECT MIN(cn.name) AS from_company,\n       MIN(mc.note) AS production_note,\n       MIN(t.title) AS movie_based_on_book\nFROM job.company_name AS cn,\n     job.company_type AS ct,\n     job.keyword AS k,\n     job.link_type AS lt,\n     job.movie_companies AS mc,\n     job.movie_keyword AS mk,\n     job.movie_link AS ml,\n     job.title AS t\nWHERE cn.country_code !='[pl]'\n  AND ct.kind != 'production companies'\n  AND ct.kind IS NOT NULL\n  AND k.keyword IN ('sequel',\n                    'revenge',\n                    'based-on-novel')\n  AND mc.note IS NOT NULL\n  AND t.production_year > 1950\n  AND lt.id = ml.link_type_id\n  AND ml.movie_id = t.id\n  AND t.id = mk.movie_id\n  AND mk.keyword_id = k.id\n  AND t.id = mc.movie_id\n  AND mc.company_type_id = ct.id\n  AND mc.company_id = cn.id\n  AND ml.movie_id = mk.movie_id\n  AND ml.movie_id = mc.movie_id\n  AND mk.movie_id = mc.movie_id;\n",
-      "startTime": "2026-06-30T11:20:41.757121Z",
+      "startTime": "2026-07-01T14:51:58.737553Z",
       "status": "OK",
-      "timeMs": 550.74
+      "timeMs": 542.183
     }
   ],
   "runtime": {
-    "avgMs": 550.74,
-    "bestMs": 550.74,
-    "maxMs": 550.74,
-    "minMs": 550.74,
+    "avgMs": 542.183,
+    "bestMs": 542.183,
+    "maxMs": 542.183,
+    "minMs": 542.183,
     "stdDevMs": 0.0
   },
   "storageVariant": "iceberg",

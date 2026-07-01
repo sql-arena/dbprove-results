@@ -16,18 +16,18 @@
           ">16x": 0
         },
         "distribute": {
-          "+2x": 0,
+          "+2x": 2,
           "+4x": 0,
           "+8x": 1,
           "-2x": 0,
           "-4x": 1,
           "-8x": 0,
           "<16x": 0,
-          "=": 0,
-          ">16x": 5
+          "=": 1,
+          ">16x": 2
         },
         "filter": {
-          "+2x": 0,
+          "+2x": 2,
           "+4x": 0,
           "+8x": 1,
           "-2x": 0,
@@ -35,7 +35,7 @@
           "-8x": 0,
           "<16x": 0,
           "=": 0,
-          ">16x": 4
+          ">16x": 2
         },
         "hash": {
           "+2x": 0,
@@ -60,15 +60,15 @@
           ">16x": 0
         },
         "scan": {
-          "+2x": 0,
+          "+2x": 2,
           "+4x": 0,
           "+8x": 1,
           "-2x": 0,
           "-4x": 1,
           "-8x": 0,
           "<16x": 0,
-          "=": 1,
-          ">16x": 6
+          "=": 2,
+          ">16x": 3
         },
         "sort": {
           "+2x": 0,
@@ -84,25 +84,25 @@
       },
       "operatorRows": {
         "aggregate": 137,
-        "distribute": 1141745,
-        "hash": 1142069,
-        "join": 40949,
-        "scan": 1148497,
+        "distribute": 4883509,
+        "hash": 4883833,
+        "join": 2601,
+        "scan": 4883721,
         "seek": 0,
         "sort": 0
       },
-      "plan": "Estimate    Actual  Operator\n       1         ∞  PROJECT min AS alternative_name, min_50 AS character_name, min_51 AS movie\n       1         1  AGGREGATE MIN(min_52) AS min, MIN(min_53) AS min_50, MIN(min_54) AS min_51\n       -        16  DISTRIBUTE GATHER\n       -        16  AGGREGATE MIN(name) AS min_52, MIN(name_1) AS min_53, MIN(title) AS min_54\n       -       121  INNER JOIN HASH ON movie_id = id_43\n  176706   1107888  │└DISTRIBUTE HASH ON id_43\n  176706   1107888  │ PROJECT id AS id_43, title\n  176706   1107888  │ FILTER production_year BETWEEN 2005 AND 2015\n  176706   1107888  │ TABLE SCAN title\n       -       341  INNER JOIN HASH ON role_id = id_39\n      12         1  │└DISTRIBUTE GATHER\n      12         1  │ PROJECT id AS id_39\n      12         1  │ FILTER role = 'actress'\n      12         1  │ TABLE SCAN role_type\n       -      6768  INNER JOIN HASH ON person_id_10 = id_28\n 4167491      6768  │└DISTRIBUTE HASH ON id_28\n 4167491      6768  │ PROJECT id AS id_28\n 4167491      6768  │ FILTER (gender = 'f') AND (name LIKE '%Ang%')\n 4167491      6768  │ TABLE SCAN name\n       -      6768  INNER JOIN HASH ON company_id = id_14\n  234997      6768  │└DISTRIBUTE GATHER\n  234997      6768  │ PROJECT id AS id_14\n  234997      6768  │ FILTER country_code = 'us'\n  234997      6768  │ TABLE SCAN company_name\n       -      6768  INNER JOIN HASH ON movie_id = movie_id_23\n 2609129      6768  │└DISTRIBUTE HASH ON movie_id_23\n 2609129      6768  │ PROJECT movie_id AS movie_id_23, company_id\n 2609129      6768  │ FILTER  NOT (note IS NULL) AND ((note LIKE '%(USA)%') OR (note LIKE '%(worldwide)%'))\n 2609129      6768  │ TABLE SCAN movie_companies\n       -      6768  INNER JOIN HASH ON person_role_id = id_0\n 3140339      6768  │└DISTRIBUTE HASH ON id_0\n 3140339      6768  │ PROJECT id AS id_0, name AS name_1\n 3140339      6768  │ TABLE SCAN char_name\n       -      6768  INNER JOIN HASH ON person_id_10 = person_id\n  901343      6768  │└DISTRIBUTE GATHER\n  901343      6768  │ TABLE SCAN aka_name\n36244344      6768  PROJECT person_id AS person_id_10, movie_id, person_role_id, role_id\n36244344      6768  FILTER note IN('(voice)','(voice) (uncredited)','(voice: English version)','(voice: Japanese version)')\n36244344      6768  TABLE SCAN cast_info\n",
+      "plan": "Estimate    Actual  Operator\n       1         ∞  PROJECT min AS alternative_name, min_50 AS character_name, min_51 AS movie\n       1         1  AGGREGATE MIN(min_52) AS min, MIN(min_53) AS min_50, MIN(min_54) AS min_51\n       -        16  DISTRIBUTE GATHER\n       -        16  AGGREGATE MIN(name) AS min_52, MIN(name_1) AS min_53, MIN(title) AS min_54\n       -       121  INNER JOIN HASH ON movie_id = id_43\n  176706   1107888  │└DISTRIBUTE HASH ON id_43\n  176706   1107888  │ PROJECT id AS id_43, title\n  176706   1107888  │ FILTER production_year BETWEEN 2005 AND 2015\n  176706   1107888  │ TABLE SCAN title\n       -       341  INNER JOIN HASH ON role_id = id_39\n      12         1  │└DISTRIBUTE GATHER\n      12         1  │ PROJECT id AS id_39\n      12         1  │ FILTER role = 'actress'\n      12         1  │ TABLE SCAN role_type\n       -       341  INNER JOIN HASH ON person_id_10 = id_28\n 4167491      6768  │└DISTRIBUTE HASH ON id_28\n 4167491      6768  │ PROJECT id AS id_28\n 4167491      6768  │ FILTER (gender = 'f') AND (name LIKE '%Ang%')\n 4167491      6768  │ TABLE SCAN name\n       -       341  INNER JOIN HASH ON company_id = id_14\n  234997     84843  │└DISTRIBUTE GATHER\n  234997     84843  │ PROJECT id AS id_14\n  234997     84843  │ FILTER country_code = 'us'\n  234997     84843  │ TABLE SCAN company_name\n       -       341  INNER JOIN HASH ON movie_id = movie_id_23\n 1203426    542096  │└DISTRIBUTE HASH ON movie_id_23\n 1203426    542096  │ PROJECT movie_id AS movie_id_23, company_id\n 1203426    542096  │ FILTER  NOT (note IS NULL) AND ((note LIKE '%(USA)%') OR (note LIKE '%(worldwide)%'))\n 1203426    542096  │ TABLE SCAN movie_companies\n       -       387  INNER JOIN HASH ON person_role_id = id_0\n 3140339   3140339  │└DISTRIBUTE HASH ON id_0\n 3140339   3140339  │ PROJECT id AS id_0, name AS name_1\n 3140339   3140339  │ TABLE SCAN char_name\n       -       425  INNER JOIN HASH ON person_id_10 = person_id\n  901343      1558  │└DISTRIBUTE GATHER\n  901343      1558  │ TABLE SCAN aka_name\n32619910       228  PROJECT person_id AS person_id_10, movie_id, person_role_id, role_id\n32619910       228  FILTER note IN('(voice)','(voice) (uncredited)','(voice: English version)','(voice: Japanese version)')\n32619910       228  TABLE SCAN cast_info\n",
       "sql": "SELECT MIN(an.name) AS alternative_name,\n       MIN(chn.name) AS character_name,\n       MIN(t.title) AS movie\nFROM job.aka_name AS an,\n     job.char_name AS chn,\n     job.cast_info AS ci,\n     job.company_name AS cn,\n     job.movie_companies AS mc,\n     job.name AS n,\n     job.role_type AS rt,\n     job.title AS t\nWHERE ci.note IN ('(voice)',\n                  '(voice: Japanese version)',\n                  '(voice) (uncredited)',\n                  '(voice: English version)')\n  AND cn.country_code ='[us]'\n  AND mc.note IS NOT NULL\n  AND (mc.note LIKE '%(USA)%'\n       OR mc.note LIKE '%(worldwide)%')\n  AND n.gender ='f'\n  AND n.name LIKE '%Ang%'\n  AND rt.role ='actress'\n  AND t.production_year BETWEEN 2005 AND 2015\n  AND ci.movie_id = t.id\n  AND t.id = mc.movie_id\n  AND ci.movie_id = mc.movie_id\n  AND mc.company_id = cn.id\n  AND ci.role_id = rt.id\n  AND n.id = ci.person_id\n  AND chn.id = ci.person_role_id\n  AND an.person_id = n.id\n  AND an.person_id = ci.person_id;\n",
-      "startTime": "2026-06-30T11:21:54.690784Z",
+      "startTime": "2026-07-01T14:53:17.263206Z",
       "status": "OK",
-      "timeMs": 607.685
+      "timeMs": 858.703
     }
   ],
   "runtime": {
-    "avgMs": 607.685,
-    "bestMs": 607.685,
-    "maxMs": 607.685,
-    "minMs": 607.685,
+    "avgMs": 858.703,
+    "bestMs": 858.703,
+    "maxMs": 858.703,
+    "minMs": 858.703,
     "stdDevMs": 0.0
   },
   "storageVariant": "iceberg",

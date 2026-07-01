@@ -1,0 +1,86 @@
+Trino version: 481
+Queued: 102.88us, Analysis: 5.79ms, Planning: 29.23ms, Execution: 405.45ms, Finishing: 0.00ns
+Fragment 1 [SINGLE]
+    CPU: 1.15ms, Scheduled: 1.21ms, Blocked 4.50s (Input: 4.23s, Output: 0.00ns), Input: 17 rows (306B); per task: avg.: 17.00 std.dev.: 0.00, Output: 1 row (18B)
+    Peak Memory: 184B, Tasks count: 1; per task: max: 184B
+    Output layout: [count, count_3]
+    Output partitioning: SINGLE []
+    Aggregate[type = FINAL]
+    │   Layout: [count:bigint, count_3:bigint]
+    │   Estimates: {rows: 1 (18B), cpu: ?, memory: 18B, network: 0B}
+    │   CPU: 0.00ns (0.00%), Scheduled: 0.00ns (0.00%), Blocked: 0.00ns (0.00%), Output: 1 row (18B)
+    │   Input avg.: 17.00 rows, Input std.dev.: 0.00%
+    │   count := count(count_4)
+    │   count_3 := count(count_5)
+    └─ LocalExchange[partitioning = SINGLE]
+       │   Layout: [count_4:bigint, count_5:bigint]
+       │   Estimates: {rows: ? (?), cpu: 0, memory: 0B, network: 0B}
+       │   CPU: 0.00ns (0.00%), Scheduled: 0.00ns (0.00%), Blocked: 264.00ms (3.48%), Output: 17 rows (306B)
+       │   Input avg.: 1.06 rows, Input std.dev.: 22.78%
+       └─ RemoteSource[sourceFragmentIds = [2]]
+              Layout: [count_4:bigint, count_5:bigint]
+              CPU: 0.00ns (0.00%), Scheduled: 0.00ns (0.00%), Blocked: 4.23s (55.75%), Output: 17 rows (306B)
+              Input avg.: 1.06 rows, Input std.dev.: 22.78%
+
+Fragment 2 [HASH]
+    CPU: 384.04ms, Scheduled: 1.59s, Blocked 3.09s (Input: 2.60s, Output: 0.00ns), Input: 1650000 rows (15.02MB); per task: avg.: 1650000.00 std.dev.: 0.00, Output: 17 rows (306B)
+    Peak Memory: 6.06MB, Tasks count: 1; per task: max: 6.06MB
+    Output layout: [count_4, count_5]
+    Output partitioning: SINGLE []
+    Aggregate[type = PARTIAL]
+    │   Layout: [count_4:bigint, count_5:bigint]
+    │   CPU: 1.00ms (0.24%), Scheduled: 1.00ms (0.06%), Blocked: 0.00ns (0.00%), Output: 17 rows (306B)
+    │   Input avg.: 91176.71 rows, Input std.dev.: 20.73%
+    │   count_4 := count(c_custkey)
+    │   count_5 := count(o_orderkey)
+    └─ RightJoin[criteria = (o_custkey = c_custkey), distribution = PARTITIONED]
+       │   Layout: [o_orderkey:integer, c_custkey:integer]
+       │   Estimates: {rows: ? (?), cpu: ?, memory: 732.42kB, network: 0B}
+       │   CPU: 380.00ms (92.01%), Scheduled: 1.59s (97.54%), Blocked: 487.00ms (6.42%), Output: 1550004 rows (14.78MB)
+       │   Left (probe) Input avg.: 93750.00 rows, Input std.dev.: 17.43%
+       │   Right (build) Input avg.: 150000.00 rows, Input std.dev.: 0.00%
+       │   Distribution: PARTITIONED
+       │   dynamicFilterAssignments = {c_custkey -> #df_374}
+       ├─ RemoteSource[sourceFragmentIds = [3]]
+       │      Layout: [o_orderkey:integer, o_custkey:integer]
+       │      CPU: 1.00ms (0.24%), Scheduled: 1.00ms (0.06%), Blocked: 2.55s (33.61%), Output: 1500000 rows (14.31MB)
+       │      Input avg.: 93750.00 rows, Input std.dev.: 17.43%
+       └─ LocalExchange[partitioning = SINGLE]
+          │   Layout: [c_custkey:integer]
+          │   Estimates: {rows: 150000 (732.42kB), cpu: 0, memory: 0B, network: 0B}
+          │   CPU: 0.00ns (0.00%), Scheduled: 0.00ns (0.00%), Blocked: 4.00ms (0.05%), Output: 150000 rows (732.42kB)
+          │   Input avg.: 9375.00 rows, Input std.dev.: 175.10%
+          └─ RemoteSource[sourceFragmentIds = [4]]
+                 Layout: [c_custkey:integer]
+                 CPU: 0.00ns (0.00%), Scheduled: 0.00ns (0.00%), Blocked: 52.00ms (0.69%), Output: 150000 rows (732.42kB)
+                 Input avg.: 9375.00 rows, Input std.dev.: 175.10%
+
+Fragment 3 [SOURCE]
+    CPU: 29.21ms, Scheduled: 34.88ms, Blocked 0.00ns (Input: 0.00ns, Output: 0.00ns), Input: 1500000 rows (14.31MB); per task: avg.: 1500000.00 std.dev.: 0.00, Output: 1500000 rows (14.31MB)
+    Peak Memory: 586.25kB, Tasks count: 1; per task: max: 586.25kB
+    Output layout: [o_orderkey, o_custkey]
+    Output partitioning: HASH [o_custkey]
+    ScanFilter[table = tpch:tpch_sf1.orders$data@7857308658907047114, dynamicFilters = {o_custkey = #df_374}]
+        Layout: [o_orderkey:integer, o_custkey:integer]
+        Estimates: {rows: 1500000 (14.31MB), cpu: 14.31M, memory: 0B, network: 0B}/{rows: 1500000 (14.31MB), cpu: 14.31M, memory: 0B, network: 0B}
+        CPU: 29.00ms (7.02%), Scheduled: 35.00ms (2.15%), Blocked: 0.00ns (0.00%), Output: 1500000 rows (14.31MB)
+        Input avg.: 1500000.00 rows, Input std.dev.: 0.00%
+        o_orderkey := 1:o_orderkey:integer
+        o_custkey := 2:o_custkey:integer
+        Input: 1500000 rows (14.31MB), Filtered: 0.00%, Physical input: 12.32MB, Physical input time: 10.43ms, Splits: 1, Splits generation wait time: 91.26ms
+        Dynamic filters: 
+            - df_374, [ SortedRangeSet[type=integer, ranges=150000, {[1], ..., [150000]}] ], collection time=52.85ms
+
+Fragment 4 [SOURCE]
+    CPU: 2.20ms, Scheduled: 3.40ms, Blocked 0.00ns (Input: 0.00ns, Output: 0.00ns), Input: 150000 rows (732.42kB); per task: avg.: 150000.00 std.dev.: 0.00, Output: 150000 rows (732.42kB)
+    Peak Memory: 255.04kB, Tasks count: 1; per task: max: 255.04kB
+    Output layout: [c_custkey]
+    Output partitioning: HASH [c_custkey]
+    TableScan[table = tpch:tpch_sf1.customer$data@1867307869030913782]
+        Layout: [c_custkey:integer]
+        Estimates: {rows: 150000 (732.42kB), cpu: 732.42k, memory: 0B, network: 0B}
+        CPU: 2.00ms (0.48%), Scheduled: 3.00ms (0.18%), Blocked: 0.00ns (0.00%), Output: 150000 rows (732.42kB)
+        Input avg.: 150000.00 rows, Input std.dev.: 0.00%
+        c_custkey := 1:c_custkey:integer
+        Input: 150000 rows (732.42kB), Physical input: 635.02kB, Physical input time: 1.38ms, Splits: 1, Splits generation wait time: 0.61ms
+

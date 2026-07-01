@@ -17,31 +17,31 @@
         },
         "distribute": {
           "+2x": 1,
-          "+4x": 0,
+          "+4x": 1,
           "+8x": 0,
-          "-2x": 9,
+          "-2x": 1,
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
-          "=": 0,
-          ">16x": 0
+          "=": 1,
+          ">16x": 6
         },
         "filter": {
           "+2x": 1,
-          "+4x": 0,
+          "+4x": 1,
           "+8x": 0,
-          "-2x": 8,
+          "-2x": 1,
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
-          "=": 0,
-          ">16x": 0
+          "=": 1,
+          ">16x": 5
         },
         "hash": {
           "+2x": 0,
           "+4x": 0,
           "+8x": 0,
-          "-2x": 9,
+          "-2x": 0,
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
@@ -52,7 +52,7 @@
           "+2x": 0,
           "+4x": 0,
           "+8x": 0,
-          "-2x": 9,
+          "-2x": 0,
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
@@ -61,14 +61,14 @@
         },
         "scan": {
           "+2x": 1,
-          "+4x": 0,
+          "+4x": 1,
           "+8x": 0,
-          "-2x": 10,
+          "-2x": 1,
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
-          "=": 1,
-          ">16x": 0
+          "=": 3,
+          ">16x": 6
         },
         "sort": {
           "+2x": 0,
@@ -84,25 +84,25 @@
       },
       "operatorRows": {
         "aggregate": 2867,
-        "distribute": 5957523,
-        "hash": 5960356,
-        "join": 6619450,
-        "scan": 6619452,
+        "distribute": 1032259,
+        "hash": 1387061,
+        "join": 936423,
+        "scan": 1158473,
         "seek": 0,
         "sort": 0
       },
-      "plan": "Estimate    Actual  Operator\n       1         ∞  PROJECT min AS movie_company, min_53 AS rating, min_54 AS western_violent_movie\n       1         1  AGGREGATE MIN(min_55) AS min, MIN(min_56) AS min_53, MIN(min_57) AS min_54\n       -        16  DISTRIBUTE GATHER\n       -        16  AGGREGATE MIN(name) AS min_55, MIN(info_36) AS min_56, MIN(title) AS min_57\n       -      2851  INNER JOIN HASH ON kind_id = id_17\n       7         2  │└DISTRIBUTE GATHER\n       7         2  │ PROJECT id AS id_17\n       7         2  │ FILTER kind IN('episode','movie')\n       7         2  │ TABLE SCAN kind_type\n  194377    661945  INNER JOIN HASH ON movie_id = id_46\n  194377    661945  │└DISTRIBUTE HASH ON id_46\n  194377    661945  │ PROJECT id AS id_46, title, kind_id\n  194377    661945  │ FILTER production_year > 2008\n  194377    661945  │ TABLE SCAN title\n  194377    661945  INNER JOIN HASH ON keyword_id = id_13\n  194377    661945  │└DISTRIBUTE GATHER\n  194377    661945  │ PROJECT id AS id_13\n  194377    661945  │ FILTER keyword IN('blood','murder','murder-in-title','violence')\n  194377    661945  │ TABLE SCAN keyword\n  194377    661945  INNER JOIN HASH ON movie_id = movie_id_42\n  194377    661945  │└DISTRIBUTE HASH ON movie_id_42\n  194377    661945  │ PROJECT movie_id AS movie_id_42, keyword_id\n  194377    661945  │ TABLE SCAN movie_keyword\n  194377    661945  INNER JOIN HASH ON info_type_id_35 = id_8\n  194377    661945  │└DISTRIBUTE GATHER\n  194377    661945  │ PROJECT id AS id_8\n  194377    661945  │ FILTER info = 'rating'\n  194377    661945  │ TABLE SCAN info_type\n  194377    661945  INNER JOIN HASH ON movie_id = movie_id_34\n  194377    661945  │└DISTRIBUTE HASH ON movie_id_34\n  194377    661945  │ PROJECT movie_id AS movie_id_34, info_type_id AS info_type_id_35, info AS info_36\n  194377    661945  │ FILTER info < '7.0'\n  194377    661945  │ TABLE SCAN movie_info_idx\n  194377    661945  INNER JOIN HASH ON info_type_id = id_4\n  194377    661945  │└DISTRIBUTE GATHER\n  194377    661945  │ PROJECT id AS id_4\n  194377    661945  │ FILTER info = 'countries'\n  194377    661945  │ TABLE SCAN info_type\n  194377    661945  INNER JOIN HASH ON movie_id = movie_id_27\n  194377    661945  │└DISTRIBUTE HASH ON movie_id_27\n  194377    661945  │ PROJECT movie_id AS movie_id_27, info_type_id\n  194377    661945  │ FILTER info IN('American','German','Germany','USA')\n  194377    661945  │ TABLE SCAN movie_info\n  194377    661945  INNER JOIN HASH ON company_type_id = id_0\n  194377    661945  │└DISTRIBUTE GATHER\n  194377    661945  │ PROJECT id AS id_0\n  194377    661945  │ TABLE SCAN company_type\n  194377    661945  INNER JOIN HASH ON id = company_id\n  194377    661945  │└DISTRIBUTE HASH ON company_id\n  194377    661945  │ FILTER  NOT (note LIKE '%(USA)%') AND (note LIKE '%(200%)%')\n  194377    661945  │ TABLE SCAN movie_companies\n  194377    661945  FILTER country_code <> 'us'\n  194377    661945  TABLE SCAN company_name\n",
+      "plan": "Estimate    Actual  Operator\n       1         ∞  PROJECT min AS movie_company, min_53 AS rating, min_54 AS western_violent_movie\n       1         1  AGGREGATE MIN(min_55) AS min, MIN(min_56) AS min_53, MIN(min_57) AS min_54\n       -        16  DISTRIBUTE GATHER\n       -        16  AGGREGATE MIN(name) AS min_55, MIN(info_36) AS min_56, MIN(title) AS min_57\n       -      2851  INNER JOIN HASH ON kind_id = id_17\n       7         2  │└DISTRIBUTE GATHER\n       7         2  │ PROJECT id AS id_17\n       7         2  │ FILTER kind IN('episode','movie')\n       7         2  │ TABLE SCAN kind_type\n       -      3027  INNER JOIN HASH ON movie_id = id_46\n  194377    661945  │└DISTRIBUTE HASH ON id_46\n  194377    661945  │ PROJECT id AS id_46, title, kind_id\n  194377    661945  │ FILTER production_year > 2008\n  194377    661945  │ TABLE SCAN title\n       -     40185  INNER JOIN HASH ON keyword_id = id_13\n  134170         3  │└DISTRIBUTE GATHER\n  134170         3  │ PROJECT id AS id_13\n  134170         3  │ FILTER keyword IN('blood','murder','murder-in-title','violence')\n  134170         3  │ TABLE SCAN keyword\n       -     40185  INNER JOIN HASH ON movie_id = movie_id_42\n 4523930     37091  │└DISTRIBUTE HASH ON movie_id_42\n 4523930     37091  │ PROJECT movie_id AS movie_id_42, keyword_id\n 4523930     37091  │ TABLE SCAN movie_keyword\n       -     22559  INNER JOIN HASH ON info_type_id_35 = id_8\n     113         1  │└DISTRIBUTE GATHER\n     113         1  │ PROJECT id AS id_8\n     113         1  │ FILTER info = 'rating'\n     113         1  │ TABLE SCAN info_type\n       -     22559  INNER JOIN HASH ON movie_id = movie_id_34\n 1380035     18183  │└DISTRIBUTE HASH ON movie_id_34\n 1380035     18183  │ PROJECT movie_id AS movie_id_34, info_type_id AS info_type_id_35, info AS info_36\n 1380035     18183  │ FILTER info < '7.0'\n 1380035     18183  │ TABLE SCAN movie_info_idx\n       -     22559  INNER JOIN HASH ON info_type_id = id_4\n     113         1  │└DISTRIBUTE GATHER\n     113         1  │ PROJECT id AS id_4\n     113         1  │ FILTER info = 'countries'\n     113         1  │ TABLE SCAN info_type\n       -     22559  INNER JOIN HASH ON movie_id = movie_id_27\n13352148     11742  │└DISTRIBUTE HASH ON movie_id_27\n13352148     11742  │ PROJECT movie_id AS movie_id_27, info_type_id\n13352148     11742  │ FILTER info IN('American','German','Germany','USA')\n13352148     11742  │ TABLE SCAN movie_info\n       -    248388  INNER JOIN HASH ON company_type_id = id_0\n       4         4  │└DISTRIBUTE GATHER\n       4         4  │ PROJECT id AS id_0\n       4         4  │ TABLE SCAN company_type\n       -    248388  INNER JOIN HASH ON id = company_id\n 2348216    303271  │└DISTRIBUTE HASH ON company_id\n 2348216    303271  │ FILTER  NOT (note LIKE '%(USA)%') AND (note LIKE '%(200%)%')\n 2348216    303271  │ TABLE SCAN movie_companies\n  105537    126230  FILTER country_code <> 'us'\n  105537    126230  TABLE SCAN company_name\n",
       "sql": "SELECT MIN(cn.name) AS movie_company,\n       MIN(mi_idx.info) AS rating,\n       MIN(t.title) AS western_violent_movie\nFROM job.company_name AS cn,\n     job.company_type AS ct,\n     job.info_type AS it1,\n     job.info_type AS it2,\n     job.keyword AS k,\n     job.kind_type AS kt,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.movie_info_idx AS mi_idx,\n     job.movie_keyword AS mk,\n     job.title AS t\nWHERE cn.country_code != '[us]'\n  AND it1.info = 'countries'\n  AND it2.info = 'rating'\n  AND k.keyword IN ('murder',\n                    'murder-in-title',\n                    'blood',\n                    'violence')\n  AND kt.kind IN ('movie',\n                  'episode')\n  AND mc.note NOT LIKE '%(USA)%'\n  AND mc.note LIKE '%(200%)%'\n  AND mi.info IN ('Germany',\n                  'German',\n                  'USA',\n                  'American')\n  AND mi_idx.info < '7.0'\n  AND t.production_year > 2008\n  AND kt.id = t.kind_id\n  AND t.id = mi.movie_id\n  AND t.id = mk.movie_id\n  AND t.id = mi_idx.movie_id\n  AND t.id = mc.movie_id\n  AND mk.movie_id = mi.movie_id\n  AND mk.movie_id = mi_idx.movie_id\n  AND mk.movie_id = mc.movie_id\n  AND mi.movie_id = mi_idx.movie_id\n  AND mi.movie_id = mc.movie_id\n  AND mc.movie_id = mi_idx.movie_id\n  AND k.id = mk.keyword_id\n  AND it1.id = mi.info_type_id\n  AND it2.id = mi_idx.info_type_id\n  AND ct.id = mc.company_type_id\n  AND cn.id = mc.company_id;\n",
-      "startTime": "2026-06-30T11:21:12.314337Z",
+      "startTime": "2026-07-01T14:52:31.157705Z",
       "status": "OK",
-      "timeMs": 736.633
+      "timeMs": 782.09
     }
   ],
   "runtime": {
-    "avgMs": 736.633,
-    "bestMs": 736.633,
-    "maxMs": 736.633,
-    "minMs": 736.633,
+    "avgMs": 782.09,
+    "bestMs": 782.09,
+    "maxMs": 782.09,
+    "minMs": 782.09,
     "stdDevMs": 0.0
   },
   "storageVariant": "iceberg",

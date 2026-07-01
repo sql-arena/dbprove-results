@@ -46,7 +46,7 @@
           "-8x": 0,
           "<16x": 0,
           "=": 0,
-          ">16x": 5
+          ">16x": 0
         },
         "join": {
           "+2x": 0,
@@ -57,7 +57,7 @@
           "-8x": 0,
           "<16x": 0,
           "=": 0,
-          ">16x": 5
+          ">16x": 0
         },
         "scan": {
           "+2x": 0,
@@ -84,25 +84,25 @@
       },
       "operatorRows": {
         "aggregate": 32,
-        "distribute": 76402,
-        "hash": 76401,
-        "join": 400,
-        "scan": 76450,
+        "distribute": 76588,
+        "hash": 76618,
+        "join": 102,
+        "scan": 76575,
         "seek": 0,
         "sort": 0
       },
-      "plan": "Estimate    Actual  Operator\n       1         ∞  PROJECT min AS of_person, min_42 AS biography_movie\n       1         1  AGGREGATE MIN(min_43) AS min, MIN(min_44) AS min_42\n       -        16  DISTRIBUTE GATHER\n       -        16  AGGREGATE MIN(name_19) AS min_43, MIN(title) AS min_44\n       -        16  INNER JOIN HASH ON movie_id = id_35\n   70683     76065  │└DISTRIBUTE HASH ON id_35\n   70683     76065  │ PROJECT id AS id_35, title\n   70683     76065  │ FILTER production_year BETWEEN 1980 AND 1984\n   70683     76065  │ TABLE SCAN title\n       -        16  INNER JOIN HASH ON info_type_id = id_5\n     113         1  │└DISTRIBUTE GATHER\n     113         1  │ PROJECT id AS id_5\n     113         1  │ FILTER info = 'mini biography'\n     113         1  │ TABLE SCAN info_type\n 2667298        64  INNER JOIN HASH ON person_id_1 = person_id_29\n 2667298        64  │└DISTRIBUTE HASH ON person_id_29\n 2667298        64  │ PROJECT person_id AS person_id_29, info_type_id\n 2667298        64  │ FILTER note = 'Volker Boehm'\n 2667298        64  │ TABLE SCAN person_info\n 2667298        64  INNER JOIN HASH ON person_id_1 = id_18\n 2667298        64  │└DISTRIBUTE HASH ON id_18\n 2667298        64  │ PROJECT id AS id_18, name AS name_19\n 2667298        64  │ FILTER (gender = 'm') AND (name_pcode_cf >= 'D') AND (name_pcode_cf < 'E') AND (name_pcode_cf LIKE 'D%')\n 2667298        64  │ TABLE SCAN name\n 2667298        64  INNER JOIN HASH ON link_type_id = id_9\n 2667298        64  │└DISTRIBUTE GATHER\n 2667298        64  │ PROJECT id AS id_9\n 2667298        64  │ FILTER link = 'features'\n 2667298        64  │ TABLE SCAN link_type\n 2667298        64  INNER JOIN HASH ON movie_id = linked_movie_id\n 2667298        64  │└DISTRIBUTE GATHER\n 2667298        64  │ TABLE SCAN movie_link\n 2667298        64  INNER JOIN HASH ON person_id_1 = person_id\n 2667298        64  │└DISTRIBUTE GATHER\n 2667298        64  │ FILTER name LIKE '%a%'\n 2667298        64  │ TABLE SCAN aka_name\n 2667298        64  PROJECT person_id AS person_id_1, movie_id\n 2667298        64  TABLE SCAN cast_info\n",
+      "plan": "Estimate    Actual  Operator\n       1         ∞  PROJECT min AS of_person, min_42 AS biography_movie\n       1         1  AGGREGATE MIN(min_43) AS min, MIN(min_44) AS min_42\n       -        16  DISTRIBUTE GATHER\n       -        16  AGGREGATE MIN(name_19) AS min_43, MIN(title) AS min_44\n       -        16  INNER JOIN HASH ON movie_id = id_35\n   70683     76065  │└DISTRIBUTE HASH ON id_35\n   70683     76065  │ PROJECT id AS id_35, title\n   70683     76065  │ FILTER production_year BETWEEN 1980 AND 1984\n   70683     76065  │ TABLE SCAN title\n       -        16  INNER JOIN HASH ON info_type_id = id_5\n     113         1  │└DISTRIBUTE GATHER\n     113         1  │ PROJECT id AS id_5\n     113         1  │ FILTER info = 'mini biography'\n     113         1  │ TABLE SCAN info_type\n       -        16  INNER JOIN HASH ON person_id_1 = person_id_29\n 2667298        64  │└DISTRIBUTE HASH ON person_id_29\n 2667298        64  │ PROJECT person_id AS person_id_29, info_type_id\n 2667298        64  │ FILTER note = 'Volker Boehm'\n 2667298        64  │ TABLE SCAN person_info\n       -        16  INNER JOIN HASH ON person_id_1 = id_18\n 3750736         3  │└DISTRIBUTE HASH ON id_18\n 3750736         3  │ PROJECT id AS id_18, name AS name_19\n 3750736         3  │ FILTER (gender = 'm') AND (name_pcode_cf >= 'D') AND (name_pcode_cf < 'E') AND (name_pcode_cf LIKE 'D%')\n 3750736         3  │ TABLE SCAN name\n       -        16  INNER JOIN HASH ON link_type_id = id_9\n      18         1  │└DISTRIBUTE GATHER\n      18         1  │ PROJECT id AS id_9\n      18         1  │ FILTER link = 'features'\n      18         1  │ TABLE SCAN link_type\n       -        16  INNER JOIN HASH ON movie_id = linked_movie_id\n   29997       435  │└DISTRIBUTE GATHER\n   29997       435  │ TABLE SCAN movie_link\n       -         6  INNER JOIN HASH ON person_id_1 = person_id\n  811209         3  │└DISTRIBUTE GATHER\n  811209         3  │ FILTER name LIKE '%a%'\n  811209         3  │ TABLE SCAN aka_name\n36244344         3  PROJECT person_id AS person_id_1, movie_id\n36244344         3  TABLE SCAN cast_info\n",
       "sql": "SELECT MIN(n.name) AS of_person,\n       MIN(t.title) AS biography_movie\nFROM job.aka_name AS an,\n     job.cast_info AS ci,\n     job.info_type AS it,\n     job.link_type AS lt,\n     job.movie_link AS ml,\n     job.name AS n,\n     job.person_info AS pi,\n     job.title AS t\nWHERE an.name LIKE '%a%'\n  AND it.info ='mini biography'\n  AND lt.link ='features'\n  AND n.name_pcode_cf LIKE 'D%'\n  AND n.gender='m'\n  AND pi.note ='Volker Boehm'\n  AND t.production_year BETWEEN 1980 AND 1984\n  AND n.id = an.person_id\n  AND n.id = pi.person_id\n  AND ci.person_id = n.id\n  AND t.id = ci.movie_id\n  AND ml.linked_movie_id = t.id\n  AND lt.id = ml.link_type_id\n  AND it.id = pi.info_type_id\n  AND pi.person_id = an.person_id\n  AND pi.person_id = ci.person_id\n  AND an.person_id = ci.person_id\n  AND ci.movie_id = ml.linked_movie_id;\n",
-      "startTime": "2026-06-30T11:21:49.953921Z",
+      "startTime": "2026-07-01T14:53:11.844691Z",
       "status": "OK",
-      "timeMs": 418.197
+      "timeMs": 455.13
     }
   ],
   "runtime": {
-    "avgMs": 418.197,
-    "bestMs": 418.197,
-    "maxMs": 418.197,
-    "minMs": 418.197,
+    "avgMs": 455.13,
+    "bestMs": 455.13,
+    "maxMs": 455.13,
+    "minMs": 455.13,
     "stdDevMs": 0.0
   },
   "storageVariant": "iceberg",

@@ -16,18 +16,7 @@
           ">16x": 0
         },
         "distribute": {
-          "+2x": 0,
-          "+4x": 0,
-          "+8x": 0,
-          "-2x": 1,
-          "-4x": 0,
-          "-8x": 0,
-          "<16x": 0,
-          "=": 7,
-          ">16x": 0
-        },
-        "filter": {
-          "+2x": 0,
+          "+2x": 1,
           "+4x": 0,
           "+8x": 0,
           "-2x": 1,
@@ -35,7 +24,18 @@
           "-8x": 0,
           "<16x": 0,
           "=": 3,
-          ">16x": 0
+          ">16x": 3
+        },
+        "filter": {
+          "+2x": 1,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 1,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 2
         },
         "hash": {
           "+2x": 0,
@@ -45,7 +45,7 @@
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
-          "=": 7,
+          "=": 0,
           ">16x": 0
         },
         "join": {
@@ -56,19 +56,19 @@
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
-          "=": 7,
+          "=": 0,
           ">16x": 0
         },
         "scan": {
-          "+2x": 0,
+          "+2x": 1,
           "+4x": 0,
           "+8x": 0,
           "-2x": 1,
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
-          "=": 9,
-          ">16x": 0
+          "=": 4,
+          ">16x": 4
         },
         "sort": {
           "+2x": 0,
@@ -84,25 +84,25 @@
       },
       "operatorRows": {
         "aggregate": 11363,
-        "distribute": 2688238,
-        "hash": 2688222,
-        "join": 1073360,
-        "scan": 2822392,
+        "distribute": 6503232,
+        "hash": 6505162,
+        "join": 38881,
+        "scan": 6503780,
         "seek": 0,
         "sort": 0
       },
-      "plan": "Estimate    Actual  Operator\n       1         ∞  PROJECT min AS aka_title, min_50 AS internet_movie_title\n       1         1  AGGREGATE MIN(min_51) AS min, MIN(min_52) AS min_50\n       -        16  DISTRIBUTE GATHER\n       -        16  AGGREGATE MIN(title) AS min_51, MIN(title_37) AS min_52\n       -     11347  INNER JOIN HASH ON movie_id_19 = id_36\n  512448   1749032  │└DISTRIBUTE HASH ON id_36\n  512448   1749032  │ PROJECT id AS id_36, title AS title_37\n  512448   1749032  │ FILTER production_year > 1990\n  512448   1749032  │ TABLE SCAN title\n  134170    134170  INNER JOIN HASH ON keyword_id = id_13\n  134170    134170  │└DISTRIBUTE GATHER\n  134170    134170  │ PROJECT id AS id_13\n  134170    134170  │ TABLE SCAN keyword\n  134170    134170  INNER JOIN HASH ON movie_id_19 = movie_id_32\n  134170    134170  │└DISTRIBUTE HASH ON movie_id_32\n  134170    134170  │ PROJECT movie_id AS movie_id_32, keyword_id\n  134170    134170  │ TABLE SCAN movie_keyword\n  134170    134170  INNER JOIN HASH ON info_type_id = id_9\n  134170    134170  │└DISTRIBUTE GATHER\n  134170    134170  │ PROJECT id AS id_9\n  134170    134170  │ FILTER info = 'release dates'\n  134170    134170  │ TABLE SCAN info_type\n  134170    134170  INNER JOIN HASH ON movie_id_19 = movie_id_25\n  134170    134170  │└DISTRIBUTE HASH ON movie_id_25\n  134170    134170  │ PROJECT movie_id AS movie_id_25, info_type_id\n  134170    134170  │ FILTER note LIKE '%internet%'\n  134170    134170  │ TABLE SCAN movie_info\n  134170    134170  INNER JOIN HASH ON company_type_id = id_5\n  134170    134170  │└DISTRIBUTE GATHER\n  134170    134170  │ PROJECT id AS id_5\n  134170    134170  │ TABLE SCAN company_type\n  134170    134170  INNER JOIN HASH ON company_id = id_0\n  134170    134170  │└DISTRIBUTE GATHER\n  134170    134170  │ PROJECT id AS id_0\n  134170    134170  │ FILTER country_code = 'us'\n  134170    134170  │ TABLE SCAN company_name\n  134170    134170  INNER JOIN HASH ON movie_id_19 = movie_id\n  134170    134170  │└DISTRIBUTE GATHER\n  134170    134170  │ TABLE SCAN aka_title\n  134170    134170  PROJECT movie_id AS movie_id_19, company_id, company_type_id\n  134170    134170  TABLE SCAN movie_companies\n",
+      "plan": "Estimate    Actual  Operator\n       1         ∞  PROJECT min AS aka_title, min_50 AS internet_movie_title\n       1         1  AGGREGATE MIN(min_51) AS min, MIN(min_52) AS min_50\n       -        16  DISTRIBUTE GATHER\n       -        16  AGGREGATE MIN(title) AS min_51, MIN(title_37) AS min_52\n       -     11347  INNER JOIN HASH ON movie_id_19 = id_36\n  512448   1749032  │└DISTRIBUTE HASH ON id_36\n  512448   1749032  │ PROJECT id AS id_36, title AS title_37\n  512448   1749032  │ FILTER production_year > 1990\n  512448   1749032  │ TABLE SCAN title\n       -     11557  INNER JOIN HASH ON keyword_id = id_13\n  134170    134170  │└DISTRIBUTE GATHER\n  134170    134170  │ PROJECT id AS id_13\n  134170    134170  │ TABLE SCAN keyword\n       -     11557  INNER JOIN HASH ON movie_id_19 = movie_id_32\n 4523930   4523930  │└DISTRIBUTE HASH ON movie_id_32\n 4523930   4523930  │ PROJECT movie_id AS movie_id_32, keyword_id\n 4523930   4523930  │ TABLE SCAN movie_keyword\n       -       896  INNER JOIN HASH ON info_type_id = id_9\n     113         1  │└DISTRIBUTE GATHER\n     113         1  │ PROJECT id AS id_9\n     113         1  │ FILTER info = 'release dates'\n     113         1  │ TABLE SCAN info_type\n       -       896  INNER JOIN HASH ON movie_id_19 = movie_id_25\n13352148     10679  │└DISTRIBUTE HASH ON movie_id_25\n13352148     10679  │ PROJECT movie_id AS movie_id_25, info_type_id\n13352148     10679  │ FILTER note LIKE '%internet%'\n13352148     10679  │ TABLE SCAN movie_info\n       -       806  INNER JOIN HASH ON company_type_id = id_5\n       4         4  │└DISTRIBUTE GATHER\n       4         4  │ PROJECT id AS id_5\n       4         4  │ TABLE SCAN company_type\n       -       806  INNER JOIN HASH ON company_id = id_0\n  234997     84843  │└DISTRIBUTE GATHER\n  234997     84843  │ PROJECT id AS id_0\n  234997     84843  │ FILTER country_code = 'us'\n  234997     84843  │ TABLE SCAN company_name\n       -       806  INNER JOIN HASH ON movie_id_19 = movie_id\n  361379       557  │└DISTRIBUTE GATHER\n  361379       557  │ TABLE SCAN aka_title\n 2609129       564  PROJECT movie_id AS movie_id_19, company_id, company_type_id\n 2609129       564  TABLE SCAN movie_companies\n",
       "sql": "SELECT MIN(aka_t.title) AS aka_title,\n       MIN(t.title) AS internet_movie_title\nFROM job.aka_title AS aka_t,\n     job.company_name AS cn,\n     job.company_type AS ct,\n     job.info_type AS it1,\n     job.keyword AS k,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.movie_keyword AS mk,\n     job.title AS t\nWHERE cn.country_code = '[us]'\n  AND it1.info = 'release dates'\n  AND mi.note LIKE '%internet%'\n  AND t.production_year > 1990\n  AND t.id = aka_t.movie_id\n  AND t.id = mi.movie_id\n  AND t.id = mk.movie_id\n  AND t.id = mc.movie_id\n  AND mk.movie_id = mi.movie_id\n  AND mk.movie_id = mc.movie_id\n  AND mk.movie_id = aka_t.movie_id\n  AND mi.movie_id = mc.movie_id\n  AND mi.movie_id = aka_t.movie_id\n  AND mc.movie_id = aka_t.movie_id\n  AND k.id = mk.keyword_id\n  AND it1.id = mi.info_type_id\n  AND cn.id = mc.company_id\n  AND ct.id = mc.company_type_id;\n",
-      "startTime": "2026-06-30T11:20:50.569864Z",
+      "startTime": "2026-07-01T14:52:07.681699Z",
       "status": "OK",
-      "timeMs": 687.783
+      "timeMs": 662.327
     }
   ],
   "runtime": {
-    "avgMs": 687.783,
-    "bestMs": 687.783,
-    "maxMs": 687.783,
-    "minMs": 687.783,
+    "avgMs": 662.327,
+    "bestMs": 662.327,
+    "maxMs": 662.327,
+    "minMs": 662.327,
     "stdDevMs": 0.0
   },
   "storageVariant": "iceberg",

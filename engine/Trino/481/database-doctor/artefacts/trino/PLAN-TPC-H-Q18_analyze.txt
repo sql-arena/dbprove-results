@@ -1,0 +1,204 @@
+Trino version: 481
+Queued: 116.58us, Analysis: 6.95ms, Planning: 46.58ms, Execution: 427.36ms, Finishing: 0.00ns
+Fragment 1 [SINGLE]
+    CPU: 92.29us, Scheduled: 94.34us, Blocked 274.22ms (Input: 274.22ms, Output: 0.00ns), Input: 9 rows (576B); per task: avg.: 9.00 std.dev.: 0.00, Output: 9 rows (576B)
+    Peak Memory: 752B, Tasks count: 1; per task: max: 752B
+    Output layout: [c_name, o_custkey, l_orderkey, o_orderdate, o_totalprice, sum_27]
+    Output partitioning: SINGLE []
+    RemoteMerge[sourceFragmentIds = [2]]
+        Layout: [c_name:varchar, o_custkey:integer, l_orderkey:integer, o_orderdate:date, o_totalprice:decimal(15,2), sum_27:decimal(38,2)]
+        CPU: 0.00ns (0.00%), Scheduled: 0.00ns (0.00%), Blocked: 274.00ms (0.84%), Output: 9 rows (576B)
+        Input avg.: 9.00 rows, Input std.dev.: 0.00%
+
+Fragment 2 [ROUND_ROBIN]
+    CPU: 723.42us, Scheduled: 793.00us, Blocked 4.62s (Input: 4.35s, Output: 0.00ns), Input: 9 rows (576B); per task: avg.: 9.00 std.dev.: 0.00, Output: 9 rows (576B)
+    Peak Memory: 752B, Tasks count: 1; per task: max: 752B
+    Output layout: [c_name, o_custkey, l_orderkey, o_orderdate, o_totalprice, sum_27]
+    Output partitioning: SINGLE []
+    LocalMerge[orderBy = [o_totalprice DESC NULLS LAST, o_orderdate ASC NULLS LAST]]
+    │   Layout: [c_name:varchar, o_custkey:integer, l_orderkey:integer, o_orderdate:date, o_totalprice:decimal(15,2), sum_27:decimal(38,2)]
+    │   Estimates: {rows: ? (?), cpu: 0, memory: 0B, network: 0B}
+    │   CPU: 0.00ns (0.00%), Scheduled: 0.00ns (0.00%), Blocked: 274.00ms (0.84%), Output: 9 rows (576B)
+    │   Input avg.: 0.56 rows, Input std.dev.: 188.23%
+    └─ PartialSort[orderBy = [o_totalprice DESC NULLS LAST, o_orderdate ASC NULLS LAST]]
+       │   Layout: [c_name:varchar, o_custkey:integer, l_orderkey:integer, o_orderdate:date, o_totalprice:decimal(15,2), sum_27:decimal(38,2)]
+       │   CPU: 0.00ns (0.00%), Scheduled: 0.00ns (0.00%), Blocked: 0.00ns (0.00%), Output: 9 rows (576B)
+       │   Input avg.: 0.56 rows, Input std.dev.: 188.23%
+       └─ RemoteSource[sourceFragmentIds = [3]]
+              Layout: [c_name:varchar, o_custkey:integer, l_orderkey:integer, o_orderdate:date, o_totalprice:decimal(15,2), sum_27:decimal(38,2)]
+              CPU: 0.00ns (0.00%), Scheduled: 0.00ns (0.00%), Blocked: 4.35s (13.37%), Output: 9 rows (576B)
+              Input avg.: 0.56 rows, Input std.dev.: 188.23%
+
+Fragment 3 [HASH]
+    CPU: 1.14ms, Scheduled: 1.25ms, Blocked 8.64s (Input: 4.31s, Output: 0.00ns), Input: 9 rows (540B); per task: avg.: 9.00 std.dev.: 0.00, Output: 9 rows (576B)
+    Peak Memory: 2.37kB, Tasks count: 1; per task: max: 2.37kB
+    Output layout: [c_name, o_custkey, l_orderkey, o_orderdate, o_totalprice, sum_27]
+    Output partitioning: ROUND_ROBIN []
+    Aggregate[type = FINAL, keys = [c_name, o_custkey, l_orderkey, o_orderdate, o_totalprice]]
+    │   Layout: [c_name:varchar, o_custkey:integer, l_orderkey:integer, o_orderdate:date, o_totalprice:decimal(15,2), sum_27:decimal(38,2)]
+    │   Estimates: {rows: ? (?), cpu: ?, memory: ?, network: 0B}
+    │   CPU: 0.00ns (0.00%), Scheduled: 0.00ns (0.00%), Blocked: 0.00ns (0.00%), Output: 9 rows (576B)
+    │   Input avg.: 0.56 rows, Input std.dev.: 125.22%
+    │   sum_27 := sum(sum_29)
+    └─ LocalExchange[partitioning = HASH, arguments = [c_name::varchar, o_custkey::integer, l_orderkey::integer, o_orderdate::date, o_totalprice::decimal(15,2)]]
+       │   Layout: [c_name:varchar, o_custkey:integer, l_orderkey:integer, o_orderdate:date, o_totalprice:decimal(15,2), sum_29:varbinary]
+       │   Estimates: {rows: ? (?), cpu: ?, memory: 0B, network: 0B}
+       │   CPU: 0.00ns (0.00%), Scheduled: 0.00ns (0.00%), Blocked: 4.33s (13.30%), Output: 9 rows (540B)
+       │   Input avg.: 0.56 rows, Input std.dev.: 280.87%
+       └─ RemoteSource[sourceFragmentIds = [4]]
+              Layout: [c_name:varchar, o_custkey:integer, l_orderkey:integer, o_orderdate:date, o_totalprice:decimal(15,2), sum_29:varbinary]
+              CPU: 0.00ns (0.00%), Scheduled: 0.00ns (0.00%), Blocked: 4.31s (13.24%), Output: 9 rows (540B)
+              Input avg.: 0.56 rows, Input std.dev.: 280.87%
+
+Fragment 4 [SOURCE]
+    CPU: 58.54ms, Scheduled: 62.26ms, Blocked 14.83s (Input: 6.30s, Output: 0.00ns), Input: 1133058 rows (9.33MB); per task: avg.: 1133058.00 std.dev.: 0.00, Output: 9 rows (540B)
+    Peak Memory: 13.19MB, Tasks count: 1; per task: max: 13.19MB
+    Output layout: [c_name, o_custkey, l_orderkey, o_orderdate, o_totalprice, sum_29]
+    Output partitioning: HASH [c_name, o_custkey, l_orderkey, o_orderdate, o_totalprice]
+    Aggregate[type = PARTIAL, keys = [c_name, o_custkey, l_orderkey, o_orderdate, o_totalprice]]
+    │   Layout: [c_name:varchar, o_custkey:integer, l_orderkey:integer, o_orderdate:date, o_totalprice:decimal(15,2), sum_29:varbinary]
+    │   CPU: 0.00ns (0.00%), Scheduled: 0.00ns (0.00%), Blocked: 0.00ns (0.00%), Output: 9 rows (540B)
+    │   Input avg.: 31.50 rows, Input std.dev.: 33.33%
+    │   sum_29 := sum(l_quantity)
+    └─ InnerJoin[criteria = (l_orderkey = l_orderkey_6), distribution = REPLICATED]
+       │   Layout: [l_quantity:decimal(15,2), l_orderkey:integer, o_totalprice:decimal(15,2), o_orderdate:date, o_custkey:integer, c_name:varchar]
+       │   Estimates: {rows: ? (?), cpu: ?, memory: ?, network: 0B}
+       │   CPU: 0.00ns (0.00%), Scheduled: 0.00ns (0.00%), Blocked: 1.94s (5.96%), Output: 63 rows (3.45kB)
+       │   Left (probe) Input avg.: 31.50 rows, Input std.dev.: 33.33%
+       │   Right (build) Input avg.: 0.56 rows, Input std.dev.: 153.56%
+       │   Distribution: REPLICATED
+       │   dynamicFilterAssignments = {l_orderkey_6 -> #df_1058}
+       ├─ InnerJoin[criteria = (o_custkey = c_custkey), distribution = REPLICATED]
+       │  │   Layout: [l_quantity:decimal(15,2), l_orderkey:integer, o_custkey:integer, o_totalprice:decimal(15,2), o_orderdate:date, c_name:varchar]
+       │  │   Estimates: {rows: ? (?), cpu: ?, memory: 3.34MB, network: 0B}
+       │  │   CPU: 41.00ms (10.90%), Scheduled: 41.00ms (9.26%), Blocked: 211.00ms (0.65%), Output: 63 rows (3.45kB)
+       │  │   Left (probe) Input avg.: 31.50 rows, Input std.dev.: 33.33%
+       │  │   Right (build) Input avg.: 150000.00 rows, Input std.dev.: 0.00%
+       │  │   Distribution: REPLICATED
+       │  │   dynamicFilterAssignments = {c_custkey -> #df_1059}
+       │  ├─ InnerJoin[criteria = (l_orderkey = o_orderkey), distribution = REPLICATED]
+       │  │  │   Layout: [l_orderkey:integer, l_quantity:decimal(15,2), o_custkey:integer, o_totalprice:decimal(15,2), o_orderdate:date]
+       │  │  │   Estimates: {rows: ? (?), cpu: ?, memory: 34.33MB, network: 0B}
+       │  │  │   CPU: 0.00ns (0.00%), Scheduled: 0.00ns (0.00%), Blocked: 200.00ms (0.61%), Output: 63 rows (2.03kB)
+       │  │  │   Left (probe) Input avg.: 31.50 rows, Input std.dev.: 33.33%
+       │  │  │   Right (build) Input avg.: 0.56 rows, Input std.dev.: 153.56%
+       │  │  │   Distribution: REPLICATED
+       │  │  │   dynamicFilterAssignments = {o_orderkey -> #df_1060}
+       │  │  ├─ ScanFilter[table = tpch:tpch_sf1.lineitem$data@1934773159408571084, dynamicFilters = {l_orderkey = #df_1058, l_orderkey = #df_1060}]
+       │  │  │      Layout: [l_orderkey:integer, l_quantity:decimal(15,2)]
+       │  │  │      Estimates: {rows: 6001215 (80.12MB), cpu: 80.12M, memory: 0B, network: 0B}/{rows: 6001215 (80.12MB), cpu: 80.12M, memory: 0B, network: 0B}
+       │  │  │      CPU: 13.00ms (3.46%), Scheduled: 16.00ms (3.61%), Blocked: 0.00ns (0.00%), Output: 63 rows (882B)
+       │  │  │      Input avg.: 491520.00 rows, Input std.dev.: 50.00%
+       │  │  │      l_orderkey := 1:l_orderkey:integer
+       │  │  │      l_quantity := 5:l_quantity:decimal(15,2)
+       │  │  │      Input: 983040 rows (5.32MB), Filtered: 99.99%, Physical input: 8.99MB, Physical input time: 4.62ms, Splits: 2, Splits generation wait time: 75.37ms
+       │  │  │      Dynamic filters: 
+       │  │  │          - df_1058, [ SortedRangeSet[type=integer, ranges=9, {[1263015], ..., [4806726]}] ], collection time=152.46ms
+       │  │  │          - df_1060, [ SortedRangeSet[type=integer, ranges=9, {[1263015], ..., [4806726]}] ], collection time=261.33ms
+       │  │  └─ LocalExchange[partitioning = HASH, arguments = [o_orderkey::integer]]
+       │  │     │   Layout: [o_orderkey:integer, o_custkey:integer, o_totalprice:decimal(15,2), o_orderdate:date]
+       │  │     │   Estimates: {rows: 1500000 (34.33MB), cpu: 34.33M, memory: 0B, network: 0B}
+       │  │     │   CPU: 0.00ns (0.00%), Scheduled: 0.00ns (0.00%), Blocked: 3.98s (12.23%), Output: 9 rows (216B)
+       │  │     │   Input avg.: 0.56 rows, Input std.dev.: 387.30%
+       │  │     └─ RemoteSource[sourceFragmentIds = [5]]
+       │  │            Layout: [o_orderkey:integer, o_custkey:integer, o_totalprice:decimal(15,2), o_orderdate:date]
+       │  │            CPU: 0.00ns (0.00%), Scheduled: 0.00ns (0.00%), Blocked: 3.99s (12.26%), Output: 9 rows (216B)
+       │  │            Input avg.: 0.56 rows, Input std.dev.: 387.30%
+       │  └─ LocalExchange[partitioning = SINGLE]
+       │     │   Layout: [c_custkey:integer, c_name:varchar]
+       │     │   Estimates: {rows: 150000 (3.34MB), cpu: 0, memory: 0B, network: 0B}
+       │     │   CPU: 0.00ns (0.00%), Scheduled: 0.00ns (0.00%), Blocked: 2.00ms (0.01%), Output: 150000 rows (4.01MB)
+       │     │   Input avg.: 9375.00 rows, Input std.dev.: 146.29%
+       │     └─ RemoteSource[sourceFragmentIds = [6]]
+       │            Layout: [c_custkey:integer, c_name:varchar]
+       │            CPU: 1.00ms (0.27%), Scheduled: 1.00ms (0.23%), Blocked: 94.00ms (0.29%), Output: 150000 rows (4.01MB)
+       │            Input avg.: 9375.00 rows, Input std.dev.: 146.29%
+       └─ LocalExchange[partitioning = HASH, arguments = [l_orderkey_6::integer]]
+          │   Layout: [l_orderkey_6:integer]
+          │   Estimates: {rows: ? (?), cpu: ?, memory: 0B, network: 0B}
+          │   CPU: 0.00ns (0.00%), Scheduled: 0.00ns (0.00%), Blocked: 2.19s (6.73%), Output: 9 rows (45B)
+          │   Input avg.: 0.56 rows, Input std.dev.: 188.23%
+          └─ RemoteSource[sourceFragmentIds = [7]]
+                 Layout: [l_orderkey_6:integer]
+                 CPU: 0.00ns (0.00%), Scheduled: 0.00ns (0.00%), Blocked: 2.21s (6.79%), Output: 9 rows (45B)
+                 Input avg.: 0.56 rows, Input std.dev.: 188.23%
+
+Fragment 5 [SOURCE]
+    CPU: 19.07ms, Scheduled: 21.54ms, Blocked 0.00ns (Input: 0.00ns, Output: 0.00ns), Input: 860160 rows (5.72MB); per task: avg.: 860160.00 std.dev.: 0.00, Output: 9 rows (216B)
+    Peak Memory: 320B, Tasks count: 1; per task: max: 320B
+    Output layout: [o_orderkey, o_custkey, o_totalprice, o_orderdate]
+    Output partitioning: BROADCAST []
+    ScanFilter[table = tpch:tpch_sf1.orders$data@7857308658907047114, dynamicFilters = {o_orderkey = #df_1058, o_custkey = #df_1059}]
+        Layout: [o_orderkey:integer, o_custkey:integer, o_totalprice:decimal(15,2), o_orderdate:date]
+        Estimates: {rows: 1500000 (34.33MB), cpu: 34.33M, memory: 0B, network: 0B}/{rows: 1500000 (34.33MB), cpu: 34.33M, memory: 0B, network: 0B}
+        CPU: 19.00ms (5.05%), Scheduled: 21.00ms (4.74%), Blocked: 0.00ns (0.00%), Output: 9 rows (216B)
+        Input avg.: 860160.00 rows, Input std.dev.: 0.00%
+        o_orderkey := 1:o_orderkey:integer
+        o_custkey := 2:o_custkey:integer
+        o_orderdate := 5:o_orderdate:date
+        o_totalprice := 4:o_totalprice:decimal(15,2)
+        Input: 860160 rows (5.72MB), Filtered: 100.00%, Physical input: 13.18MB, Physical input time: 5.23ms, Splits: 1, Splits generation wait time: 184.81ms
+        Dynamic filters: 
+            - df_1058, [ SortedRangeSet[type=integer, ranges=9, {[1263015], ..., [4806726]}] ], collection time=152.46ms
+            - df_1059, [ SortedRangeSet[type=integer, ranges=150000, {[1], ..., [150000]}] ], collection time=71.35ms
+
+Fragment 6 [SOURCE]
+    CPU: 4.44ms, Scheduled: 16.03ms, Blocked 0.00ns (Input: 0.00ns, Output: 0.00ns), Input: 150000 rows (4.01MB); per task: avg.: 150000.00 std.dev.: 0.00, Output: 150000 rows (4.01MB)
+    Peak Memory: 4.81MB, Tasks count: 1; per task: max: 4.81MB
+    Output layout: [c_custkey, c_name]
+    Output partitioning: BROADCAST []
+    TableScan[table = tpch:tpch_sf1.customer$data@1867307869030913782]
+        Layout: [c_custkey:integer, c_name:varchar]
+        Estimates: {rows: 150000 (3.34MB), cpu: 3.34M, memory: 0B, network: 0B}
+        CPU: 4.00ms (1.06%), Scheduled: 16.00ms (3.61%), Blocked: 0.00ns (0.00%), Output: 150000 rows (4.01MB)
+        Input avg.: 150000.00 rows, Input std.dev.: 0.00%
+        c_name := 2:c_name:varchar
+        c_custkey := 1:c_custkey:integer
+        Input: 150000 rows (4.01MB), Physical input: 1.33MB, Physical input time: 12.24ms, Splits: 1, Splits generation wait time: 1.77ms
+
+Fragment 7 [HASH]
+    CPU: 123.03ms, Scheduled: 138.27ms, Blocked 4.18s (Input: 2.17s, Output: 0.00ns), Input: 1500000 rows (25.75MB); per task: avg.: 1500000.00 std.dev.: 0.00, Output: 9 rows (45B)
+    Peak Memory: 688B, Tasks count: 1; per task: max: 688B
+    Output layout: [l_orderkey_6]
+    Output partitioning: BROADCAST []
+    FilterProject[filterPredicate = (sum > decimal(38,2) '314.00')]
+    │   Layout: [l_orderkey_6:integer]
+    │   Estimates: {rows: ? (?), cpu: ?, memory: 0B, network: 0B}/{rows: ? (?), cpu: ?, memory: 0B, network: 0B}
+    │   CPU: 2.00ms (0.53%), Scheduled: 3.00ms (0.68%), Blocked: 0.00ns (0.00%), Output: 9 rows (45B)
+    │   Input avg.: 93750.00 rows, Input std.dev.: 0.23%
+    └─ Aggregate[type = FINAL, keys = [l_orderkey_6]]
+       │   Layout: [l_orderkey_6:integer, sum:decimal(38,2)]
+       │   Estimates: {rows: ? (?), cpu: 343.39M, memory: ?, network: 0B}
+       │   CPU: 99.00ms (26.33%), Scheduled: 112.00ms (25.28%), Blocked: 0.00ns (0.00%), Output: 1500000 rows (31.47MB)
+       │   Input avg.: 93750.00 rows, Input std.dev.: 0.23%
+       │   sum := sum(sum_30)
+       └─ LocalExchange[partitioning = HASH, arguments = [l_orderkey_6::integer]]
+          │   Layout: [l_orderkey_6:integer, sum_30:varbinary]
+          │   Estimates: {rows: 6001215 (343.39MB), cpu: 343.39M, memory: 0B, network: 0B}
+          │   CPU: 19.00ms (5.05%), Scheduled: 20.00ms (4.51%), Blocked: 2.02s (6.21%), Output: 1500000 rows (25.75MB)
+          │   Input avg.: 93750.00 rows, Input std.dev.: 97.26%
+          └─ RemoteSource[sourceFragmentIds = [8]]
+                 Layout: [l_orderkey_6:integer, sum_30:varbinary]
+                 CPU: 2.00ms (0.53%), Scheduled: 2.00ms (0.45%), Blocked: 2.17s (6.67%), Output: 1500000 rows (25.75MB)
+                 Input avg.: 93750.00 rows, Input std.dev.: 97.26%
+
+Fragment 8 [SOURCE]
+    CPU: 176.23ms, Scheduled: 210.57ms, Blocked 0.00ns (Input: 0.00ns, Output: 0.00ns), Input: 6001215 rows (80.12MB); per task: avg.: 6001215.00 std.dev.: 0.00, Output: 1500000 rows (25.75MB)
+    Peak Memory: 1.72MB, Tasks count: 1; per task: max: 1.72MB
+    Output layout: [l_orderkey_6, sum_30]
+    Output partitioning: HASH [l_orderkey_6]
+    Aggregate[type = PARTIAL, keys = [l_orderkey_6]]
+    │   Layout: [l_orderkey_6:integer, sum_30:varbinary]
+    │   Estimates: {rows: 6001215 (343.39MB), cpu: ?, memory: ?, network: ?}
+    │   CPU: 133.00ms (35.37%), Scheduled: 134.00ms (30.25%), Blocked: 0.00ns (0.00%), Output: 1500000 rows (25.75MB)
+    │   Input avg.: 3000607.50 rows, Input std.dev.: 35.14%
+    │   sum_30 := sum(l_quantity_10)
+    └─ TableScan[table = tpch:tpch_sf1.lineitem$data@1934773159408571084]
+           Layout: [l_orderkey_6:integer, l_quantity_10:decimal(15,2)]
+           Estimates: {rows: 6001215 (80.12MB), cpu: 80.12M, memory: 0B, network: 0B}
+           CPU: 43.00ms (11.44%), Scheduled: 77.00ms (17.38%), Blocked: 0.00ns (0.00%), Output: 6001215 rows (80.12MB)
+           Input avg.: 3000607.50 rows, Input std.dev.: 35.14%
+           l_orderkey_6 := 1:l_orderkey:integer
+           l_quantity_10 := 5:l_quantity:decimal(15,2)
+           Input: 6001215 rows (80.12MB), Physical input: 53.66MB, Physical input time: 48.73ms, Splits: 2, Splits generation wait time: 1.34ms
+

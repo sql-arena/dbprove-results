@@ -16,7 +16,7 @@
           ">16x": 0
         },
         "distribute": {
-          "+2x": 3,
+          "+2x": 1,
           "+4x": 0,
           "+8x": 0,
           "-2x": 0,
@@ -24,10 +24,10 @@
           "-8x": 0,
           "<16x": 0,
           "=": 1,
-          ">16x": 2
+          ">16x": 4
         },
         "filter": {
-          "+2x": 2,
+          "+2x": 0,
           "+4x": 0,
           "+8x": 0,
           "-2x": 0,
@@ -35,10 +35,10 @@
           "-8x": 0,
           "<16x": 0,
           "=": 0,
-          ">16x": 2
+          ">16x": 4
         },
         "hash": {
-          "+2x": 3,
+          "+2x": 0,
           "+4x": 0,
           "+8x": 0,
           "-2x": 0,
@@ -49,7 +49,7 @@
           ">16x": 0
         },
         "join": {
-          "+2x": 3,
+          "+2x": 0,
           "+4x": 0,
           "+8x": 0,
           "-2x": 0,
@@ -60,7 +60,7 @@
           ">16x": 0
         },
         "scan": {
-          "+2x": 4,
+          "+2x": 1,
           "+4x": 0,
           "+8x": 0,
           "-2x": 0,
@@ -68,7 +68,7 @@
           "-8x": 0,
           "<16x": 0,
           "=": 2,
-          ">16x": 2
+          ">16x": 5
         },
         "sort": {
           "+2x": 0,
@@ -84,25 +84,25 @@
       },
       "operatorRows": {
         "aggregate": 426,
-        "distribute": 3917166,
-        "hash": 3917559,
-        "join": 1840520,
-        "scan": 4377075,
+        "distribute": 3119180,
+        "hash": 3120271,
+        "join": 3327,
+        "scan": 3119860,
         "seek": 0,
         "sort": 0
       },
-      "plan": "Estimate    Actual  Operator\n       1         ∞  PROJECT min AS movie_budget, min_35 AS movie_votes, min_36 AS movie_title\n       1         1  AGGREGATE MIN(min_37) AS min, MIN(min_38) AS min_35, MIN(min_39) AS min_36\n       -        16  DISTRIBUTE GATHER\n       -        16  AGGREGATE MIN(info_11) AS min_37, MIN(info_19) AS min_38, MIN(title) AS min_39\n       -       410  INNER JOIN HASH ON movie_id = id_28\n 2528312   2528312  │└DISTRIBUTE HASH ON id_28\n 2528312   2528312  │ PROJECT id AS id_28, title\n 2528312   2528312  │ TABLE SCAN title\n       -       410  INNER JOIN HASH ON person_id = id_24\n 4167491      9062  │└DISTRIBUTE HASH ON id_24\n 4167491      9062  │ PROJECT id AS id_24\n 4167491      9062  │ FILTER (gender = 'm') AND (name LIKE '%Tim%')\n 4167491      9062  │ TABLE SCAN name\n       -       410  INNER JOIN HASH ON info_type_id_18 = id_4\n     113         1  │└DISTRIBUTE GATHER\n     113         1  │ PROJECT id AS id_4\n     113         1  │ FILTER info = 'votes'\n     113         1  │ TABLE SCAN info_type\n 1380035    459925  INNER JOIN HASH ON movie_id = movie_id_17\n 1380035    459925  │└DISTRIBUTE HASH ON movie_id_17\n 1380035    459925  │ PROJECT movie_id AS movie_id_17, info_type_id AS info_type_id_18, info AS info_19\n 1380035    459925  │ TABLE SCAN movie_info_idx\n 1380035    459925  INNER JOIN HASH ON info_type_id = id_0\n 1380035    459925  │└DISTRIBUTE GATHER\n 1380035    459925  │ PROJECT id AS id_0\n 1380035    459925  │ FILTER info = 'budget'\n 1380035    459925  │ TABLE SCAN info_type\n 1380035    459925  INNER JOIN HASH ON movie_id = movie_id_10\n 1380035    459925  │└DISTRIBUTE HASH ON movie_id_10\n 1380035    459925  │ PROJECT movie_id AS movie_id_10, info_type_id, info AS info_11\n 1380035    459925  │ TABLE SCAN movie_info\n 1380035    459925  FILTER note IN('(executive producer)','(producer)')\n 1380035    459925  TABLE SCAN cast_info\n",
+      "plan": "Estimate    Actual  Operator\n       1         ∞  PROJECT min AS movie_budget, min_35 AS movie_votes, min_36 AS movie_title\n       1         1  AGGREGATE MIN(min_37) AS min, MIN(min_38) AS min_35, MIN(min_39) AS min_36\n       -        16  DISTRIBUTE GATHER\n       -        16  AGGREGATE MIN(info_11) AS min_37, MIN(info_19) AS min_38, MIN(title) AS min_39\n       -       410  INNER JOIN HASH ON movie_id = id_28\n 2528312   2528312  │└DISTRIBUTE HASH ON id_28\n 2528312   2528312  │ PROJECT id AS id_28, title\n 2528312   2528312  │ TABLE SCAN title\n       -       410  INNER JOIN HASH ON person_id = id_24\n 4167491      9062  │└DISTRIBUTE HASH ON id_24\n 4167491      9062  │ PROJECT id AS id_24\n 4167491      9062  │ FILTER (gender = 'm') AND (name LIKE '%Tim%')\n 4167491      9062  │ TABLE SCAN name\n       -       410  INNER JOIN HASH ON info_type_id_18 = id_4\n     113         1  │└DISTRIBUTE GATHER\n     113         1  │ PROJECT id AS id_4\n     113         1  │ FILTER info = 'votes'\n     113         1  │ TABLE SCAN info_type\n       -       410  INNER JOIN HASH ON movie_id = movie_id_17\n 1380035    459925  │└DISTRIBUTE HASH ON movie_id_17\n 1380035    459925  │ PROJECT movie_id AS movie_id_17, info_type_id AS info_type_id_18, info AS info_19\n 1380035    459925  │ TABLE SCAN movie_info_idx\n       -       699  INNER JOIN HASH ON info_type_id = id_0\n     113         1  │└DISTRIBUTE GATHER\n     113         1  │ PROJECT id AS id_0\n     113         1  │ FILTER info = 'budget'\n     113         1  │ TABLE SCAN info_type\n       -       699  INNER JOIN HASH ON movie_id = movie_id_10\n14835720    121863  │└DISTRIBUTE HASH ON movie_id_10\n14835720    121863  │ PROJECT movie_id AS movie_id_10, info_type_id, info AS info_11\n14835720    121863  │ TABLE SCAN movie_info\n32619910       696  FILTER note IN('(executive producer)','(producer)')\n32619910       696  TABLE SCAN cast_info\n",
       "sql": "SELECT MIN(mi.info) AS movie_budget,\n       MIN(mi_idx.info) AS movie_votes,\n       MIN(t.title) AS movie_title\nFROM job.cast_info AS ci,\n     job.info_type AS it1,\n     job.info_type AS it2,\n     job.movie_info AS mi,\n     job.movie_info_idx AS mi_idx,\n     job.name AS n,\n     job.title AS t\nWHERE ci.note IN ('(producer)',\n                  '(executive producer)')\n  AND it1.info = 'budget'\n  AND it2.info = 'votes'\n  AND n.gender = 'm'\n  AND n.name LIKE '%Tim%'\n  AND t.id = mi.movie_id\n  AND t.id = mi_idx.movie_id\n  AND t.id = ci.movie_id\n  AND ci.movie_id = mi.movie_id\n  AND ci.movie_id = mi_idx.movie_id\n  AND mi.movie_id = mi_idx.movie_id\n  AND n.id = ci.person_id\n  AND it1.id = mi.info_type_id\n  AND it2.id = mi_idx.info_type_id;\n",
-      "startTime": "2026-06-30T11:21:00.611096Z",
+      "startTime": "2026-07-01T14:52:18.630927Z",
       "status": "OK",
-      "timeMs": 681.044
+      "timeMs": 669.926
     }
   ],
   "runtime": {
-    "avgMs": 681.044,
-    "bestMs": 681.044,
-    "maxMs": 681.044,
-    "minMs": 681.044,
+    "avgMs": 669.926,
+    "bestMs": 669.926,
+    "maxMs": 669.926,
+    "minMs": 669.926,
     "stdDevMs": 0.0
   },
   "storageVariant": "iceberg",

@@ -16,33 +16,33 @@
           ">16x": 0
         },
         "distribute": {
-          "+2x": 1,
+          "+2x": 2,
           "+4x": 0,
-          "+8x": 0,
+          "+8x": 1,
           "-2x": 0,
-          "-4x": 12,
+          "-4x": 1,
           "-8x": 0,
           "<16x": 0,
-          "=": 0,
-          ">16x": 0
+          "=": 3,
+          ">16x": 6
         },
         "filter": {
-          "+2x": 1,
+          "+2x": 2,
           "+4x": 0,
-          "+8x": 0,
+          "+8x": 1,
           "-2x": 0,
-          "-4x": 7,
+          "-4x": 1,
           "-8x": 0,
           "<16x": 0,
-          "=": 0,
-          ">16x": 0
+          "=": 1,
+          ">16x": 3
         },
         "hash": {
           "+2x": 0,
           "+4x": 0,
           "+8x": 0,
           "-2x": 0,
-          "-4x": 12,
+          "-4x": 0,
           "-8x": 0,
           "<16x": 0,
           "=": 0,
@@ -53,22 +53,22 @@
           "+4x": 0,
           "+8x": 0,
           "-2x": 0,
-          "-4x": 12,
+          "-4x": 0,
           "-8x": 0,
           "<16x": 0,
           "=": 0,
           ">16x": 0
         },
         "scan": {
-          "+2x": 1,
+          "+2x": 2,
           "+4x": 0,
-          "+8x": 0,
+          "+8x": 1,
           "-2x": 0,
-          "-4x": 13,
+          "-4x": 1,
           "-8x": 0,
           "<16x": 0,
-          "=": 1,
-          ">16x": 0
+          "=": 4,
+          ">16x": 7
         },
         "sort": {
           "+2x": 0,
@@ -84,25 +84,25 @@
       },
       "operatorRows": {
         "aggregate": 130,
-        "distribute": 9248802,
-        "hash": 9248898,
-        "join": 10019516,
-        "scan": 10019518,
+        "distribute": 2969645,
+        "hash": 2970378,
+        "join": 1981,
+        "scan": 2969691,
         "seek": 0,
         "sort": 0
       },
-      "plan": "Estimate    Actual  Operator\n       1         ∞  PROJECT min AS first_company, min_85 AS second_company, min_86 AS first_rating, min_87 AS second_rating, min_88 AS first_movie, min_89 AS second_movie\n       1         1  AGGREGATE MIN(min_90) AS min, MIN(min_91) AS min_85, MIN(min_92) AS min_86, MIN(min_93) AS min_87, MIN(min_94) AS min_88, MIN(min_95) AS min_89\n       -        16  DISTRIBUTE GATHER\n       -        16  AGGREGATE MIN(name) AS min_90, MIN(name_1) AS min_91, MIN(info_46) AS min_92, MIN(info_54) AS min_93, MIN(title) AS min_94, MIN(title_71) AS min_95\n       -       114  INNER JOIN HASH ON kind_id_73 = id_23\n       7         2  │└DISTRIBUTE GATHER\n       7         2  │ PROJECT id AS id_23\n       7         2  │ FILTER kind IN('episode','tv series')\n       7         2  │ TABLE SCAN kind_type\n  176706    770732  INNER JOIN HASH ON linked_movie_id = id_70\n  176706    770732  │└DISTRIBUTE HASH ON id_70\n  176706    770732  │ PROJECT id AS id_70, title AS title_71, kind_id AS kind_id_73\n  176706    770732  │ FILTER production_year BETWEEN 2000 AND 2010\n  176706    770732  │ TABLE SCAN title\n  176706    770732  INNER JOIN HASH ON kind_id = id_19\n  176706    770732  │└DISTRIBUTE GATHER\n  176706    770732  │ PROJECT id AS id_19\n  176706    770732  │ FILTER kind IN('episode','tv series')\n  176706    770732  │ TABLE SCAN kind_type\n  176706    770732  INNER JOIN HASH ON movie_id = id_64\n  176706    770732  │└DISTRIBUTE HASH ON id_64\n  176706    770732  │ PROJECT id AS id_64, title, kind_id\n  176706    770732  │ TABLE SCAN title\n  176706    770732  INNER JOIN HASH ON info_type_id_53 = id_14\n  176706    770732  │└DISTRIBUTE GATHER\n  176706    770732  │ PROJECT id AS id_14\n  176706    770732  │ FILTER info = 'rating'\n  176706    770732  │ TABLE SCAN info_type\n  176706    770732  INNER JOIN HASH ON linked_movie_id = movie_id_52\n  176706    770732  │└DISTRIBUTE HASH ON movie_id_52\n  176706    770732  │ PROJECT movie_id AS movie_id_52, info_type_id AS info_type_id_53, info AS info_54\n  176706    770732  │ FILTER info < '3.5'\n  176706    770732  │ TABLE SCAN movie_info_idx\n  176706    770732  INNER JOIN HASH ON company_id_38 = id_0\n  176706    770732  │└DISTRIBUTE GATHER\n  176706    770732  │ PROJECT id AS id_0, name AS name_1\n  176706    770732  │ TABLE SCAN company_name\n  176706    770732  INNER JOIN HASH ON linked_movie_id = movie_id_37\n  176706    770732  │└DISTRIBUTE HASH ON movie_id_37\n  176706    770732  │ PROJECT movie_id AS movie_id_37, company_id AS company_id_38\n  176706    770732  │ TABLE SCAN movie_companies\n  176706    770732  INNER JOIN HASH ON link_type_id = id_28\n  176706    770732  │└DISTRIBUTE GATHER\n  176706    770732  │ PROJECT id AS id_28\n  176706    770732  │ FILTER link IN('followed by','follows','sequel')\n  176706    770732  │ TABLE SCAN link_type\n  176706    770732  INNER JOIN HASH ON movie_id = movie_id_60\n  176706    770732  │└DISTRIBUTE GATHER\n  176706    770732  │ PROJECT movie_id AS movie_id_60, linked_movie_id, link_type_id\n  176706    770732  │ TABLE SCAN movie_link\n  176706    770732  INNER JOIN HASH ON info_type_id = id_10\n  176706    770732  │└DISTRIBUTE GATHER\n  176706    770732  │ PROJECT id AS id_10\n  176706    770732  │ FILTER info = 'rating'\n  176706    770732  │ TABLE SCAN info_type\n  176706    770732  INNER JOIN HASH ON movie_id = movie_id_45\n  176706    770732  │└DISTRIBUTE HASH ON movie_id_45\n  176706    770732  │ PROJECT movie_id AS movie_id_45, info_type_id, info AS info_46\n  176706    770732  │ TABLE SCAN movie_info_idx\n  176706    770732  INNER JOIN HASH ON company_id = id\n  176706    770732  │└DISTRIBUTE GATHER\n  176706    770732  │ FILTER country_code <> 'us'\n  176706    770732  │ TABLE SCAN company_name\n  176706    770732  TABLE SCAN movie_companies\n",
+      "plan": "Estimate    Actual  Operator\n       1         ∞  PROJECT min AS first_company, min_85 AS second_company, min_86 AS first_rating, min_87 AS second_rating, min_88 AS first_movie, min_89 AS second_movie\n       1         1  AGGREGATE MIN(min_90) AS min, MIN(min_91) AS min_85, MIN(min_92) AS min_86, MIN(min_93) AS min_87, MIN(min_94) AS min_88, MIN(min_95) AS min_89\n       -        16  DISTRIBUTE GATHER\n       -        16  AGGREGATE MIN(name) AS min_90, MIN(name_1) AS min_91, MIN(info_46) AS min_92, MIN(info_54) AS min_93, MIN(title) AS min_94, MIN(title_71) AS min_95\n       -       114  INNER JOIN HASH ON kind_id_73 = id_23\n       7         2  │└DISTRIBUTE GATHER\n       7         2  │ PROJECT id AS id_23\n       7         2  │ FILTER kind IN('episode','tv series')\n       7         2  │ TABLE SCAN kind_type\n       -       117  INNER JOIN HASH ON linked_movie_id = id_70\n  176706    770732  │└DISTRIBUTE HASH ON id_70\n  176706    770732  │ PROJECT id AS id_70, title AS title_71, kind_id AS kind_id_73\n  176706    770732  │ FILTER production_year BETWEEN 2000 AND 2010\n  176706    770732  │ TABLE SCAN title\n       -       218  INNER JOIN HASH ON kind_id = id_19\n       7         2  │└DISTRIBUTE GATHER\n       7         2  │ PROJECT id AS id_19\n       7         2  │ FILTER kind IN('episode','tv series')\n       7         2  │ TABLE SCAN kind_type\n       -       218  INNER JOIN HASH ON movie_id = id_64\n 2528312   1724531  │└DISTRIBUTE HASH ON id_64\n 2528312   1724531  │ PROJECT id AS id_64, title, kind_id\n 2528312   1724531  │ TABLE SCAN title\n       -       218  INNER JOIN HASH ON info_type_id_53 = id_14\n     113         1  │└DISTRIBUTE GATHER\n     113         1  │ PROJECT id AS id_14\n     113         1  │ FILTER info = 'rating'\n     113         1  │ TABLE SCAN info_type\n       -       218  INNER JOIN HASH ON linked_movie_id = movie_id_52\n 1380035     36749  │└DISTRIBUTE HASH ON movie_id_52\n 1380035     36749  │ PROJECT movie_id AS movie_id_52, info_type_id AS info_type_id_53, info AS info_54\n 1380035     36749  │ FILTER info < '3.5'\n 1380035     36749  │ TABLE SCAN movie_info_idx\n       -       218  INNER JOIN HASH ON company_id_38 = id_0\n  234997    234997  │└DISTRIBUTE GATHER\n  234997    234997  │ PROJECT id AS id_0, name AS name_1\n  234997    234997  │ TABLE SCAN company_name\n       -       218  INNER JOIN HASH ON linked_movie_id = movie_id_37\n 2609129     76313  │└DISTRIBUTE HASH ON movie_id_37\n 2609129     76313  │ PROJECT movie_id AS movie_id_37, company_id AS company_id_38\n 2609129     76313  │ TABLE SCAN movie_companies\n       -        76  INNER JOIN HASH ON link_type_id = id_28\n      18         2  │└DISTRIBUTE GATHER\n      18         2  │ PROJECT id AS id_28\n      18         2  │ FILTER link IN('followed by','follows','sequel')\n      18         2  │ TABLE SCAN link_type\n       -        76  INNER JOIN HASH ON movie_id = movie_id_60\n   29997        40  │└DISTRIBUTE GATHER\n   29997        40  │ PROJECT movie_id AS movie_id_60, linked_movie_id, link_type_id\n   29997        40  │ TABLE SCAN movie_link\n       -        62  INNER JOIN HASH ON info_type_id = id_10\n     113         1  │└DISTRIBUTE GATHER\n     113         1  │ PROJECT id AS id_10\n     113         1  │ FILTER info = 'rating'\n     113         1  │ TABLE SCAN info_type\n       -        62  INNER JOIN HASH ON movie_id = movie_id_45\n 1380035        29  │└DISTRIBUTE HASH ON movie_id_45\n 1380035        29  │ PROJECT movie_id AS movie_id_45, info_type_id, info AS info_46\n 1380035        29  │ TABLE SCAN movie_info_idx\n       -        62  INNER JOIN HASH ON company_id = id\n  105537    126230  │└DISTRIBUTE GATHER\n  105537    126230  │ FILTER country_code <> 'us'\n  105537    126230  │ TABLE SCAN company_name\n 2609129        62  TABLE SCAN movie_companies\n",
       "sql": "SELECT MIN(cn1.name) AS first_company,\n       MIN(cn2.name) AS second_company,\n       MIN(mi_idx1.info) AS first_rating,\n       MIN(mi_idx2.info) AS second_rating,\n       MIN(t1.title) AS first_movie,\n       MIN(t2.title) AS second_movie\nFROM job.company_name AS cn1,\n     job.company_name AS cn2,\n     job.info_type AS it1,\n     job.info_type AS it2,\n     job.kind_type AS kt1,\n     job.kind_type AS kt2,\n     job.link_type AS lt,\n     job.movie_companies AS mc1,\n     job.movie_companies AS mc2,\n     job.movie_info_idx AS mi_idx1,\n     job.movie_info_idx AS mi_idx2,\n     job.movie_link AS ml,\n     job.title AS t1,\n     job.title AS t2\nWHERE cn1.country_code != '[us]'\n  AND it1.info = 'rating'\n  AND it2.info = 'rating'\n  AND kt1.kind IN ('tv series',\n                   'episode')\n  AND kt2.kind IN ('tv series',\n                   'episode')\n  AND lt.link IN ('sequel',\n                  'follows',\n                  'followed by')\n  AND mi_idx2.info < '3.5'\n  AND t2.production_year BETWEEN 2000 AND 2010\n  AND lt.id = ml.link_type_id\n  AND t1.id = ml.movie_id\n  AND t2.id = ml.linked_movie_id\n  AND it1.id = mi_idx1.info_type_id\n  AND t1.id = mi_idx1.movie_id\n  AND kt1.id = t1.kind_id\n  AND cn1.id = mc1.company_id\n  AND t1.id = mc1.movie_id\n  AND ml.movie_id = mi_idx1.movie_id\n  AND ml.movie_id = mc1.movie_id\n  AND mi_idx1.movie_id = mc1.movie_id\n  AND it2.id = mi_idx2.info_type_id\n  AND t2.id = mi_idx2.movie_id\n  AND kt2.id = t2.kind_id\n  AND cn2.id = mc2.company_id\n  AND t2.id = mc2.movie_id\n  AND ml.linked_movie_id = mi_idx2.movie_id\n  AND ml.linked_movie_id = mc2.movie_id\n  AND mi_idx2.movie_id = mc2.movie_id;\n",
-      "startTime": "2026-06-30T11:21:41.556718Z",
+      "startTime": "2026-07-01T14:53:01.930398Z",
       "status": "OK",
-      "timeMs": 718.706
+      "timeMs": 798.514
     }
   ],
   "runtime": {
-    "avgMs": 718.706,
-    "bestMs": 718.706,
-    "maxMs": 718.706,
-    "minMs": 718.706,
+    "avgMs": 798.514,
+    "bestMs": 798.514,
+    "maxMs": 798.514,
+    "minMs": 798.514,
     "stdDevMs": 0.0
   },
   "storageVariant": "iceberg",

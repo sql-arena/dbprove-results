@@ -1,0 +1,509 @@
+Trino version: 481
+Queued: 166.96us, Analysis: 26.72ms, Planning: 172.96ms, Execution: 614.52ms, Finishing: 0.00ns
+Fragment 1 [SINGLE]
+    CPU: 504.21us, Scheduled: 582.04us, Blocked 7.28s (Input: 6.85s, Output: 0.00ns), Input: 16 rows (569B); per task: avg.: 16.00 std.dev.: 0.00, Output: 1 row (119B)
+    Peak Memory: 360B, Tasks count: 1; per task: max: 360B
+    Output layout: [min, min_85, min_86, min_87, min_88, min_89]
+    Output partitioning: SINGLE []
+    Aggregate[type = FINAL]
+    │   Layout: [min:varchar, min_85:varchar, min_86:varchar, min_87:varchar, min_88:varchar, min_89:varchar]
+    │   Estimates: {rows: 1 (330B), cpu: ?, memory: 330B, network: 0B}
+    │   CPU: 0.00ns (0.00%), Scheduled: 0.00ns (0.00%), Blocked: 0.00ns (0.00%), Output: 1 row (119B)
+    │   Input avg.: 16.00 rows, Input std.dev.: 0.00%
+    │   min := min(min_90)
+    │   min_85 := min(min_91)
+    │   min_86 := min(min_92)
+    │   min_87 := min(min_93)
+    │   min_88 := min(min_94)
+    │   min_89 := min(min_95)
+    └─ LocalExchange[partitioning = SINGLE]
+       │   Layout: [min_90:varchar, min_91:varchar, min_92:varchar, min_93:varchar, min_94:varchar, min_95:varchar]
+       │   Estimates: {rows: ? (?), cpu: 0, memory: 0B, network: 0B}
+       │   CPU: 0.00ns (0.00%), Scheduled: 0.00ns (0.00%), Blocked: 427.00ms (0.46%), Output: 16 rows (569B)
+       │   Input avg.: 1.00 rows, Input std.dev.: 314.25%
+       └─ RemoteSource[sourceFragmentIds = [2]]
+              Layout: [min_90:varchar, min_91:varchar, min_92:varchar, min_93:varchar, min_94:varchar, min_95:varchar]
+              CPU: 0.00ns (0.00%), Scheduled: 0.00ns (0.00%), Blocked: 6.85s (7.43%), Output: 16 rows (569B)
+              Input avg.: 1.00 rows, Input std.dev.: 314.25%
+
+Fragment 2 [HASH]
+    CPU: 5.82ms, Scheduled: 11.66ms, Blocked 15.51s (Input: 7.77s, Output: 0.00ns), Input: 4063 rows (128.38kB); per task: avg.: 4063.00 std.dev.: 0.00, Output: 16 rows (569B)
+    Peak Memory: 135.50kB, Tasks count: 1; per task: max: 135.50kB
+    Output layout: [min_90, min_91, min_92, min_93, min_94, min_95]
+    Output partitioning: SINGLE []
+    Aggregate[type = PARTIAL]
+    │   Layout: [min_90:varchar, min_91:varchar, min_92:varchar, min_93:varchar, min_94:varchar, min_95:varchar]
+    │   CPU: 0.00ns (0.00%), Scheduled: 0.00ns (0.00%), Blocked: 0.00ns (0.00%), Output: 16 rows (569B)
+    │   Input avg.: 0.25 rows, Input std.dev.: 387.30%
+    │   min_90 := min(name)
+    │   min_91 := min(name_1)
+    │   min_92 := min(info_46)
+    │   min_93 := min(info_54)
+    │   min_94 := min(title)
+    │   min_95 := min(title_71)
+    └─ InnerJoin[criteria = (kind_id_73 = id_23), distribution = REPLICATED]
+       │   Layout: [name:varchar, info_46:varchar, name_1:varchar, info_54:varchar, title:varchar, title_71:varchar]
+       │   Estimates: {rows: ? (?), cpu: ?, memory: ?, network: 0B}
+       │   CPU: 0.00ns (0.00%), Scheduled: 0.00ns (0.00%), Blocked: 418.00ms (0.45%), Output: 4 rows (496B)
+       │   Left (probe) Input avg.: 0.25 rows, Input std.dev.: 387.30%
+       │   Right (build) Input avg.: 1.00 rows, Input std.dev.: 0.00%
+       │   Distribution: REPLICATED
+       │   dynamicFilterAssignments = {id_23 -> #df_3079}
+       ├─ InnerJoin[criteria = (linked_movie_id = id_70), distribution = PARTITIONED]
+       │  │   Layout: [name:varchar, info_46:varchar, name_1:varchar, info_54:varchar, title:varchar, title_71:varchar, kind_id_73:integer]
+       │  │   Estimates: {rows: ? (?), cpu: ?, memory: 119.34MB, network: 0B}
+       │  │   CPU: 2.00ms (0.59%), Scheduled: 6.00ms (1.59%), Blocked: 5.24s (5.68%), Output: 4 rows (516B)
+       │  │   Left (probe) Input avg.: 0.25 rows, Input std.dev.: 387.30%
+       │  │   Right (build) Input avg.: 253.63 rows, Input std.dev.: 5.54%
+       │  │   Distribution: PARTITIONED
+       │  │   dynamicFilterAssignments = {id_70 -> #df_3080}
+       │  ├─ RemoteSource[sourceFragmentIds = [3]]
+       │  │      Layout: [name:varchar, info_46:varchar, linked_movie_id:integer, name_1:varchar, info_54:varchar, title:varchar]
+       │  │      CPU: 0.00ns (0.00%), Scheduled: 0.00ns (0.00%), Blocked: 6.77s (7.34%), Output: 4 rows (368B)
+       │  │      Input avg.: 0.25 rows, Input std.dev.: 387.30%
+       │  └─ LocalExchange[partitioning = HASH, arguments = [id_70::integer]]
+       │     │   Layout: [id_70:integer, title_71:varchar, kind_id_73:integer]
+       │     │   Estimates: {rows: 2275481 (119.34MB), cpu: 119.34M, memory: 0B, network: 0B}
+       │     │   CPU: 0.00ns (0.00%), Scheduled: 1.00ms (0.26%), Blocked: 1.51s (1.64%), Output: 4058 rows (128.02kB)
+       │     │   Input avg.: 253.63 rows, Input std.dev.: 387.09%
+       │     └─ RemoteSource[sourceFragmentIds = [16]]
+       │            Layout: [id_70:integer, title_71:varchar, kind_id_73:integer]
+       │            CPU: 0.00ns (0.00%), Scheduled: 0.00ns (0.00%), Blocked: 923.00ms (1.00%), Output: 4058 rows (128.02kB)
+       │            Input avg.: 253.63 rows, Input std.dev.: 387.09%
+       └─ LocalExchange[partitioning = SINGLE]
+          │   Layout: [id_23:integer]
+          │   Estimates: {rows: ? (?), cpu: 0, memory: 0B, network: 0B}
+          │   CPU: 0.00ns (0.00%), Scheduled: 0.00ns (0.00%), Blocked: 5.00ms (0.01%), Output: 1 row (5B)
+          │   Input avg.: 0.06 rows, Input std.dev.: 387.30%
+          └─ RemoteSource[sourceFragmentIds = [17]]
+                 Layout: [id_23:integer]
+                 CPU: 0.00ns (0.00%), Scheduled: 0.00ns (0.00%), Blocked: 72.00ms (0.08%), Output: 1 row (5B)
+                 Input avg.: 0.06 rows, Input std.dev.: 387.30%
+
+Fragment 3 [HASH]
+    CPU: 47.23ms, Scheduled: 48.09ms, Blocked 15.67s (Input: 8.14s, Output: 0.00ns), Input: 90857 rows (2.76MB); per task: avg.: 90857.00 std.dev.: 0.00, Output: 4 rows (368B)
+    Peak Memory: 154.75kB, Tasks count: 1; per task: max: 154.75kB
+    Output layout: [name, info_46, linked_movie_id, name_1, info_54, title]
+    Output partitioning: HASH [linked_movie_id]
+    InnerJoin[criteria = (kind_id = id_19), distribution = REPLICATED]
+    │   Layout: [name:varchar, info_46:varchar, linked_movie_id:integer, name_1:varchar, info_54:varchar, title:varchar]
+    │   Estimates: {rows: ? (?), cpu: ?, memory: ?, network: 0B}
+    │   CPU: 0.00ns (0.00%), Scheduled: 0.00ns (0.00%), Blocked: 418.00ms (0.45%), Output: 4 rows (368B)
+    │   Left (probe) Input avg.: 0.25 rows, Input std.dev.: 387.30%
+    │   Right (build) Input avg.: 1.00 rows, Input std.dev.: 0.00%
+    │   Distribution: REPLICATED
+    │   dynamicFilterAssignments = {id_19 -> #df_3081}
+    ├─ InnerJoin[criteria = (movie_id = id_64), distribution = PARTITIONED]
+    │  │   Layout: [name:varchar, info_46:varchar, linked_movie_id:integer, name_1:varchar, info_54:varchar, title:varchar, kind_id:integer]
+    │  │   Estimates: {rows: ? (?), cpu: ?, memory: 132.60MB, network: 0B}
+    │  │   CPU: 40.00ms (11.87%), Scheduled: 41.00ms (10.85%), Blocked: 5.18s (5.62%), Output: 4 rows (388B)
+    │  │   Left (probe) Input avg.: 0.25 rows, Input std.dev.: 387.30%
+    │  │   Right (build) Input avg.: 5678.25 rows, Input std.dev.: 1.19%
+    │  │   Distribution: PARTITIONED
+    │  │   dynamicFilterAssignments = {id_64 -> #df_3082}
+    │  ├─ RemoteSource[sourceFragmentIds = [4]]
+    │  │      Layout: [name:varchar, movie_id:integer, info_46:varchar, linked_movie_id:integer, name_1:varchar, info_54:varchar]
+    │  │      CPU: 0.00ns (0.00%), Scheduled: 0.00ns (0.00%), Blocked: 6.78s (7.35%), Output: 4 rows (284B)
+    │  │      Input avg.: 0.25 rows, Input std.dev.: 387.30%
+    │  └─ LocalExchange[partitioning = HASH, arguments = [id_64::integer]]
+    │     │   Layout: [id_64:integer, title:varchar, kind_id:integer]
+    │     │   Estimates: {rows: 2528312 (132.60MB), cpu: 132.60M, memory: 0B, network: 0B}
+    │     │   CPU: 3.00ms (0.89%), Scheduled: 3.00ms (0.79%), Blocked: 1.60s (1.74%), Output: 90852 rows (2.76MB)
+    │     │   Input avg.: 5678.25 rows, Input std.dev.: 210.07%
+    │     └─ RemoteSource[sourceFragmentIds = [14]]
+    │            Layout: [id_64:integer, title:varchar, kind_id:integer]
+    │            CPU: 1.00ms (0.30%), Scheduled: 1.00ms (0.26%), Blocked: 1.28s (1.39%), Output: 90852 rows (2.76MB)
+    │            Input avg.: 5678.25 rows, Input std.dev.: 210.07%
+    └─ LocalExchange[partitioning = SINGLE]
+       │   Layout: [id_19:integer]
+       │   Estimates: {rows: ? (?), cpu: 0, memory: 0B, network: 0B}
+       │   CPU: 0.00ns (0.00%), Scheduled: 0.00ns (0.00%), Blocked: 5.00ms (0.01%), Output: 1 row (5B)
+       │   Input avg.: 0.06 rows, Input std.dev.: 387.30%
+       └─ RemoteSource[sourceFragmentIds = [15]]
+              Layout: [id_19:integer]
+              CPU: 0.00ns (0.00%), Scheduled: 0.00ns (0.00%), Blocked: 80.00ms (0.09%), Output: 1 row (5B)
+              Input avg.: 0.06 rows, Input std.dev.: 387.30%
+
+Fragment 4 [SOURCE]
+    CPU: 100.51ms, Scheduled: 103.37ms, Blocked 54.68s (Input: 25.88s, Output: 0.00ns), Input: 358786 rows (7.29MB); per task: avg.: 358786.00 std.dev.: 0.00, Output: 4 rows (348B)
+    Peak Memory: 20.63MB, Tasks count: 1; per task: max: 20.63MB
+    Output layout: [name, movie_id, info_46, linked_movie_id, name_1, info_54]
+    Output partitioning: HASH [movie_id]
+    InnerJoin[criteria = (info_type_id_53 = id_14), distribution = REPLICATED]
+    │   Layout: [name:varchar, movie_id:integer, info_46:varchar, linked_movie_id:integer, name_1:varchar, info_54:varchar]
+    │   Estimates: {rows: ? (?), cpu: ?, memory: ?, network: 0B}
+    │   CPU: 0.00ns (0.00%), Scheduled: 0.00ns (0.00%), Blocked: 412.00ms (0.45%), Output: 4 rows (348B)
+    │   Left (probe) Input avg.: 4.00 rows, Input std.dev.: 0.00%
+    │   Right (build) Input avg.: 1.00 rows, Input std.dev.: 0.00%
+    │   Distribution: REPLICATED
+    │   dynamicFilterAssignments = {id_14 -> #df_3083}
+    ├─ InnerJoin[criteria = (linked_movie_id = movie_id_52), distribution = REPLICATED]
+    │  │   Layout: [name:varchar, movie_id:integer, info_46:varchar, linked_movie_id:integer, name_1:varchar, info_type_id_53:integer, info_54:varchar]
+    │  │   Estimates: {rows: ? (?), cpu: ?, memory: 32.55MB, network: 0B}
+    │  │   CPU: 0.00ns (0.00%), Scheduled: 1.00ms (0.26%), Blocked: 4.53s (4.91%), Output: 4 rows (368B)
+    │  │   Left (probe) Input avg.: 4.00 rows, Input std.dev.: 0.00%
+    │  │   Right (build) Input avg.: 18.00 rows, Input std.dev.: 24.14%
+    │  │   Distribution: REPLICATED
+    │  │   dynamicFilterAssignments = {movie_id_52 -> #df_3084}
+    │  ├─ InnerJoin[criteria = (company_id_38 = id_0), distribution = REPLICATED]
+    │  │  │   Layout: [name:varchar, movie_id:integer, info_46:varchar, linked_movie_id:integer, name_1:varchar]
+    │  │  │   Estimates: {rows: ? (?), cpu: ?, memory: 10.83MB, network: 0B}
+    │  │  │   CPU: 85.00ms (25.22%), Scheduled: 85.00ms (22.49%), Blocked: 326.00ms (0.35%), Output: 4 rows (316B)
+    │  │  │   Left (probe) Input avg.: 4.00 rows, Input std.dev.: 0.00%
+    │  │  │   Right (build) Input avg.: 234997.00 rows, Input std.dev.: 0.00%
+    │  │  │   Distribution: REPLICATED
+    │  │  │   dynamicFilterAssignments = {id_0 -> #df_3085}
+    │  │  ├─ InnerJoin[criteria = (linked_movie_id = movie_id_37), distribution = REPLICATED]
+    │  │  │  │   Layout: [name:varchar, movie_id:integer, info_46:varchar, linked_movie_id:integer, company_id_38:integer]
+    │  │  │  │   Estimates: {rows: ? (?), cpu: ?, memory: 24.88MB, network: 0B}
+    │  │  │  │   CPU: 0.00ns (0.00%), Scheduled: 0.00ns (0.00%), Blocked: 1.88s (2.04%), Output: 4 rows (236B)
+    │  │  │  │   Left (probe) Input avg.: 1.00 rows, Input std.dev.: 0.00%
+    │  │  │  │   Right (build) Input avg.: 38.06 rows, Input std.dev.: 28.17%
+    │  │  │  │   Distribution: REPLICATED
+    │  │  │  │   dynamicFilterAssignments = {movie_id_37 -> #df_3086}
+    │  │  │  ├─ InnerJoin[criteria = (link_type_id = id_28), distribution = REPLICATED]
+    │  │  │  │  │   Layout: [name:varchar, movie_id:integer, info_46:varchar, linked_movie_id:integer]
+    │  │  │  │  │   Estimates: {rows: ? (?), cpu: ?, memory: ?, network: 0B}
+    │  │  │  │  │   CPU: 0.00ns (0.00%), Scheduled: 0.00ns (0.00%), Blocked: 412.00ms (0.45%), Output: 1 row (38B)
+    │  │  │  │  │   Left (probe) Input avg.: 1.00 rows, Input std.dev.: 0.00%
+    │  │  │  │  │   Right (build) Input avg.: 2.00 rows, Input std.dev.: 0.00%
+    │  │  │  │  │   Distribution: REPLICATED
+    │  │  │  │  │   dynamicFilterAssignments = {id_28 -> #df_3087}
+    │  │  │  │  ├─ InnerJoin[criteria = (movie_id = movie_id_60), distribution = REPLICATED]
+    │  │  │  │  │  │   Layout: [name:varchar, movie_id:integer, info_46:varchar, linked_movie_id:integer, link_type_id:integer]
+    │  │  │  │  │  │   Estimates: {rows: ? (?), cpu: ?, memory: 439.41kB, network: 0B}
+    │  │  │  │  │  │   CPU: 0.00ns (0.00%), Scheduled: 0.00ns (0.00%), Blocked: 51.00ms (0.06%), Output: 1 row (43B)
+    │  │  │  │  │  │   Left (probe) Input avg.: 1.00 rows, Input std.dev.: 0.00%
+    │  │  │  │  │  │   Right (build) Input avg.: 2.00 rows, Input std.dev.: 0.00%
+    │  │  │  │  │  │   Distribution: REPLICATED
+    │  │  │  │  │  │   dynamicFilterAssignments = {movie_id_60 -> #df_3088}
+    │  │  │  │  │  ├─ InnerJoin[criteria = (info_type_id = id_10), distribution = REPLICATED]
+    │  │  │  │  │  │  │   Layout: [name:varchar, movie_id:integer, info_46:varchar]
+    │  │  │  │  │  │  │   Estimates: {rows: ? (?), cpu: ?, memory: ?, network: 0B}
+    │  │  │  │  │  │  │   CPU: 0.00ns (0.00%), Scheduled: 0.00ns (0.00%), Blocked: 413.00ms (0.45%), Output: 1 row (33B)
+    │  │  │  │  │  │  │   Left (probe) Input avg.: 1.00 rows, Input std.dev.: 0.00%
+    │  │  │  │  │  │  │   Right (build) Input avg.: 1.00 rows, Input std.dev.: 0.00%
+    │  │  │  │  │  │  │   Distribution: REPLICATED
+    │  │  │  │  │  │  │   dynamicFilterAssignments = {id_10 -> #df_3089}
+    │  │  │  │  │  │  ├─ InnerJoin[criteria = (movie_id = movie_id_45), distribution = REPLICATED]
+    │  │  │  │  │  │  │  │   Layout: [name:varchar, movie_id:integer, info_type_id:integer, info_46:varchar]
+    │  │  │  │  │  │  │  │   Estimates: {rows: ? (?), cpu: ?, memory: 32.55MB, network: 0B}
+    │  │  │  │  │  │  │  │   CPU: 0.00ns (0.00%), Scheduled: 0.00ns (0.00%), Blocked: 535.00ms (0.58%), Output: 1 row (38B)
+    │  │  │  │  │  │  │  │   Left (probe) Input avg.: 1.00 rows, Input std.dev.: 0.00%
+    │  │  │  │  │  │  │  │   Right (build) Input avg.: 0.13 rows, Input std.dev.: 264.58%
+    │  │  │  │  │  │  │  │   Distribution: REPLICATED
+    │  │  │  │  │  │  │  │   dynamicFilterAssignments = {movie_id_45 -> #df_3090}
+    │  │  │  │  │  │  │  ├─ InnerJoin[criteria = (id = company_id), distribution = REPLICATED]
+    │  │  │  │  │  │  │  │  │   Layout: [name:varchar, movie_id:integer]
+    │  │  │  │  │  │  │  │  │   Estimates: {rows: ? (?), cpu: ?, memory: 24.88MB, network: 0B}
+    │  │  │  │  │  │  │  │  │   CPU: 1.00ms (0.30%), Scheduled: 1.00ms (0.26%), Blocked: 142.00ms (0.15%), Output: 1 row (25B)
+    │  │  │  │  │  │  │  │  │   Left (probe) Input avg.: 1.00 rows, Input std.dev.: 0.00%
+    │  │  │  │  │  │  │  │  │   Right (build) Input avg.: 0.25 rows, Input std.dev.: 223.61%
+    │  │  │  │  │  │  │  │  │   Distribution: REPLICATED
+    │  │  │  │  │  │  │  │  │   dynamicFilterAssignments = {company_id -> #df_3091}
+    │  │  │  │  │  │  │  │  ├─ ScanFilterProject[table = tpch:job.company_name$data@8161245174422102436, filterPredicate = (country_code = varchar '[nl]'), dynamicFilters = {id = #df_3091}]
+    │  │  │  │  │  │  │  │  │      Layout: [id:integer, name:varchar]
+    │  │  │  │  │  │  │  │  │      Estimates: {rows: 234997 (10.83MB), cpu: 12.50M, memory: 0B, network: 0B}/{rows: 211497 (9.75MB), cpu: 12.50M, memory: 0B, network: 0B}/{rows: 211497 (9.75MB), cpu: 9.75M, memory: 0B, network: 0B}
+    │  │  │  │  │  │  │  │  │      CPU: 5.00ms (1.48%), Scheduled: 6.00ms (1.59%), Blocked: 0.00ns (0.00%), Output: 1 row (25B)
+    │  │  │  │  │  │  │  │  │      Input avg.: 122880.00 rows, Input std.dev.: 0.00%
+    │  │  │  │  │  │  │  │  │      id := 1:id:integer
+    │  │  │  │  │  │  │  │  │      country_code := 3:country_code:varchar
+    │  │  │  │  │  │  │  │  │      name := 2:name:varchar
+    │  │  │  │  │  │  │  │  │      Input: 122880 rows (948.30kB), Filtered: 100.00%, Physical input: 2.26MB, Physical input time: 1.37ms, Splits: 1, Splits generation wait time: 26.54ms
+    │  │  │  │  │  │  │  │  │      Dynamic filters: 
+    │  │  │  │  │  │  │  │  │          - df_3091, [ SortedRangeSet[type=integer, ranges=4, {[20], ..., [71403]}] ], collection time=426.56ms
+    │  │  │  │  │  │  │  │  └─ LocalExchange[partitioning = HASH, arguments = [company_id::integer]]
+    │  │  │  │  │  │  │  │     │   Layout: [movie_id:integer, company_id:integer]
+    │  │  │  │  │  │  │  │     │   Estimates: {rows: 2609129 (24.88MB), cpu: 24.88M, memory: 0B, network: 0B}
+    │  │  │  │  │  │  │  │     │   CPU: 0.00ns (0.00%), Scheduled: 0.00ns (0.00%), Blocked: 6.57s (7.13%), Output: 4 rows (40B)
+    │  │  │  │  │  │  │  │     │   Input avg.: 0.25 rows, Input std.dev.: 387.30%
+    │  │  │  │  │  │  │  │     └─ RemoteSource[sourceFragmentIds = [5]]
+    │  │  │  │  │  │  │  │            Layout: [movie_id:integer, company_id:integer]
+    │  │  │  │  │  │  │  │            CPU: 0.00ns (0.00%), Scheduled: 0.00ns (0.00%), Blocked: 6.59s (7.15%), Output: 4 rows (40B)
+    │  │  │  │  │  │  │  │            Input avg.: 0.25 rows, Input std.dev.: 387.30%
+    │  │  │  │  │  │  │  └─ LocalExchange[partitioning = HASH, arguments = [movie_id_45::integer]]
+    │  │  │  │  │  │  │     │   Layout: [movie_id_45:integer, info_type_id:integer, info_46:varchar]
+    │  │  │  │  │  │  │     │   Estimates: {rows: 1380035 (32.55MB), cpu: 32.55M, memory: 0B, network: 0B}
+    │  │  │  │  │  │  │     │   CPU: 0.00ns (0.00%), Scheduled: 0.00ns (0.00%), Blocked: 6.14s (6.66%), Output: 2 rows (36B)
+    │  │  │  │  │  │  │     │   Input avg.: 0.13 rows, Input std.dev.: 387.30%
+    │  │  │  │  │  │  │     └─ RemoteSource[sourceFragmentIds = [6]]
+    │  │  │  │  │  │  │            Layout: [movie_id_45:integer, info_type_id:integer, info_46:varchar]
+    │  │  │  │  │  │  │            CPU: 0.00ns (0.00%), Scheduled: 0.00ns (0.00%), Blocked: 6.13s (6.65%), Output: 2 rows (36B)
+    │  │  │  │  │  │  │            Input avg.: 0.13 rows, Input std.dev.: 387.30%
+    │  │  │  │  │  │  └─ LocalExchange[partitioning = SINGLE]
+    │  │  │  │  │  │     │   Layout: [id_10:integer]
+    │  │  │  │  │  │     │   Estimates: {rows: ? (?), cpu: 0, memory: 0B, network: 0B}
+    │  │  │  │  │  │     │   CPU: 0.00ns (0.00%), Scheduled: 0.00ns (0.00%), Blocked: 5.00ms (0.01%), Output: 1 row (5B)
+    │  │  │  │  │  │     │   Input avg.: 0.06 rows, Input std.dev.: 387.30%
+    │  │  │  │  │  │     └─ RemoteSource[sourceFragmentIds = [7]]
+    │  │  │  │  │  │            Layout: [id_10:integer]
+    │  │  │  │  │  │            CPU: 0.00ns (0.00%), Scheduled: 0.00ns (0.00%), Blocked: 68.00ms (0.07%), Output: 1 row (5B)
+    │  │  │  │  │  │            Input avg.: 0.06 rows, Input std.dev.: 387.30%
+    │  │  │  │  │  └─ LocalExchange[partitioning = SINGLE]
+    │  │  │  │  │     │   Layout: [movie_id_60:integer, linked_movie_id:integer, link_type_id:integer]
+    │  │  │  │  │     │   Estimates: {rows: 29997 (439.41kB), cpu: 0, memory: 0B, network: 0B}
+    │  │  │  │  │     │   CPU: 0.00ns (0.00%), Scheduled: 0.00ns (0.00%), Blocked: 365.00ms (0.40%), Output: 2 rows (30B)
+    │  │  │  │  │     │   Input avg.: 0.13 rows, Input std.dev.: 387.30%
+    │  │  │  │  │     └─ RemoteSource[sourceFragmentIds = [8]]
+    │  │  │  │  │            Layout: [movie_id_60:integer, linked_movie_id:integer, link_type_id:integer]
+    │  │  │  │  │            CPU: 0.00ns (0.00%), Scheduled: 0.00ns (0.00%), Blocked: 5.85s (6.34%), Output: 2 rows (30B)
+    │  │  │  │  │            Input avg.: 0.13 rows, Input std.dev.: 387.30%
+    │  │  │  │  └─ LocalExchange[partitioning = SINGLE]
+    │  │  │  │     │   Layout: [id_28:integer]
+    │  │  │  │     │   Estimates: {rows: ? (?), cpu: 0, memory: 0B, network: 0B}
+    │  │  │  │     │   CPU: 0.00ns (0.00%), Scheduled: 0.00ns (0.00%), Blocked: 4.00ms (0.00%), Output: 2 rows (10B)
+    │  │  │  │     │   Input avg.: 0.13 rows, Input std.dev.: 387.30%
+    │  │  │  │     └─ RemoteSource[sourceFragmentIds = [9]]
+    │  │  │  │            Layout: [id_28:integer]
+    │  │  │  │            CPU: 0.00ns (0.00%), Scheduled: 0.00ns (0.00%), Blocked: 57.00ms (0.06%), Output: 2 rows (10B)
+    │  │  │  │            Input avg.: 0.13 rows, Input std.dev.: 387.30%
+    │  │  │  └─ LocalExchange[partitioning = HASH, arguments = [movie_id_37::integer]]
+    │  │  │     │   Layout: [movie_id_37:integer, company_id_38:integer]
+    │  │  │     │   Estimates: {rows: 2609129 (24.88MB), cpu: 24.88M, memory: 0B, network: 0B}
+    │  │  │     │   CPU: 0.00ns (0.00%), Scheduled: 0.00ns (0.00%), Blocked: 4.81s (5.22%), Output: 609 rows (5.95kB)
+    │  │  │     │   Input avg.: 38.06 rows, Input std.dev.: 387.30%
+    │  │  │     └─ RemoteSource[sourceFragmentIds = [10]]
+    │  │  │            Layout: [movie_id_37:integer, company_id_38:integer]
+    │  │  │            CPU: 0.00ns (0.00%), Scheduled: 0.00ns (0.00%), Blocked: 4.80s (5.21%), Output: 609 rows (5.95kB)
+    │  │  │            Input avg.: 38.06 rows, Input std.dev.: 387.30%
+    │  │  └─ LocalExchange[partitioning = SINGLE]
+    │  │     │   Layout: [id_0:integer, name_1:varchar]
+    │  │     │   Estimates: {rows: 234997 (10.83MB), cpu: 0, memory: 0B, network: 0B}
+    │  │     │   CPU: 0.00ns (0.00%), Scheduled: 0.00ns (0.00%), Blocked: 6.00ms (0.01%), Output: 234997 rows (6.36MB)
+    │  │     │   Input avg.: 14687.31 rows, Input std.dev.: 83.69%
+    │  │     └─ RemoteSource[sourceFragmentIds = [11]]
+    │  │            Layout: [id_0:integer, name_1:varchar]
+    │  │            CPU: 1.00ms (0.30%), Scheduled: 1.00ms (0.26%), Blocked: 225.00ms (0.24%), Output: 234997 rows (6.36MB)
+    │  │            Input avg.: 14687.31 rows, Input std.dev.: 83.69%
+    │  └─ LocalExchange[partitioning = HASH, arguments = [movie_id_52::integer]]
+    │     │   Layout: [movie_id_52:integer, info_type_id_53:integer, info_54:varchar]
+    │     │   Estimates: {rows: 1380035 (32.55MB), cpu: 32.55M, memory: 0B, network: 0B}
+    │     │   CPU: 0.00ns (0.00%), Scheduled: 0.00ns (0.00%), Blocked: 2.15s (2.33%), Output: 288 rows (5.06kB)
+    │     │   Input avg.: 18.00 rows, Input std.dev.: 387.30%
+    │     └─ RemoteSource[sourceFragmentIds = [12]]
+    │            Layout: [movie_id_52:integer, info_type_id_53:integer, info_54:varchar]
+    │            CPU: 0.00ns (0.00%), Scheduled: 0.00ns (0.00%), Blocked: 2.14s (2.32%), Output: 288 rows (5.06kB)
+    │            Input avg.: 18.00 rows, Input std.dev.: 387.30%
+    └─ LocalExchange[partitioning = SINGLE]
+       │   Layout: [id_14:integer]
+       │   Estimates: {rows: ? (?), cpu: 0, memory: 0B, network: 0B}
+       │   CPU: 0.00ns (0.00%), Scheduled: 0.00ns (0.00%), Blocked: 6.00ms (0.01%), Output: 1 row (5B)
+       │   Input avg.: 0.06 rows, Input std.dev.: 387.30%
+       └─ RemoteSource[sourceFragmentIds = [13]]
+              Layout: [id_14:integer]
+              CPU: 0.00ns (0.00%), Scheduled: 0.00ns (0.00%), Blocked: 32.00ms (0.03%), Output: 1 row (5B)
+              Input avg.: 0.06 rows, Input std.dev.: 387.30%
+
+Fragment 5 [SOURCE]
+    CPU: 8.86ms, Scheduled: 9.80ms, Blocked 0.00ns (Input: 0.00ns, Output: 0.00ns), Input: 494814 rows (2.46MB); per task: avg.: 494814.00 std.dev.: 0.00, Output: 4 rows (40B)
+    Peak Memory: 168B, Tasks count: 1; per task: max: 168B
+    Output layout: [movie_id, company_id]
+    Output partitioning: BROADCAST []
+    ScanFilter[table = tpch:job.movie_companies$data@4212450327521598396, dynamicFilters = {movie_id = #df_3082, movie_id = #df_3088, movie_id = #df_3090}]
+        Layout: [movie_id:integer, company_id:integer]
+        Estimates: {rows: 2609129 (24.88MB), cpu: 24.88M, memory: 0B, network: 0B}/{rows: 2609129 (24.88MB), cpu: 24.88M, memory: 0B, network: 0B}
+        CPU: 9.00ms (2.67%), Scheduled: 10.00ms (2.65%), Blocked: 0.00ns (0.00%), Output: 4 rows (40B)
+        Input avg.: 494814.00 rows, Input std.dev.: 0.00%
+        company_id := 3:company_id:integer
+        movie_id := 2:movie_id:integer
+        Input: 494814 rows (2.46MB), Filtered: 100.00%, Physical input: 2.70MB, Physical input time: 1.80ms, Splits: 1, Splits generation wait time: 397.28ms
+        Dynamic filters: 
+            - df_3082, [ SortedRangeSet[type=integer, ranges=90852, {[1], ..., [2528296]}] ], collection time=136.35ms
+            - df_3088, [ SortedRangeSet[type=integer, ranges=2, {[22690], [63971]}] ], collection time=383.96ms
+            - df_3090, [ SortedRangeSet[type=integer, ranges=2, {[22690], [63971]}] ], collection time=399.89ms
+
+Fragment 6 [SOURCE]
+    CPU: 5.78ms, Scheduled: 6.40ms, Blocked 0.00ns (Input: 0.00ns, Output: 0.00ns), Input: 245760 rows (1.54MB); per task: avg.: 245760.00 std.dev.: 0.00, Output: 2 rows (36B)
+    Peak Memory: 160B, Tasks count: 1; per task: max: 160B
+    Output layout: [movie_id_45, info_type_id, info_46]
+    Output partitioning: BROADCAST []
+    ScanFilter[table = tpch:job.movie_info_idx$data@6493804555416032900, dynamicFilters = {movie_id_45 = #df_3082, movie_id_45 = #df_3088, info_type_id = #df_3089}]
+        Layout: [movie_id_45:integer, info_type_id:integer, info_46:varchar]
+        Estimates: {rows: 1380035 (32.55MB), cpu: 32.55M, memory: 0B, network: 0B}/{rows: 1380035 (32.55MB), cpu: 32.55M, memory: 0B, network: 0B}
+        CPU: 6.00ms (1.78%), Scheduled: 6.00ms (1.59%), Blocked: 0.00ns (0.00%), Output: 2 rows (36B)
+        Input avg.: 245760.00 rows, Input std.dev.: 0.00%
+        movie_id_45 := 2:movie_id:integer
+        info_46 := 4:info:varchar
+        info_type_id := 3:info_type_id:integer
+        Input: 245760 rows (1.54MB), Filtered: 100.00%, Physical input: 1.32MB, Physical input time: 934.54us, Splits: 1, Splits generation wait time: 382.37ms
+        Dynamic filters: 
+            - df_3082, [ SortedRangeSet[type=integer, ranges=90852, {[1], ..., [2528296]}] ], collection time=136.35ms
+            - df_3088, [ SortedRangeSet[type=integer, ranges=2, {[22690], [63971]}] ], collection time=383.96ms
+            - df_3089, [ SortedRangeSet[type=integer, ranges=1, {[101]}] ], collection time=22.95ms
+
+Fragment 7 [SOURCE]
+    CPU: 414.75us, Scheduled: 438.33us, Blocked 0.00ns (Input: 0.00ns, Output: 0.00ns), Input: 113 rows (2.23kB); per task: avg.: 113.00 std.dev.: 0.00, Output: 1 row (5B)
+    Peak Memory: 120B, Tasks count: 1; per task: max: 120B
+    Output layout: [id_10]
+    Output partitioning: BROADCAST []
+    ScanFilterProject[table = tpch:job.info_type$data@6495735528065536025, filterPredicate = (info = varchar 'rating')]
+        Layout: [id_10:integer]
+        Estimates: {rows: 113 (565B), cpu: 4.92k, memory: 0B, network: 0B}/{rows: ? (?), cpu: 4.92k, memory: 0B, network: 0B}/{rows: ? (?), cpu: ?, memory: 0B, network: 0B}
+        CPU: 0.00ns (0.00%), Scheduled: 0.00ns (0.00%), Blocked: 0.00ns (0.00%), Output: 1 row (5B)
+        Input avg.: 113.00 rows, Input std.dev.: 0.00%
+        id_10 := 1:id:integer
+        info := 2:info:varchar
+        Input: 113 rows (2.23kB), Filtered: 99.12%, Physical input: 2.17kB, Physical input time: 1.58us, Splits: 1, Splits generation wait time: 1.82ms
+
+Fragment 8 [SOURCE]
+    CPU: 1.99ms, Scheduled: 1.99ms, Blocked 0.00ns (Input: 0.00ns, Output: 0.00ns), Input: 29997 rows (420.67kB); per task: avg.: 29997.00 std.dev.: 0.00, Output: 2 rows (30B)
+    Peak Memory: 144B, Tasks count: 1; per task: max: 144B
+    Output layout: [movie_id_60, linked_movie_id, link_type_id]
+    Output partitioning: BROADCAST []
+    ScanFilter[table = tpch:job.movie_link$data@4605270863776881522, dynamicFilters = {linked_movie_id = #df_3080, movie_id_60 = #df_3082, linked_movie_id = #df_3084, linked_movie_id = #df_3086, link_type_id = #df_3087}]
+        Layout: [movie_id_60:integer, linked_movie_id:integer, link_type_id:integer]
+        Estimates: {rows: 29997 (439.41kB), cpu: 439.41k, memory: 0B, network: 0B}/{rows: 29997 (439.41kB), cpu: 439.41k, memory: 0B, network: 0B}
+        CPU: 2.00ms (0.59%), Scheduled: 2.00ms (0.53%), Blocked: 0.00ns (0.00%), Output: 2 rows (30B)
+        Input avg.: 29997.00 rows, Input std.dev.: 0.00%
+        linked_movie_id := 3:linked_movie_id:integer
+        link_type_id := 4:link_type_id:integer
+        movie_id_60 := 2:movie_id:integer
+        Input: 29997 rows (420.67kB), Filtered: 99.99%, Physical input: 260.65kB, Physical input time: 10.96us, Splits: 1, Splits generation wait time: 340.78ms
+        Dynamic filters: 
+            - df_3080, [ SortedRangeSet[type=integer, ranges=4058, {[371], ..., [2527876]}] ], collection time=130.62ms
+            - df_3082, [ SortedRangeSet[type=integer, ranges=90852, {[1], ..., [2528296]}] ], collection time=136.35ms
+            - df_3084, [ SortedRangeSet[type=integer, ranges=288, {[4457], ..., [1629898]}] ], collection time=153.00ms
+            - df_3086, [ SortedRangeSet[type=integer, ranges=278, {[4457], ..., [1629898]}] ], collection time=318.04ms
+            - df_3087, [ SortedRangeSet[type=integer, ranges=2, {[1], [2]}] ], collection time=24.66ms
+
+Fragment 9 [SOURCE]
+    CPU: 329.08us, Scheduled: 330.42us, Blocked 0.00ns (Input: 0.00ns, Output: 0.00ns), Input: 18 rows (303B); per task: avg.: 18.00 std.dev.: 0.00, Output: 2 rows (10B)
+    Peak Memory: 96B, Tasks count: 1; per task: max: 96B
+    Output layout: [id_28]
+    Output partitioning: BROADCAST []
+    ScanFilterProject[table = tpch:job.link_type$data@6804259899155664883, filterPredicate = $like(link, LikePattern '[%follow%]')]
+        Layout: [id_28:integer]
+        Estimates: {rows: 18 (90B), cpu: 787, memory: 0B, network: 0B}/{rows: ? (?), cpu: 787, memory: 0B, network: 0B}/{rows: ? (?), cpu: ?, memory: 0B, network: 0B}
+        CPU: 0.00ns (0.00%), Scheduled: 0.00ns (0.00%), Blocked: 0.00ns (0.00%), Output: 2 rows (10B)
+        Input avg.: 18.00 rows, Input std.dev.: 0.00%
+        link := 2:link:varchar
+        id_28 := 1:id:integer
+        Input: 18 rows (303B), Filtered: 88.89%, Physical input: 623B, Physical input time: 2.29us, Splits: 1, Splits generation wait time: 0.83ms
+
+Fragment 10 [SOURCE]
+    CPU: 7.89ms, Scheduled: 9.59ms, Blocked 0.00ns (Input: 0.00ns, Output: 0.00ns), Input: 1111216 rows (9.47MB); per task: avg.: 1111216.00 std.dev.: 0.00, Output: 609 rows (5.95kB)
+    Peak Memory: 7.20kB, Tasks count: 1; per task: max: 7.20kB
+    Output layout: [movie_id_37, company_id_38]
+    Output partitioning: BROADCAST []
+    ScanFilter[table = tpch:job.movie_companies$data@4212450327521598396, dynamicFilters = {movie_id_37 = #df_3080, movie_id_37 = #df_3084, company_id_38 = #df_3085}]
+        Layout: [movie_id_37:integer, company_id_38:integer]
+        Estimates: {rows: 2609129 (24.88MB), cpu: 24.88M, memory: 0B, network: 0B}/{rows: 2609129 (24.88MB), cpu: 24.88M, memory: 0B, network: 0B}
+        CPU: 8.00ms (2.37%), Scheduled: 10.00ms (2.65%), Blocked: 0.00ns (0.00%), Output: 609 rows (5.95kB)
+        Input avg.: 1111216.00 rows, Input std.dev.: 0.00%
+        movie_id_37 := 2:movie_id:integer
+        company_id_38 := 3:company_id:integer
+        Input: 1111216 rows (9.47MB), Filtered: 99.95%, Physical input: 9.95MB, Physical input time: 4.05ms, Splits: 1, Splits generation wait time: 207.89ms
+        Dynamic filters: 
+            - df_3080, [ SortedRangeSet[type=integer, ranges=4058, {[371], ..., [2527876]}] ], collection time=130.62ms
+            - df_3084, [ SortedRangeSet[type=integer, ranges=288, {[4457], ..., [1629898]}] ], collection time=153.00ms
+            - df_3085, [ SortedRangeSet[type=integer, ranges=234997, {[1], ..., [234997]}] ], collection time=129.90ms
+
+Fragment 11 [SOURCE]
+    CPU: 12.78ms, Scheduled: 16.14ms, Blocked 0.00ns (Input: 0.00ns, Output: 0.00ns), Input: 234997 rows (6.36MB); per task: avg.: 234997.00 std.dev.: 0.00, Output: 234997 rows (6.36MB)
+    Peak Memory: 7.63MB, Tasks count: 1; per task: max: 7.63MB
+    Output layout: [id_0, name_1]
+    Output partitioning: BROADCAST []
+    TableScan[table = tpch:job.company_name$data@8161245174422102436]
+        Layout: [id_0:integer, name_1:varchar]
+        Estimates: {rows: 234997 (10.83MB), cpu: 10.83M, memory: 0B, network: 0B}
+        CPU: 13.00ms (3.86%), Scheduled: 16.00ms (4.23%), Blocked: 0.00ns (0.00%), Output: 234997 rows (6.36MB)
+        Input avg.: 234997.00 rows, Input std.dev.: 0.00%
+        id_0 := 1:id:integer
+        name_1 := 2:name:varchar
+        Input: 234997 rows (6.36MB), Physical input: 4.13MB, Physical input time: 4.50ms, Splits: 1, Splits generation wait time: 4.05ms
+
+Fragment 12 [SOURCE]
+    CPU: 11.53ms, Scheduled: 12.88ms, Blocked 0.00ns (Input: 0.00ns, Output: 0.00ns), Input: 615135 rows (14.69MB); per task: avg.: 615135.00 std.dev.: 0.00, Output: 288 rows (5.06kB)
+    Peak Memory: 6.14kB, Tasks count: 1; per task: max: 6.14kB
+    Output layout: [movie_id_52, info_type_id_53, info_54]
+    Output partitioning: BROADCAST []
+    ScanFilter[table = tpch:job.movie_info_idx$data@6493804555416032900, filterPredicate = (info_54 < varchar '3.0'), dynamicFilters = {movie_id_52 = #df_3080, info_type_id_53 = #df_3083}]
+        Layout: [movie_id_52:integer, info_type_id_53:integer, info_54:varchar]
+        Estimates: {rows: 1380035 (32.55MB), cpu: 32.55M, memory: 0B, network: 0B}/{rows: 1380035 (32.55MB), cpu: 32.55M, memory: 0B, network: 0B}
+        CPU: 11.00ms (3.26%), Scheduled: 13.00ms (3.44%), Blocked: 0.00ns (0.00%), Output: 288 rows (5.06kB)
+        Input avg.: 615135.00 rows, Input std.dev.: 0.00%
+        info_54 := 4:info:varchar
+        info_type_id_53 := 3:info_type_id:integer
+        movie_id_52 := 2:movie_id:integer
+        Input: 615135 rows (14.69MB), Filtered: 99.95%, Physical input: 5.54MB, Physical input time: 3.11ms, Splits: 1, Splits generation wait time: 130.17ms
+        Dynamic filters: 
+            - df_3080, [ SortedRangeSet[type=integer, ranges=4058, {[371], ..., [2527876]}] ], collection time=130.62ms
+            - df_3083, [ SortedRangeSet[type=integer, ranges=1, {[101]}] ], collection time=24.63ms
+
+Fragment 13 [SOURCE]
+    CPU: 606.58us, Scheduled: 610.88us, Blocked 0.00ns (Input: 0.00ns, Output: 0.00ns), Input: 113 rows (2.23kB); per task: avg.: 113.00 std.dev.: 0.00, Output: 1 row (5B)
+    Peak Memory: 120B, Tasks count: 1; per task: max: 120B
+    Output layout: [id_14]
+    Output partitioning: BROADCAST []
+    ScanFilterProject[table = tpch:job.info_type$data@6495735528065536025, filterPredicate = (info_15 = varchar 'rating')]
+        Layout: [id_14:integer]
+        Estimates: {rows: 113 (565B), cpu: 4.92k, memory: 0B, network: 0B}/{rows: ? (?), cpu: 4.92k, memory: 0B, network: 0B}/{rows: ? (?), cpu: ?, memory: 0B, network: 0B}
+        CPU: 1.00ms (0.30%), Scheduled: 1.00ms (0.26%), Blocked: 0.00ns (0.00%), Output: 1 row (5B)
+        Input avg.: 113.00 rows, Input std.dev.: 0.00%
+        id_14 := 1:id:integer
+        info_15 := 2:info:varchar
+        Input: 113 rows (2.23kB), Filtered: 99.12%, Physical input: 2.17kB, Physical input time: 2.13us, Splits: 1, Splits generation wait time: 1.22ms
+
+Fragment 14 [SOURCE]
+    CPU: 70.55ms, Scheduled: 82.91ms, Blocked 0.00ns (Input: 0.00ns, Output: 0.00ns), Input: 1790294 rows (49.93MB); per task: avg.: 1790294.00 std.dev.: 0.00, Output: 90852 rows (2.76MB)
+    Peak Memory: 945.82kB, Tasks count: 1; per task: max: 945.82kB
+    Output layout: [id_64, title, kind_id]
+    Output partitioning: HASH [id_64]
+    ScanFilter[table = tpch:job.title$data@2534927760184987021, dynamicFilters = {kind_id = #df_3081}]
+        Layout: [id_64:integer, title:varchar, kind_id:integer]
+        Estimates: {rows: 2528312 (132.60MB), cpu: 132.60M, memory: 0B, network: 0B}/{rows: 2528312 (132.60MB), cpu: 132.60M, memory: 0B, network: 0B}
+        CPU: 71.00ms (21.07%), Scheduled: 83.00ms (21.96%), Blocked: 0.00ns (0.00%), Output: 90852 rows (2.76MB)
+        Input avg.: 895147.00 rows, Input std.dev.: 92.51%
+        kind_id := 4:kind_id:integer
+        title := 2:title:varchar
+        id_64 := 1:id:integer
+        Input: 1790294 rows (49.93MB), Filtered: 94.93%, Physical input: 30.82MB, Physical input time: 20.94ms, Splits: 2, Splits generation wait time: 19.22ms
+        Dynamic filters: 
+            - df_3081, [ SortedRangeSet[type=integer, ranges=1, {[2]}] ], collection time=21.03ms
+
+Fragment 15 [SOURCE]
+    CPU: 249.29us, Scheduled: 250.29us, Blocked 0.00ns (Input: 0.00ns, Output: 0.00ns), Input: 7 rows (109B); per task: avg.: 7.00 std.dev.: 0.00, Output: 1 row (5B)
+    Peak Memory: 120B, Tasks count: 1; per task: max: 120B
+    Output layout: [id_19]
+    Output partitioning: BROADCAST []
+    ScanFilterProject[table = tpch:job.kind_type$data@1015414099535677133, filterPredicate = (kind = varchar 'tv series')]
+        Layout: [id_19:integer]
+        Estimates: {rows: 7 (35B), cpu: 337, memory: 0B, network: 0B}/{rows: ? (?), cpu: 337, memory: 0B, network: 0B}/{rows: ? (?), cpu: ?, memory: 0B, network: 0B}
+        CPU: 0.00ns (0.00%), Scheduled: 0.00ns (0.00%), Blocked: 0.00ns (0.00%), Output: 1 row (5B)
+        Input avg.: 7.00 rows, Input std.dev.: 0.00%
+        kind := 2:kind:varchar
+        id_19 := 1:id:integer
+        Input: 7 rows (109B), Filtered: 85.71%, Physical input: 405B, Physical input time: 667.00ns, Splits: 1, Splits generation wait time: 4.90ms
+
+Fragment 16 [SOURCE]
+    CPU: 78.53ms, Scheduled: 90.73ms, Blocked 0.00ns (Input: 0.00ns, Output: 0.00ns), Input: 1790294 rows (57.63MB); per task: avg.: 1790294.00 std.dev.: 0.00, Output: 4058 rows (128.02kB)
+    Peak Memory: 153.61kB, Tasks count: 1; per task: max: 153.61kB
+    Output layout: [id_70, title_71, kind_id_73]
+    Output partitioning: HASH [id_70]
+    ScanFilterProject[table = tpch:job.title$data@2534927760184987021, filterPredicate = (production_year_74 = integer '2007'), dynamicFilters = {kind_id_73 = #df_3079}]
+        Layout: [id_70:integer, title_71:varchar, kind_id_73:integer]
+        Estimates: {rows: 2528312 (132.60MB), cpu: 144.38M, memory: 0B, network: 0B}/{rows: 2275481 (119.34MB), cpu: 144.38M, memory: 0B, network: 0B}/{rows: 2275481 (119.34MB), cpu: 119.34M, memory: 0B, network: 0B}
+        CPU: 78.00ms (23.15%), Scheduled: 90.00ms (23.81%), Blocked: 0.00ns (0.00%), Output: 4058 rows (128.02kB)
+        Input avg.: 895147.00 rows, Input std.dev.: 92.51%
+        title_71 := 2:title:varchar
+        production_year_74 := 5:production_year:integer
+        kind_id_73 := 4:kind_id:integer
+        id_70 := 1:id:integer
+        Input: 1790294 rows (57.63MB), Filtered: 99.77%, Physical input: 32.39MB, Physical input time: 15.61ms, Splits: 2, Splits generation wait time: 19.41ms
+        Dynamic filters: 
+            - df_3079, [ SortedRangeSet[type=integer, ranges=1, {[2]}] ], collection time=21.83ms
+
+Fragment 17 [SOURCE]
+    CPU: 471.96us, Scheduled: 560.63us, Blocked 0.00ns (Input: 0.00ns, Output: 0.00ns), Input: 7 rows (109B); per task: avg.: 7.00 std.dev.: 0.00, Output: 1 row (5B)
+    Peak Memory: 120B, Tasks count: 1; per task: max: 120B
+    Output layout: [id_23]
+    Output partitioning: BROADCAST []
+    ScanFilterProject[table = tpch:job.kind_type$data@1015414099535677133, filterPredicate = (kind_24 = varchar 'tv series')]
+        Layout: [id_23:integer]
+        Estimates: {rows: 7 (35B), cpu: 337, memory: 0B, network: 0B}/{rows: ? (?), cpu: 337, memory: 0B, network: 0B}/{rows: ? (?), cpu: ?, memory: 0B, network: 0B}
+        CPU: 0.00ns (0.00%), Scheduled: 1.00ms (0.26%), Blocked: 0.00ns (0.00%), Output: 1 row (5B)
+        Input avg.: 7.00 rows, Input std.dev.: 0.00%
+        kind_24 := 2:kind:varchar
+        id_23 := 1:id:integer
+        Input: 7 rows (109B), Filtered: 85.71%, Physical input: 405B, Physical input time: 6.38us, Splits: 1, Splits generation wait time: 1.45ms
+

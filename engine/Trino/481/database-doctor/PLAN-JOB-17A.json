@@ -16,31 +16,31 @@
           ">16x": 0
         },
         "distribute": {
-          "+2x": 0,
+          "+2x": 1,
           "+4x": 0,
-          "+8x": 5,
+          "+8x": 1,
           "-2x": 0,
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
           "=": 1,
-          ">16x": 0
+          ">16x": 3
         },
         "filter": {
-          "+2x": 0,
+          "+2x": 1,
           "+4x": 0,
-          "+8x": 3,
+          "+8x": 1,
           "-2x": 0,
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
           "=": 0,
-          ">16x": 0
+          ">16x": 1
         },
         "hash": {
           "+2x": 0,
           "+4x": 0,
-          "+8x": 5,
+          "+8x": 0,
           "-2x": 0,
           "-4x": 0,
           "-8x": 0,
@@ -51,7 +51,7 @@
         "join": {
           "+2x": 0,
           "+4x": 0,
-          "+8x": 5,
+          "+8x": 0,
           "-2x": 0,
           "-4x": 0,
           "-8x": 0,
@@ -60,15 +60,15 @@
           ">16x": 0
         },
         "scan": {
-          "+2x": 0,
+          "+2x": 1,
           "+4x": 0,
-          "+8x": 6,
+          "+8x": 1,
           "-2x": 0,
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
           "=": 2,
-          ">16x": 0
+          ">16x": 4
         },
         "sort": {
           "+2x": 0,
@@ -84,25 +84,25 @@
       },
       "operatorRows": {
         "aggregate": 258305,
-        "distribute": 4245323,
-        "hash": 4245307,
-        "join": 2060394,
-        "scan": 4588706,
+        "distribute": 3066686,
+        "hash": 14038563,
+        "join": 14217299,
+        "scan": 3803373,
         "seek": 0,
         "sort": 0
       },
-      "plan": "Estimate    Actual  Operator\n       1         ∞  PROJECT min AS member_in_charnamed_american_movie, min AS a1\n       1         1  AGGREGATE MIN(min_35) AS min\n       -        16  DISTRIBUTE GATHER\n       -        16  AGGREGATE MIN(name_20) AS min_35\n       -    258289  INNER JOIN HASH ON movie_id = id_27\n 2528312   2528312  │└DISTRIBUTE HASH ON id_27\n 2528312   2528312  │ PROJECT id AS id_27\n 2528312   2528312  │ TABLE SCAN title\n 3750742    343399  INNER JOIN HASH ON person_id = id_19\n 3750742    343399  │└DISTRIBUTE HASH ON id_19\n 3750742    343399  │ PROJECT id AS id_19, name AS name_20\n 3750742    343399  │ FILTER (name >= 'B') AND (name < 'C') AND (name LIKE 'B%')\n 3750742    343399  │ TABLE SCAN name\n 3750742    343399  INNER JOIN HASH ON keyword_id = id_4\n 3750742    343399  │└DISTRIBUTE GATHER\n 3750742    343399  │ PROJECT id AS id_4\n 3750742    343399  │ FILTER keyword = 'character-name-in-title'\n 3750742    343399  │ TABLE SCAN keyword\n 3750742    343399  INNER JOIN HASH ON movie_id = movie_id_15\n 3750742    343399  │└DISTRIBUTE HASH ON movie_id_15\n 3750742    343399  │ PROJECT movie_id AS movie_id_15, keyword_id\n 3750742    343399  │ TABLE SCAN movie_keyword\n 3750742    343399  INNER JOIN HASH ON company_id = id_0\n 3750742    343399  │└DISTRIBUTE GATHER\n 3750742    343399  │ PROJECT id AS id_0\n 3750742    343399  │ FILTER country_code = 'us'\n 3750742    343399  │ TABLE SCAN company_name\n 3750742    343399  INNER JOIN HASH ON movie_id = movie_id_9\n 3750742    343399  │└DISTRIBUTE HASH ON movie_id_9\n 3750742    343399  │ PROJECT movie_id AS movie_id_9, company_id\n 3750742    343399  │ TABLE SCAN movie_companies\n 3750742    343399  TABLE SCAN cast_info\n",
+      "plan": "Estimate    Actual  Operator\n       1         ∞  PROJECT min AS member_in_charnamed_american_movie, min AS a1\n       1         1  AGGREGATE MIN(min_35) AS min\n       -        16  DISTRIBUTE GATHER\n       -        16  AGGREGATE MIN(name_20) AS min_35\n       -    258289  INNER JOIN HASH ON movie_id = id_27\n 2528312   2528312  │└DISTRIBUTE HASH ON id_27\n 2528312   2528312  │ PROJECT id AS id_27\n 2528312   2528312  │ TABLE SCAN title\n       -    258289  INNER JOIN HASH ON person_id = id_19\n 3750742    343399  │└DISTRIBUTE HASH ON id_19\n 3750742    343399  │ PROJECT id AS id_19, name AS name_20\n 3750742    343399  │ FILTER (name >= 'B') AND (name < 'C') AND (name LIKE 'B%')\n 3750742    343399  │ TABLE SCAN name\n       -   2792158  INNER JOIN HASH ON keyword_id = id_4\n  134170         1  │└DISTRIBUTE GATHER\n  134170         1  │ PROJECT id AS id_4\n  134170         1  │ FILTER keyword = 'character-name-in-title'\n  134170         1  │ TABLE SCAN keyword\n       -   2792158  INNER JOIN HASH ON movie_id = movie_id_15\n 4523930     41840  │└DISTRIBUTE HASH ON movie_id_15\n 4523930     41840  │ PROJECT movie_id AS movie_id_15, keyword_id\n 4523930     41840  │ TABLE SCAN movie_keyword\n       -   2791268  INNER JOIN HASH ON company_id = id_0\n  234997     84843  │└DISTRIBUTE GATHER\n  234997     84843  │ PROJECT id AS id_0\n  234997     84843  │ FILTER country_code = 'us'\n  234997     84843  │ TABLE SCAN company_name\n       -   2791268  INNER JOIN HASH ON movie_id = movie_id_9\n 2609129     68275  │└DISTRIBUTE HASH ON movie_id_9\n 2609129     68275  │ PROJECT movie_id AS movie_id_9, company_id\n 2609129     68275  │ TABLE SCAN movie_companies\n36244344    736703  TABLE SCAN cast_info\n",
       "sql": "SELECT MIN(n.name) AS member_in_charnamed_american_movie,\n       MIN(n.name) AS a1\nFROM job.cast_info AS ci,\n     job.company_name AS cn,\n     job.keyword AS k,\n     job.movie_companies AS mc,\n     job.movie_keyword AS mk,\n     job.name AS n,\n     job.title AS t\nWHERE cn.country_code ='[us]'\n  AND k.keyword ='character-name-in-title'\n  AND n.name LIKE 'B%'\n  AND n.id = ci.person_id\n  AND ci.movie_id = t.id\n  AND t.id = mk.movie_id\n  AND mk.keyword_id = k.id\n  AND t.id = mc.movie_id\n  AND mc.company_id = cn.id\n  AND ci.movie_id = mc.movie_id\n  AND ci.movie_id = mk.movie_id\n  AND mc.movie_id = mk.movie_id;\n",
-      "startTime": "2026-06-30T11:20:55.740219Z",
+      "startTime": "2026-07-01T14:52:13.521287Z",
       "status": "OK",
-      "timeMs": 735.12
+      "timeMs": 782.614
     }
   ],
   "runtime": {
-    "avgMs": 735.12,
-    "bestMs": 735.12,
-    "maxMs": 735.12,
-    "minMs": 735.12,
+    "avgMs": 782.614,
+    "bestMs": 782.614,
+    "maxMs": 782.614,
+    "minMs": 782.614,
     "stdDevMs": 0.0
   },
   "storageVariant": "iceberg",

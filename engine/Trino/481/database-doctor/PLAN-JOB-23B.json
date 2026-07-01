@@ -16,26 +16,26 @@
           ">16x": 0
         },
         "distribute": {
-          "+2x": 0,
-          "+4x": 1,
+          "+2x": 1,
+          "+4x": 2,
           "+8x": 0,
           "-2x": 0,
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
-          "=": 9,
-          ">16x": 0
+          "=": 2,
+          ">16x": 5
         },
         "filter": {
-          "+2x": 0,
-          "+4x": 1,
+          "+2x": 1,
+          "+4x": 2,
           "+8x": 0,
           "-2x": 0,
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
-          "=": 6,
-          ">16x": 0
+          "=": 1,
+          ">16x": 3
         },
         "hash": {
           "+2x": 0,
@@ -45,7 +45,7 @@
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
-          "=": 9,
+          "=": 0,
           ">16x": 0
         },
         "join": {
@@ -56,19 +56,19 @@
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
-          "=": 9,
+          "=": 0,
           ">16x": 0
         },
         "scan": {
-          "+2x": 0,
-          "+4x": 1,
+          "+2x": 1,
+          "+4x": 2,
           "+8x": 0,
           "-2x": 0,
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
-          "=": 11,
-          ">16x": 0
+          "=": 3,
+          ">16x": 6
         },
         "sort": {
           "+2x": 0,
@@ -84,25 +84,25 @@
       },
       "operatorRows": {
         "aggregate": 32,
-        "distribute": 2547836,
-        "hash": 2547835,
-        "join": 2830910,
-        "scan": 2830911,
+        "distribute": 368370,
+        "hash": 368386,
+        "join": 80,
+        "scan": 368356,
         "seek": 0,
         "sort": 0
       },
-      "plan": "Estimate    Actual  Operator\n       1         ∞  PROJECT min AS movie_kind, min_50 AS complete_nerdy_internet_movie\n       1         1  AGGREGATE MIN(min_51) AS min, MIN(min_52) AS min_50\n       -        16  DISTRIBUTE GATHER\n       -        16  AGGREGATE MIN(kind_22) AS min_51, MIN(title) AS min_52\n       -        16  INNER JOIN HASH ON kind_id = id_21\n       7         1  │└DISTRIBUTE GATHER\n       7         1  │ PROJECT id AS id_21, kind AS kind_22\n       7         1  │ FILTER kind = 'movie'\n       7         1  │ TABLE SCAN kind_type\n  335742    283091  INNER JOIN HASH ON movie_id = id_43\n  335742    283091  │└DISTRIBUTE HASH ON id_43\n  335742    283091  │ PROJECT id AS id_43, title, kind_id\n  335742    283091  │ FILTER production_year > 2000\n  335742    283091  │ TABLE SCAN title\n  335742    283091  INNER JOIN HASH ON keyword_id = id_17\n  335742    283091  │└DISTRIBUTE GATHER\n  335742    283091  │ PROJECT id AS id_17\n  335742    283091  │ FILTER keyword IN('alienation','dignity','loner','nerd')\n  335742    283091  │ TABLE SCAN keyword\n  335742    283091  INNER JOIN HASH ON movie_id = movie_id_39\n  335742    283091  │└DISTRIBUTE HASH ON movie_id_39\n  335742    283091  │ PROJECT movie_id AS movie_id_39, keyword_id\n  335742    283091  │ TABLE SCAN movie_keyword\n  335742    283091  INNER JOIN HASH ON info_type_id = id_13\n  335742    283091  │└DISTRIBUTE GATHER\n  335742    283091  │ PROJECT id AS id_13\n  335742    283091  │ FILTER info = 'release dates'\n  335742    283091  │ TABLE SCAN info_type\n  335742    283091  INNER JOIN HASH ON movie_id = movie_id_32\n  335742    283091  │└DISTRIBUTE HASH ON movie_id_32\n  335742    283091  │ PROJECT movie_id AS movie_id_32, info_type_id\n  335742    283091  │ FILTER (info >= 'USA:') AND (info < 'USA;') AND (note LIKE '%internet%') AND (info LIKE 'USA:% 200%')\n  335742    283091  │ TABLE SCAN movie_info\n  335742    283091  INNER JOIN HASH ON company_type_id = id_8\n  335742    283091  │└DISTRIBUTE GATHER\n  335742    283091  │ PROJECT id AS id_8\n  335742    283091  │ TABLE SCAN company_type\n  335742    283091  INNER JOIN HASH ON company_id = id_4\n  335742    283091  │└DISTRIBUTE GATHER\n  335742    283091  │ PROJECT id AS id_4\n  335742    283091  │ FILTER country_code = 'us'\n  335742    283091  │ TABLE SCAN company_name\n  335742    283091  INNER JOIN HASH ON movie_id = movie_id_27\n  335742    283091  │└DISTRIBUTE HASH ON movie_id_27\n  335742    283091  │ PROJECT movie_id AS movie_id_27, company_id, company_type_id\n  335742    283091  │ TABLE SCAN movie_companies\n  335742    283091  INNER JOIN HASH ON status_id = id_0\n  335742    283091  │└DISTRIBUTE GATHER\n  335742    283091  │ PROJECT id AS id_0\n  335742    283091  │ FILTER kind = 'complete+verified'\n  335742    283091  │ TABLE SCAN comp_cast_type\n  335742    283091  TABLE SCAN complete_cast\n",
+      "plan": "Estimate    Actual  Operator\n       1         ∞  PROJECT min AS movie_kind, min_50 AS complete_nerdy_internet_movie\n       1         1  AGGREGATE MIN(min_51) AS min, MIN(min_52) AS min_50\n       -        16  DISTRIBUTE GATHER\n       -        16  AGGREGATE MIN(kind_22) AS min_51, MIN(title) AS min_52\n       -        16  INNER JOIN HASH ON kind_id = id_21\n       7         1  │└DISTRIBUTE GATHER\n       7         1  │ PROJECT id AS id_21, kind AS kind_22\n       7         1  │ FILTER kind = 'movie'\n       7         1  │ TABLE SCAN kind_type\n       -        16  INNER JOIN HASH ON movie_id = id_43\n  335742    283091  │└DISTRIBUTE HASH ON id_43\n  335742    283091  │ PROJECT id AS id_43, title, kind_id\n  335742    283091  │ FILTER production_year > 2000\n  335742    283091  │ TABLE SCAN title\n       -        16  INNER JOIN HASH ON keyword_id = id_17\n  134170         4  │└DISTRIBUTE GATHER\n  134170         4  │ PROJECT id AS id_17\n  134170         4  │ FILTER keyword IN('alienation','dignity','loner','nerd')\n  134170         4  │ TABLE SCAN keyword\n       -        16  INNER JOIN HASH ON movie_id = movie_id_39\n 4523930       404  │└DISTRIBUTE HASH ON movie_id_39\n 4523930       404  │ PROJECT movie_id AS movie_id_39, keyword_id\n 4523930       404  │ TABLE SCAN movie_keyword\n       -         4  INNER JOIN HASH ON info_type_id = id_13\n     113         1  │└DISTRIBUTE GATHER\n     113         1  │ PROJECT id AS id_13\n     113         1  │ FILTER info = 'release dates'\n     113         1  │ TABLE SCAN info_type\n       -         4  INNER JOIN HASH ON movie_id = movie_id_32\n13352148         3  │└DISTRIBUTE HASH ON movie_id_32\n13352148         3  │ PROJECT movie_id AS movie_id_32, info_type_id\n13352148         3  │ FILTER (info >= 'USA:') AND (info < 'USA;') AND (note LIKE '%internet%') AND (info LIKE 'USA:% 200%')\n13352148         3  │ TABLE SCAN movie_info\n       -         2  INNER JOIN HASH ON company_type_id = id_8\n       4         4  │└DISTRIBUTE GATHER\n       4         4  │ PROJECT id AS id_8\n       4         4  │ TABLE SCAN company_type\n       -         2  INNER JOIN HASH ON company_id = id_4\n  234997     84843  │└DISTRIBUTE GATHER\n  234997     84843  │ PROJECT id AS id_4\n  234997     84843  │ FILTER country_code = 'us'\n  234997     84843  │ TABLE SCAN company_name\n       -         2  INNER JOIN HASH ON movie_id = movie_id_27\n 2609129         2  │└DISTRIBUTE HASH ON movie_id_27\n 2609129         2  │ PROJECT movie_id AS movie_id_27, company_id, company_type_id\n 2609129         2  │ TABLE SCAN movie_companies\n       -         2  INNER JOIN HASH ON status_id = id_0\n       4         1  │└DISTRIBUTE GATHER\n       4         1  │ PROJECT id AS id_0\n       4         1  │ FILTER kind = 'complete+verified'\n       4         1  │ TABLE SCAN comp_cast_type\n  135086         2  TABLE SCAN complete_cast\n",
       "sql": "SELECT MIN(kt.kind) AS movie_kind,\n       MIN(t.title) AS complete_nerdy_internet_movie\nFROM job.complete_cast AS cc,\n     job.comp_cast_type AS cct1,\n     job.company_name AS cn,\n     job.company_type AS ct,\n     job.info_type AS it1,\n     job.keyword AS k,\n     job.kind_type AS kt,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.movie_keyword AS mk,\n     job.title AS t\nWHERE cct1.kind = 'complete+verified'\n  AND cn.country_code = '[us]'\n  AND it1.info = 'release dates'\n  AND k.keyword IN ('nerd',\n                    'loner',\n                    'alienation',\n                    'dignity')\n  AND kt.kind IN ('movie')\n  AND mi.note LIKE '%internet%'\n  AND mi.info LIKE 'USA:% 200%'\n  AND t.production_year > 2000\n  AND kt.id = t.kind_id\n  AND t.id = mi.movie_id\n  AND t.id = mk.movie_id\n  AND t.id = mc.movie_id\n  AND t.id = cc.movie_id\n  AND mk.movie_id = mi.movie_id\n  AND mk.movie_id = mc.movie_id\n  AND mk.movie_id = cc.movie_id\n  AND mi.movie_id = mc.movie_id\n  AND mi.movie_id = cc.movie_id\n  AND mc.movie_id = cc.movie_id\n  AND k.id = mk.keyword_id\n  AND it1.id = mi.info_type_id\n  AND cn.id = mc.company_id\n  AND ct.id = mc.company_type_id\n  AND cct1.id = cc.status_id;\n",
-      "startTime": "2026-06-30T11:21:16.186777Z",
+      "startTime": "2026-07-01T14:52:35.143202Z",
       "status": "OK",
-      "timeMs": 856.088
+      "timeMs": 893.247
     }
   ],
   "runtime": {
-    "avgMs": 856.088,
-    "bestMs": 856.088,
-    "maxMs": 856.088,
-    "minMs": 856.088,
+    "avgMs": 893.247,
+    "bestMs": 893.247,
+    "maxMs": 893.247,
+    "minMs": 893.247,
     "stdDevMs": 0.0
   },
   "storageVariant": "iceberg",

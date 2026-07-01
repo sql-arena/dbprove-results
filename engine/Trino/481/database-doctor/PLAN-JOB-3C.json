@@ -23,8 +23,8 @@
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
-          "=": 0,
-          ">16x": 2
+          "=": 1,
+          ">16x": 1
         },
         "filter": {
           "+2x": 0,
@@ -46,7 +46,7 @@
           "-8x": 0,
           "<16x": 0,
           "=": 0,
-          ">16x": 2
+          ">16x": 0
         },
         "join": {
           "+2x": 0,
@@ -57,7 +57,7 @@
           "-8x": 0,
           "<16x": 0,
           "=": 0,
-          ">16x": 2
+          ">16x": 0
         },
         "scan": {
           "+2x": 0,
@@ -67,8 +67,8 @@
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
-          "=": 1,
-          ">16x": 3
+          "=": 2,
+          ">16x": 2
         },
         "sort": {
           "+2x": 0,
@@ -84,25 +84,25 @@
       },
       "operatorRows": {
         "aggregate": 7266,
-        "distribute": 3162396,
-        "hash": 3162380,
-        "join": 2120022,
-        "scan": 3869054,
+        "distribute": 6979652,
+        "hash": 6979636,
+        "join": 38065,
+        "scan": 6979666,
         "seek": 0,
         "sort": 0
       },
-      "plan": "Estimate    Actual  Operator\n       1         ∞  PROJECT min AS movie_title\n       1         1  AGGREGATE MIN(min_14) AS min\n       -        16  DISTRIBUTE GATHER\n       -        16  AGGREGATE MIN(title) AS min_14\n       -      7250  INNER JOIN HASH ON movie_id_5 = id_9\n  512448   1749032  │└DISTRIBUTE HASH ON id_9\n  512448   1749032  │ PROJECT id AS id_9, title\n  512448   1749032  │ FILTER production_year > 1990\n  512448   1749032  │ TABLE SCAN title\n13352148    706674  INNER JOIN HASH ON movie_id_5 = movie_id\n13352148    706674  │└DISTRIBUTE HASH ON movie_id\n13352148    706674  │ FILTER info IN('American','Denish','Denmark','German','Germany','Norway','Norwegian','Sweden','Swedish','USA')\n13352148    706674  │ TABLE SCAN movie_info\n13352148    706674  INNER JOIN HASH ON id = keyword_id\n13352148    706674  │└DISTRIBUTE HASH ON keyword_id\n13352148    706674  │ PROJECT movie_id AS movie_id_5, keyword_id\n13352148    706674  │ TABLE SCAN movie_keyword\n13352148    706674  FILTER keyword LIKE '%sequel%'\n13352148    706674  TABLE SCAN keyword\n",
+      "plan": "Estimate    Actual  Operator\n       1         ∞  PROJECT min AS movie_title\n       1         1  AGGREGATE MIN(min_14) AS min\n       -        16  DISTRIBUTE GATHER\n       -        16  AGGREGATE MIN(title) AS min_14\n       -      7250  INNER JOIN HASH ON movie_id_5 = id_9\n  512448   1749032  │└DISTRIBUTE HASH ON id_9\n  512448   1749032  │ PROJECT id AS id_9, title\n  512448   1749032  │ FILTER production_year > 1990\n  512448   1749032  │ TABLE SCAN title\n       -     12163  INNER JOIN HASH ON movie_id_5 = movie_id\n13352148    706674  │└DISTRIBUTE HASH ON movie_id\n13352148    706674  │ FILTER info IN('American','Denish','Denmark','German','Germany','Norway','Norwegian','Sweden','Swedish','USA')\n13352148    706674  │ TABLE SCAN movie_info\n       -     12951  INNER JOIN HASH ON id = keyword_id\n 4523930   4523930  │└DISTRIBUTE HASH ON keyword_id\n 4523930   4523930  │ PROJECT movie_id AS movie_id_5, keyword_id\n 4523930   4523930  │ TABLE SCAN movie_keyword\n  120753        30  FILTER keyword LIKE '%sequel%'\n  120753        30  TABLE SCAN keyword\n",
       "sql": "SELECT MIN(t.title) AS movie_title\nFROM job.keyword AS k,\n     job.movie_info AS mi,\n     job.movie_keyword AS mk,\n     job.title AS t\nWHERE k.keyword LIKE '%sequel%'\n  AND mi.info IN ('Sweden',\n                  'Norway',\n                  'Germany',\n                  'Denmark',\n                  'Swedish',\n                  'Denish',\n                  'Norwegian',\n                  'German',\n                  'USA',\n                  'American')\n  AND t.production_year > 1990\n  AND t.id = mi.movie_id\n  AND t.id = mk.movie_id\n  AND mk.movie_id = mi.movie_id\n  AND k.id = mk.keyword_id;\n",
-      "startTime": "2026-06-30T11:21:43.865044Z",
+      "startTime": "2026-07-01T14:53:04.681310Z",
       "status": "OK",
-      "timeMs": 701.194
+      "timeMs": 697.592
     }
   ],
   "runtime": {
-    "avgMs": 701.194,
-    "bestMs": 701.194,
-    "maxMs": 701.194,
-    "minMs": 701.194,
+    "avgMs": 697.592,
+    "bestMs": 697.592,
+    "maxMs": 697.592,
+    "minMs": 697.592,
     "stdDevMs": 0.0
   },
   "storageVariant": "iceberg",

@@ -23,19 +23,19 @@
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
-          "=": 3,
-          ">16x": 0
+          "=": 1,
+          ">16x": 2
         },
         "filter": {
           "+2x": 0,
-          "+4x": 0,
+          "+4x": 1,
           "+8x": 0,
           "-2x": 1,
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
-          "=": 3,
-          ">16x": 0
+          "=": 0,
+          ">16x": 2
         },
         "hash": {
           "+2x": 0,
@@ -45,7 +45,7 @@
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
-          "=": 3,
+          "=": 0,
           ">16x": 0
         },
         "join": {
@@ -56,19 +56,19 @@
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
-          "=": 3,
+          "=": 0,
           ">16x": 0
         },
         "scan": {
           "+2x": 0,
-          "+4x": 0,
+          "+4x": 1,
           "+8x": 0,
           "-2x": 1,
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
-          "=": 5,
-          ">16x": 0
+          "=": 2,
+          ">16x": 2
         },
         "sort": {
           "+2x": 0,
@@ -84,25 +84,25 @@
       },
       "operatorRows": {
         "aggregate": 16,
-        "distribute": 392021,
-        "hash": 392005,
-        "join": 452,
-        "scan": 392118,
+        "distribute": 945990,
+        "hash": 945974,
+        "join": 0,
+        "scan": 945974,
         "seek": 0,
         "sort": 0
       },
-      "plan": "Estimate    Actual  Operator\n       1         ∞  PROJECT min AS american_vhs_movie\n       1         1  AGGREGATE MIN(min_19) AS min\n       -        16  DISTRIBUTE GATHER\n       -        16  AGGREGATE MIN(title) AS min_19\n       -         0  INNER JOIN HASH ON movie_id = id_15\n  159036    391666  │└DISTRIBUTE HASH ON id_15\n  159036    391666  │ PROJECT id AS id_15, title\n  159036    391666  │ FILTER production_year > 2010\n  159036    391666  │ TABLE SCAN title\n     113       113  INNER JOIN HASH ON info_type_id = id_0\n     113       113  │└DISTRIBUTE GATHER\n     113       113  │ PROJECT id AS id_0\n     113       113  │ TABLE SCAN info_type\n     113       113  INNER JOIN HASH ON movie_id = movie_id_9\n     113       113  │└DISTRIBUTE HASH ON movie_id_9\n     113       113  │ PROJECT movie_id AS movie_id_9, info_type_id\n     113       113  │ FILTER info IN('America','USA')\n     113       113  │ TABLE SCAN movie_info\n     113       113  INNER JOIN HASH ON id = company_type_id\n     113       113  │└DISTRIBUTE HASH ON company_type_id\n     113       113  │ FILTER (note LIKE '%(VHS)%') AND (note LIKE '%(USA)%') AND (note LIKE '%(1994)%')\n     113       113  │ TABLE SCAN movie_companies\n     113       113  FILTER kind = 'production companies'\n     113       113  TABLE SCAN company_type\n",
+      "plan": "Estimate    Actual  Operator\n       1         ∞  PROJECT min AS american_vhs_movie\n       1         1  AGGREGATE MIN(min_19) AS min\n       -        16  DISTRIBUTE GATHER\n       -        16  AGGREGATE MIN(title) AS min_19\n       -         0  INNER JOIN HASH ON movie_id = id_15\n  159036    391666  │└DISTRIBUTE HASH ON id_15\n  159036    391666  │ PROJECT id AS id_15, title\n  159036    391666  │ FILTER production_year > 2010\n  159036    391666  │ TABLE SCAN title\n       -         0  INNER JOIN HASH ON info_type_id = id_0\n     113       113  │└DISTRIBUTE GATHER\n     113       113  │ PROJECT id AS id_0\n     113       113  │ TABLE SCAN info_type\n       -         0  INNER JOIN HASH ON movie_id = movie_id_9\n13352148    552777  │└DISTRIBUTE HASH ON movie_id_9\n13352148    552777  │ PROJECT movie_id AS movie_id_9, info_type_id\n13352148    552777  │ FILTER info IN('America','USA')\n13352148    552777  │ TABLE SCAN movie_info\n       -         0  INNER JOIN HASH ON id = company_type_id\n 2348216      1418  │└DISTRIBUTE HASH ON company_type_id\n 2348216      1418  │ FILTER (note LIKE '%(VHS)%') AND (note LIKE '%(USA)%') AND (note LIKE '%(1994)%')\n 2348216      1418  │ TABLE SCAN movie_companies\n       4         0  FILTER kind = 'production companies'\n       4         0  TABLE SCAN company_type\n",
       "sql": "SELECT MIN(t.title) AS american_vhs_movie\nFROM job.company_type AS ct,\n     job.info_type AS it,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.title AS t\nWHERE ct.kind = 'production companies'\n  AND mc.note LIKE '%(VHS)%'\n  AND mc.note LIKE '%(USA)%'\n  AND mc.note LIKE '%(1994)%'\n  AND mi.info IN ('USA',\n                  'America')\n  AND t.production_year > 2010\n  AND t.id = mi.movie_id\n  AND t.id = mc.movie_id\n  AND mc.movie_id = mi.movie_id\n  AND ct.id = mc.company_type_id\n  AND it.id = mi.info_type_id;\n",
-      "startTime": "2026-06-30T11:21:46.192791Z",
+      "startTime": "2026-07-01T14:53:07.329650Z",
       "status": "OK",
-      "timeMs": 594.392
+      "timeMs": 924.476
     }
   ],
   "runtime": {
-    "avgMs": 594.392,
-    "bestMs": 594.392,
-    "maxMs": 594.392,
-    "minMs": 594.392,
+    "avgMs": 924.476,
+    "bestMs": 924.476,
+    "maxMs": 924.476,
+    "minMs": 924.476,
     "stdDevMs": 0.0
   },
   "storageVariant": "iceberg",

@@ -23,19 +23,19 @@
           "-4x": 1,
           "-8x": 0,
           "<16x": 0,
-          "=": 3,
-          ">16x": 0
+          "=": 1,
+          ">16x": 2
         },
         "filter": {
           "+2x": 0,
-          "+4x": 0,
+          "+4x": 1,
           "+8x": 0,
           "-2x": 0,
           "-4x": 1,
           "-8x": 0,
           "<16x": 0,
-          "=": 3,
-          ">16x": 0
+          "=": 0,
+          ">16x": 2
         },
         "hash": {
           "+2x": 0,
@@ -45,7 +45,7 @@
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
-          "=": 3,
+          "=": 0,
           ">16x": 0
         },
         "join": {
@@ -56,19 +56,19 @@
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
-          "=": 3,
+          "=": 0,
           ">16x": 0
         },
         "scan": {
           "+2x": 0,
-          "+4x": 0,
+          "+4x": 1,
           "+8x": 0,
           "-2x": 0,
           "-4x": 1,
           "-8x": 0,
           "<16x": 0,
-          "=": 5,
-          ">16x": 0
+          "=": 2,
+          ">16x": 2
         },
         "sort": {
           "+2x": 0,
@@ -84,25 +84,25 @@
       },
       "operatorRows": {
         "aggregate": 16,
-        "distribute": 1013275,
-        "hash": 1013259,
-        "join": 452,
-        "scan": 1013372,
+        "distribute": 1168877,
+        "hash": 1168861,
+        "join": 0,
+        "scan": 1168861,
         "seek": 0,
         "sort": 0
       },
-      "plan": "Estimate    Actual  Operator\n       1         ∞  PROJECT min AS typical_european_movie\n       1         1  AGGREGATE MIN(min_19) AS min\n       -        16  DISTRIBUTE GATHER\n       -        16  AGGREGATE MIN(title) AS min_19\n       -         0  INNER JOIN HASH ON movie_id = id_15\n  247389   1012920  │└DISTRIBUTE HASH ON id_15\n  247389   1012920  │ PROJECT id AS id_15, title\n  247389   1012920  │ FILTER production_year > 2005\n  247389   1012920  │ TABLE SCAN title\n     113       113  INNER JOIN HASH ON info_type_id = id_0\n     113       113  │└DISTRIBUTE GATHER\n     113       113  │ PROJECT id AS id_0\n     113       113  │ TABLE SCAN info_type\n     113       113  INNER JOIN HASH ON movie_id = movie_id_9\n     113       113  │└DISTRIBUTE HASH ON movie_id_9\n     113       113  │ PROJECT movie_id AS movie_id_9, info_type_id\n     113       113  │ FILTER info IN('Denish','Denmark','German','Germany','Norway','Norwegian','Sweden','Swedish')\n     113       113  │ TABLE SCAN movie_info\n     113       113  INNER JOIN HASH ON id = company_type_id\n     113       113  │└DISTRIBUTE HASH ON company_type_id\n     113       113  │ FILTER (note LIKE '%(theatrical)%') AND (note LIKE '%(France)%')\n     113       113  │ TABLE SCAN movie_companies\n     113       113  FILTER kind = 'production companies'\n     113       113  TABLE SCAN company_type\n",
+      "plan": "Estimate    Actual  Operator\n       1         ∞  PROJECT min AS typical_european_movie\n       1         1  AGGREGATE MIN(min_19) AS min\n       -        16  DISTRIBUTE GATHER\n       -        16  AGGREGATE MIN(title) AS min_19\n       -         0  INNER JOIN HASH ON movie_id = id_15\n  247389   1012920  │└DISTRIBUTE HASH ON id_15\n  247389   1012920  │ PROJECT id AS id_15, title\n  247389   1012920  │ FILTER production_year > 2005\n  247389   1012920  │ TABLE SCAN title\n       -         0  INNER JOIN HASH ON info_type_id = id_0\n     113       113  │└DISTRIBUTE GATHER\n     113       113  │ PROJECT id AS id_0\n     113       113  │ TABLE SCAN info_type\n       -         0  INNER JOIN HASH ON movie_id = movie_id_9\n13352148    153897  │└DISTRIBUTE HASH ON movie_id_9\n13352148    153897  │ PROJECT movie_id AS movie_id_9, info_type_id\n13352148    153897  │ FILTER info IN('Denish','Denmark','German','Germany','Norway','Norwegian','Sweden','Swedish')\n13352148    153897  │ TABLE SCAN movie_info\n       -         0  INNER JOIN HASH ON id = company_type_id\n 2348216      1931  │└DISTRIBUTE HASH ON company_type_id\n 2348216      1931  │ FILTER (note LIKE '%(theatrical)%') AND (note LIKE '%(France)%')\n 2348216      1931  │ TABLE SCAN movie_companies\n       4         0  FILTER kind = 'production companies'\n       4         0  TABLE SCAN company_type\n",
       "sql": "SELECT MIN(t.title) AS typical_european_movie\nFROM job.company_type AS ct,\n     job.info_type AS it,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.title AS t\nWHERE ct.kind = 'production companies'\n  AND mc.note LIKE '%(theatrical)%'\n  AND mc.note LIKE '%(France)%'\n  AND mi.info IN ('Sweden',\n                  'Norway',\n                  'Germany',\n                  'Denmark',\n                  'Swedish',\n                  'Denish',\n                  'Norwegian',\n                  'German')\n  AND t.production_year > 2005\n  AND t.id = mi.movie_id\n  AND t.id = mc.movie_id\n  AND mc.movie_id = mi.movie_id\n  AND ct.id = mc.company_type_id\n  AND it.id = mi.info_type_id;\n",
-      "startTime": "2026-06-30T11:21:45.461875Z",
+      "startTime": "2026-07-01T14:53:06.344740Z",
       "status": "OK",
-      "timeMs": 708.937
+      "timeMs": 963.191
     }
   ],
   "runtime": {
-    "avgMs": 708.937,
-    "bestMs": 708.937,
-    "maxMs": 708.937,
-    "minMs": 708.937,
+    "avgMs": 963.191,
+    "bestMs": 963.191,
+    "maxMs": 963.191,
+    "minMs": 963.191,
     "stdDevMs": 0.0
   },
   "storageVariant": "iceberg",

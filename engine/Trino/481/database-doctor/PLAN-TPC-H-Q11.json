@@ -19,12 +19,12 @@
           "+2x": 0,
           "+4x": 0,
           "+8x": 0,
-          "-2x": 1,
+          "-2x": 0,
           "-4x": 0,
           "-8x": 0,
-          "<16x": 1,
+          "<16x": 0,
           "=": 2,
-          ">16x": 2
+          ">16x": 4
         },
         "filter": {
           "+2x": 0,
@@ -33,9 +33,9 @@
           "-2x": 0,
           "-4x": 0,
           "-8x": 0,
-          "<16x": 1,
+          "<16x": 0,
           "=": 0,
-          ">16x": 1
+          ">16x": 2
         },
         "hash": {
           "+2x": 0,
@@ -46,7 +46,7 @@
           "-8x": 0,
           "<16x": 0,
           "=": 0,
-          ">16x": 1
+          ">16x": 0
         },
         "join": {
           "+2x": 0,
@@ -57,18 +57,18 @@
           "-8x": 0,
           "<16x": 0,
           "=": 0,
-          ">16x": 1
+          ">16x": 0
         },
         "scan": {
           "+2x": 0,
           "+4x": 0,
           "+8x": 0,
-          "-2x": 1,
+          "-2x": 0,
           "-4x": 0,
           "-8x": 0,
-          "<16x": 1,
+          "<16x": 0,
           "=": 1,
-          ">16x": 4
+          ">16x": 6
         },
         "sort": {
           "+2x": 0,
@@ -83,26 +83,26 @@
         }
       },
       "operatorRows": {
-        "aggregate": 87191,
-        "distribute": 85926,
-        "hash": 116082,
-        "join": 116082,
-        "scan": 86300,
+        "aggregate": 88836,
+        "distribute": 29274,
+        "hash": 149155,
+        "join": 149155,
+        "scan": 61076,
         "seek": 0,
         "sort": 1225
       },
-      "plan": "Estimate    Actual  Operator\n       -      1225  PROJECT ps_partkey, sum AS v\n       -      1225  SORT sum\n       -      1225  FILTER CAST(sum AS decimal(38,6)) > expr_33\n       -     28515  CROSS JOIN LOOP\n       -     28515  │└AGGREGATE SUM(sum_34) AS sum GROUP BY HASH ps_partkey\n       -     28515  │ DISTRIBUTE HASH ON ps_partkey\n       -     28515  │ AGGREGATE SUM(expr) AS sum_34 GROUP BY PARTIAL ps_partkey\n       -     28515  │ PROJECT ps_supplycost * CAST(ps_availqty AS decimal(10,0)) AS expr, ps_partkey\n       -     28515  │ INNER JOIN HASH ON s_nationkey = n_nationkey\n      25     28515  │ │└DISTRIBUTE GATHER\n      25     28515  │ │ FILTER n_name = 'JAPAN'\n      25     28515  │ │ TABLE SCAN nation\n       -     28515  │ INNER JOIN HASH ON ps_suppkey = s_suppkey\n   10000     28515  │ │└DISTRIBUTE GATHER\n   10000     28515  │ │ TABLE SCAN supplier\n  800000     28515  │ TABLE SCAN partsupp\n       1         1  DISTRIBUTE GATHER\n       1         1  PROJECT sum_32 * 0.0001 AS expr_33\n       1         1  DISTRIBUTE ROUND ROBIN\n       1         1  AGGREGATE SUM(sum_35) AS sum_32\n       -         1  DISTRIBUTE GATHER\n       -         1  AGGREGATE SUM(expr_31) AS sum_35\n       -     30160  PROJECT ps_supplycost_9 * CAST(ps_availqty_8 AS decimal(10,0)) AS expr_31\n       -     30160  INNER JOIN HASH ON s_nationkey_17 = n_nationkey_24\n      25         1  │└DISTRIBUTE GATHER\n      25         1  │ PROJECT n_nationkey AS n_nationkey_24\n      25         1  │ FILTER n_name = 'JAPAN'\n      25         1  │ TABLE SCAN nation\n   10000       377  INNER JOIN HASH ON ps_suppkey_7 = s_suppkey_14\n   10000       377  │└DISTRIBUTE GATHER\n   10000       377  │ PROJECT s_suppkey AS s_suppkey_14, s_nationkey AS s_nationkey_17\n   10000       377  │ TABLE SCAN supplier\n   10000       377  PROJECT ps_suppkey AS ps_suppkey_7, ps_availqty AS ps_availqty_8, ps_supplycost AS ps_supplycost_9\n   10000       377  TABLE SCAN partsupp\n",
+      "plan": "Estimate    Actual  Operator\n       -      1225  PROJECT ps_partkey, sum AS v\n       -      1225  SORT sum\n       -      1225  FILTER CAST(sum AS decimal(38,6)) > expr_33\n       -     28515  CROSS JOIN LOOP\n       -     28515  │└AGGREGATE SUM(sum_34) AS sum GROUP BY HASH ps_partkey\n       -     28515  │ DISTRIBUTE HASH ON ps_partkey\n       -     28515  │ AGGREGATE SUM(expr) AS sum_34 GROUP BY PARTIAL ps_partkey\n       -     30160  │ PROJECT ps_supplycost * CAST(ps_availqty AS decimal(10,0)) AS expr, ps_partkey\n       -     30160  │ INNER JOIN HASH ON s_nationkey = n_nationkey\n      25         1  │ │└DISTRIBUTE GATHER\n      25         1  │ │ FILTER n_name = 'JAPAN'\n      25         1  │ │ TABLE SCAN nation\n       -     30160  │ INNER JOIN HASH ON ps_suppkey = s_suppkey\n   10000       377  │ │└DISTRIBUTE GATHER\n   10000       377  │ │ TABLE SCAN supplier\n  800000     30160  │ TABLE SCAN partsupp\n       1         1  DISTRIBUTE GATHER\n       1         1  PROJECT sum_32 * 0.0001 AS expr_33\n       1         1  DISTRIBUTE ROUND ROBIN\n       1         1  AGGREGATE SUM(sum_35) AS sum_32\n       -         1  DISTRIBUTE GATHER\n       -         1  AGGREGATE SUM(expr_31) AS sum_35\n       -     30160  PROJECT ps_supplycost_9 * CAST(ps_availqty_8 AS decimal(10,0)) AS expr_31\n       -     30160  INNER JOIN HASH ON s_nationkey_17 = n_nationkey_24\n      25         1  │└DISTRIBUTE GATHER\n      25         1  │ PROJECT n_nationkey AS n_nationkey_24\n      25         1  │ FILTER n_name = 'JAPAN'\n      25         1  │ TABLE SCAN nation\n       -     30160  INNER JOIN HASH ON ps_suppkey_7 = s_suppkey_14\n   10000       377  │└DISTRIBUTE GATHER\n   10000       377  │ PROJECT s_suppkey AS s_suppkey_14, s_nationkey AS s_nationkey_17\n   10000       377  │ TABLE SCAN supplier\n  800000     30160  PROJECT ps_suppkey AS ps_suppkey_7, ps_availqty AS ps_availqty_8, ps_supplycost AS ps_supplycost_9\n  800000     30160  TABLE SCAN partsupp\n",
       "sql": "/* TPC-H Q11 */\nSELECT ps_partkey,\n       SUM(ps_supplycost * ps_availqty) AS v\nFROM tpch_sf1.partsupp\nINNER JOIN tpch_sf1.supplier\n    ON ps_suppkey = s_suppkey\nINNER JOIN tpch_sf1.nation\n    ON s_nationkey = n_nationkey\nWHERE n_name = 'JAPAN'\nGROUP BY ps_partkey\nHAVING SUM(ps_supplycost * ps_availqty)\n           > (SELECT SUM(ps_supplycost * ps_availqty) * 0.0001\n              FROM tpch_sf1.partsupp\n              INNER JOIN tpch_sf1.supplier\n                  ON ps_suppkey = s_suppkey\n              INNER JOIN tpch_sf1.nation\n                  ON s_nationkey = n_nationkey\n              WHERE n_name = 'JAPAN')\nORDER BY v DESC\n",
-      "startTime": "2026-06-30T10:06:08.516673Z",
+      "startTime": "2026-07-01T14:53:46.689545Z",
       "status": "OK",
-      "timeMs": 195.813
+      "timeMs": 183.821
     }
   ],
   "runtime": {
-    "avgMs": 195.813,
-    "bestMs": 195.813,
-    "maxMs": 195.813,
-    "minMs": 195.813,
+    "avgMs": 183.821,
+    "bestMs": 183.821,
+    "maxMs": 183.821,
+    "minMs": 183.821,
     "stdDevMs": 0.0
   },
   "storageVariant": "iceberg",

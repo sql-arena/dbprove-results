@@ -91,18 +91,18 @@
         "seek": 0,
         "sort": 0
       },
-      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE min, min\n       1        16  INNER JOIN HASH ON id = company_type_id\n       4         4  │└TABLE SCAN company_type\n       3        16  INNER JOIN HASH ON id71 = company_id\n       7        16  │└INNER JOIN HASH ON id41 = movie_id64\n       1        16  │ │└INNER JOIN HASH ON id6 = info_type_id\n       1         1  │ │ │└TABLE SCAN info_type WHERE info = release dates\n       1        16  │ │ INNER JOIN HASH ON id11 = status_id\n       1         1  │ │ │└TABLE SCAN comp_cast_type WHERE kind = complete + verified\n       1        16  │ │ INNER JOIN HASH ON id41 = movie_id57\n       1         9  │ │ │└INNER JOIN HASH ON id16 = kind_id\n       1         1  │ │ │ │└TABLE SCAN kind_type WHERE kind = movie\n       2        10  │ │ │ INNER JOIN HASH ON id41 = movie_id34\n       3        10  │ │ │ │└INNER JOIN HASH ON movie_id = movie_id34\n     129      1133  │ │ │ │ │└INNER JOIN HASH ON id21 = keyword_id\n       4         4  │ │ │ │ │ │└TABLE SCAN keyword\n 4523930   4523930  │ │ │ │ │ TABLE SCAN movie_keyword\n    5129         4  │ │ │ │ TABLE SCAN movie_info WHERE info) USA : \n 1402423         3  │ │ │ TABLE SCAN title WHERE production_year >= 2001\n  135086         2  │ │ TABLE SCAN complete_cast\n 2076277         1  │ TABLE SCAN movie_companies\n   90648         1  TABLE SCAN company_name WHERE country_code = us\n",
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE min, min\n       1        16  INNER JOIN HASH ON id = company_type_id\n       4         4  │└TABLE SCAN company_type\n       3        16  INNER JOIN HASH ON id71 = company_id\n       7        16  │└INNER JOIN HASH ON id41 = movie_id64\n       1        16  │ │└INNER JOIN HASH ON id6 = info_type_id\n       1         1  │ │ │└TABLE SCAN info_type WHERE info = release dates\n       1        16  │ │ INNER JOIN HASH ON id11 = status_id\n       1         1  │ │ │└TABLE SCAN comp_cast_type WHERE kind = complete + verified\n       1        16  │ │ INNER JOIN HASH ON id41 = movie_id57\n       1         9  │ │ │└INNER JOIN HASH ON id16 = kind_id\n       1         1  │ │ │ │└TABLE SCAN kind_type WHERE kind = movie\n       2        10  │ │ │ INNER JOIN HASH ON id41 = movie_id34\n       3        10  │ │ │ │└INNER JOIN HASH ON movie_id = movie_id34\n     129      1133  │ │ │ │ │└INNER JOIN HASH ON id21 = keyword_id\n       4         4  │ │ │ │ │ │└TABLE SCAN keyword WHERE keyword IN(alienation,dignity,loner,nerd)\n 4523930   4523930  │ │ │ │ │ TABLE SCAN movie_keyword\n    5129         4  │ │ │ │ TABLE SCAN movie_info WHERE info) USA :  AND note LIKE '%internet%' AND info36 LIKE '% 200%'\n 1402423         3  │ │ │ TABLE SCAN title WHERE production_year >= 2001\n  135086         2  │ │ TABLE SCAN complete_cast\n 2076277         1  │ TABLE SCAN movie_companies\n   90648         1  TABLE SCAN company_name WHERE country_code = us\n",
       "sql": "SELECT MIN(kt.kind) AS movie_kind,\n       MIN(t.title) AS complete_nerdy_internet_movie\nFROM job.complete_cast AS cc,\n     job.comp_cast_type AS cct1,\n     job.company_name AS cn,\n     job.company_type AS ct,\n     job.info_type AS it1,\n     job.keyword AS k,\n     job.kind_type AS kt,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.movie_keyword AS mk,\n     job.title AS t\nWHERE cct1.kind = 'complete+verified'\n  AND cn.country_code = '[us]'\n  AND it1.info = 'release dates'\n  AND k.keyword IN ('nerd',\n                    'loner',\n                    'alienation',\n                    'dignity')\n  AND kt.kind IN ('movie')\n  AND mi.note LIKE '%internet%'\n  AND mi.info LIKE 'USA:% 200%'\n  AND t.production_year > 2000\n  AND kt.id = t.kind_id\n  AND t.id = mi.movie_id\n  AND t.id = mk.movie_id\n  AND t.id = mc.movie_id\n  AND t.id = cc.movie_id\n  AND mk.movie_id = mi.movie_id\n  AND mk.movie_id = mc.movie_id\n  AND mk.movie_id = cc.movie_id\n  AND mi.movie_id = mc.movie_id\n  AND mi.movie_id = cc.movie_id\n  AND mc.movie_id = cc.movie_id\n  AND k.id = mk.keyword_id\n  AND it1.id = mi.info_type_id\n  AND cn.id = mc.company_id\n  AND ct.id = mc.company_type_id\n  AND cct1.id = cc.status_id;\n",
-      "startTime": "2026-07-01T12:08:17.392174Z",
+      "startTime": "2026-07-01T12:48:26.669933Z",
       "status": "OK",
-      "timeMs": 106.757
+      "timeMs": 12.371
     }
   ],
   "runtime": {
-    "avgMs": 106.757,
-    "bestMs": 106.757,
-    "maxMs": 106.757,
-    "minMs": 106.757,
+    "avgMs": 12.371,
+    "bestMs": 12.371,
+    "maxMs": 12.371,
+    "minMs": 12.371,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

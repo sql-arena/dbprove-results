@@ -91,18 +91,18 @@
         "seek": 0,
         "sort": 0
       },
-      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE min, min, min\n       2        88  INNER JOIN HASH ON id = person_id\n    2821         2  │└TABLE SCAN name\n    2112    785477  INNER JOIN HASH ON id25 = movie_id42\n     141     14165  │└INNER JOIN HASH ON id25 = movie_id\n     244     35548  │ │└INNER JOIN HASH ON id13 = keyword_id\n       8         8  │ │ │└TABLE SCAN keyword WHERE keyword BETWEEN based - on - comic AND violence\n 4523930   4523930  │ │ TABLE SCAN movie_keyword\n 1402423     11843  │ TABLE SCAN title WHERE production_year >= 2001\n36244344  36244344  TABLE SCAN cast_info\n",
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE min, min, min\n       2        88  INNER JOIN HASH ON id = person_id\n    2821         2  │└TABLE SCAN name WHERE name LIKE '%Downey%Robert%'\n    2112    785477  INNER JOIN HASH ON id25 = movie_id42\n     141     14165  │└INNER JOIN HASH ON id25 = movie_id\n     244     35548  │ │└INNER JOIN HASH ON id13 = keyword_id\n       8         8  │ │ │└TABLE SCAN keyword WHERE keyword BETWEEN based - on - comic AND violence AND keyword IN(based - on - comic,fight,marvel - comics,second - part,sequel,superhero,tv - special,violence)\n 4523930   4523930  │ │ TABLE SCAN movie_keyword\n 1402423     11843  │ TABLE SCAN title WHERE production_year >= 2001\n36244344  36244344  TABLE SCAN cast_info\n",
       "sql": "SELECT MIN(k.keyword) AS movie_keyword,\n       MIN(n.name) AS actor_name,\n       MIN(t.title) AS hero_movie\nFROM job.cast_info AS ci,\n     job.keyword AS k,\n     job.movie_keyword AS mk,\n     job.name AS n,\n     job.title AS t\nWHERE k.keyword IN ('superhero',\n                    'sequel',\n                    'second-part',\n                    'marvel-comics',\n                    'based-on-comic',\n                    'tv-special',\n                    'fight',\n                    'violence')\n  AND n.name LIKE '%Downey%Robert%'\n  AND t.production_year > 2000\n  AND k.id = mk.keyword_id\n  AND t.id = mk.movie_id\n  AND t.id = ci.movie_id\n  AND ci.movie_id = mk.movie_id\n  AND n.id = ci.person_id;\n",
-      "startTime": "2026-07-01T12:08:38.109815Z",
+      "startTime": "2026-07-01T12:48:54.926069Z",
       "status": "OK",
-      "timeMs": 221.292
+      "timeMs": 368.718
     }
   ],
   "runtime": {
-    "avgMs": 221.292,
-    "bestMs": 221.292,
-    "maxMs": 221.292,
-    "minMs": 221.292,
+    "avgMs": 368.718,
+    "bestMs": 368.718,
+    "maxMs": 368.718,
+    "minMs": 368.718,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

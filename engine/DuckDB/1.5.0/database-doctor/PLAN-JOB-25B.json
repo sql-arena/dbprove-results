@@ -93,16 +93,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       -         1  AGGREGATE MIN(#0), MIN(#1), MIN(#2), MIN(#3)\n       0         6  PROJECT info, info, name, title\n       0         6  INNER JOIN HASH ON id = person_id\n       0         6  │└INNER JOIN HASH ON movie_id = id\n       0         9  │ │└INNER JOIN HASH ON id = keyword_id\n       0        74  │ │ │└INNER JOIN HASH ON movie_id = movie_id\n       0        10  │ │ │ │└INNER JOIN HASH ON id = info_type_id\n       0        30  │ │ │ │ │└INNER JOIN HASH ON movie_id = movie_id\n       0        23  │ │ │ │ │ │└INNER JOIN HASH ON id = movie_id\n       0     30413  │ │ │ │ │ │ │└INNER JOIN HASH ON info_type_id = id\n       2         1  │ │ │ │ │ │ │ │└FILTER id <= 110\n       2         1  │ │ │ │ │ │ │ │ TABLE SCAN info_type WHERE info = 'genres'\n      15     30413  │ │ │ │ │ │ │ FILTER movie_id BETWEEN 2 AND 2525793\n      15     30413  │ │ │ │ │ │ │ TABLE SCAN movie_info WHERE info = 'Horror'\n  505662        23  │ │ │ │ │ │ FILTER id BETWEEN 2 AND 2525793\n  505662        23  │ │ │ │ │ │ TABLE SCAN title WHERE production_year > 2010 AND title >= 'Vampire' AND title < 'Vampirf'\n 1380035        30  │ │ │ │ │ TABLE SCAN movie_info_idx\n       2         1  │ │ │ │ FILTER id >= 99\n       2         1  │ │ │ │ TABLE SCAN info_type WHERE info = 'votes'\n 4523930        74  │ │ │ TABLE SCAN movie_keyword WHERE movie_id <= 2525793\n   26834         4  │ │ FILTER IN ...\n  134170       530  │ │ INNER JOIN HASH ON keyword = #0\n       0         5  │ │ │└SCAN MATERIALISED\n  134170       530  │ │ TABLE SCAN keyword WHERE keyword IN('murder','blood','gore','death','female-nudity')\n 7248868         3  │ FILTER movie_id BETWEEN 2 AND 2525793\n 7248868         3  │ FILTER IN ...\n36244344       105  │ INNER JOIN HASH ON note = #0\n       0         5  │ │└SCAN MATERIALISED\n36244344       105  │ TABLE SCAN cast_info WHERE note IN('(writer)','(head writer)','(written by)','(story)','(story editor)')\n 2083746         2  FILTER id <= 4061926\n 2083746         2  TABLE SCAN \"name\" WHERE gender = 'm'\n",
       "sql": "SELECT MIN(mi.info) AS movie_budget,\n       MIN(mi_idx.info) AS movie_votes,\n       MIN(n.name) AS male_writer,\n       MIN(t.title) AS violent_movie_title\nFROM job.cast_info AS ci,\n     job.info_type AS it1,\n     job.info_type AS it2,\n     job.keyword AS k,\n     job.movie_info AS mi,\n     job.movie_info_idx AS mi_idx,\n     job.movie_keyword AS mk,\n     job.name AS n,\n     job.title AS t\nWHERE ci.note IN ('(writer)',\n                  '(head writer)',\n                  '(written by)',\n                  '(story)',\n                  '(story editor)')\n  AND it1.info = 'genres'\n  AND it2.info = 'votes'\n  AND k.keyword IN ('murder',\n                    'blood',\n                    'gore',\n                    'death',\n                    'female-nudity')\n  AND mi.info = 'Horror'\n  AND n.gender = 'm'\n  AND t.production_year > 2010\n  AND t.title LIKE 'Vampire%'\n  AND t.id = mi.movie_id\n  AND t.id = mi_idx.movie_id\n  AND t.id = ci.movie_id\n  AND t.id = mk.movie_id\n  AND ci.movie_id = mi.movie_id\n  AND ci.movie_id = mi_idx.movie_id\n  AND ci.movie_id = mk.movie_id\n  AND mi.movie_id = mi_idx.movie_id\n  AND mi.movie_id = mk.movie_id\n  AND mi_idx.movie_id = mk.movie_id\n  AND n.id = ci.person_id\n  AND it1.id = mi.info_type_id\n  AND it2.id = mi_idx.info_type_id\n  AND k.id = mk.keyword_id;\n",
-      "startTime": "2026-06-30T17:43:13.090289Z",
+      "startTime": "2026-07-01T12:48:47.929887Z",
       "status": "OK",
-      "timeMs": 29.093
+      "timeMs": 66.985
     }
   ],
   "runtime": {
-    "avgMs": 29.093,
-    "bestMs": 29.093,
-    "maxMs": 29.093,
-    "minMs": 29.093,
+    "avgMs": 66.985,
+    "bestMs": 66.985,
+    "maxMs": 66.985,
+    "minMs": 66.985,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

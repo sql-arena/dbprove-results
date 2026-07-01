@@ -91,18 +91,18 @@
         "seek": 0,
         "sort": 0
       },
-      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE min, min, min\n     172       410  INNER JOIN HASH ON id49 = movie_id34\n     165       410  │└INNER JOIN HASH ON id = info_type_id43\n       1         1  │ │└TABLE SCAN info_type WHERE info = votes\n     395      1235  │ INNER JOIN HASH ON movie_id34 = movie_id42\n     281       699  │ │└INNER JOIN HASH ON id6 = info_type_id\n       1         1  │ │ │└TABLE SCAN info_type WHERE info = budget\n   31788     95896  │ │ INNER JOIN HASH ON movie_id = movie_id34\n    2600      6719  │ │ │└INNER JOIN HASH ON id11 = person_id\n    4069      9062  │ │ │ │└TABLE SCAN name WHERE gender = m\n 2406850      6719  │ │ │ TABLE SCAN cast_info\n14835720  14835720  │ │ TABLE SCAN movie_info\n 1380035   1380035  │ TABLE SCAN movie_info_idx\n 2528312   2528312  TABLE SCAN title\n",
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE min, min, min\n     172       410  INNER JOIN HASH ON id49 = movie_id34\n     165       410  │└INNER JOIN HASH ON id = info_type_id43\n       1         1  │ │└TABLE SCAN info_type WHERE info = votes\n     395      1235  │ INNER JOIN HASH ON movie_id34 = movie_id42\n     281       699  │ │└INNER JOIN HASH ON id6 = info_type_id\n       1         1  │ │ │└TABLE SCAN info_type WHERE info = budget\n   31788     95896  │ │ INNER JOIN HASH ON movie_id = movie_id34\n    2600      6719  │ │ │└INNER JOIN HASH ON id11 = person_id\n    4069      9062  │ │ │ │└TABLE SCAN name WHERE gender = m AND name LIKE '%Tim%'\n 2406850      6719  │ │ │ TABLE SCAN cast_info WHERE note IN((executive producer),producer)\n14835720  14835720  │ │ TABLE SCAN movie_info\n 1380035   1380035  │ TABLE SCAN movie_info_idx\n 2528312   2528312  TABLE SCAN title\n",
       "sql": "SELECT MIN(mi.info) AS movie_budget,\n       MIN(mi_idx.info) AS movie_votes,\n       MIN(t.title) AS movie_title\nFROM job.cast_info AS ci,\n     job.info_type AS it1,\n     job.info_type AS it2,\n     job.movie_info AS mi,\n     job.movie_info_idx AS mi_idx,\n     job.name AS n,\n     job.title AS t\nWHERE ci.note IN ('(producer)',\n                  '(executive producer)')\n  AND it1.info = 'budget'\n  AND it2.info = 'votes'\n  AND n.gender = 'm'\n  AND n.name LIKE '%Tim%'\n  AND t.id = mi.movie_id\n  AND t.id = mi_idx.movie_id\n  AND t.id = ci.movie_id\n  AND ci.movie_id = mi.movie_id\n  AND ci.movie_id = mi_idx.movie_id\n  AND mi.movie_id = mi_idx.movie_id\n  AND n.id = ci.person_id\n  AND it1.id = mi.info_type_id\n  AND it2.id = mi_idx.info_type_id;\n",
-      "startTime": "2026-07-01T12:08:13.050819Z",
+      "startTime": "2026-07-01T12:48:21.845726Z",
       "status": "OK",
-      "timeMs": 193.191
+      "timeMs": 335.547
     }
   ],
   "runtime": {
-    "avgMs": 193.191,
-    "bestMs": 193.191,
-    "maxMs": 193.191,
-    "minMs": 193.191,
+    "avgMs": 335.547,
+    "bestMs": 335.547,
+    "maxMs": 335.547,
+    "minMs": 335.547,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

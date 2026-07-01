@@ -93,16 +93,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       -         1  AGGREGATE MIN(#0), MIN(#1)\n       0       328  PROJECT info, title\n       0       328  INNER JOIN HASH ON id = keyword_id\n       0       328  │└INNER JOIN HASH ON movie_id = movie_id\n       0        57  │ │└INNER JOIN HASH ON id = company_type_id\n       0        57  │ │ │└INNER JOIN HASH ON id = movie_id\n       2        71  │ │ │ │└INNER JOIN HASH ON info_type_id = id\n       2         1  │ │ │ │ │└FILTER id <= 110\n       2         1  │ │ │ │ │ TABLE SCAN info_type WHERE info = 'release dates'\n     126        71  │ │ │ │ INNER JOIN HASH ON movie_id = movie_id\n     531     13699  │ │ │ │ │└INNER JOIN HASH ON movie_id = movie_id\n    3650     43836  │ │ │ │ │ │└INNER JOIN HASH ON company_id = id\n    1644     84843  │ │ │ │ │ │ │└TABLE SCAN company_name WHERE country_code = 'us'\n  521825     61663  │ │ │ │ │ │ FILTER movie_id BETWEEN 50 AND 2525672\n  521825     61664  │ │ │ │ │ │ TABLE SCAN movie_companies WHERE (note LIKE '%(200%)%') AND contains(note,'(worldwide)')\n  361379     10438  │ │ │ │ │ TABLE SCAN aka_title\n 2967144        34  │ │ │ │ FILTER (movie_id BETWEEN 50 AND 2525672) AND (info LIKE 'USA:% 200%')\n 2967144        39  │ │ │ │ TABLE SCAN movie_info WHERE contains(note,'internet') AND info >= 'USA:' AND info < 'USA;'\n  505662       781  │ │ │ FILTER id BETWEEN 50 AND 2525672\n  505662       781  │ │ │ TABLE SCAN title WHERE production_year > 2000\n       4         1  │ │ TABLE SCAN company_type WHERE id <= 2\n 4523930      2709  │ TABLE SCAN movie_keyword WHERE movie_id >= 50 AND movie_id <= 2525672\n  134170       386  TABLE SCAN keyword\n",
       "sql": "SELECT MIN(mi.info) AS release_date,\n       MIN(t.title) AS internet_movie\nFROM job.aka_title AS aka_t,\n     job.company_name AS cn,\n     job.company_type AS ct,\n     job.info_type AS it1,\n     job.keyword AS k,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.movie_keyword AS mk,\n     job.title AS t\nWHERE cn.country_code = '[us]'\n  AND it1.info = 'release dates'\n  AND mc.note LIKE '%(200%)%'\n  AND mc.note LIKE '%(worldwide)%'\n  AND mi.note LIKE '%internet%'\n  AND mi.info LIKE 'USA:% 200%'\n  AND t.production_year > 2000\n  AND t.id = aka_t.movie_id\n  AND t.id = mi.movie_id\n  AND t.id = mk.movie_id\n  AND t.id = mc.movie_id\n  AND mk.movie_id = mi.movie_id\n  AND mk.movie_id = mc.movie_id\n  AND mk.movie_id = aka_t.movie_id\n  AND mi.movie_id = mc.movie_id\n  AND mi.movie_id = aka_t.movie_id\n  AND mc.movie_id = aka_t.movie_id\n  AND k.id = mk.keyword_id\n  AND it1.id = mi.info_type_id\n  AND cn.id = mc.company_id\n  AND ct.id = mc.company_type_id;\n",
-      "startTime": "2026-06-30T17:43:09.430174Z",
+      "startTime": "2026-07-01T12:48:39.192774Z",
       "status": "OK",
-      "timeMs": 40.251
+      "timeMs": 90.146
     }
   ],
   "runtime": {
-    "avgMs": 40.251,
-    "bestMs": 40.251,
-    "maxMs": 40.251,
-    "minMs": 40.251,
+    "avgMs": 90.146,
+    "bestMs": 90.146,
+    "maxMs": 90.146,
+    "minMs": 90.146,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

@@ -93,16 +93,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       -         1  AGGREGATE MIN(#0), MIN(#1), MIN(#2)\n       7        11  PROJECT info, info, title\n       7        11  INNER JOIN HASH ON id = person_id\n      12       268  │└INNER JOIN HASH ON movie_id = id\n       4       358  │ │└INNER JOIN HASH ON id = movie_id\n      20       732  │ │ │└INNER JOIN HASH ON info_type_id = id\n       2         1  │ │ │ │└FILTER id <= 110\n       2         1  │ │ │ │ TABLE SCAN info_type WHERE info = 'genres'\n    1167       732  │ │ │ INNER JOIN HASH ON movie_id = movie_id\n    4885     15849  │ │ │ │└INNER JOIN HASH ON info_type_id = id\n       2         1  │ │ │ │ │└FILTER id >= 99\n       2         1  │ │ │ │ │ TABLE SCAN info_type WHERE info = 'rating'\n  276007     15849  │ │ │ │ TABLE SCAN movie_info_idx WHERE info > '8.0'\n 2967144      1066  │ │ │ FILTER (movie_id BETWEEN 2 AND 2525793) AND ((info = 'Horror') OR (info = 'Thriller'))\n 2967144     17898  │ │ │ TABLE SCAN movie_info WHERE info IN('Horror','Thriller') AND (note IS NULL)\n  505662      1652  │ │ FILTER id BETWEEN 2 AND 2525793\n  505662      1652  │ │ TABLE SCAN title WHERE production_year >= 2008 AND production_year <= 2014\n 7248868      2131  │ FILTER movie_id BETWEEN 2 AND 2525793\n 7248868      2131  │ FILTER IN ...\n36244344     66591  │ INNER JOIN HASH ON note = #0\n       0         5  │ │└SCAN MATERIALISED\n36244344     66591  │ TABLE SCAN cast_info WHERE note IN('(writer)','(head writer)','(written by)','(story)','(story editor)')\n 2083746      2766  FILTER id <= 4061926\n 2083746      2766  TABLE SCAN \"name\" WHERE gender = 'f' AND (gender IS NOT NULL)\n",
       "sql": "SELECT MIN(mi.info) AS movie_budget,\n       MIN(mi_idx.info) AS movie_votes,\n       MIN(t.title) AS movie_title\nFROM job.cast_info AS ci,\n     job.info_type AS it1,\n     job.info_type AS it2,\n     job.movie_info AS mi,\n     job.movie_info_idx AS mi_idx,\n     job.name AS n,\n     job.title AS t\nWHERE ci.note IN ('(writer)',\n                  '(head writer)',\n                  '(written by)',\n                  '(story)',\n                  '(story editor)')\n  AND it1.info = 'genres'\n  AND it2.info = 'rating'\n  AND mi.info IN ('Horror',\n                  'Thriller')\n  AND mi.note IS NULL\n  AND mi_idx.info > '8.0'\n  AND n.gender IS NOT NULL\n  AND n.gender = 'f'\n  AND t.production_year BETWEEN 2008 AND 2014\n  AND t.id = mi.movie_id\n  AND t.id = mi_idx.movie_id\n  AND t.id = ci.movie_id\n  AND ci.movie_id = mi.movie_id\n  AND ci.movie_id = mi_idx.movie_id\n  AND mi.movie_id = mi_idx.movie_id\n  AND n.id = ci.person_id\n  AND it1.id = mi.info_type_id\n  AND it2.id = mi_idx.info_type_id;\n",
-      "startTime": "2026-06-30T17:43:11.201142Z",
+      "startTime": "2026-07-01T12:48:42.825589Z",
       "status": "OK",
-      "timeMs": 64.305
+      "timeMs": 108.357
     }
   ],
   "runtime": {
-    "avgMs": 64.305,
-    "bestMs": 64.305,
-    "maxMs": 64.305,
-    "minMs": 64.305,
+    "avgMs": 108.357,
+    "bestMs": 108.357,
+    "maxMs": 108.357,
+    "minMs": 108.357,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

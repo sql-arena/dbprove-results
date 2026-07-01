@@ -91,18 +91,18 @@
         "seek": 0,
         "sort": 0
       },
-      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE min, min\n      62       104  INNER JOIN HASH ON id = company_type_id\n       4         4  │└TABLE SCAN company_type\n      49       104  INNER JOIN HASH ON id54 = person_role_id\n      51       104  │└INNER JOIN HASH ON id39 = movie_id\n     119       265  │ │└INNER JOIN HASH ON id6 = role_id\n       1         1  │ │ │└TABLE SCAN role_type WHERE role = actor\n     151       337  │ │ INNER JOIN HASH ON movie_id31 = movie_id\n    7830      8790  │ │ │└INNER JOIN HASH ON id11 = company_id\n     917      1361  │ │ │ │└TABLE SCAN company_name WHERE country_code = ru\n 2076277      8790  │ │ │ TABLE SCAN movie_companies\n   24534     10125  │ │ TABLE SCAN cast_info\n 1049348        54  │ TABLE SCAN title WHERE production_year >= 2006\n 3140339   3140339  TABLE SCAN char_name\n",
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE min, min\n      62       104  INNER JOIN HASH ON id = company_type_id\n       4         4  │└TABLE SCAN company_type\n      49       104  INNER JOIN HASH ON id54 = person_role_id\n      51       104  │└INNER JOIN HASH ON id39 = movie_id\n     119       265  │ │└INNER JOIN HASH ON id6 = role_id\n       1         1  │ │ │└TABLE SCAN role_type WHERE role = actor\n     151       337  │ │ INNER JOIN HASH ON movie_id31 = movie_id\n    7830      8790  │ │ │└INNER JOIN HASH ON id11 = company_id\n     917      1361  │ │ │ │└TABLE SCAN company_name WHERE country_code = ru\n 2076277      8790  │ │ │ TABLE SCAN movie_companies\n   24534     10125  │ │ TABLE SCAN cast_info WHERE note33 LIKE '%(voice)%' AND note33 LIKE '%(uncredited)%'\n 1049348        54  │ TABLE SCAN title WHERE production_year >= 2006\n 3140339   3140339  TABLE SCAN char_name\n",
       "sql": "SELECT MIN(chn.name) AS uncredited_voiced_character,\n       MIN(t.title) AS russian_movie\nFROM job.char_name AS chn,\n     job.cast_info AS ci,\n     job.company_name AS cn,\n     job.company_type AS ct,\n     job.movie_companies AS mc,\n     job.role_type AS rt,\n     job.title AS t\nWHERE ci.note LIKE '%(voice)%'\n  AND ci.note LIKE '%(uncredited)%'\n  AND cn.country_code = '[ru]'\n  AND rt.role = 'actor'\n  AND t.production_year > 2005\n  AND t.id = mc.movie_id\n  AND t.id = ci.movie_id\n  AND ci.movie_id = mc.movie_id\n  AND chn.id = ci.person_role_id\n  AND rt.id = ci.role_id\n  AND cn.id = mc.company_id\n  AND ct.id = mc.company_type_id;\n",
-      "startTime": "2026-07-01T12:07:49.721192Z",
+      "startTime": "2026-07-01T12:47:40.190879Z",
       "status": "OK",
-      "timeMs": 246.361
+      "timeMs": 725.087
     }
   ],
   "runtime": {
-    "avgMs": 246.361,
-    "bestMs": 246.361,
-    "maxMs": 246.361,
-    "minMs": 246.361,
+    "avgMs": 725.087,
+    "bestMs": 725.087,
+    "maxMs": 725.087,
+    "minMs": 725.087,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

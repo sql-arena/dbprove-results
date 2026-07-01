@@ -15,6 +15,17 @@
           "=": 1,
           ">16x": 0
         },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
         "filter": {
           "+2x": 0,
           "+4x": 0,
@@ -67,7 +78,7 @@
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
-          "=": 0,
+          "=": 1,
           ">16x": 0
         }
       },
@@ -80,18 +91,18 @@
         "seek": 0,
         "sort": 396
       },
-      "plan": "Estimate    Actual  Operator\n       -       396  SORT count_star(), s_name\n     776       396  AGGREGATE count_star() GROUP BY HASH #0\n     930      3935  PROJECT s_name\n     930         0  LEFT SEMI JOIN HASH ON l_suppkey IS NOT DISTINCT FROM l_suppkey AND l_orderkey IS NOT DISTINCT FROM l_orderkey\n    4653     70392  │└AGGREGATE  GROUP BY HASH #1, #0\n     930      3935  │ LEFT ANTI JOIN HASH ON l_suppkey IS NOT DISTINCT FROM l_suppkey AND l_orderkey IS NOT DISTINCT FROM l_orderkey\n    5865    184147  │ │└PROJECT l_suppkey, l_orderkey\n    5865    184147  │ │ INNER JOIN HASH ON l_orderkey = l_orderkey AND l_suppkey != l_suppkey\n    4653         0  │ │ │└SCAN MATERIALISED\n 1200243   3793128  │ │ FILTER l_receiptdate > l_commitdate\n 6001215   6000945  │ │ TABLE SCAN lineitem\n     930     70401  │ SCAN MATERIALISED\n    4654         0  RIGHT SEMI INNER JOIN HASH ON l_suppkey IS NOT DISTINCT FROM l_suppkey AND l_orderkey IS NOT DISTINCT FROM l_orderkey\n   23273     73039  │└AGGREGATE  GROUP BY HASH #2, #1\n    4654     70401  │ RIGHT SEMI INNER JOIN HASH ON l_suppkey IS NOT DISTINCT FROM l_suppkey AND l_orderkey IS NOT DISTINCT FROM l_orderkey\n       -         0  │ │└SCAN EMPTY\n  146690    291776  │ PROJECT l_suppkey, l_orderkey\n  146690    291776  │ INNER JOIN HASH ON l_orderkey = l_orderkey AND l_suppkey != l_suppkey\n   23273         0  │ │└SCAN MATERIALISED\n 6001215   6000945  │ TABLE SCAN lineitem\n   23274     73048  INNER JOIN HASH ON o_orderkey = l_orderkey\n   46163    150794  │└INNER JOIN HASH ON l_suppkey = s_suppkey\n     384       396  │ │└INNER JOIN HASH ON s_nationkey = n_nationkey\n       1         1  │ │ │└TABLE SCAN nation WHERE n_name = 'GERMANY'\n   10000       396  │ │ TABLE SCAN supplier\n 1200243   3791665  │ FILTER l_receiptdate > l_commitdate\n 6001215   5998667  │ TABLE SCAN lineitem\n  750000     74029  TABLE SCAN orders WHERE o_orderstatus = 'F'\n",
+      "plan": "Estimate    Actual  Operator\n     776       396  SORT count_star(), s_name\n     776       396  AGGREGATE count_star() GROUP BY HASH #0\n     930      3935  PROJECT s_name\n     930         0  LEFT SEMI JOIN HASH ON l_suppkey IS NOT DISTINCT FROM l_suppkey AND l_orderkey IS NOT DISTINCT FROM l_orderkey\n    4653     70392  │└AGGREGATE  GROUP BY HASH #1, #0\n     930      3935  │ LEFT ANTI JOIN HASH ON l_suppkey IS NOT DISTINCT FROM l_suppkey AND l_orderkey IS NOT DISTINCT FROM l_orderkey\n    5865    184147  │ │└PROJECT l_suppkey, l_orderkey\n    5865    184147  │ │ INNER JOIN HASH ON l_orderkey = l_orderkey AND l_suppkey != l_suppkey\n    4653         0  │ │ │└SCAN MATERIALISED\n 1200243   3793128  │ │ FILTER l_receiptdate > l_commitdate\n 6001215   6000945  │ │ TABLE SCAN lineitem\n     930     70401  │ SCAN MATERIALISED\n    4654         0  RIGHT SEMI INNER JOIN HASH ON l_suppkey IS NOT DISTINCT FROM l_suppkey AND l_orderkey IS NOT DISTINCT FROM l_orderkey\n   23273     73039  │└AGGREGATE  GROUP BY HASH #2, #1\n    4654     70401  │ RIGHT SEMI INNER JOIN HASH ON l_suppkey IS NOT DISTINCT FROM l_suppkey AND l_orderkey IS NOT DISTINCT FROM l_orderkey\n       -         0  │ │└SCAN EMPTY\n  146690    291776  │ PROJECT l_suppkey, l_orderkey\n  146690    291776  │ INNER JOIN HASH ON l_orderkey = l_orderkey AND l_suppkey != l_suppkey\n   23273         0  │ │└SCAN MATERIALISED\n 6001215   6000945  │ TABLE SCAN lineitem\n   23274     73048  INNER JOIN HASH ON o_orderkey = l_orderkey\n   46163    150794  │└INNER JOIN HASH ON l_suppkey = s_suppkey\n     384       396  │ │└INNER JOIN HASH ON s_nationkey = n_nationkey\n       1         1  │ │ │└TABLE SCAN nation WHERE n_name = 'GERMANY'\n   10000       396  │ │ TABLE SCAN supplier\n 1200243   3791665  │ FILTER l_receiptdate > l_commitdate\n 6001215   5998667  │ TABLE SCAN lineitem\n  750000     74029  TABLE SCAN orders WHERE o_orderstatus = 'F'\n",
       "sql": "/* TPC-H Q21 */\nSELECT s_name, COUNT(*) AS numwait\nFROM tpch_sf1.lineitem l1\nINNER JOIN tpch_sf1.orders\n    ON l1.l_orderkey = o_orderkey\nINNER JOIN tpch_sf1.supplier\n    ON l1.l_suppkey = s_suppkey\nINNER JOIN tpch_sf1.nation\n    ON s_nationkey = n_nationkey\nWHERE o_orderstatus = 'F'\n  AND l1.l_receiptdate > l1.l_commitdate\n  AND EXISTS (SELECT 1\n              FROM tpch_sf1.lineitem l2\n              WHERE l2.l_orderkey = l1.l_orderkey\n                AND l2.l_suppkey <> l1.l_suppkey)\n  AND NOT EXISTS (SELECT 1\n                  FROM tpch_sf1.lineitem l3\n                  WHERE l3.l_orderkey = l1.l_orderkey\n                    AND l3.l_suppkey <> l1.l_suppkey\n                    AND l3.l_receiptdate\n                      > l3.l_commitdate)\n  AND n_name = 'GERMANY'\nGROUP BY s_name\nORDER BY numwait DESC,\n         s_name\n",
-      "startTime": "2026-06-26T15:25:04.182975Z",
+      "startTime": "2026-07-01T12:49:01.851686Z",
       "status": "OK",
-      "timeMs": 26.278
+      "timeMs": 36.222
     }
   ],
   "runtime": {
-    "avgMs": 26.278,
-    "bestMs": 26.278,
-    "maxMs": 26.278,
-    "minMs": 26.278,
+    "avgMs": 36.222,
+    "bestMs": 36.222,
+    "maxMs": 36.222,
+    "minMs": 36.222,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

@@ -91,18 +91,18 @@
         "seek": 0,
         "sort": 396
       },
-      "plan": "Estimate    Actual  Operator\n     402       396  SORT count_star *, s_name87\n     402       396  AGGREGATE countstar GROUP BY HASH s_name\n    3298      3935  RIGHT SEMI INNER JOIN HASH ON l_orderkey68 = l_orderkey AND l_suppkey70 <> l_suppkey\n    3317      6582  │└INNER JOIN HASH ON l_orderkey = o_orderkey\n    6125     13450  │ │└RIGHT ANTI JOIN HASH ON l_orderkey37 = l_orderkey AND l_suppkey39 <> l_suppkey\n  150674    150794  │ │ │└INNER JOIN HASH ON l_suppkey = s_suppkey\n     402       396  │ │ │ │└INNER JOIN HASH ON s_nationkey = n_nationkey\n       1         1  │ │ │ │ │└TABLE SCAN nation WHERE n_name = GERMANY\n   10000     10000  │ │ │ │ TABLE SCAN supplier\n 3709735   2028506  │ │ │ TABLE SCAN lineitem\n 3709735   1890830  │ │ TABLE SCAN lineitem\n  744140      6582  │ TABLE SCAN orders WHERE o_orderstatus = F\n 6001215   6001215  TABLE SCAN lineitem\n",
+      "plan": "Estimate    Actual  Operator\n     402       396  SORT count_star *, s_name87\n     402       396  AGGREGATE countstar GROUP BY HASH s_name\n    3298      3935  RIGHT SEMI INNER JOIN HASH ON l_orderkey68 = l_orderkey AND l_suppkey70 <> l_suppkey\n    3317      6582  │└INNER JOIN HASH ON l_orderkey = o_orderkey\n    6125     13450  │ │└RIGHT ANTI JOIN HASH ON l_orderkey37 = l_orderkey AND l_suppkey39 <> l_suppkey\n  150674    150794  │ │ │└INNER JOIN HASH ON l_suppkey = s_suppkey\n     402       396  │ │ │ │└INNER JOIN HASH ON s_nationkey = n_nationkey\n       1         1  │ │ │ │ │└TABLE SCAN nation WHERE n_name = GERMANY\n   10000     10000  │ │ │ │ TABLE SCAN supplier\n 3709735   2028506  │ │ │ TABLE SCAN lineitem WHERE l_receiptdate > l_commitdate\n 3709735   1890830  │ │ TABLE SCAN lineitem WHERE l_receiptdate49 > l_commitdate48\n  744140      6582  │ TABLE SCAN orders WHERE o_orderstatus = F\n 6001215   6001215  TABLE SCAN lineitem\n",
       "sql": "/* TPC-H Q21 */\nSELECT s_name, COUNT(*) AS numwait\nFROM tpch_sf1.lineitem l1\nINNER JOIN tpch_sf1.orders\n    ON l1.l_orderkey = o_orderkey\nINNER JOIN tpch_sf1.supplier\n    ON l1.l_suppkey = s_suppkey\nINNER JOIN tpch_sf1.nation\n    ON s_nationkey = n_nationkey\nWHERE o_orderstatus = 'F'\n  AND l1.l_receiptdate > l1.l_commitdate\n  AND EXISTS (SELECT 1\n              FROM tpch_sf1.lineitem l2\n              WHERE l2.l_orderkey = l1.l_orderkey\n                AND l2.l_suppkey <> l1.l_suppkey)\n  AND NOT EXISTS (SELECT 1\n                  FROM tpch_sf1.lineitem l3\n                  WHERE l3.l_orderkey = l1.l_orderkey\n                    AND l3.l_suppkey <> l1.l_suppkey\n                    AND l3.l_receiptdate\n                      > l3.l_commitdate)\n  AND n_name = 'GERMANY'\nGROUP BY s_name\nORDER BY numwait DESC,\n         s_name\n",
-      "startTime": "2026-07-01T12:09:10.084381Z",
+      "startTime": "2026-07-01T12:49:27.010839Z",
       "status": "OK",
-      "timeMs": 60.104
+      "timeMs": 44.291
     }
   ],
   "runtime": {
-    "avgMs": 60.104,
-    "bestMs": 60.104,
-    "maxMs": 60.104,
-    "minMs": 60.104,
+    "avgMs": 44.291,
+    "bestMs": 44.291,
+    "maxMs": 44.291,
+    "minMs": 44.291,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

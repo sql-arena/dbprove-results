@@ -93,16 +93,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       -         1  AGGREGATE MIN(#0), MIN(#1)\n       0       618  PROJECT kind, title\n       0       618  INNER JOIN HASH ON id = keyword_id\n       0       618  │└INNER JOIN HASH ON movie_id = movie_id\n       0         6  │ │└INNER JOIN HASH ON id = company_type_id\n       0         6  │ │ │└INNER JOIN HASH ON info_type_id = id\n       2         1  │ │ │ │└FILTER id <= 110\n       2         1  │ │ │ │ TABLE SCAN info_type WHERE info = 'release dates'\n       8         6  │ │ │ INNER JOIN HASH ON movie_id = movie_id\n       7      5763  │ │ │ │└INNER JOIN HASH ON status_id = id\n       1         1  │ │ │ │ │└FILTER id >= 3\n       1         1  │ │ │ │ │ TABLE SCAN comp_cast_type WHERE kind = 'complete+verified'\n      28     18806  │ │ │ │ INNER JOIN HASH ON kind_id = id\n       1         1  │ │ │ │ │└TABLE SCAN kind_type WHERE kind = 'movie'\n     202     18806  │ │ │ │ INNER JOIN HASH ON id = movie_id\n     992    282816  │ │ │ │ │└INNER JOIN HASH ON movie_id = movie_id\n   18253   1153687  │ │ │ │ │ │└INNER JOIN HASH ON company_id = id\n    1644     84843  │ │ │ │ │ │ │└TABLE SCAN company_name WHERE country_code = 'us'\n 2609129   2608923  │ │ │ │ │ │ TABLE SCAN movie_companies WHERE movie_id >= 285\n  135086    132364  │ │ │ │ │ TABLE SCAN complete_cast WHERE movie_id <= 2525745\n  505662      3409  │ │ │ │ FILTER id BETWEEN 285 AND 2525745\n  505662      3409  │ │ │ │ TABLE SCAN title WHERE production_year > 2000\n 2967144       316  │ │ │ FILTER movie_id BETWEEN 285 AND 2525745\n 2967144       316  │ │ │ TABLE SCAN movie_info WHERE contains(note,'internet') AND (info IS NOT NULL) AND ((info LIKE 'USA:% 199%') OR (info LIKE 'USA:% 200%'))\n       4         2  │ │ TABLE SCAN company_type WHERE id <= 2\n 4523930       156  │ TABLE SCAN movie_keyword WHERE movie_id >= 285 AND movie_id <= 2525745\n  134170       198  TABLE SCAN keyword\n",
       "sql": "SELECT MIN(kt.kind) AS movie_kind,\n       MIN(t.title) AS complete_us_internet_movie\nFROM job.complete_cast AS cc,\n     job.comp_cast_type AS cct1,\n     job.company_name AS cn,\n     job.company_type AS ct,\n     job.info_type AS it1,\n     job.keyword AS k,\n     job.kind_type AS kt,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.movie_keyword AS mk,\n     job.title AS t\nWHERE cct1.kind = 'complete+verified'\n  AND cn.country_code = '[us]'\n  AND it1.info = 'release dates'\n  AND kt.kind IN ('movie')\n  AND mi.note LIKE '%internet%'\n  AND mi.info IS NOT NULL\n  AND (mi.info LIKE 'USA:% 199%'\n       OR mi.info LIKE 'USA:% 200%')\n  AND t.production_year > 2000\n  AND kt.id = t.kind_id\n  AND t.id = mi.movie_id\n  AND t.id = mk.movie_id\n  AND t.id = mc.movie_id\n  AND t.id = cc.movie_id\n  AND mk.movie_id = mi.movie_id\n  AND mk.movie_id = mc.movie_id\n  AND mk.movie_id = cc.movie_id\n  AND mi.movie_id = mc.movie_id\n  AND mi.movie_id = cc.movie_id\n  AND mc.movie_id = cc.movie_id\n  AND k.id = mk.keyword_id\n  AND it1.id = mi.info_type_id\n  AND cn.id = mc.company_id\n  AND ct.id = mc.company_type_id\n  AND cct1.id = cc.status_id;\n",
-      "startTime": "2026-06-30T17:43:12.674671Z",
+      "startTime": "2026-07-01T12:48:46.599851Z",
       "status": "OK",
-      "timeMs": 35.83
+      "timeMs": 72.652
     }
   ],
   "runtime": {
-    "avgMs": 35.83,
-    "bestMs": 35.83,
-    "maxMs": 35.83,
-    "minMs": 35.83,
+    "avgMs": 72.652,
+    "bestMs": 72.652,
+    "maxMs": 72.652,
+    "minMs": 72.652,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

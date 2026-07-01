@@ -91,18 +91,18 @@
         "seek": 0,
         "sort": 0
       },
-      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE min, min\n      33        10  INNER JOIN HASH ON id55 = company_id\n      89        33  │└INNER JOIN HASH ON id = company_type_id\n       2         2  │ │└TABLE SCAN company_type\n     101        33  │ INNER JOIN HASH ON movie_id48 = movie_id40\n       9         2  │ │└INNER JOIN HASH ON info_type_id41 = id6\n       1         1  │ │ │└TABLE SCAN info_type WHERE info = budget\n    1060       221  │ │ INNER JOIN HASH ON movie_id40 = movie_id\n      12         2  │ │ │└INNER JOIN HASH ON info_type_id = id11\n       1         1  │ │ │ │└TABLE SCAN info_type WHERE info = bottom 10 rank\n    1406      2645  │ │ │ INNER JOIN HASH ON id16 = movie_id\n    2469      2536  │ │ │ │└TABLE SCAN title WHERE production_year >= 2001\n 1380035   1380035  │ │ │ TABLE SCAN movie_info_idx\n14835720  14835720  │ │ TABLE SCAN movie_info\n 2609129   2609129  │ TABLE SCAN movie_companies\n   90648         6  TABLE SCAN company_name WHERE country_code = us\n",
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE min, min\n      33        10  INNER JOIN HASH ON id55 = company_id\n      89        33  │└INNER JOIN HASH ON id = company_type_id\n       2         2  │ │└TABLE SCAN company_type WHERE kind IN(production companies,distributors)\n     101        33  │ INNER JOIN HASH ON movie_id48 = movie_id40\n       9         2  │ │└INNER JOIN HASH ON info_type_id41 = id6\n       1         1  │ │ │└TABLE SCAN info_type WHERE info = budget\n    1060       221  │ │ INNER JOIN HASH ON movie_id40 = movie_id\n      12         2  │ │ │└INNER JOIN HASH ON info_type_id = id11\n       1         1  │ │ │ │└TABLE SCAN info_type WHERE info = bottom 10 rank\n    1406      2645  │ │ │ INNER JOIN HASH ON id16 = movie_id\n    2469      2536  │ │ │ │└TABLE SCAN title WHERE production_year >= 2001 AND title LIKE '%Movie%'\n 1380035   1380035  │ │ │ TABLE SCAN movie_info_idx\n14835720  14835720  │ │ TABLE SCAN movie_info\n 2609129   2609129  │ TABLE SCAN movie_companies\n   90648         6  TABLE SCAN company_name WHERE country_code = us\n",
       "sql": "SELECT MIN(mi.info) AS budget,\n       MIN(t.title) AS unsuccsessful_movie\nFROM job.company_name AS cn,\n     job.company_type AS ct,\n     job.info_type AS it1,\n     job.info_type AS it2,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.movie_info_idx AS mi_idx,\n     job.title AS t\nWHERE cn.country_code ='[us]'\n  AND ct.kind IS NOT NULL\n  AND (ct.kind ='production companies'\n       OR ct.kind = 'distributors')\n  AND it1.info ='budget'\n  AND it2.info ='bottom 10 rank'\n  AND t.production_year >2000\n  AND (t.title LIKE 'Birdemic%'\n       OR t.title LIKE '%Movie%')\n  AND t.id = mi.movie_id\n  AND t.id = mi_idx.movie_id\n  AND mi.info_type_id = it1.id\n  AND mi_idx.info_type_id = it2.id\n  AND t.id = mc.movie_id\n  AND ct.id = mc.company_type_id\n  AND cn.id = mc.company_id\n  AND mc.movie_id = mi.movie_id\n  AND mc.movie_id = mi_idx.movie_id\n  AND mi.movie_id = mi_idx.movie_id;\n",
-      "startTime": "2026-07-01T12:07:50.669516Z",
+      "startTime": "2026-07-01T12:47:42.473190Z",
       "status": "OK",
-      "timeMs": 16.959
+      "timeMs": 43.943
     }
   ],
   "runtime": {
-    "avgMs": 16.959,
-    "bestMs": 16.959,
-    "maxMs": 16.959,
-    "minMs": 16.959,
+    "avgMs": 43.943,
+    "bestMs": 43.943,
+    "maxMs": 43.943,
+    "minMs": 43.943,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

@@ -91,18 +91,18 @@
         "seek": 0,
         "sort": 0
       },
-      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE min, min, min\n      75         3  INNER JOIN HASH ON id = company_type_id\n       1         1  │└TABLE SCAN company_type WHERE kind = production companies\n      75         3  INNER JOIN HASH ON id27 = movie_id20\n     246        23  │└INNER JOIN HASH ON movie_id20 = movie_id\n   12213       250  │ │└INNER JOIN HASH ON id6 = info_type_id\n       1         1  │ │ │└TABLE SCAN info_type WHERE info = top 250 rank\n 1380035   1380035  │ │ TABLE SCAN movie_info_idx\n   17835      6797  │ TABLE SCAN movie_companies\n  365420         1  TABLE SCAN title WHERE production_year >= 2011\n",
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE min, min, min\n      75         3  INNER JOIN HASH ON id = company_type_id\n       1         1  │└TABLE SCAN company_type WHERE kind = production companies\n      75         3  INNER JOIN HASH ON id27 = movie_id20\n     246        23  │└INNER JOIN HASH ON movie_id20 = movie_id\n   12213       250  │ │└INNER JOIN HASH ON id6 = info_type_id\n       1         1  │ │ │└TABLE SCAN info_type WHERE info = top 250 rank\n 1380035   1380035  │ │ TABLE SCAN movie_info_idx\n   17835      6797  │ TABLE SCAN movie_companies WHERE note23 LIKE '%(co-production)%' AND  NOT (note23 LIKE '%(as Metro-Goldwyn-Mayer Pictures)%')\n  365420         1  TABLE SCAN title WHERE production_year >= 2011\n",
       "sql": "SELECT MIN(mc.note) AS production_note,\n       MIN(t.title) AS movie_title,\n       MIN(t.production_year) AS movie_year\nFROM job.company_type AS ct,\n     job.info_type AS it,\n     job.movie_companies AS mc,\n     job.movie_info_idx AS mi_idx,\n     job.title AS t\nWHERE ct.kind = 'production companies'\n  AND it.info = 'top 250 rank'\n  AND mc.note NOT LIKE '%(as Metro-Goldwyn-Mayer Pictures)%'\n  AND (mc.note LIKE '%(co-production)%')\n  AND t.production_year >2010\n  AND ct.id = mc.company_type_id\n  AND t.id = mc.movie_id\n  AND t.id = mi_idx.movie_id\n  AND mc.movie_id = mi_idx.movie_id\n  AND it.id = mi_idx.info_type_id;\n",
-      "startTime": "2026-07-01T12:08:14.219219Z",
+      "startTime": "2026-07-01T12:48:23.516247Z",
       "status": "OK",
-      "timeMs": 10.813
+      "timeMs": 16.193
     }
   ],
   "runtime": {
-    "avgMs": 10.813,
-    "bestMs": 10.813,
-    "maxMs": 10.813,
-    "minMs": 10.813,
+    "avgMs": 16.193,
+    "bestMs": 16.193,
+    "maxMs": 16.193,
+    "minMs": 16.193,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

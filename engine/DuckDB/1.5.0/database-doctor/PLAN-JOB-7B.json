@@ -93,16 +93,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       -         1  AGGREGATE MIN(#0), MIN(#1)\n       0        16  PROJECT name, title\n       0        16  INNER JOIN HASH ON id = movie_id\n       0        46  │└INNER JOIN HASH ON id = link_type_id\n       0       176  │ │└INNER JOIN HASH ON linked_movie_id = movie_id\n       3       353  │ │ │└INNER JOIN HASH ON person_id = person_id\n       0         3  │ │ │ │└INNER JOIN HASH ON id = person_id\n       0        96  │ │ │ │ │└INNER JOIN HASH ON person_id = person_id\n      10        62  │ │ │ │ │ │└INNER JOIN HASH ON info_type_id = id\n       2         1  │ │ │ │ │ │ │└FILTER id BETWEEN 15 AND 39\n       2         1  │ │ │ │ │ │ │ TABLE SCAN info_type WHERE info = 'mini biography'\n     621        62  │ │ │ │ │ │ FILTER person_id <= 4061926\n     621        64  │ │ │ │ │ │ TABLE SCAN person_info WHERE note = 'Volker Boehm'\n  180268      2632  │ │ │ │ │ FILTER person_id <= 4061926\n  180268      2644  │ │ │ │ │ TABLE SCAN aka_name WHERE contains(name,'a')\n 2083746        74  │ │ │ │ FILTER id BETWEEN 4 AND 4061926\n 2083746        74  │ │ │ │ TABLE SCAN \"name\" WHERE name_pcode_cf >= 'D' AND name_pcode_cf < 'E' AND gender = 'm'\n36244344       230  │ │ │ FILTER movie_id BETWEEN 284 AND 2524994\n36244344       230  │ │ │ TABLE SCAN cast_info WHERE person_id >= 4\n   29997        94  │ │ TABLE SCAN movie_link\n       2         1  │ FILTER id <= 17\n       2         1  │ TABLE SCAN link_type WHERE link = 'features'\n  505662         3  FILTER id BETWEEN 284 AND 2524994\n  505662         3  TABLE SCAN title WHERE production_year >= 1980 AND production_year <= 1984\n",
       "sql": "SELECT MIN(n.name) AS of_person,\n       MIN(t.title) AS biography_movie\nFROM job.aka_name AS an,\n     job.cast_info AS ci,\n     job.info_type AS it,\n     job.link_type AS lt,\n     job.movie_link AS ml,\n     job.name AS n,\n     job.person_info AS pi,\n     job.title AS t\nWHERE an.name LIKE '%a%'\n  AND it.info ='mini biography'\n  AND lt.link ='features'\n  AND n.name_pcode_cf LIKE 'D%'\n  AND n.gender='m'\n  AND pi.note ='Volker Boehm'\n  AND t.production_year BETWEEN 1980 AND 1984\n  AND n.id = an.person_id\n  AND n.id = pi.person_id\n  AND ci.person_id = n.id\n  AND t.id = ci.movie_id\n  AND ml.linked_movie_id = t.id\n  AND lt.id = ml.link_type_id\n  AND it.id = pi.info_type_id\n  AND pi.person_id = an.person_id\n  AND pi.person_id = ci.person_id\n  AND an.person_id = ci.person_id\n  AND ci.movie_id = ml.linked_movie_id;\n",
-      "startTime": "2026-06-30T17:43:15.909737Z",
+      "startTime": "2026-07-01T12:48:56.903744Z",
       "status": "OK",
-      "timeMs": 12.333
+      "timeMs": 24.66
     }
   ],
   "runtime": {
-    "avgMs": 12.333,
-    "bestMs": 12.333,
-    "maxMs": 12.333,
-    "minMs": 12.333,
+    "avgMs": 24.66,
+    "bestMs": 24.66,
+    "maxMs": 24.66,
+    "minMs": 24.66,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

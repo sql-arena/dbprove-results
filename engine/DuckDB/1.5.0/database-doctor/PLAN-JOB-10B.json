@@ -93,16 +93,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       -         1  AGGREGATE MIN(#0), MIN(#1)\n     903         0  PROJECT name, title\n     903         0  INNER JOIN HASH ON id = person_role_id\n     903         0  │└INNER JOIN HASH ON company_type_id = id\n       4         2  │ │└TABLE SCAN company_type WHERE id <= 2\n     903         0  │ INNER JOIN HASH ON role_id = id\n       1         1  │ │└FILTER id <= 11\n       1         1  │ │ TABLE SCAN role_type WHERE role = 'actor'\n   10844         0  │ INNER JOIN HASH ON movie_id = id\n    3716      1259  │ │└INNER JOIN HASH ON id = movie_id\n   18253      8790  │ │ │└INNER JOIN HASH ON company_id = id\n    1644      1361  │ │ │ │└TABLE SCAN company_name WHERE country_code = 'ru'\n 2609129   2275887  │ │ │ TABLE SCAN movie_companies\n  505662      1706  │ │ FILTER id BETWEEN 2 AND 2525745\n  505662      1706  │ │ TABLE SCAN title WHERE production_year > 2010\n 7248868         0  │ FILTER movie_id BETWEEN 2 AND 2525745\n 7248868         0  │ TABLE SCAN cast_info WHERE contains(note,'(producer)')\n 3140339     20480  TABLE SCAN char_name\n",
       "sql": "SELECT MIN(chn.name) AS character,\n       MIN(t.title) AS russian_mov_with_actor_producer\nFROM job.char_name AS chn,\n     job.cast_info AS ci,\n     job.company_name AS cn,\n     job.company_type AS ct,\n     job.movie_companies AS mc,\n     job.role_type AS rt,\n     job.title AS t\nWHERE ci.note LIKE '%(producer)%'\n  AND cn.country_code = '[ru]'\n  AND rt.role = 'actor'\n  AND t.production_year > 2010\n  AND t.id = mc.movie_id\n  AND t.id = ci.movie_id\n  AND ci.movie_id = mc.movie_id\n  AND chn.id = ci.person_role_id\n  AND rt.id = ci.role_id\n  AND cn.id = mc.company_id\n  AND ct.id = mc.company_type_id;\n",
-      "startTime": "2026-06-30T17:43:08.251252Z",
+      "startTime": "2026-07-01T12:48:36.708125Z",
       "status": "OK",
-      "timeMs": 40.554
+      "timeMs": 56.92
     }
   ],
   "runtime": {
-    "avgMs": 40.554,
-    "bestMs": 40.554,
-    "maxMs": 40.554,
-    "minMs": 40.554,
+    "avgMs": 56.92,
+    "bestMs": 56.92,
+    "maxMs": 56.92,
+    "minMs": 56.92,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

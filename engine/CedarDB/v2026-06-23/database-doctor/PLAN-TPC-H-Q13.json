@@ -12,7 +12,7 @@
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
-          "=": 1,
+          "=": 0,
           ">16x": 0
         },
         "distribute": {
@@ -67,7 +67,7 @@
           "-4x": 0,
           "-8x": 0,
           "<16x": 0,
-          "=": 3,
+          "=": 2,
           ">16x": 0
         },
         "sort": {
@@ -83,26 +83,26 @@
         }
       },
       "operatorRows": {
-        "aggregate": 1699963,
+        "aggregate": 150000,
         "distribute": 0,
-        "hash": 1549963,
-        "join": 1549963,
+        "hash": 150000,
+        "join": 1499959,
         "scan": 1649959,
         "seek": 0,
         "sort": 42
       },
-      "plan": "Estimate    Actual  Operator\n      13        42  SORT count_star *, COUNT(o_orderkey) 26\n      13        42  AGGREGATE countstar GROUP BY HASH COUNT(o_orderkey)\n  150000    150000  AGGREGATE count GROUP BY HASH c_custkey\n 1539322   1549963  RIGHT OUTER JOIN HASH ON c_custkey = o_custkey\n  150000    150000  │└TABLE SCAN customer\n 1500000   1499959  TABLE SCAN orders\n",
+      "plan": "Estimate    Actual  Operator\n      13        42  SORT count_star *, COUNT(o_orderkey) 27\n      13        42  AGGREGATE countstar GROUP BY HASH COUNT(o_orderkey)\n  150000    150000  RIGHT OUTER JOIN HASH ON c_custkey = o_custkey\n  150000    150000  │└TABLE SCAN customer\n 1500000   1499959  TABLE SCAN orders WHERE  NOT (o_comment LIKE ' % special % requests % ')\n",
       "sql": "/* TPC-H Q13 */\nSELECT\n  c_count,\n  COUNT(*) AS custdist\nFROM\n  (\n    SELECT\n      c_custkey,\n      COUNT(o_orderkey) AS c_count\n    FROM\n      tpch_sf1.customer\n      LEFT OUTER JOIN tpch_sf1.orders ON c_custkey = o_custkey\n      AND o_comment NOT LIKE ' % special % requests % '\n    GROUP BY\n      c_custkey\n  ) AS c_orders\nGROUP BY\n  c_count\nORDER BY\n  custdist DESC,\n  c_count DESC\n;",
-      "startTime": "2026-07-01T12:09:09.888789Z",
+      "startTime": "2026-07-01T12:49:26.821199Z",
       "status": "OK",
-      "timeMs": 42.599
+      "timeMs": 33.397
     }
   ],
   "runtime": {
-    "avgMs": 42.599,
-    "bestMs": 42.599,
-    "maxMs": 42.599,
-    "minMs": 42.599,
+    "avgMs": 33.397,
+    "bestMs": 33.397,
+    "maxMs": 33.397,
+    "minMs": 33.397,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

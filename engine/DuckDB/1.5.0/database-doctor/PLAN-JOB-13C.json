@@ -93,16 +93,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       -         1  AGGREGATE MIN(#0), MIN(#1), MIN(#2)\n       0        53  PROJECT name, info, title\n       0        53  INNER JOIN HASH ON info_type_id = id\n       2         1  │└FILTER id <= 110\n       2         1  │ TABLE SCAN info_type WHERE info = 'release dates'\n       7        53  INNER JOIN HASH ON movie_id = movie_id\n       1        14  │└INNER JOIN HASH ON info_type_id = id\n       2         1  │ │└FILTER id >= 99\n       2         1  │ │ TABLE SCAN info_type WHERE info = 'rating'\n      73        14  │ INNER JOIN HASH ON movie_id = movie_id\n     132        36  │ │└INNER JOIN HASH ON company_type_id = id\n       1         1  │ │ │└FILTER id <= 2\n       1         1  │ │ │ TABLE SCAN company_type WHERE kind = 'production companies'\n     530        88  │ │ INNER JOIN HASH ON kind_id = id\n       1         1  │ │ │└TABLE SCAN kind_type WHERE kind = 'movie'\n    3716        88  │ │ INNER JOIN HASH ON id = movie_id\n   18253   1153798  │ │ │└INNER JOIN HASH ON company_id = id\n    1644     84843  │ │ │ │└TABLE SCAN company_name WHERE country_code = 'us'\n 2609129   2609129  │ │ │ TABLE SCAN movie_companies\n  505662        89  │ │ FILTER id BETWEEN 2 AND 2525745\n  505662        89  │ │ TABLE SCAN title WHERE title != '' AND (prefix(title,'Champion') OR prefix(title,'Loser'))\n 1380035       401  │ TABLE SCAN movie_info_idx WHERE movie_id <= 2525745\n14835720    245853  TABLE SCAN movie_info WHERE movie_id >= 2 AND movie_id <= 2525745\n",
       "sql": "SELECT MIN(cn.name) AS producing_company,\n       MIN(miidx.info) AS rating,\n       MIN(t.title) AS movie_about_winning\nFROM job.company_name AS cn,\n     job.company_type AS ct,\n     job.info_type AS it,\n     job.info_type AS it2,\n     job.kind_type AS kt,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.movie_info_idx AS miidx,\n     job.title AS t\nWHERE cn.country_code ='[us]'\n  AND ct.kind ='production companies'\n  AND it.info ='rating'\n  AND it2.info ='release dates'\n  AND kt.kind ='movie'\n  AND t.title != ''\n  AND (t.title LIKE 'Champion%'\n       OR t.title LIKE 'Loser%')\n  AND mi.movie_id = t.id\n  AND it2.id = mi.info_type_id\n  AND kt.id = t.kind_id\n  AND mc.movie_id = t.id\n  AND cn.id = mc.company_id\n  AND ct.id = mc.company_type_id\n  AND miidx.movie_id = t.id\n  AND it.id = miidx.info_type_id\n  AND mi.movie_id = miidx.movie_id\n  AND mi.movie_id = mc.movie_id\n  AND miidx.movie_id = mc.movie_id;\n",
-      "startTime": "2026-06-30T17:43:09.143338Z",
+      "startTime": "2026-07-01T12:48:38.575987Z",
       "status": "OK",
-      "timeMs": 39.51
+      "timeMs": 28.533
     }
   ],
   "runtime": {
-    "avgMs": 39.51,
-    "bestMs": 39.51,
-    "maxMs": 39.51,
-    "minMs": 39.51,
+    "avgMs": 28.533,
+    "bestMs": 28.533,
+    "maxMs": 28.533,
+    "minMs": 28.533,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

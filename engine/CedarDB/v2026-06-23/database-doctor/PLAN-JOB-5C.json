@@ -91,18 +91,18 @@
         "seek": 0,
         "sort": 0
       },
-      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE min\n   66304       669  INNER JOIN HASH ON id = info_type_id\n     113       113  │└TABLE SCAN info_type\n   15420       669  INNER JOIN HASH ON id19 = movie_id35\n   61410       767  │└INNER JOIN HASH ON id19 = movie_id\n   76439       798  │ │└INNER JOIN HASH ON id6 = company_type_id\n       1         1  │ │ │└TABLE SCAN company_type WHERE kind = production companies\n  305757    295628  │ │ TABLE SCAN movie_companies\n 1757966    893164  │ TABLE SCAN title WHERE production_year >= 1991\n  608496    348424  TABLE SCAN movie_info WHERE info BETWEEN American AND USA\n",
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE min\n   66304       669  INNER JOIN HASH ON id = info_type_id\n     113       113  │└TABLE SCAN info_type\n   15420       669  INNER JOIN HASH ON id19 = movie_id35\n   61410       767  │└INNER JOIN HASH ON id19 = movie_id\n   76439       798  │ │└INNER JOIN HASH ON id6 = company_type_id\n       1         1  │ │ │└TABLE SCAN company_type WHERE kind = production companies\n  305757    295628  │ │ TABLE SCAN movie_companies WHERE note LIKE '%(USA)%' AND  NOT (note LIKE '%(TV)%')\n 1757966    893164  │ TABLE SCAN title WHERE production_year >= 1991\n  608496    348424  TABLE SCAN movie_info WHERE info BETWEEN American AND USA AND info37 IN(American,Denish,Denmark,German,Germany,Norway,Norwegian,Sweden,Swedish,USA)\n",
       "sql": "SELECT MIN(t.title) AS american_movie\nFROM job.company_type AS ct,\n     job.info_type AS it,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.title AS t\nWHERE ct.kind = 'production companies'\n  AND mc.note NOT LIKE '%(TV)%'\n  AND mc.note LIKE '%(USA)%'\n  AND mi.info IN ('Sweden',\n                  'Norway',\n                  'Germany',\n                  'Denmark',\n                  'Swedish',\n                  'Denish',\n                  'Norwegian',\n                  'German',\n                  'USA',\n                  'American')\n  AND t.production_year > 1990\n  AND t.id = mi.movie_id\n  AND t.id = mc.movie_id\n  AND mc.movie_id = mi.movie_id\n  AND ct.id = mc.company_type_id\n  AND it.id = mi.info_type_id;\n",
-      "startTime": "2026-07-01T12:08:37.970486Z",
+      "startTime": "2026-07-01T12:48:54.699744Z",
       "status": "OK",
-      "timeMs": 67.041
+      "timeMs": 102.761
     }
   ],
   "runtime": {
-    "avgMs": 67.041,
-    "bestMs": 67.041,
-    "maxMs": 67.041,
-    "minMs": 67.041,
+    "avgMs": 102.761,
+    "bestMs": 102.761,
+    "maxMs": 102.761,
+    "minMs": 102.761,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

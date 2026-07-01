@@ -93,16 +93,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       -         1  AGGREGATE MIN(#0), MIN(#1)\n       0        15  PROJECT name, title\n       0        15  INNER JOIN HASH ON id = person_role_id\n       0        15  │└INNER JOIN HASH ON id = person_id\n       0        36  │ │└INNER JOIN HASH ON id = info_type_id\n       0        36  │ │ │└INNER JOIN HASH ON movie_id = movie_id\n       0        36  │ │ │ │└INNER JOIN HASH ON person_id = person_id\n       0        24  │ │ │ │ │└INNER JOIN HASH ON id = movie_id\n       0     26447  │ │ │ │ │ │└INNER JOIN HASH ON id = company_id\n       5     29100  │ │ │ │ │ │ │└INNER JOIN HASH ON movie_id = movie_id\n      26    222685  │ │ │ │ │ │ │ │└INNER JOIN HASH ON role_id = id\n       1         1  │ │ │ │ │ │ │ │ │└FILTER id <= 11\n       1         1  │ │ │ │ │ │ │ │ │ TABLE SCAN role_type WHERE role = 'actress'\n     323    222685  │ │ │ │ │ │ │ │ FILTER (person_id >= 4) AND (movie_id BETWEEN 2 AND 2525745)\n     323    222686  │ │ │ │ │ │ │ │ TABLE SCAN cast_info WHERE note = '(voice)'\n  521825      7509  │ │ │ │ │ │ │ TABLE SCAN movie_companies WHERE (note LIKE '%(200%)%') AND (contains(note,'(USA)') OR contains(note,'(worldwide)'))\n    1644     44844  │ │ │ │ │ │ TABLE SCAN company_name WHERE country_code = 'us'\n  505662         2  │ │ │ │ │ FILTER id BETWEEN 2 AND 2525745\n  505662         2  │ │ │ │ │ TABLE SCAN title WHERE production_year >= 2007 AND production_year <= 2008 AND (title LIKE '%Kung%Fu%Panda%')\n  901343        20  │ │ │ │ TABLE SCAN aka_name WHERE person_id <= 4061926\n 2967144         3  │ │ │ FILTER movie_id BETWEEN 2 AND 2525745\n 2967144         3  │ │ │ TABLE SCAN movie_info WHERE (info IS NOT NULL) AND ((info LIKE 'Japan:%2007%') OR (info LIKE 'USA:%2008%'))\n       2         1  │ │ FILTER id <= 110\n       2         1  │ │ TABLE SCAN info_type WHERE info = 'release dates'\n 2083746         1  │ FILTER id BETWEEN 4 AND 4061926\n 2083746         1  │ TABLE SCAN \"name\" WHERE gender = 'f' AND contains(name,'Angel')\n 3140339         1  TABLE SCAN char_name\n",
       "sql": "SELECT MIN(n.name) AS voicing_actress,\n       MIN(t.title) AS kung_fu_panda\nFROM job.aka_name AS an,\n     job.char_name AS chn,\n     job.cast_info AS ci,\n     job.company_name AS cn,\n     job.info_type AS it,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.name AS n,\n     job.role_type AS rt,\n     job.title AS t\nWHERE ci.note = '(voice)'\n  AND cn.country_code ='[us]'\n  AND it.info = 'release dates'\n  AND mc.note LIKE '%(200%)%'\n  AND (mc.note LIKE '%(USA)%'\n       OR mc.note LIKE '%(worldwide)%')\n  AND mi.info IS NOT NULL\n  AND (mi.info LIKE 'Japan:%2007%'\n       OR mi.info LIKE 'USA:%2008%')\n  AND n.gender ='f'\n  AND n.name LIKE '%Angel%'\n  AND rt.role ='actress'\n  AND t.production_year BETWEEN 2007 AND 2008\n  AND t.title LIKE '%Kung%Fu%Panda%'\n  AND t.id = mi.movie_id\n  AND t.id = mc.movie_id\n  AND t.id = ci.movie_id\n  AND mc.movie_id = ci.movie_id\n  AND mc.movie_id = mi.movie_id\n  AND mi.movie_id = ci.movie_id\n  AND cn.id = mc.company_id\n  AND it.id = mi.info_type_id\n  AND n.id = ci.person_id\n  AND rt.id = ci.role_id\n  AND n.id = an.person_id\n  AND ci.person_id = an.person_id\n  AND chn.id = ci.person_role_id;\n",
-      "startTime": "2026-06-30T17:43:11.499444Z",
+      "startTime": "2026-07-01T12:48:43.502662Z",
       "status": "OK",
-      "timeMs": 51.381
+      "timeMs": 108.243
     }
   ],
   "runtime": {
-    "avgMs": 51.381,
-    "bestMs": 51.381,
-    "maxMs": 51.381,
-    "minMs": 51.381,
+    "avgMs": 108.243,
+    "bestMs": 108.243,
+    "maxMs": 108.243,
+    "minMs": 108.243,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

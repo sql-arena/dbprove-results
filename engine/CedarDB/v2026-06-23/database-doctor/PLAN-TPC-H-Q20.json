@@ -93,16 +93,16 @@
       },
       "plan": "Estimate    Actual  Operator\n     256       158  SORT s_name\n     256       158  RIGHT SEMI INNER JOIN HASH ON s_suppkey = ps_suppkey\n     400       376  │└INNER JOIN HASH ON s_nationkey = n_nationkey\n       1         1  │ │└TABLE SCAN nation WHERE n_name = KENYA\n   10000     10000  │ TABLE SCAN supplier\n     306      3255  INNER JOIN HASH ON ps_suppkey = l_suppkey58 AND ps_partkey = l_partkey57 AND ps_availqty > 5 * SUM(l_quantity)\n     532      4833  │└LEFT SEMI JOIN HASH ON ps_partkey = p_partkey\n    1562      2224  │ │└TABLE SCAN part WHERE p_name) almond\n   71699      4833  │ TABLE SCAN partsupp\n     305      3263  AGGREGATE sum GROUP BY HASH l_partkey, l_suppkey\n  310159    498728  TABLE SCAN lineitem WHERE l_shipdate BETWEEN 2448989 AND 2449353\n",
       "sql": "/* TPC-H Q20 */\nSELECT s_name,\n       s_address\nFROM tpch_sf1.supplier\nINNER JOIN tpch_sf1.nation\n    ON s_nationkey = n_nationkey\nWHERE s_suppkey IN (SELECT ps_suppkey\n                    FROM tpch_sf1.partsupp\n                    WHERE ps_partkey IN (SELECT p_partkey\n                                         FROM tpch_sf1.part AS p_inner\n                                         WHERE p_name LIKE 'almond%')\n                      AND ps_availqty > (SELECT 0.5 * SUM(l_quantity) AS qty\n                                         FROM tpch_sf1.lineitem as li_inner\n                                         WHERE l_partkey = ps_partkey\n                                           AND l_suppkey = ps_suppkey\n                                           AND l_shipdate >= '1993-01-01'\n                                           AND l_shipdate < '1994-01-01'))\n  AND n_name = 'KENYA'\nORDER BY s_name\n\n",
-      "startTime": "2026-07-01T12:09:10.073004Z",
+      "startTime": "2026-07-01T12:49:27.001248Z",
       "status": "OK",
-      "timeMs": 6.334
+      "timeMs": 4.919
     }
   ],
   "runtime": {
-    "avgMs": 6.334,
-    "bestMs": 6.334,
-    "maxMs": 6.334,
-    "minMs": 6.334,
+    "avgMs": 4.919,
+    "bestMs": 4.919,
+    "maxMs": 4.919,
+    "minMs": 4.919,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

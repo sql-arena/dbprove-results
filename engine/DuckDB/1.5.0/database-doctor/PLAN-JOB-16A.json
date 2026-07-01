@@ -93,16 +93,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       -         1  AGGREGATE MIN(#0), MIN(#1)\n       0       385  PROJECT name, title\n       0       385  INNER JOIN HASH ON id = person_id\n       0       385  │└INNER JOIN HASH ON person_id = person_id\n       1       323  │ │└INNER JOIN HASH ON movie_id = id\n       0        25  │ │ │└INNER JOIN HASH ON id = company_id\n      14        54  │ │ │ │└INNER JOIN HASH ON movie_id = movie_id\n      14       146  │ │ │ │ │└INNER JOIN HASH ON id = movie_id\n      69     41838  │ │ │ │ │ │└INNER JOIN HASH ON keyword_id = id\n       2         1  │ │ │ │ │ │ │└TABLE SCAN keyword WHERE keyword = 'character-name-in-title'\n 4523930     41838  │ │ │ │ │ │ TABLE SCAN movie_keyword WHERE movie_id <= 2525745\n  505662       865  │ │ │ │ │ FILTER id BETWEEN 2 AND 2525745\n  505662       865  │ │ │ │ │ TABLE SCAN title WHERE episode_nr >= 50 AND episode_nr < 100\n 2609129      7422  │ │ │ │ TABLE SCAN movie_companies\n    1644        40  │ │ │ TABLE SCAN company_name WHERE country_code = 'us'\n36244344     20452  │ │ FILTER person_id >= 4\n36244344     20452  │ │ TABLE SCAN cast_info WHERE movie_id >= 2 AND movie_id <= 2525745\n  901343      1641  │ TABLE SCAN aka_name WHERE person_id <= 4061926\n 4167491       363  TABLE SCAN \"name\" WHERE id >= 4 AND id <= 4061926\n",
       "sql": "SELECT MIN(an.name) AS cool_actor_pseudonym,\n       MIN(t.title) AS series_named_after_char\nFROM job.aka_name AS an,\n     job.cast_info AS ci,\n     job.company_name AS cn,\n     job.keyword AS k,\n     job.movie_companies AS mc,\n     job.movie_keyword AS mk,\n     job.name AS n,\n     job.title AS t\nWHERE cn.country_code ='[us]'\n  AND k.keyword ='character-name-in-title'\n  AND t.episode_nr >= 50\n  AND t.episode_nr < 100\n  AND an.person_id = n.id\n  AND n.id = ci.person_id\n  AND ci.movie_id = t.id\n  AND t.id = mk.movie_id\n  AND mk.keyword_id = k.id\n  AND t.id = mc.movie_id\n  AND mc.company_id = cn.id\n  AND an.person_id = ci.person_id\n  AND ci.movie_id = mc.movie_id\n  AND ci.movie_id = mk.movie_id\n  AND mc.movie_id = mk.movie_id;\n",
-      "startTime": "2026-06-30T17:43:09.785112Z",
+      "startTime": "2026-07-01T12:48:39.988037Z",
       "status": "OK",
-      "timeMs": 51.958
+      "timeMs": 114.125
     }
   ],
   "runtime": {
-    "avgMs": 51.958,
-    "bestMs": 51.958,
-    "maxMs": 51.958,
-    "minMs": 51.958,
+    "avgMs": 114.125,
+    "bestMs": 114.125,
+    "maxMs": 114.125,
+    "minMs": 114.125,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

@@ -91,18 +91,18 @@
         "seek": 0,
         "sort": 0
       },
-      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE min, min\n       1         1  INNER JOIN HASH ON id = kind_id\n       1         1  │└TABLE SCAN kind_type WHERE kind = movie\n       1         2  INNER JOIN HASH ON id6 = info_type_id53\n       1         1  │└TABLE SCAN info_type WHERE info = countries\n       1         2  INNER JOIN HASH ON movie_id52 = movie_id44\n       1         2  │└INNER JOIN HASH ON id11 = info_type_id\n       1         1  │ │└TABLE SCAN info_type WHERE info = rating\n       1         2  │ INNER JOIN HASH ON id28 = movie_id44\n       1        15  │ │└INNER JOIN HASH ON id28 = movie_id\n      65     19528  │ │ │└INNER JOIN HASH ON id16 = keyword_id\n       2         1  │ │ │ │└TABLE SCAN keyword\n 4523930   4523930  │ │ │ TABLE SCAN movie_keyword\n    1711        15  │ │ TABLE SCAN title WHERE production_year >= 2011\n  369267         2  │ TABLE SCAN movie_info_idx WHERE info > 6.0\n  608496         2  TABLE SCAN movie_info WHERE info BETWEEN American AND USA\n",
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE min, min\n       1         1  INNER JOIN HASH ON id = kind_id\n       1         1  │└TABLE SCAN kind_type WHERE kind = movie\n       1         2  INNER JOIN HASH ON id6 = info_type_id53\n       1         1  │└TABLE SCAN info_type WHERE info = countries\n       1         2  INNER JOIN HASH ON movie_id52 = movie_id44\n       1         2  │└INNER JOIN HASH ON id11 = info_type_id\n       1         1  │ │└TABLE SCAN info_type WHERE info = rating\n       1         2  │ INNER JOIN HASH ON id28 = movie_id44\n       1        15  │ │└INNER JOIN HASH ON id28 = movie_id\n      65     19528  │ │ │└INNER JOIN HASH ON id16 = keyword_id\n       2         1  │ │ │ │└TABLE SCAN keyword WHERE keyword IN(murder,murder - in - title)\n 4523930   4523930  │ │ │ TABLE SCAN movie_keyword\n    1711        15  │ │ TABLE SCAN title WHERE production_year >= 2011 AND title LIKE '%murder%' OR title LIKE '%Murder%' OR title LIKE '%Mord%'\n  369267         2  │ TABLE SCAN movie_info_idx WHERE info > 6.0\n  608496         2  TABLE SCAN movie_info WHERE info BETWEEN American AND USA AND info54 IN(American,Denish,Denmark,German,Germany,Norway,Norwegian,Sweden,Swedish,USA)\n",
       "sql": "SELECT MIN(mi_idx.info) AS rating,\n       MIN(t.title) AS western_dark_production\nFROM job.info_type AS it1,\n     job.info_type AS it2,\n     job.keyword AS k,\n     job.kind_type AS kt,\n     job.movie_info AS mi,\n     job.movie_info_idx AS mi_idx,\n     job.movie_keyword AS mk,\n     job.title AS t\nWHERE it1.info = 'countries'\n  AND it2.info = 'rating'\n  AND k.keyword IN ('murder',\n                    'murder-in-title')\n  AND kt.kind = 'movie'\n  AND mi.info IN ('Sweden',\n                  'Norway',\n                  'Germany',\n                  'Denmark',\n                  'Swedish',\n                  'Denish',\n                  'Norwegian',\n                  'German',\n                  'USA',\n                  'American')\n  AND mi_idx.info > '6.0'\n  AND t.production_year > 2010\n  AND (t.title LIKE '%murder%'\n       OR t.title LIKE '%Murder%'\n       OR t.title LIKE '%Mord%')\n  AND kt.id = t.kind_id\n  AND t.id = mi.movie_id\n  AND t.id = mk.movie_id\n  AND t.id = mi_idx.movie_id\n  AND mk.movie_id = mi.movie_id\n  AND mk.movie_id = mi_idx.movie_id\n  AND mi.movie_id = mi_idx.movie_id\n  AND k.id = mk.keyword_id\n  AND it1.id = mi.info_type_id\n  AND it2.id = mi_idx.info_type_id;\n",
-      "startTime": "2026-07-01T12:07:51.375428Z",
+      "startTime": "2026-07-01T12:47:46.362563Z",
       "status": "OK",
-      "timeMs": 14.194
+      "timeMs": 95.341
     }
   ],
   "runtime": {
-    "avgMs": 14.194,
-    "bestMs": 14.194,
-    "maxMs": 14.194,
-    "minMs": 14.194,
+    "avgMs": 95.341,
+    "bestMs": 95.341,
+    "maxMs": 95.341,
+    "minMs": 95.341,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

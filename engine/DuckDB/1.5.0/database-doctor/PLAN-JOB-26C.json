@@ -93,16 +93,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       -         1  AGGREGATE MIN(#0), MIN(#1), MIN(#2)\n       3      5400  PROJECT name, info, title\n       3      5400  INNER JOIN HASH ON id = person_id\n       2      5400  │└INNER JOIN HASH ON id = person_role_id\n      13    189738  │ │└INNER JOIN HASH ON movie_id = id\n       0      1261  │ │ │└INNER JOIN HASH ON id = keyword_id\n       4    293146  │ │ │ │└INNER JOIN HASH ON movie_id = id\n       2      4028  │ │ │ │ │└INNER JOIN HASH ON status_id = id\n       1         2  │ │ │ │ │ │└FILTER id >= 3\n       1         2  │ │ │ │ │ │ TABLE SCAN comp_cast_type WHERE contains(kind,'complete')\n       9      4028  │ │ │ │ │ INNER JOIN HASH ON subject_id = id\n       1         1  │ │ │ │ │ │└FILTER id <= 2\n       1         1  │ │ │ │ │ │ TABLE SCAN comp_cast_type WHERE kind = 'cast'\n      38      5052  │ │ │ │ │ INNER JOIN HASH ON kind_id = id\n       1         1  │ │ │ │ │ │└TABLE SCAN kind_type WHERE kind = 'movie'\n     270      5052  │ │ │ │ │ INNER JOIN HASH ON id = movie_id\n    1328     95399  │ │ │ │ │ │└INNER JOIN HASH ON movie_id = movie_id\n   24425    459891  │ │ │ │ │ │ │└INNER JOIN HASH ON info_type_id = id\n       2         1  │ │ │ │ │ │ │ │└FILTER id >= 99\n       2         1  │ │ │ │ │ │ │ │ TABLE SCAN info_type WHERE info = 'rating'\n 1380035    459891  │ │ │ │ │ │ │ TABLE SCAN movie_info_idx WHERE movie_id >= 285\n  135086    132439  │ │ │ │ │ │ TABLE SCAN complete_cast WHERE movie_id <= 2525793\n  505662      4351  │ │ │ │ │ FILTER id BETWEEN 285 AND 2525793\n  505662      4353  │ │ │ │ │ TABLE SCAN title WHERE production_year > 2000\n 4523930   3689305  │ │ │ │ TABLE SCAN movie_keyword WHERE movie_id >= 285 AND movie_id <= 2525793\n   26834        10  │ │ │ FILTER IN ...\n  134170    134058  │ │ │ INNER JOIN HASH ON keyword = #0\n       0        10  │ │ │ │└SCAN MATERIALISED\n  134170    134058  │ │ │ TABLE SCAN keyword WHERE keyword IN('superhero','marvel-comics','based-on-comic','tv-special','fight','violence','magnet','web','claw','laser')\n36244344    185302  │ │ TABLE SCAN cast_info WHERE movie_id >= 285 AND movie_id <= 2525793\n  628067      2682  │ TABLE SCAN char_name WHERE (name IS NOT NULL) AND (contains(name,'man') OR contains(name,'Man'))\n 4167491     13372  TABLE SCAN \"name\" WHERE id <= 4061926\n",
       "sql": "SELECT MIN(chn.name) AS character_name,\n       MIN(mi_idx.info) AS rating,\n       MIN(t.title) AS complete_hero_movie\nFROM job.complete_cast AS cc,\n     job.comp_cast_type AS cct1,\n     job.comp_cast_type AS cct2,\n     job.char_name AS chn,\n     job.cast_info AS ci,\n     job.info_type AS it2,\n     job.keyword AS k,\n     job.kind_type AS kt,\n     job.movie_info_idx AS mi_idx,\n     job.movie_keyword AS mk,\n     job.name AS n,\n     job.title AS t\nWHERE cct1.kind = 'cast'\n  AND cct2.kind LIKE '%complete%'\n  AND chn.name IS NOT NULL\n  AND (chn.name LIKE '%man%'\n       OR chn.name LIKE '%Man%')\n  AND it2.info = 'rating'\n  AND k.keyword IN ('superhero',\n                    'marvel-comics',\n                    'based-on-comic',\n                    'tv-special',\n                    'fight',\n                    'violence',\n                    'magnet',\n                    'web',\n                    'claw',\n                    'laser')\n  AND kt.kind = 'movie'\n  AND t.production_year > 2000\n  AND kt.id = t.kind_id\n  AND t.id = mk.movie_id\n  AND t.id = ci.movie_id\n  AND t.id = cc.movie_id\n  AND t.id = mi_idx.movie_id\n  AND mk.movie_id = ci.movie_id\n  AND mk.movie_id = cc.movie_id\n  AND mk.movie_id = mi_idx.movie_id\n  AND ci.movie_id = cc.movie_id\n  AND ci.movie_id = mi_idx.movie_id\n  AND cc.movie_id = mi_idx.movie_id\n  AND chn.id = ci.person_role_id\n  AND n.id = ci.person_id\n  AND k.id = mk.keyword_id\n  AND cct1.id = cc.subject_id\n  AND cct2.id = cc.status_id\n  AND it2.id = mi_idx.info_type_id;\n",
-      "startTime": "2026-06-30T17:43:13.441744Z",
+      "startTime": "2026-07-01T12:48:49.315612Z",
       "status": "OK",
-      "timeMs": 72.139
+      "timeMs": 211.266
     }
   ],
   "runtime": {
-    "avgMs": 72.139,
-    "bestMs": 72.139,
-    "maxMs": 72.139,
-    "minMs": 72.139,
+    "avgMs": 211.266,
+    "bestMs": 211.266,
+    "maxMs": 211.266,
+    "minMs": 211.266,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

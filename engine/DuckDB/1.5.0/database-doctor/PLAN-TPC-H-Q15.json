@@ -15,6 +15,17 @@
           "=": 1,
           ">16x": 0
         },
+        "distribute": {
+          "+2x": 0,
+          "+4x": 0,
+          "+8x": 0,
+          "-2x": 0,
+          "-4x": 0,
+          "-8x": 0,
+          "<16x": 0,
+          "=": 0,
+          ">16x": 0
+        },
         "filter": {
           "+2x": 0,
           "+4x": 0,
@@ -60,7 +71,7 @@
           ">16x": 1
         },
         "sort": {
-          "+2x": 0,
+          "+2x": 1,
           "+4x": 0,
           "+8x": 0,
           "-2x": 0,
@@ -80,18 +91,18 @@
         "seek": 0,
         "sort": 1
       },
-      "plan": "Estimate    Actual  Operator\n       -         1  SEQUENCE\n    8565     10000  ├─MATERIALISE AS m_revenue\n    8565     10000  │ AGGREGATE sum_no_overflow #1 GROUP BY HASH #0\n 1200243    226297  │ PROJECT l_suppkey, l_extendedprice * (1.00 - l_discount)\n 1200243    226297  │ TABLE SCAN lineitem WHERE l_shipdate >= '1997-09-01' AND l_shipdate < '1997-12-01'\n       -         1  └─SORT s_suppkey\n       3         1    INNER JOIN HASH ON s_suppkey = supplier_no\n       3         1    │└INNER JOIN HASH ON total_revenue = SUBQUERY\n       1         1    │ │└PROJECT CASE WHEN (#1 > 1) THEN (\"error\"('More than one row returned by a subquery used as an expression - scalar subqueries can only return a single row. Use \"SET scalar_subquery_error_on_multiple_rows=false\" to revert to previous behavior of returning a random row.')) ELSE #0 END\n       -         1    │ │ AGGREGATE \"first\" #0, count_star()\n       -         1    │ │ AGGREGATE MAX(#0)\n    8565     10000    │ │ PROJECT total_revenue\n    8565     10000    │ │ SCAN MATERIALISED revenue\n    8565     10000    │ SCAN MATERIALISED revenue\n   10000         1    TABLE SCAN supplier\n",
+      "plan": "Estimate    Actual  Operator\n       3         1  SEQUENCE\n    8565     10000  ├─MATERIALISE AS m_revenue\n    8565     10000  │ AGGREGATE sum_no_overflow #1 GROUP BY HASH #0\n 1200243    226297  │ PROJECT l_suppkey, l_extendedprice * (1.00 - l_discount)\n 1200243    226297  │ TABLE SCAN lineitem WHERE l_shipdate >= '1997-09-01' AND l_shipdate < '1997-12-01'\n       3         1  └─SORT s_suppkey\n       3         1    INNER JOIN HASH ON s_suppkey = supplier_no\n       3         1    │└INNER JOIN HASH ON total_revenue = SUBQUERY\n       1         1    │ │└PROJECT CASE WHEN (#1 > 1) THEN (\"error\"('More than one row returned by a subquery used as an expression - scalar subqueries can only return a single row. Use \"SET scalar_subquery_error_on_multiple_rows=false\" to revert to previous behavior of returning a random row.')) ELSE #0 END\n       -         1    │ │ AGGREGATE \"first\" #0, count_star()\n       -         1    │ │ AGGREGATE MAX(#0)\n    8565     10000    │ │ PROJECT total_revenue\n    8565     10000    │ │ SCAN MATERIALISED revenue\n    8565     10000    │ SCAN MATERIALISED revenue\n   10000         1    TABLE SCAN supplier\n",
       "sql": "/* TPC-H Q15 */\nWITH revenue AS (SELECT l_suppkey                               AS supplier_no,\n                        SUM(l_extendedprice * (1 - l_discount)) AS total_revenue\n                 FROM tpch_sf1.lineitem\n                 WHERE l_shipdate >= '1997-09-01'\n                   AND l_shipdate < '1997-12-01'\n                 GROUP BY l_suppkey)\nSELECT s_suppkey,\n       s_name,\n       s_address,\n       s_phone,\n       total_revenue\nFROM tpch_sf1.supplier\nINNER JOIN revenue\n    ON s_suppkey = supplier_no\nWHERE total_revenue = (SELECT MAX(total_revenue)\n                       FROM revenue)\nORDER BY s_suppkey\n",
-      "startTime": "2026-06-26T15:25:04.042333Z",
+      "startTime": "2026-07-01T12:49:01.604204Z",
       "status": "OK",
-      "timeMs": 6.256
+      "timeMs": 8.224
     }
   ],
   "runtime": {
-    "avgMs": 6.256,
-    "bestMs": 6.256,
-    "maxMs": 6.256,
-    "minMs": 6.256,
+    "avgMs": 8.224,
+    "bestMs": 8.224,
+    "maxMs": 8.224,
+    "minMs": 8.224,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

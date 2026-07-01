@@ -93,16 +93,16 @@
       },
       "plan": "Estimate    Actual  Operator\n   29943         9  SORT o_totalprice68, o_orderdate67\n   29943         9  AGGREGATE sum GROUP BY HASH c_name, c_custkey, o_orderkey, o_orderdate, o_totalprice\n   33270        63  INNER JOIN HASH ON o_orderkey = l_orderkey45\n    6892         9  │└INNER JOIN HASH ON o_custkey = c_custkey\n    6892         9  │ │└INNER JOIN HASH ON o_orderkey = l_orderkey20\n   28189         9  │ │ │└FILTER \n 1472074   1500000  │ │ │ AGGREGATE sum GROUP BY HASH l_orderkey\n 6001215   6001215  │ │ │ TABLE SCAN lineitem\n 1500000   1500000  │ │ TABLE SCAN orders\n  150000    150000  │ TABLE SCAN customer\n 6001215   6001215  TABLE SCAN lineitem\n",
       "sql": "/* TPC-H Q18 */\nSELECT c_name,\n       c_custkey,\n       o_orderkey,\n       o_orderdate,\n       o_totalprice,\n       SUM(l_quantity)\nFROM tpch_sf1.lineitem\nINNER JOIN tpch_sf1.orders\n    ON l_orderkey = o_orderkey\nINNER JOIN tpch_sf1.customer\n    ON o_custkey = c_custkey\nWHERE o_orderkey IN (SELECT l_orderkey\n                     FROM tpch_sf1.lineitem\n                     GROUP BY l_orderkey\n                     HAVING SUM(l_quantity) > 314)\nGROUP BY c_name,\n         c_custkey,\n         o_orderkey,\n         o_orderdate,\n         o_totalprice\nORDER BY o_totalprice DESC,\n         o_orderdate",
-      "startTime": "2026-07-01T12:09:09.996026Z",
+      "startTime": "2026-07-01T12:49:26.930404Z",
       "status": "OK",
-      "timeMs": 57.631
+      "timeMs": 48.509
     }
   ],
   "runtime": {
-    "avgMs": 57.631,
-    "bestMs": 57.631,
-    "maxMs": 57.631,
-    "minMs": 57.631,
+    "avgMs": 48.509,
+    "bestMs": 48.509,
+    "maxMs": 48.509,
+    "minMs": 48.509,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

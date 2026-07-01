@@ -91,18 +91,18 @@
         "seek": 0,
         "sort": 0
       },
-      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE min, min\n       1        15  INNER JOIN HASH ON person_id = person_id85\n       1         3  │└INNER JOIN HASH ON id = info_type_id\n       1         1  │ │└TABLE SCAN info_type WHERE info = release dates\n       1         3  │ INNER JOIN HASH ON id74 = person_role_id\n       1         3  │ │└INNER JOIN HASH ON id64 = company_id\n       1         3  │ │ │└INNER JOIN HASH ON movie_id57 = movie_id36\n       1         1  │ │ │ │└INNER JOIN HASH ON id44 = person_id\n       4        15  │ │ │ │ │└INNER JOIN HASH ON id6 = role_id\n       1         1  │ │ │ │ │ │└TABLE SCAN role_type WHERE role = actress\n       4        60  │ │ │ │ │ INNER JOIN HASH ON id11 = movie_id36\n      13         6  │ │ │ │ │ │└INNER JOIN HASH ON id11 = movie_id\n     953         7  │ │ │ │ │ │ │└TABLE SCAN title WHERE production_year BETWEEN 2007 AND 2008\n   28976         6  │ │ │ │ │ │ TABLE SCAN movie_info\n  672502        60  │ │ │ │ │ TABLE SCAN cast_info WHERE note = voice\n    4069         1  │ │ │ │ TABLE SCAN name WHERE gender = f\n  211482         3  │ │ │ TABLE SCAN movie_companies\n   90648         2  │ │ TABLE SCAN company_name WHERE country_code = us\n 3140339   3140339  │ TABLE SCAN char_name\n  901343    901343  TABLE SCAN aka_name\n",
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE min, min\n       1        15  INNER JOIN HASH ON person_id = person_id85\n       1         3  │└INNER JOIN HASH ON id = info_type_id\n       1         1  │ │└TABLE SCAN info_type WHERE info = release dates\n       1         3  │ INNER JOIN HASH ON id74 = person_role_id\n       1         3  │ │└INNER JOIN HASH ON id64 = company_id\n       1         3  │ │ │└INNER JOIN HASH ON movie_id57 = movie_id36\n       1         1  │ │ │ │└INNER JOIN HASH ON id44 = person_id\n       4        15  │ │ │ │ │└INNER JOIN HASH ON id6 = role_id\n       1         1  │ │ │ │ │ │└TABLE SCAN role_type WHERE role = actress\n       4        60  │ │ │ │ │ INNER JOIN HASH ON id11 = movie_id36\n      13         6  │ │ │ │ │ │└INNER JOIN HASH ON id11 = movie_id\n     953         7  │ │ │ │ │ │ │└TABLE SCAN title WHERE production_year BETWEEN 2007 AND 2008 AND title LIKE '%Kung%Fu%Panda%'\n   28976         6  │ │ │ │ │ │ TABLE SCAN movie_info WHERE info29 LIKE '%2007%' OR info29 LIKE '%2008%'\n  672502        60  │ │ │ │ │ TABLE SCAN cast_info WHERE note = voice\n    4069         1  │ │ │ │ TABLE SCAN name WHERE gender = f AND name LIKE '%Angel%'\n  211482         3  │ │ │ TABLE SCAN movie_companies WHERE note60 LIKE '%(200%)%' AND note60 LIKE '%(USA)%' OR note60 LIKE '%(worldwide)%'\n   90648         2  │ │ TABLE SCAN company_name WHERE country_code = us\n 3140339   3140339  │ TABLE SCAN char_name\n  901343    901343  TABLE SCAN aka_name\n",
       "sql": "SELECT MIN(n.name) AS voicing_actress,\n       MIN(t.title) AS kung_fu_panda\nFROM job.aka_name AS an,\n     job.char_name AS chn,\n     job.cast_info AS ci,\n     job.company_name AS cn,\n     job.info_type AS it,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.name AS n,\n     job.role_type AS rt,\n     job.title AS t\nWHERE ci.note = '(voice)'\n  AND cn.country_code ='[us]'\n  AND it.info = 'release dates'\n  AND mc.note LIKE '%(200%)%'\n  AND (mc.note LIKE '%(USA)%'\n       OR mc.note LIKE '%(worldwide)%')\n  AND mi.info IS NOT NULL\n  AND (mi.info LIKE 'Japan:%2007%'\n       OR mi.info LIKE 'USA:%2008%')\n  AND n.gender ='f'\n  AND n.name LIKE '%Angel%'\n  AND rt.role ='actress'\n  AND t.production_year BETWEEN 2007 AND 2008\n  AND t.title LIKE '%Kung%Fu%Panda%'\n  AND t.id = mi.movie_id\n  AND t.id = mc.movie_id\n  AND t.id = ci.movie_id\n  AND mc.movie_id = ci.movie_id\n  AND mc.movie_id = mi.movie_id\n  AND mi.movie_id = ci.movie_id\n  AND cn.id = mc.company_id\n  AND it.id = mi.info_type_id\n  AND n.id = ci.person_id\n  AND rt.id = ci.role_id\n  AND n.id = an.person_id\n  AND ci.person_id = an.person_id\n  AND chn.id = ci.person_role_id;\n",
-      "startTime": "2026-07-01T12:08:13.661493Z",
+      "startTime": "2026-07-01T12:48:22.888829Z",
       "status": "OK",
-      "timeMs": 21.253
+      "timeMs": 24.343
     }
   ],
   "runtime": {
-    "avgMs": 21.253,
-    "bestMs": 21.253,
-    "maxMs": 21.253,
-    "minMs": 21.253,
+    "avgMs": 24.343,
+    "bestMs": 24.343,
+    "maxMs": 24.343,
+    "minMs": 24.343,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

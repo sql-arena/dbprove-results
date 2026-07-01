@@ -91,18 +91,18 @@
         "seek": 0,
         "sort": 0
       },
-      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE min, min, min\n       1        12  INNER JOIN HASH ON id38 = person_id\n      15       383  │└INNER JOIN HASH ON id13 = movie_id30\n       1        36  │ │└INNER JOIN HASH ON id13 = movie_id\n     244     35548  │ │ │└INNER JOIN HASH ON id = keyword_id\n       8         8  │ │ │ │└TABLE SCAN keyword WHERE keyword BETWEEN based - on - comic AND violence\n 4523930   4523930  │ │ │ TABLE SCAN movie_keyword\n    1711       155  │ │ TABLE SCAN title WHERE production_year >= 2015\n36244344  36244344  │ TABLE SCAN cast_info\n    2821         1  TABLE SCAN name\n",
+      "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE min, min, min\n       1        12  INNER JOIN HASH ON id38 = person_id\n      15       383  │└INNER JOIN HASH ON id13 = movie_id30\n       1        36  │ │└INNER JOIN HASH ON id13 = movie_id\n     244     35548  │ │ │└INNER JOIN HASH ON id = keyword_id\n       8         8  │ │ │ │└TABLE SCAN keyword WHERE keyword BETWEEN based - on - comic AND violence AND keyword IN(based - on - comic,fight,marvel - comics,second - part,sequel,superhero,tv - special,violence)\n 4523930   4523930  │ │ │ TABLE SCAN movie_keyword\n    1711       155  │ │ TABLE SCAN title WHERE production_year >= 2015\n36244344  36244344  │ TABLE SCAN cast_info\n    2821         1  TABLE SCAN name WHERE name LIKE '%Downey%Robert%'\n",
       "sql": "SELECT MIN(k.keyword) AS movie_keyword,\n       MIN(n.name) AS actor_name,\n       MIN(t.title) AS hero_movie\nFROM job.cast_info AS ci,\n     job.keyword AS k,\n     job.movie_keyword AS mk,\n     job.name AS n,\n     job.title AS t\nWHERE k.keyword IN ('superhero',\n                    'sequel',\n                    'second-part',\n                    'marvel-comics',\n                    'based-on-comic',\n                    'tv-special',\n                    'fight',\n                    'violence')\n  AND n.name LIKE '%Downey%Robert%'\n  AND t.production_year > 2014\n  AND k.id = mk.keyword_id\n  AND t.id = mk.movie_id\n  AND t.id = ci.movie_id\n  AND ci.movie_id = mk.movie_id\n  AND n.id = ci.person_id;\n",
-      "startTime": "2026-07-01T12:08:38.082857Z",
+      "startTime": "2026-07-01T12:48:54.892011Z",
       "status": "OK",
-      "timeMs": 10.199
+      "timeMs": 14.916
     }
   ],
   "runtime": {
-    "avgMs": 10.199,
-    "bestMs": 10.199,
-    "maxMs": 10.199,
-    "minMs": 10.199,
+    "avgMs": 14.916,
+    "bestMs": 14.916,
+    "maxMs": 14.916,
+    "minMs": 14.916,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

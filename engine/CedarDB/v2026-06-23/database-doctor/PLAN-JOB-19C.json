@@ -93,16 +93,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE min, min\n     210      3575  INNER JOIN HASH ON person_id = person_id85\n     216      2632  │└INNER JOIN HASH ON id = info_type_id\n       1         1  │ │└TABLE SCAN info_type WHERE info = release dates\n     216      2632  │ INNER JOIN HASH ON id74 = person_role_id\n     226      2632  │ │└INNER JOIN HASH ON id64 = company_id\n     347      8585  │ │ │└INNER JOIN HASH ON id41 = movie_id57\n     291      2129  │ │ │ │└INNER JOIN HASH ON id41 = movie_id\n     375      2366  │ │ │ │ │└INNER JOIN HASH ON movie_id34 = movie_id\n    1207      5686  │ │ │ │ │ │└INNER JOIN HASH ON id6 = role_id\n       1         1  │ │ │ │ │ │ │└TABLE SCAN role_type WHERE role = actress\n   11474      5686  │ │ │ │ │ │ INNER JOIN HASH ON id11 = person_id\n   61047     50011  │ │ │ │ │ │ │└TABLE SCAN name WHERE gender = f\n  707897    255096  │ │ │ │ │ │ TABLE SCAN cast_info\n  376688      1890  │ │ │ │ │ TABLE SCAN movie_info\n 1402423      1355  │ │ │ │ TABLE SCAN title WHERE production_year >= 2001\n 2609129   2609129  │ │ │ TABLE SCAN movie_companies\n   90648       447  │ │ TABLE SCAN company_name WHERE country_code = us\n 3140339   3140339  │ TABLE SCAN char_name\n  901343    901343  TABLE SCAN aka_name\n",
       "sql": "SELECT MIN(n.name) AS voicing_actress,\n       MIN(t.title) AS jap_engl_voiced_movie\nFROM job.aka_name AS an,\n     job.char_name AS chn,\n     job.cast_info AS ci,\n     job.company_name AS cn,\n     job.info_type AS it,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.name AS n,\n     job.role_type AS rt,\n     job.title AS t\nWHERE ci.note IN ('(voice)',\n                  '(voice: Japanese version)',\n                  '(voice) (uncredited)',\n                  '(voice: English version)')\n  AND cn.country_code ='[us]'\n  AND it.info = 'release dates'\n  AND mi.info IS NOT NULL\n  AND (mi.info LIKE 'Japan:%200%'\n       OR mi.info LIKE 'USA:%200%')\n  AND n.gender ='f'\n  AND n.name LIKE '%An%'\n  AND rt.role ='actress'\n  AND t.production_year > 2000\n  AND t.id = mi.movie_id\n  AND t.id = mc.movie_id\n  AND t.id = ci.movie_id\n  AND mc.movie_id = ci.movie_id\n  AND mc.movie_id = mi.movie_id\n  AND mi.movie_id = ci.movie_id\n  AND cn.id = mc.company_id\n  AND it.id = mi.info_type_id\n  AND n.id = ci.person_id\n  AND rt.id = ci.role_id\n  AND n.id = an.person_id\n  AND ci.person_id = an.person_id\n  AND chn.id = ci.person_role_id;\n",
-      "startTime": "2026-06-30T15:50:16.725752Z",
+      "startTime": "2026-07-01T12:08:13.696684Z",
       "status": "OK",
-      "timeMs": 97.336
+      "timeMs": 156.622
     }
   ],
   "runtime": {
-    "avgMs": 97.336,
-    "bestMs": 97.336,
-    "maxMs": 97.336,
-    "minMs": 97.336,
+    "avgMs": 156.622,
+    "bestMs": 156.622,
+    "maxMs": 156.622,
+    "minMs": 156.622,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

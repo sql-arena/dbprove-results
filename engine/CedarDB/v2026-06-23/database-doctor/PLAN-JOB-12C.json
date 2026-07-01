@@ -93,16 +93,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE min, min, min\n   15248      4711  INNER JOIN HASH ON info_type_id26 = id\n       1         1  │└TABLE SCAN info_type WHERE info = genres\n   15248      4711  INNER JOIN HASH ON id55 = company_id\n   97779     15537  │└INNER JOIN HASH ON id6 = company_type_id\n       1         1  │ │└TABLE SCAN company_type WHERE kind = production companies\n  208033     45006  │ INNER JOIN HASH ON movie_id48 = movie_id25\n   40577      7964  │ │└INNER JOIN HASH ON id32 = movie_id25\n   46860     23157  │ │ │└INNER JOIN HASH ON movie_id25 = movie_id\n  122141    121572  │ │ │ │└INNER JOIN HASH ON info_type_id = id11\n       1         1  │ │ │ │ │└TABLE SCAN info_type WHERE info = rating\n  184633    121572  │ │ │ │ TABLE SCAN movie_info_idx WHERE info > 7.0\n  376688    136053  │ │ │ TABLE SCAN movie_info\n 1081445    491692  │ │ TABLE SCAN title WHERE production_year BETWEEN 2000 AND 2010\n 2609129   2609129  │ TABLE SCAN movie_companies\n   90648     21696  TABLE SCAN company_name WHERE country_code = us\n",
       "sql": "SELECT MIN(cn.name) AS movie_company,\n       MIN(mi_idx.info) AS rating,\n       MIN(t.title) AS mainstream_movie\nFROM job.company_name AS cn,\n     job.company_type AS ct,\n     job.info_type AS it1,\n     job.info_type AS it2,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.movie_info_idx AS mi_idx,\n     job.title AS t\nWHERE cn.country_code = '[us]'\n  AND ct.kind = 'production companies'\n  AND it1.info = 'genres'\n  AND it2.info = 'rating'\n  AND mi.info IN ('Drama',\n                  'Horror',\n                  'Western',\n                  'Family')\n  AND mi_idx.info > '7.0'\n  AND t.production_year BETWEEN 2000 AND 2010\n  AND t.id = mi.movie_id\n  AND t.id = mi_idx.movie_id\n  AND mi.info_type_id = it1.id\n  AND mi_idx.info_type_id = it2.id\n  AND t.id = mc.movie_id\n  AND ct.id = mc.company_type_id\n  AND cn.id = mc.company_id\n  AND mc.movie_id = mi.movie_id\n  AND mc.movie_id = mi_idx.movie_id\n  AND mi.movie_id = mi_idx.movie_id;\n",
-      "startTime": "2026-06-30T15:49:56.573629Z",
+      "startTime": "2026-07-01T12:07:50.698430Z",
       "status": "OK",
-      "timeMs": 48.822
+      "timeMs": 90.001
     }
   ],
   "runtime": {
-    "avgMs": 48.822,
-    "bestMs": 48.822,
-    "maxMs": 48.822,
-    "minMs": 48.822,
+    "avgMs": 90.001,
+    "bestMs": 90.001,
+    "maxMs": 90.001,
+    "minMs": 90.001,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

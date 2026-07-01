@@ -93,16 +93,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE min, min, min\n       1       310  INNER JOIN HASH ON company_type_id = id\n       1         1  │└TABLE SCAN company_type WHERE kind = production companies\n       1       330  INNER JOIN HASH ON company_id = id53\n       4       705  │└INNER JOIN HASH ON movie_id24 = movie_id46\n       1       152  │ │└INNER JOIN HASH ON movie_id24 = id30\n       1       199  │ │ │└INNER JOIN HASH ON id6 = link_type_id\n       2         2  │ │ │ │└TABLE SCAN link_type\n       2       251  │ │ │ INNER JOIN HASH ON movie_id24 = movie_id\n      32     10544  │ │ │ │└INNER JOIN HASH ON keyword_id = id11\n       1         1  │ │ │ │ │└TABLE SCAN keyword WHERE keyword = sequel\n 4523930   4523930  │ │ │ │ TABLE SCAN movie_keyword\n   29997     29997  │ │ │ TABLE SCAN movie_link\n  886390        25  │ │ TABLE SCAN title WHERE production_year BETWEEN 1950 AND 2000\n 1203251        69  │ TABLE SCAN movie_companies WHERE note IS NULL\n   51405        11  TABLE SCAN company_name\n",
       "sql": "SELECT MIN(cn.name) AS from_company,\n       MIN(lt.link) AS movie_link_type,\n       MIN(t.title) AS non_polish_sequel_movie\nFROM job.company_name AS cn,\n     job.company_type AS ct,\n     job.keyword AS k,\n     job.link_type AS lt,\n     job.movie_companies AS mc,\n     job.movie_keyword AS mk,\n     job.movie_link AS ml,\n     job.title AS t\nWHERE cn.country_code !='[pl]'\n  AND (cn.name LIKE '%Film%'\n       OR cn.name LIKE '%Warner%')\n  AND ct.kind ='production companies'\n  AND k.keyword ='sequel'\n  AND lt.link LIKE '%follow%'\n  AND mc.note IS NULL\n  AND t.production_year BETWEEN 1950 AND 2000\n  AND lt.id = ml.link_type_id\n  AND ml.movie_id = t.id\n  AND t.id = mk.movie_id\n  AND mk.keyword_id = k.id\n  AND t.id = mc.movie_id\n  AND mc.company_type_id = ct.id\n  AND mc.company_id = cn.id\n  AND ml.movie_id = mk.movie_id\n  AND ml.movie_id = mc.movie_id\n  AND mk.movie_id = mc.movie_id;\n",
-      "startTime": "2026-06-30T15:49:56.149525Z",
+      "startTime": "2026-07-01T12:07:50.176163Z",
       "status": "OK",
-      "timeMs": 37.778
+      "timeMs": 74.759
     }
   ],
   "runtime": {
-    "avgMs": 37.778,
-    "bestMs": 37.778,
-    "maxMs": 37.778,
-    "minMs": 37.778,
+    "avgMs": 74.759,
+    "bestMs": 74.759,
+    "maxMs": 74.759,
+    "minMs": 74.759,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

@@ -93,16 +93,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE min, min, min, min\n     251      8144  INNER JOIN HASH ON person_id72 = id6\n    1048      4503  │└INNER JOIN HASH ON id56 = movie_id29\n    1004      4503  │ │└INNER JOIN HASH ON id46 = person_role_id\n    1051      4503  │ │ │└INNER JOIN HASH ON company_id = id36\n    2864     12383  │ │ │ │└INNER JOIN HASH ON movie_id = movie_id29\n    1397      5686  │ │ │ │ │└INNER JOIN HASH ON role_id = id\n       1         1  │ │ │ │ │ │└TABLE SCAN role_type WHERE role = actress\n   13279      5686  │ │ │ │ │ INNER JOIN HASH ON id6 = person_id\n   61047     50011  │ │ │ │ │ │└TABLE SCAN name WHERE gender = f\n  707897    255096  │ │ │ │ │ TABLE SCAN cast_info\n 2609129   2609129  │ │ │ │ TABLE SCAN movie_companies\n   90648     17162  │ │ │ TABLE SCAN company_name WHERE country_code = us\n 3140339   3140339  │ │ TABLE SCAN char_name\n 2528312   2528312  │ TABLE SCAN title\n  901343    901343  TABLE SCAN aka_name\n",
       "sql": "SELECT MIN(an.name) AS alternative_name,\n       MIN(chn.name) AS voiced_character_name,\n       MIN(n.name) AS voicing_actress,\n       MIN(t.title) AS american_movie\nFROM job.aka_name AS an,\n     job.char_name AS chn,\n     job.cast_info AS ci,\n     job.company_name AS cn,\n     job.movie_companies AS mc,\n     job.name AS n,\n     job.role_type AS rt,\n     job.title AS t\nWHERE ci.note IN ('(voice)',\n                  '(voice: Japanese version)',\n                  '(voice) (uncredited)',\n                  '(voice: English version)')\n  AND cn.country_code ='[us]'\n  AND n.gender ='f'\n  AND n.name LIKE '%An%'\n  AND rt.role ='actress'\n  AND ci.movie_id = t.id\n  AND t.id = mc.movie_id\n  AND ci.movie_id = mc.movie_id\n  AND mc.company_id = cn.id\n  AND ci.role_id = rt.id\n  AND n.id = ci.person_id\n  AND chn.id = ci.person_role_id\n  AND an.person_id = n.id\n  AND an.person_id = ci.person_id;\n",
-      "startTime": "2026-06-30T15:50:40.544417Z",
+      "startTime": "2026-07-01T12:08:40.048825Z",
       "status": "OK",
-      "timeMs": 59.89
+      "timeMs": 57.073
     }
   ],
   "runtime": {
-    "avgMs": 59.89,
-    "bestMs": 59.89,
-    "maxMs": 59.89,
-    "minMs": 59.89,
+    "avgMs": 57.073,
+    "bestMs": 57.073,
+    "maxMs": 57.073,
+    "minMs": 57.073,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

@@ -93,16 +93,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE min, min, min, min\n      71       757  INNER JOIN HASH ON id = info_type_id87\n       1         1  │└TABLE SCAN info_type WHERE info = votes\n     169      2281  INNER JOIN HASH ON movie_id86 = movie_id34\n      71       757  │└INNER JOIN HASH ON id6 = info_type_id\n       1         1  │ │└TABLE SCAN info_type WHERE info = genres\n      71       757  │ INNER JOIN HASH ON id73 = person_id\n     150      1021  │ │└INNER JOIN HASH ON id58 = movie_id34\n     111      7769  │ │ │└INNER JOIN HASH ON movie_id50 = movie_id34\n     148     10295  │ │ │ │└INNER JOIN HASH ON movie_id41 = movie_id34\n     590     16336  │ │ │ │ │└INNER JOIN HASH ON id11 = subject_id\n       2         2  │ │ │ │ │ │└TABLE SCAN comp_cast_type\n     669     16336  │ │ │ │ │ INNER JOIN HASH ON id16 = status_id\n       1         1  │ │ │ │ │ │└TABLE SCAN comp_cast_type WHERE kind = complete + verified\n    2676     16336  │ │ │ │ │ INNER JOIN HASH ON movie_id = movie_id34\n    4236     76714  │ │ │ │ │ │└INNER JOIN HASH ON id21 = keyword_id\n     131         7  │ │ │ │ │ │ │└TABLE SCAN keyword WHERE keyword BETWEEN blood AND violence\n 4523930   4523930  │ │ │ │ │ │ TABLE SCAN movie_keyword\n  135086     14134  │ │ │ │ │ TABLE SCAN complete_cast\n  144880      3390  │ │ │ │ TABLE SCAN movie_info\n 1274215      1860  │ │ │ TABLE SCAN cast_info WHERE note BETWEEN (head writer) AND (written by)\n 1402423       195  │ │ TABLE SCAN title WHERE production_year >= 2001\n 1778509       160  │ TABLE SCAN name WHERE gender = m\n 1380035   1380035  TABLE SCAN movie_info_idx\n",
       "sql": "SELECT MIN(mi.info) AS movie_budget,\n       MIN(mi_idx.info) AS movie_votes,\n       MIN(n.name) AS writer,\n       MIN(t.title) AS complete_violent_movie\nFROM job.complete_cast AS cc,\n     job.comp_cast_type AS cct1,\n     job.comp_cast_type AS cct2,\n     job.cast_info AS ci,\n     job.info_type AS it1,\n     job.info_type AS it2,\n     job.keyword AS k,\n     job.movie_info AS mi,\n     job.movie_info_idx AS mi_idx,\n     job.movie_keyword AS mk,\n     job.name AS n,\n     job.title AS t\nWHERE cct1.kind IN ('cast',\n                    'crew')\n  AND cct2.kind ='complete+verified'\n  AND ci.note IN ('(writer)',\n                  '(head writer)',\n                  '(written by)',\n                  '(story)',\n                  '(story editor)')\n  AND it1.info = 'genres'\n  AND it2.info = 'votes'\n  AND k.keyword IN ('murder',\n                    'violence',\n                    'blood',\n                    'gore',\n                    'death',\n                    'female-nudity',\n                    'hospital')\n  AND mi.info IN ('Horror',\n                  'Thriller')\n  AND n.gender = 'm'\n  AND t.production_year > 2000\n  AND t.id = mi.movie_id\n  AND t.id = mi_idx.movie_id\n  AND t.id = ci.movie_id\n  AND t.id = mk.movie_id\n  AND t.id = cc.movie_id\n  AND ci.movie_id = mi.movie_id\n  AND ci.movie_id = mi_idx.movie_id\n  AND ci.movie_id = mk.movie_id\n  AND ci.movie_id = cc.movie_id\n  AND mi.movie_id = mi_idx.movie_id\n  AND mi.movie_id = mk.movie_id\n  AND mi.movie_id = cc.movie_id\n  AND mi_idx.movie_id = mk.movie_id\n  AND mi_idx.movie_id = cc.movie_id\n  AND mk.movie_id = cc.movie_id\n  AND n.id = ci.person_id\n  AND it1.id = mi.info_type_id\n  AND it2.id = mi_idx.info_type_id\n  AND k.id = mk.keyword_id\n  AND cct1.id = cc.subject_id\n  AND cct2.id = cc.status_id;\n",
-      "startTime": "2026-06-30T15:50:30.234592Z",
+      "startTime": "2026-07-01T12:08:29.027817Z",
       "status": "OK",
-      "timeMs": 2033.928
+      "timeMs": 2169.137
     }
   ],
   "runtime": {
-    "avgMs": 2033.928,
-    "bestMs": 2033.928,
-    "maxMs": 2033.928,
-    "minMs": 2033.928,
+    "avgMs": 2169.137,
+    "bestMs": 2169.137,
+    "maxMs": 2169.137,
+    "minMs": 2169.137,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

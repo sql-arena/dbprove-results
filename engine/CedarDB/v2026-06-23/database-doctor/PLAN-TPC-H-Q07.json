@@ -93,16 +93,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       2         4  SORT n_name67, n_name68, l_year\n       2         4  AGGREGATE sum GROUP BY HASH n_name32, n_name, EXTRACT(YEAR FROM l_shipdate)\n   82963      5924  INNER JOIN HASH ON l_orderkey = o_orderkey AND n_name32 IN(GERMANY,FRANCE,FRANCE,GERMANY)\n  118913    121324  │└INNER JOIN HASH ON o_custkey = c_custkey\n   11891     12008  │ │└INNER JOIN HASH ON c_nationkey = n_nationkey\n       2         2  │ │ │└TABLE SCAN nation\n  150000    150000  │ │ TABLE SCAN customer\n 1500000   1500000  │ TABLE SCAN orders\n  149075     61679  INNER JOIN HASH ON l_suppkey = s_suppkey\n     804       798  │└INNER JOIN HASH ON s_nationkey = n_nationkey31\n       2         2  │ │└TABLE SCAN nation\n   10000     10000  │ TABLE SCAN supplier\n 1834355    429571  TABLE SCAN lineitem WHERE l_shipdate BETWEEN 2449719 AND 2450449\n",
       "sql": "/* TPC-H Q07 */\nSELECT supp_nation,\n       cust_nation,\n       l_year,\n       SUM(volume) AS revenue\nFROM (SELECT n1.n_name                          AS supp_nation,\n             n2.n_name                          AS cust_nation,\n             EXTRACT(YEAR FROM l_shipdate)      AS l_year,\n             l_extendedprice * (1 - l_discount) AS volume\n      FROM tpch_sf1.lineitem\n      INNER JOIN tpch_sf1.orders\n          ON l_orderkey = o_orderkey\n      INNER JOIN tpch_sf1.supplier\n          ON l_suppkey = s_suppkey\n      INNER JOIN tpch_sf1.customer\n          ON o_custkey = c_custkey\n      INNER JOIN tpch_sf1.nation n1\n          ON s_nationkey = n1.n_nationkey\n      INNER JOIN tpch_sf1.nation n2\n          ON c_nationkey = n2.n_nationkey\n      WHERE ((n1.n_name = 'GERMANY' AND n2.n_name = 'FRANCE')\n          OR (n1.n_name = 'FRANCE' AND n2.n_name = 'GERMANY'))\n        AND l_shipdate BETWEEN '1995-01-01' AND '1996-12-31') AS shipping\nGROUP BY supp_nation,\n         cust_nation,\n         l_year\nORDER BY supp_nation,\n         cust_nation,\n         l_year\n\n\n",
-      "startTime": "2026-06-30T15:51:10.520936Z",
+      "startTime": "2026-07-01T12:09:09.692480Z",
       "status": "OK",
-      "timeMs": 15.72
+      "timeMs": 15.716
     }
   ],
   "runtime": {
-    "avgMs": 15.72,
-    "bestMs": 15.72,
-    "maxMs": 15.72,
-    "minMs": 15.72,
+    "avgMs": 15.716,
+    "bestMs": 15.716,
+    "maxMs": 15.716,
+    "minMs": 15.716,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

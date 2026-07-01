@@ -91,18 +91,18 @@
         "seek": 0,
         "sort": 7
       },
-      "plan": "Estimate    Actual  Operator\n    4130         7  SORT cntrycode\n    4130         7  AGGREGATE countstar, sum GROUP BY HASH LEFT(c_phone17,2)\n    4589      6321  LEFT ANTI JOIN HASH ON o_custkey = c_custkey13\n   17506     18975  │└INNER JOIN LOOP ON c_acctbal18 > AVG(c_acctbal)\n       1         1  │ │└AGGREGATE avg\n   34130     38137  │ │ TABLE SCAN customer WHERE c_acctbal >= 1\n   37060     41958  │ TABLE SCAN customer\n 1500000   1500000  TABLE SCAN orders\n",
+      "plan": "Estimate    Actual  Operator\n    4130         7  SORT cntrycode\n    4130         7  AGGREGATE countstar, sum GROUP BY HASH LEFT(c_phone17,2)\n    4589      6321  RIGHT ANTI JOIN HASH ON o_custkey = c_custkey13\n   17506     18975  │└INNER JOIN LOOP ON c_acctbal18 > AVG(c_acctbal)\n       1         1  │ │└AGGREGATE avg\n   34130     38137  │ │ TABLE SCAN customer WHERE c_acctbal >= 1\n   37060     41958  │ TABLE SCAN customer\n 1500000   1500000  TABLE SCAN orders\n",
       "sql": "/* TPC-H Q22 */\nSELECT cntrycode,\n       COUNT(*)       AS numcust,\n       SUM(c_acctbal) AS totacctbal\nFROM (SELECT LEFT(c_phone,2) AS cntrycode,\n             c_acctbal\n      FROM tpch_sf1.customer\n      WHERE LEFT(c_phone,2) IN\n            ('10', '17', '19', '23', '22', '31', '27')\n        AND c_acctbal > (SELECT AVG(c_acctbal)\n                         FROM tpch_sf1.customer\n                         WHERE c_acctbal > 0.00\n                           AND LEFT(c_phone,2) IN\n                               ('10', '17', '19', '23', '22', '31', '27'))\n        AND NOT EXISTS (SELECT *\n                        FROM tpch_sf1.orders\n                        WHERE o_custkey = c_custkey)) AS custsale\nGROUP BY cntrycode\nORDER BY cntrycode\n\n\n",
-      "startTime": "2026-06-30T15:51:11.013474Z",
+      "startTime": "2026-07-01T12:09:10.149636Z",
       "status": "OK",
-      "timeMs": 16.908
+      "timeMs": 32.458
     }
   ],
   "runtime": {
-    "avgMs": 16.908,
-    "bestMs": 16.908,
-    "maxMs": 16.908,
-    "minMs": 16.908,
+    "avgMs": 32.458,
+    "bestMs": 32.458,
+    "maxMs": 32.458,
+    "minMs": 32.458,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

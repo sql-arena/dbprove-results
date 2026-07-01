@@ -93,16 +93,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE min, min, min\n       4     21489  INNER JOIN HASH ON id = company_type_id\n       4         4  │└TABLE SCAN company_type\n       1     21489  INNER JOIN HASH ON id72 = company_id\n       1     23216  │└INNER JOIN HASH ON movie_id65 = movie_id57\n       3      4115  │ │└INNER JOIN HASH ON id6 = info_type_id58\n       1         1  │ │ │└TABLE SCAN info_type WHERE info = rating\n       2      4115  │ │ INNER JOIN HASH ON id33 = movie_id57\n       4      5316  │ │ │└INNER JOIN HASH ON id11 = info_type_id\n       1         1  │ │ │ │└TABLE SCAN info_type WHERE info = countries\n       5      5833  │ │ │ INNER JOIN HASH ON id33 = movie_id49\n      18      8073  │ │ │ │└INNER JOIN HASH ON id16 = kind_id\n       2         2  │ │ │ │ │└TABLE SCAN kind_type\n      56      8408  │ │ │ │ INNER JOIN HASH ON id33 = movie_id\n     129     37091  │ │ │ │ │└INNER JOIN HASH ON id21 = keyword_id\n       4         3  │ │ │ │ │ │└TABLE SCAN keyword\n 4523930   4523930  │ │ │ │ │ TABLE SCAN movie_keyword\n 1049348      6099  │ │ │ │ TABLE SCAN title WHERE production_year >= 2006\n  622984      4071  │ │ │ TABLE SCAN movie_info WHERE info BETWEEN American AND USA\n 1342299      2527  │ │ TABLE SCAN movie_info_idx WHERE info < 8.5\n  248981     10361  │ TABLE SCAN movie_companies\n  120711      1401  TABLE SCAN company_name\n",
       "sql": "SELECT MIN(cn.name) AS movie_company,\n       MIN(mi_idx.info) AS rating,\n       MIN(t.title) AS western_violent_movie\nFROM job.company_name AS cn,\n     job.company_type AS ct,\n     job.info_type AS it1,\n     job.info_type AS it2,\n     job.keyword AS k,\n     job.kind_type AS kt,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.movie_info_idx AS mi_idx,\n     job.movie_keyword AS mk,\n     job.title AS t\nWHERE cn.country_code != '[us]'\n  AND it1.info = 'countries'\n  AND it2.info = 'rating'\n  AND k.keyword IN ('murder',\n                    'murder-in-title',\n                    'blood',\n                    'violence')\n  AND kt.kind IN ('movie',\n                  'episode')\n  AND mc.note NOT LIKE '%(USA)%'\n  AND mc.note LIKE '%(200%)%'\n  AND mi.info IN ('Sweden',\n                  'Norway',\n                  'Germany',\n                  'Denmark',\n                  'Swedish',\n                  'Danish',\n                  'Norwegian',\n                  'German',\n                  'USA',\n                  'American')\n  AND mi_idx.info < '8.5'\n  AND t.production_year > 2005\n  AND kt.id = t.kind_id\n  AND t.id = mi.movie_id\n  AND t.id = mk.movie_id\n  AND t.id = mi_idx.movie_id\n  AND t.id = mc.movie_id\n  AND mk.movie_id = mi.movie_id\n  AND mk.movie_id = mi_idx.movie_id\n  AND mk.movie_id = mc.movie_id\n  AND mi.movie_id = mi_idx.movie_id\n  AND mi.movie_id = mc.movie_id\n  AND mc.movie_id = mi_idx.movie_id\n  AND k.id = mk.keyword_id\n  AND it1.id = mi.info_type_id\n  AND it2.id = mi_idx.info_type_id\n  AND ct.id = mc.company_type_id\n  AND cn.id = mc.company_id;\n",
-      "startTime": "2026-06-30T15:50:18.404686Z",
+      "startTime": "2026-07-01T12:08:16.043430Z",
       "status": "OK",
-      "timeMs": 549.786
+      "timeMs": 688.752
     }
   ],
   "runtime": {
-    "avgMs": 549.786,
-    "bestMs": 549.786,
-    "maxMs": 549.786,
-    "minMs": 549.786,
+    "avgMs": 688.752,
+    "bestMs": 688.752,
+    "maxMs": 688.752,
+    "minMs": 688.752,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

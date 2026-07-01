@@ -93,16 +93,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE min, min, min\n       1       275  INNER JOIN HASH ON id33 = person_id97\n       1       141  │└INNER JOIN HASH ON id86 = company_id\n       5       300  │ │└INNER JOIN HASH ON movie_id79 = movie_id61\n       1        36  │ │ │└INNER JOIN HASH ON id = info_type_id\n       1         1  │ │ │ │└TABLE SCAN info_type WHERE info = release dates\n       1        36  │ │ │ INNER JOIN HASH ON id68 = person_role_id\n       1        36  │ │ │ │└INNER JOIN HASH ON movie_id61 = movie_id\n       1        29  │ │ │ │ │└INNER JOIN HASH ON id45 = movie_id\n       1       314  │ │ │ │ │ │└INNER JOIN HASH ON id33 = person_id\n       6      7726  │ │ │ │ │ │ │└INNER JOIN HASH ON id6 = role_id\n       1         1  │ │ │ │ │ │ │ │└TABLE SCAN role_type WHERE role = actress\n      60     30828  │ │ │ │ │ │ │ INNER JOIN HASH ON movie_id25 = movie_id\n      97      9696  │ │ │ │ │ │ │ │└INNER JOIN HASH ON id11 = keyword_id\n       3         3  │ │ │ │ │ │ │ │ │└TABLE SCAN keyword\n 4523930   4523930  │ │ │ │ │ │ │ │ TABLE SCAN movie_keyword\n  707897     16500  │ │ │ │ │ │ │ TABLE SCAN cast_info\n   61047        93  │ │ │ │ │ │ TABLE SCAN name WHERE gender = f\n  365420        12  │ │ │ │ │ TABLE SCAN title WHERE production_year >= 2011\n  318736        16  │ │ │ │ TABLE SCAN movie_info\n 3140339   3140339  │ │ │ TABLE SCAN char_name\n 2609129   2609129  │ │ TABLE SCAN movie_companies\n   90648        17  │ TABLE SCAN company_name WHERE country_code = us\n  901343    901343  TABLE SCAN aka_name\n",
       "sql": "SELECT MIN(chn.name) AS voiced_char_name,\n       MIN(n.name) AS voicing_actress_name,\n       MIN(t.title) AS voiced_action_movie_jap_eng\nFROM job.aka_name AS an,\n     job.char_name AS chn,\n     job.cast_info AS ci,\n     job.company_name AS cn,\n     job.info_type AS it,\n     job.keyword AS k,\n     job.movie_companies AS mc,\n     job.movie_info AS mi,\n     job.movie_keyword AS mk,\n     job.name AS n,\n     job.role_type AS rt,\n     job.title AS t\nWHERE ci.note IN ('(voice)',\n                  '(voice: Japanese version)',\n                  '(voice) (uncredited)',\n                  '(voice: English version)')\n  AND cn.country_code ='[us]'\n  AND it.info = 'release dates'\n  AND k.keyword IN ('hero',\n                    'martial-arts',\n                    'hand-to-hand-combat')\n  AND mi.info IS NOT NULL\n  AND (mi.info LIKE 'Japan:%201%'\n       OR mi.info LIKE 'USA:%201%')\n  AND n.gender ='f'\n  AND n.name LIKE '%An%'\n  AND rt.role ='actress'\n  AND t.production_year > 2010\n  AND t.id = mi.movie_id\n  AND t.id = mc.movie_id\n  AND t.id = ci.movie_id\n  AND t.id = mk.movie_id\n  AND mc.movie_id = ci.movie_id\n  AND mc.movie_id = mi.movie_id\n  AND mc.movie_id = mk.movie_id\n  AND mi.movie_id = ci.movie_id\n  AND mi.movie_id = mk.movie_id\n  AND ci.movie_id = mk.movie_id\n  AND cn.id = mc.company_id\n  AND it.id = mi.info_type_id\n  AND n.id = ci.person_id\n  AND rt.id = ci.role_id\n  AND n.id = an.person_id\n  AND ci.person_id = an.person_id\n  AND chn.id = ci.person_role_id\n  AND k.id = mk.keyword_id;\n",
-      "startTime": "2026-06-30T15:50:19.739402Z",
+      "startTime": "2026-07-01T12:08:17.538725Z",
       "status": "OK",
-      "timeMs": 60.799
+      "timeMs": 91.732
     }
   ],
   "runtime": {
-    "avgMs": 60.799,
-    "bestMs": 60.799,
-    "maxMs": 60.799,
-    "minMs": 60.799,
+    "avgMs": 91.732,
+    "bestMs": 91.732,
+    "maxMs": 91.732,
+    "minMs": 91.732,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

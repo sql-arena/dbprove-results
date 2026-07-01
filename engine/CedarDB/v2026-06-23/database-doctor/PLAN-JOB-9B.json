@@ -93,16 +93,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE min, min, min, min\n       1        40  INNER JOIN HASH ON person_id72 = id6\n       3        30  │└INNER JOIN HASH ON id61 = person_role_id\n       3        30  │ │└INNER JOIN HASH ON movie_id = id46\n       6        75  │ │ │└INNER JOIN HASH ON company_id = id36\n      16        76  │ │ │ │└INNER JOIN HASH ON movie_id = movie_id29\n      95       367  │ │ │ │ │└INNER JOIN HASH ON role_id = id\n       1         1  │ │ │ │ │ │└TABLE SCAN role_type WHERE role = actress\n     841       367  │ │ │ │ │ INNER JOIN HASH ON id6 = person_id\n    4069      5409  │ │ │ │ │ │└TABLE SCAN name WHERE gender = f\n  672502       367  │ │ │ │ │ TABLE SCAN cast_info WHERE note = voice\n  211482        74  │ │ │ │ TABLE SCAN movie_companies\n   90648        44  │ │ │ TABLE SCAN company_name WHERE country_code = us\n  562944        18  │ │ TABLE SCAN title WHERE production_year BETWEEN 2007 AND 2010\n 3140339   3140339  │ TABLE SCAN char_name\n  901343    901343  TABLE SCAN aka_name\n",
       "sql": "SELECT MIN(an.name) AS alternative_name,\n       MIN(chn.name) AS voiced_character,\n       MIN(n.name) AS voicing_actress,\n       MIN(t.title) AS american_movie\nFROM job.aka_name AS an,\n     job.char_name AS chn,\n     job.cast_info AS ci,\n     job.company_name AS cn,\n     job.movie_companies AS mc,\n     job.name AS n,\n     job.role_type AS rt,\n     job.title AS t\nWHERE ci.note = '(voice)'\n  AND cn.country_code ='[us]'\n  AND mc.note LIKE '%(200%)%'\n  AND (mc.note LIKE '%(USA)%'\n       OR mc.note LIKE '%(worldwide)%')\n  AND n.gender ='f'\n  AND n.name LIKE '%Angel%'\n  AND rt.role ='actress'\n  AND t.production_year BETWEEN 2007 AND 2010\n  AND ci.movie_id = t.id\n  AND t.id = mc.movie_id\n  AND ci.movie_id = mc.movie_id\n  AND mc.company_id = cn.id\n  AND ci.role_id = rt.id\n  AND n.id = ci.person_id\n  AND chn.id = ci.person_role_id\n  AND an.person_id = n.id\n  AND an.person_id = ci.person_id;\n",
-      "startTime": "2026-06-30T15:50:40.520576Z",
+      "startTime": "2026-07-01T12:08:40.024720Z",
       "status": "OK",
-      "timeMs": 11.624
+      "timeMs": 13.123
     }
   ],
   "runtime": {
-    "avgMs": 11.624,
-    "bestMs": 11.624,
-    "maxMs": 11.624,
-    "minMs": 11.624,
+    "avgMs": 13.123,
+    "bestMs": 13.123,
+    "maxMs": 13.123,
+    "minMs": 13.123,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",

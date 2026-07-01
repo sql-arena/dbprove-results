@@ -93,16 +93,16 @@
       },
       "plan": "Estimate    Actual  Operator\n       1         1  AGGREGATE min, min, min, min, min, min\n      56         8  INNER JOIN HASH ON id105 = company_id99\n      59         8  │└INNER JOIN HASH ON movie_id49 = movie_id98\n      20         2  │ │└INNER JOIN HASH ON id87 = company_id\n       1        14  │ │ │└INNER JOIN HASH ON id56 = movie_id80\n       1         5  │ │ │ │└INNER JOIN HASH ON id = info_type_id73\n       1         1  │ │ │ │ │└TABLE SCAN info_type WHERE info = rating\n       3        15  │ │ │ │ INNER JOIN HASH ON id56 = movie_id72\n       5         6  │ │ │ │ │└INNER JOIN HASH ON id6 = kind_id59\n       1         1  │ │ │ │ │ │└TABLE SCAN kind_type WHERE kind = tv series\n      31         6  │ │ │ │ │ INNER JOIN HASH ON id56 = movie_id\n      25         6  │ │ │ │ │ │└INNER JOIN HASH ON id11 = info_type_id\n       1         1  │ │ │ │ │ │ │└TABLE SCAN info_type WHERE info = rating\n     676         6  │ │ │ │ │ │ INNER JOIN HASH ON linked_movie_id = movie_id49\n     475       100  │ │ │ │ │ │ │└INNER JOIN HASH ON id16 = kind_id\n       1         1  │ │ │ │ │ │ │ │└TABLE SCAN kind_type WHERE kind = tv series\n    2990       107  │ │ │ │ │ │ │ INNER JOIN HASH ON id33 = linked_movie_id\n    3524      2315  │ │ │ │ │ │ │ │└INNER JOIN HASH ON id21 = link_type_id\n       2         2  │ │ │ │ │ │ │ │ │└TABLE SCAN link_type\n   29997     29997  │ │ │ │ │ │ │ │ TABLE SCAN movie_link\n  501218        69  │ │ │ │ │ │ │ TABLE SCAN title WHERE production_year BETWEEN 2005 AND 2008\n  675192         4  │ │ │ │ │ │ TABLE SCAN movie_info_idx WHERE info < 3.0\n 2528312   2528312  │ │ │ │ │ TABLE SCAN title\n 1380035   1380035  │ │ │ │ TABLE SCAN movie_info_idx\n 2609129   2609129  │ │ │ TABLE SCAN movie_companies\n   90648         2  │ │ TABLE SCAN company_name WHERE country_code = us\n 2609129   2609129  │ TABLE SCAN movie_companies\n  234997    234997  TABLE SCAN company_name\n",
       "sql": "SELECT MIN(cn1.name) AS first_company,\n       MIN(cn2.name) AS second_company,\n       MIN(mi_idx1.info) AS first_rating,\n       MIN(mi_idx2.info) AS second_rating,\n       MIN(t1.title) AS first_movie,\n       MIN(t2.title) AS second_movie\nFROM job.company_name AS cn1,\n     job.company_name AS cn2,\n     job.info_type AS it1,\n     job.info_type AS it2,\n     job.kind_type AS kt1,\n     job.kind_type AS kt2,\n     job.link_type AS lt,\n     job.movie_companies AS mc1,\n     job.movie_companies AS mc2,\n     job.movie_info_idx AS mi_idx1,\n     job.movie_info_idx AS mi_idx2,\n     job.movie_link AS ml,\n     job.title AS t1,\n     job.title AS t2\nWHERE cn1.country_code = '[us]'\n  AND it1.info = 'rating'\n  AND it2.info = 'rating'\n  AND kt1.kind IN ('tv series')\n  AND kt2.kind IN ('tv series')\n  AND lt.link IN ('sequel',\n                  'follows',\n                  'followed by')\n  AND mi_idx2.info < '3.0'\n  AND t2.production_year BETWEEN 2005 AND 2008\n  AND lt.id = ml.link_type_id\n  AND t1.id = ml.movie_id\n  AND t2.id = ml.linked_movie_id\n  AND it1.id = mi_idx1.info_type_id\n  AND t1.id = mi_idx1.movie_id\n  AND kt1.id = t1.kind_id\n  AND cn1.id = mc1.company_id\n  AND t1.id = mc1.movie_id\n  AND ml.movie_id = mi_idx1.movie_id\n  AND ml.movie_id = mc1.movie_id\n  AND mi_idx1.movie_id = mc1.movie_id\n  AND it2.id = mi_idx2.info_type_id\n  AND t2.id = mi_idx2.movie_id\n  AND kt2.id = t2.kind_id\n  AND cn2.id = mc2.company_id\n  AND t2.id = mc2.movie_id\n  AND ml.linked_movie_id = mi_idx2.movie_id\n  AND ml.linked_movie_id = mc2.movie_id\n  AND mi_idx2.movie_id = mc2.movie_id;\n",
-      "startTime": "2026-06-30T15:50:38.026564Z",
+      "startTime": "2026-07-01T12:08:37.075316Z",
       "status": "OK",
-      "timeMs": 6.243
+      "timeMs": 5.715
     }
   ],
   "runtime": {
-    "avgMs": 6.243,
-    "bestMs": 6.243,
-    "maxMs": 6.243,
-    "minMs": 6.243,
+    "avgMs": 5.715,
+    "bestMs": 5.715,
+    "maxMs": 5.715,
+    "minMs": 5.715,
     "stdDevMs": 0.0
   },
   "storageVariant": "native",
